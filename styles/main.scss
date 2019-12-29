@@ -1,0 +1,18 @@
+@import './variables';
+
+
+//@import './antd';
+@import './antd-dark';
+
+@import './dark-mode';
+@import './general';
+@import './header';
+
+/*
+Pages
+*/
+@import './pages/time';
+@import './pages/projects';
+@import './pages/reports';
+@import './pages/settings';
+@import './pages/users';

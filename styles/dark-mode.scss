@@ -1,0 +1,10 @@
+.dark-mode {
+  .ant-layout-header,
+  .ant-layout-footer,
+  .ant-menu-dark {
+    background-color: $black;
+  }
+  .ant-layout {
+    background-color: $gray-222;
+  }
+}

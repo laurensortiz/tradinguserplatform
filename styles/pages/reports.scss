@@ -1,0 +1,39 @@
+.report-date-select {
+  & > div {
+    display: none;
+
+    &.show {
+      display: block;
+    }
+  }
+}
+
+.custom-filter-dropdown{
+  padding: 8px;
+  border-radius: 4px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+  .ant-input, .ant-select, .ant-calendar-picker{
+    width: 298px;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .ant-btn{
+    width: 90px;
+    margin-right: 8px;
+  }
+}
+
+.table-report-total-hours {
+  text-align: right;
+  font-size: 1.4rem;
+  margin: 0;
+
+  strong {
+    font-size: 3rem;
+    border-radius: 5px;
+    padding: 10px;
+    background: #fafafa;
+    border: 1px solid #e8e8e8;
+  }
+}
