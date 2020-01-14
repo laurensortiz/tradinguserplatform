@@ -27,32 +27,32 @@ module.exports = {
         }
       },
       accountValue: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(10,2),
         allowNull: true,
         unique: false,
       },
       guaranteeOperation: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(10,2),
         allowNull: true,
         unique: false,
       },
       guaranteeCredits: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(10,2),
         allowNull: true,
         unique: false,
       },
       balanceInitial: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(10,2),
         allowNull: true,
         unique: false,
       },
       balanceFinal: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(10,2),
         allowNull: true,
         unique: false,
       },
       maintenanceMargin: {
-        type: Sequelize.STRING,
+        type: Sequelize.DECIMAL(10,2),
         allowNull: true,
         unique: false,
       },

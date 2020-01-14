@@ -71,16 +71,6 @@ class AddOrEditUserAccountForm extends PureComponent {
     }
   }
 
-  _handleChange = e => {
-    let value = '';
-    if (e.target.type === 'checkbox') {
-      value = e.target.checked ? 1 : 0;
-    } else {
-      value = e.target.value;
-    }
-    this.setState( { [ e.target.name ]: value } );
-  };
-
   _handleChangeSelect = (event) => {
     const { value } = event;
     const fieldName = event.name;
@@ -109,22 +99,22 @@ class AddOrEditUserAccountForm extends PureComponent {
         }
       } )
     }
+  };
 
-
+  _handleChange = e => {
+    this.setState( {
+      [ e.target.name ]: _.replace( e.target.value, ',', '' )
+    } );
   };
 
   _handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
       if (!err) {
-        const user = {
-          ...this.state,
-        };
-
         if (_.isEqual( this.props.actionType, 'add' )) {
-          this.props.onAddNew( user )
+          this.props.onAddNew( this.state )
         } else {
-          this.props.onEdit( user )
+          this.props.onEdit( this.state )
         }
       }
     } );
@@ -147,45 +137,55 @@ class AddOrEditUserAccountForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    console.log( '[=====  STATE  =====>' );
-    console.log( this.state );
-    console.log( '<=====  /STATE  =====]' );
+    const isAddAction = _.isEqual( this.props.actionType, 'add' );
+
 
     // Default values for edit action
     const accountInitValue = !_.isEmpty( this.state.account.name ) ? this.state.account.name : undefined;
-    const userInitValue = !_.isEmpty( this.state.user.id ) ? this.state.user.username : undefined;
+    const userInitValue = !_.isEmpty( this.state.user.username ) ? this.state.user.username : undefined;
     const accountValueInitValue = !_.isEmpty( this.state.accountValue ) ? this.state.accountValue : undefined;
     const guaranteeOperationInitValue = !_.isEmpty( this.state.guaranteeOperation ) ? this.state.guaranteeOperation : undefined;
     const guaranteeCreditsInitValue = !_.isEmpty( this.state.guaranteeCredits ) ? this.state.guaranteeCredits : undefined;
     const balanceInitialInitValue = !_.isEmpty( this.state.balanceInitial ) ? this.state.balanceInitial : undefined;
     const balanceFinalInitValue = !_.isEmpty( this.state.balanceFinal ) ? this.state.balanceFinal : undefined;
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
-
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
-        <Form.Item>
+        <Form.Item label="Usuario">
           { getFieldDecorator( 'user', {
             initialValue: userInitValue,
             rules: [ { required: true, message: 'Por favor ingrese el Usuario' } ],
           } )(
-            <Select name="user" onChange={ value => this._handleChangeSelect( { name: 'user', value } ) }
-                    placeholder="Usuario">
+            <Select
+              showSearch={ true }
+              name="user"
+              onChange={ value => this._handleChangeSelect( { name: 'user', value } ) }
+              placeholder="Usuario"
+              disabled={ !isAddAction }
+              showArrow={ isAddAction }
+            >
               { this._getUserSelectOption( this.state.users ) }
             </Select>
           ) }
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Cuenta">
           { getFieldDecorator( 'account', {
             initialValue: accountInitValue,
             rules: [ { required: true, message: 'Por favor indique el tipo de Cuenta' } ],
           } )(
-            <Select name="user" onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }
-                    placeholder="Cuenta">
+            <Select
+              showSearch={ true }
+              name="user"
+              onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }
+              placeholder="Cuenta"
+              disabled={ !isAddAction }
+              showArrow={ isAddAction }
+            >
               { this._getSelectOption( this.state.accounts ) }
             </Select>
           ) }
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Valor de la Cuenta">
           { getFieldDecorator( 'accountValue', {
             initialValue: accountValueInitValue,
             rules: [ { required: true, message: 'Por favor indique el valor de la cuenta' } ],
@@ -193,7 +193,7 @@ class AddOrEditUserAccountForm extends PureComponent {
             <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
           ) }
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Garantías disponibles">
           { getFieldDecorator( 'guaranteeOperation', {
             initialValue: guaranteeOperationInitValue,
             rules: [ { required: true, message: 'Por favor indique las garatías disponibles' } ],
@@ -202,7 +202,7 @@ class AddOrEditUserAccountForm extends PureComponent {
                    placeholder="Garantías disponibles para operar"/>
           ) }
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Garantía/Créditos">
           { getFieldDecorator( 'guaranteeCredits', {
             initialValue: guaranteeCreditsInitValue,
             rules: [ { required: true, message: 'Por favor ingrese Garantía / Créditos' } ],
@@ -210,26 +210,26 @@ class AddOrEditUserAccountForm extends PureComponent {
             <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
           ) }
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Saldo Inicial">
           { getFieldDecorator( 'balanceInitial', {
             initialValue: balanceInitialInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el Saldo Inicial' } ],
+            rules: [ { required: true, message: 'Por favor ingrese el saldo inicial' } ],
           } )(
             <Input name="balanceInitial" onChange={ this._handleChange } placeholder="Saldo Inicial"/>
           ) }
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Saldo Final">
           { getFieldDecorator( 'balanceFinal', {
             initialValue: balanceFinalInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el Saldo Final' } ],
+            rules: [ { required: false, message: 'Por favor ingrese el saldo final' } ],
           } )(
             <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
           ) }
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Margen de Mantenimiento">
           { getFieldDecorator( 'maintenanceMargin', {
             initialValue: maintenanceMarginInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el Margen de Mantenimiento' } ],
+            rules: [ { required: true, message: 'Por favor ingrese el margen de mantenimiento' } ],
           } )(
             <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>
           ) }

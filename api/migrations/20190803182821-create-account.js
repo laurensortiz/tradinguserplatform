@@ -11,10 +11,10 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true,
+        unique: false,
       },
       percentage: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.DECIMAL(10,2),
         allowNull: false,
         unique: true,
       },

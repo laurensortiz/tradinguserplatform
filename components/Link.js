@@ -10,7 +10,6 @@ class CustomLink extends Component {
   render() {
     const {router, href} = this.props;
 
-
     if (this.props.onClick) {
       return (
         <span

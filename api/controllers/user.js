@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import passport from 'passport';
 import _ from 'lodash';
 import { userQuery } from '../queries';
-import { User, Role, Account } from '../models';
+import { User, Role, Account, UserAccount } from '../models';
 import { hashPassword, salt } from '../hashPassword';
 
 
@@ -146,12 +146,23 @@ module.exports = {
     // }
 
     const user = await User.findByPk( req.params.userId );
+    const userAccount = await UserAccount.update( {
+      accountId: _.get(req, 'body.account.id', user.accountId),
+    }, {
+      where: {
+        userId: req.params.userId
+      }
+    } );
 
     if (!user) {
       return res.status( 404 ).send( {
         message: '404 no user on update',
       } );
     }
+
+    console.log('[=====  TEST  =====>');
+    console.log(userAccount);
+    console.log('<=====  /TEST  =====]');
 
 
     const updatedUser = await user.update( {

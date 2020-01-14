@@ -10,7 +10,7 @@ class Index extends Component {
 
   renderLoggedIn = () => {
     if (process.browser) {
-      Router.push('/accounts')
+      Router.push('/operations')
     }
 
   };

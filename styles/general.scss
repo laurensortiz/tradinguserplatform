@@ -148,3 +148,18 @@ body > div:first-of-type:not(#__next) {
   background-color: $blue-165;
   border-color: $blue-165;
 }
+
+.ant-menu  {
+  a.active {
+    color: $white;
+
+    i {
+      color: $blue-44a;
+    }
+  }
+
+}
+
+.ant-form-item-label {
+  line-height: 23px;
+}

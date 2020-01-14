@@ -1,28 +1,28 @@
 module.exports = (Sequelize, DataTypes) => {
   const UserAccount = Sequelize.define('UserAccount', {
     accountValue: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL(10,2),
       allowNull: false,
       unique: true,
     },
     guaranteeOperation: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
     },
     guaranteeCredits: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
     },
     balanceInitial: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
     },
     balanceFinal: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
     },
     maintenanceMargin: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL(10,2),
       allowNull: false,
     },
     createdAt: {

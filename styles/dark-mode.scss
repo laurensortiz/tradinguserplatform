@@ -7,4 +7,12 @@
   .ant-layout {
     background-color: $gray-222;
   }
+
+  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+    color: $white;
+    background: #1890ff;
+    &:hover {
+      color: $white;
+    }
+  }
 }

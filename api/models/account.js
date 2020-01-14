@@ -3,10 +3,10 @@ module.exports = (Sequelize, DataTypes) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
+      unique: false,
     },
     percentage: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(10,2),
       allowNull: false,
     },
     createdAt: {

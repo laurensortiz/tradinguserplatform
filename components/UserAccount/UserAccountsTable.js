@@ -5,6 +5,7 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import { Button, Icon, Popconfirm, Table, Tag } from 'antd';
+import { Sort, FormatCurrency } from '../../common/utils';
 
 
 class UserAccountsTable extends Component {
@@ -13,7 +14,7 @@ class UserAccountsTable extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual(nextProps.users, prevState.users)) {
+    if (!_.isEqual( nextProps.users, prevState.users )) {
       return {
         users: nextProps.users
       }
@@ -21,9 +22,16 @@ class UserAccountsTable extends Component {
     return null;
   }
 
+  _selectItemsOperationType = () => (
+    <Menu onClick={this.props.onCreateOperation}>
+      <Menu.Item key="market">Bolsa</Menu.Item>
+      <Menu.Item key="investment">Inversión</Menu.Item>
+    </Menu>
+  );
+
   _getCTA = (type, row) => {
 
-    if (_.isEqual(this.props.status, 'inactive')) {
+    if (_.isEqual( this.props.status, 'inactive' )) {
       return (
         <div className="cta-container">
           <Popconfirm
@@ -45,86 +53,103 @@ class UserAccountsTable extends Component {
             cancelText="Cancelar"
             onConfirm={ () => this.props.onDelete( row.id ) }
           >
-            <Button type="danger"><Icon type="delete" /></Button>
+            <Button type="danger"><Icon type="delete"/></Button>
           </Popconfirm>
-          <Button type="secondary" onClick={() => this.props.onEdit(row.id)}><Icon type="edit" /></Button>
+          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
         </div>
       )
     }
 
   };
 
+  _displayTableAmount = amount => {
+    if (amount) {
+      return `${ FormatCurrency.format(amount) }`
+    } else {
+      return '-'
+    }
+  };
+
   render() {
     const columns = [
       {
-        title: 'Nombre',
-        dataIndex: 'firstName',
-        key: 'firstName',
-        render: text => <span key={ text }>{ text }</span>
-      },
-      {
-        title: 'Apellido',
-        dataIndex: 'lastName',
-        key: 'lastName',
-        render: text => <span key={ text }>{ text }</span>
-      },
-      {
         title: 'Usuario',
-        dataIndex: 'username',
+        dataIndex: 'user',
         key: 'username',
-        render: text => <span key={ text }>{ text }</span>
+        render: text => <span key={ text }>{ text.username }</span>,
+        sorter: (a, b) => Sort( a.user.username, b.user.username ),
+        sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Cédula',
-        dataIndex: 'userID',
-        key: 'userID',
-        render: text => <span key={ text }>{ text }</span>
-      },
-      {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-        render: email => <span key={ email }>{ email }</span>
-      },
-      {
-        title: 'Teléfono',
-        dataIndex: 'phoneNumber',
-        key: 'phoneNumber',
-        render: phoneNumber => <span key={ phoneNumber }>{ phoneNumber }</span>
-      },
-      {
-        title: 'Fecha de Inicio',
-        dataIndex: 'startDate',
-        key: 'startDate',
-        render: (date, row) => <span className="date">{ moment.utc( date ).isValid() ? moment.utc( date ).format( 'DD-MM-YYYY' ) : ''}</span>
-      },
-      {
-        title: 'Fecha de Salida',
-        dataIndex: 'endDate',
-        key: 'endDate',
-        render: (date, row) => <span className="date">{ moment.utc( date ).isValid() ? moment.utc( date ).format( 'DD-MM-YYYY' ) : '' }</span>
-      },
-      {
-        title: 'Cuenta',
+        title: 'Tipo de Cuenta',
         dataIndex: 'account',
         key: 'account',
-        render: account => <span >{ `${account.percentage}% - ${account.name}` }</span>
+        render: text => <span key={ text }>{ text.name }</span>,
+        sorter: (a, b) => Sort( a.account.name, b.account.name ),
+        sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Permisos',
-        dataIndex: 'role',
-        key: 'role',
-        render: (type, row) => {
-
-          const colorTag = type.id === 2 ? 'orange' : 'green';
-
-          return <Tag color={ colorTag }>{ type.name }</Tag>
-        }
+        title: 'Comisión',
+        dataIndex: 'account',
+        key: 'percentage',
+        render: text => <span key={ text }>{ text.percentage }%</span>,
+        sorter: (a, b) => Sort( a.account.percentage, b.account.percentage ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Valor de la Cuenta',
+        dataIndex: 'accountValue',
+        key: 'accountValue',
+        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Garantías disponibles',
+        dataIndex: 'guaranteeOperation',
+        key: 'guaranteeOperation',
+        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        sorter: (a, b) => Sort( a.guaranteeOperation, b.guaranteeOperation ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Saldo Inicial',
+        dataIndex: 'balanceInitial',
+        key: 'balanceInitial',
+        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        sorter: (a, b) => Sort( a.balanceInitial, b.balanceInitial ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Saldo Final',
+        dataIndex: 'balanceFinal',
+        key: 'balanceFinal',
+        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        sorter: (a, b) => Sort( a.balanceFinal, b.balanceFinal ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Margen Mantenimiento',
+        dataIndex: 'maintenanceMargin',
+        key: 'maintenanceMargin',
+        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Garantías / Créditos',
+        dataIndex: 'guaranteeCredits',
+        key: 'guaranteeCredits',
+        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        sorter: (a, b) => Sort( a.guaranteeCredits, b.guaranteeCredits ),
+        sortDirections: [ 'descend', 'ascend' ],
       },
       {
         title: 'Acciones',
         key: 'actions',
-        render: this._getCTA
+        render: this._getCTA,
+        fixed: 'right',
+        width: 150
       },
     ];
 
@@ -132,7 +157,7 @@ class UserAccountsTable extends Component {
       <Table
         rowKey={ record => record.id }
         columns={ columns }
-        dataSource={ this.props.users }
+        dataSource={ this.props.userAccounts }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
       />
@@ -143,14 +168,11 @@ class UserAccountsTable extends Component {
 
 function mapStateToProps(state) {
 
-  return {
-
-  }
+  return {}
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators( {
-  }, dispatch );
+  bindActionCreators( {}, dispatch );
 
 
 export default connect( mapStateToProps, mapDispatchToProps )( UserAccountsTable );

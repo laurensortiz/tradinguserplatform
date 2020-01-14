@@ -19,7 +19,10 @@ class NavPrivate extends PureComponent {
           <Link href="/calendar"><Icon type="calendar" /> <span>Calendario Económico</span></Link>
         </MenuItem>
         <MenuItem>
-          <Link href="/accounts"><Icon type="area-chart" /> <span>Cuentas</span></Link>
+          <Link href="/accounts"><Icon type="control" /> <span>Cuentas</span></Link>
+        </MenuItem>
+        <MenuItem>
+          <Link href="/operations"><Icon type="area-chart" /> <span>Operaciones</span></Link>
         </MenuItem>
         <MenuItem>
           <Link href="/users"><Icon type="user" /> <span>Usuarios</span></Link>

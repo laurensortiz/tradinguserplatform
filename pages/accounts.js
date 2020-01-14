@@ -19,6 +19,8 @@ class Accounts extends Component {
     isVisibleAddOrEditUserAccount: false,
     actionType: 'add',
     selectedUserAccount: {},
+    isCreatingOperation: false,
+    operationType: 'investment',
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -87,12 +89,12 @@ class Accounts extends Component {
     } )
   };
 
-  _handleAddNewUserAccount = (user) => {
-    this.props.fetchAddUserAccount( user )
+  _handleAddNewUserAccount = (userAccount) => {
+    this.props.fetchAddUserAccount( userAccount )
   };
 
-  _handleEditUserAccount = (user) => {
-    this.props.fetchEditUserAccount( user )
+  _handleEditUserAccount = (userAccount) => {
+    this.props.fetchEditUserAccount( userAccount )
   };
 
   _handleDeleteUserAccount = (userId) => {
@@ -130,13 +132,13 @@ class Accounts extends Component {
 
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
-      ? 'Agregar Usuario'
-      : 'Editar Usuario';
+      ? 'Agregar Cuenta de Usuario'
+      : 'Editar Cuenta de Usuario';
     return (
       <Document id="userAccounts-page">
         <Row>
           <Button style={ { float: 'right' } } type="primary" onClick={ this._addUserAccount }>
-            Agregar Usuario
+            Agregar Cuenta
           </Button>
         </Row>
         <Row>
