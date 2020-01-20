@@ -1,5 +1,5 @@
 module.exports = (Sequelize, DataTypes) => {
-  const OperationInvestment = Sequelize.define('OperationInvestment', {
+  const InvestmentOperation = Sequelize.define('InvestmentOperation', {
     operationType: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -32,19 +32,19 @@ module.exports = (Sequelize, DataTypes) => {
     },
   });
 
-  OperationInvestment.associate = models => {
+  InvestmentOperation.associate = models => {
 
-    OperationInvestment.belongsTo(models.Account, {
-      foreignKey: 'accountId',
-      as: 'account',
+    InvestmentOperation.belongsTo(models.UserAccount, {
+      foreignKey: 'userAccountId',
+      as: 'userAccount',
     });
 
-    OperationInvestment.hasMany(models.InvestmentMovement, {
+    InvestmentOperation.hasMany(models.InvestmentMovement, {
       foreignKey: 'investmentMovementId',
       as: 'investmentMovement',
     });
 
   };
 
-  return OperationInvestment;
+  return InvestmentOperation;
 };

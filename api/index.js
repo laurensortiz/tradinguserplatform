@@ -5,7 +5,8 @@ import {
   product,
   role,
   broker,
-  userAccount
+  userAccount,
+  investmentOperation,
 } from './controllers';
 
 const authMiddleware = (req, res, next) => {
@@ -89,5 +90,11 @@ module.exports = app => {
   app.put( '/api/user-accounts/:userAccountId', userAccount.update );
   app.delete( '/api/user-accounts/:userAccountId', userAccount.delete );
 
+  // User Account
+  app.get( '/api/investment-operation', investmentOperation.list );
+  app.get( '/api/investment-operation/:investmentOperationId', investmentOperation.get );
+  app.post( '/api/investment-operation', investmentOperation.create );
+  app.put( '/api/investment-operation/:investmentOperationId', investmentOperation.update );
+  app.delete( '/api/investment-operation/:investmentOperationId', investmentOperation.delete );
 
 };

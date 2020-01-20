@@ -34,10 +34,10 @@ const requestInvestmentOperationsError = (error) => {
 };
 
 // Add
-export const fetchAddInvestmentOperation = (user) => async dispatch => {
+export const fetchAddInvestmentOperation = (operation) => async dispatch => {
   dispatch( requestAddInvestmentOperation() );
   try {
-    const res = await addInvestmentOperation(user);
+    const res = await addInvestmentOperation(operation);
     dispatch( requestAddInvestmentOperationSuccess( res.data ) )
   } catch (e) {
     dispatch( requestAddInvestmentOperationError( e.message ) )

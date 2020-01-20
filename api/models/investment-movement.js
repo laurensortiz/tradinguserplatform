@@ -27,9 +27,9 @@ module.exports = (Sequelize, DataTypes) => {
 
   InvestmentMovement.associate = models => {
 
-    InvestmentMovement.belongsTo(models.OperationInvestment, {
-      foreignKey: 'operationInvestmentId',
-      as: 'operationInvestment',
+    InvestmentMovement.belongsTo(models.InvestmentOperation, {
+      foreignKey: 'investmentOperationId',
+      as: 'investmentOperation',
     });
 
   };

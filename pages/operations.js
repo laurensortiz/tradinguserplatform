@@ -7,32 +7,26 @@ import _ from 'lodash';
 
 import Document from '../components/Document';
 
-import { userAccountOperations } from "../state/modules/userAccounts";
 import { Investment, Market } from '../components/Operation';
+import { investmentOperationOperations } from "../state/modules/investmentOperation";
 
 const { TabPane } = Tabs;
 
-class Accounts extends Component {
+class Operations extends Component {
   state = {
     operationType: 'investment',
     isFormVisible: false,
-    userAccounts: [],
+    investmentOperations: [],
+    marketOperations: [],
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
 
-    if (!_.isEqual(nextProps.userAccounts, prevState.userAccounts)) {
-      _.assignIn(updatedState, {
-        userAccounts: nextProps.userAccounts
-      })
-    }
-
     return !_.isEmpty(updatedState) ? updatedState : null;
   }
 
   componentDidMount() {
-    this.props.fetchGetUserAccounts();
   };
 
   _onSelectOperationType = ({target}) => {
@@ -74,14 +68,14 @@ class Accounts extends Component {
               <Market
                 isFormVisible={_.isEqual(this.state.operationType, 'market') && this.state.isFormVisible}
                 onClose={this._handleFormDisplay}
-                userAccounts={this.state.userAccounts}
+
               />
             </TabPane>
             <TabPane tab key="investment">
               <Investment
                 isFormVisible={_.isEqual(this.state.operationType, 'investment') && this.state.isFormVisible}
                 onClose={this._handleFormDisplay}
-                userAccounts={this.state.userAccounts}
+
               />
             </TabPane>
           </Tabs>
@@ -94,18 +88,18 @@ class Accounts extends Component {
 
 function mapStateToProps(state) {
   return {
-    userAccounts: state.userAccountsState.list,
-    isLoading: state.userAccountsState.isLoading,
-    isSuccess: state.userAccountsState.isSuccess,
-    isFailure: state.userAccountsState.isFailure,
-    message: state.userAccountsState.message,
+
+    isLoading: state.investmentOperationsState.isLoading,
+    isSuccess: state.investmentOperationsState.isSuccess,
+    isFailure: state.investmentOperationsState.isFailure,
+    message: state.investmentOperationsState.message,
   }
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
+    fetchGetInvestmentOperations: investmentOperationOperations.fetchGetInvestmentOperations,
   }, dispatch );
 
 
-export default connect( mapStateToProps, mapDispatchToProps )( Accounts );
+export default connect( mapStateToProps, mapDispatchToProps )( Operations );

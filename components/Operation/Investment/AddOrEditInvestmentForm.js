@@ -9,64 +9,54 @@ moment.locale( 'es' ); // Set Lang to Spanish
 import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon } from 'antd';
 
 import { accountOperations } from '../../../state/modules/accounts';
-import { userOperations } from '../../../state/modules/users';
+import { investmentOperationOperations } from '../../../state/modules/investmentOperation';
+import { userAccountOperations } from "../../../state/modules/userAccounts";
 
-const { Option } = Select;
+const { Option, OptGroup } = Select;
 
 class AddOrEditInvestmentForm extends PureComponent {
   state = {
-    accountValue: '',
-    guaranteeOperation: '',
-    guaranteeCredits: '',
-    balanceInitial: '',
-    balanceFinal: '',
-    maintenanceMargin: '',
-    user: {
-      id: null,
-      username: ''
-    },
-    account: {
+    operationType: '',
+    userAccount: {
       id: null,
       name: ''
     },
+    amount: '',
+    startDate: null,
+    endDate: null,
+
     confirmDirty: false,
     isInvalid: true,
     status: 1,
-    accounts: [],
-    users: [],
+    userAccounts: [],
+
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let stateUpdated = {};
 
-    if (!_.isEqual( nextProps.accounts, prevState.accounts )) {
+    if (!_.isEqual( nextProps.userAccounts, prevState.userAccounts )) {
       _.assign( stateUpdated, {
-        accounts: nextProps.accounts
+        userAccounts: nextProps.userAccounts
       } )
     }
-    if (!_.isEqual( nextProps.users, prevState.users )) {
-      _.assign( stateUpdated, {
-        users: nextProps.users,
-      } )
-    }
+
 
     return !_.isEmpty( stateUpdated ) ? stateUpdated : null;
   }
 
 
   componentDidMount() {
-    if (_.isEmpty( this.state.accounts )) {
-      this.props.fetchGetAccounts();
-    }
-    if (_.isEmpty( this.state.users )) {
-      this.props.fetchGetUsers();
+    if (_.isEmpty( this.state.userAccounts )) {
+      this.props.fetchGetUserAccounts();
     }
 
-    if (!_.isEmpty( this.props.selectedAccount )) {
-      const { selectedAccount } = this.props;
+
+    if (!_.isEmpty( this.props.selectedOperation )) {
+      const { selectedOperation } = this.props;
       this.setState( {
         ...this.state,
-        ...selectedAccount,
+        ...selectedOperation,
       } )
     }
   }
@@ -79,17 +69,16 @@ class AddOrEditInvestmentForm extends PureComponent {
     const id = Number( codeIdName[ 0 ] );
     const name = codeIdName[ 1 ];
 
-    if (_.isEqual( fieldName, 'user' )) {
-      const selectedUser = _.find( this.state.users, { id } )
+    if (_.isEqual( fieldName, 'userAccount' )) {
+      const selectedUserAccount = _.find( this.state.userAccounts, { id } );
+
       this.setState( {
-        user: {
+        userAccount: {
           id,
-          username: name,
+          name,
         },
-        account: {
-          id: selectedUser.account.id,
-          name: selectedUser.account.name
-        }
+        amount: selectedUserAccount.accountValue
+
       } )
     } else {
       this.setState( {
@@ -99,6 +88,19 @@ class AddOrEditInvestmentForm extends PureComponent {
         }
       } )
     }
+  };
+
+  _setStartDate = (date) => {
+    this.setState( {
+      startDate: moment.utc( date ).format()
+    } );
+  };
+
+  _setEndDate = (date) => {
+    this.setState( {
+      endDate: moment.utc( date ).format()
+    } );
+
   };
 
   _handleChange = e => {
@@ -125,8 +127,16 @@ class AddOrEditInvestmentForm extends PureComponent {
     return _.map( options, ({ id, name }) => <Option key={ `${ id }_${ name }` }>{ name }</Option> )
   };
 
-  _getUserSelectOption = options => {
-    return _.map( options, ({ id, username }) => <Option key={ `${ id }_${ username }` }>{ username }</Option> )
+  _getAccountUserSelectOption = options => {
+    const accountsGrouped = _.groupBy(this.state.userAccounts, 'user.username');
+    return _.map(accountsGrouped, (accounts, user) => {
+      return (
+        <OptGroup label={user}>
+          {_.map(accounts, account => <Option key={`${ account.id }_${ _.get(account, 'account.name', ' - ') }`}>{_.get(account, 'account.name', ' - ')}</Option>)}
+        </OptGroup>
+      )
+    })
+   // return _.map( options, ({ id, username }) => <Option key={ `${ id }_${ username }` }>{ username }</Option> )
   };
 
 
@@ -141,99 +151,86 @@ class AddOrEditInvestmentForm extends PureComponent {
 
 
     // Default values for edit action
-    const accountInitValue = !_.isEmpty( this.state.account.name ) ? this.state.account.name : undefined;
-    const userInitValue = !_.isEmpty( this.state.user.username ) ? this.state.user.username : undefined;
-    const accountValueInitValue = !_.isEmpty( this.state.accountValue ) ? this.state.accountValue : undefined;
-    const guaranteeOperationInitValue = !_.isEmpty( this.state.guaranteeOperation ) ? this.state.guaranteeOperation : undefined;
-    const guaranteeCreditsInitValue = !_.isEmpty( this.state.guaranteeCredits ) ? this.state.guaranteeCredits : undefined;
-    const balanceInitialInitValue = !_.isEmpty( this.state.balanceInitial ) ? this.state.balanceInitial : undefined;
-    const balanceFinalInitValue = !_.isEmpty( this.state.balanceFinal ) ? this.state.balanceFinal : undefined;
-    const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
+    const statusInitValue = !_.isEmpty( this.state.status) ? this.state.status : undefined;
+    const userAccountInitValue = !_.isEmpty( this.state.userAccount.id ) ? this.state.userAccount.id : undefined;
+    const operationTypeInitValue = !_.isEmpty( this.state.operationType ) ? this.state.operationType : undefined;
+    const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
+    const startDateInitValue = !_.isEmpty( this.state.startDate ) ? moment.utc( this.state.startDate ) : undefined;
+    const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.utc( this.state.endDate ) : undefined;
+
+
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
-        <Form.Item label="Usuario">
-          { getFieldDecorator( 'user', {
-            initialValue: userInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el Usuario' } ],
+        <Form.Item label="Cuenta de Usuario">
+          { getFieldDecorator( 'userAccount', {
+            initialValue: userAccountInitValue,
+            rules: [ { required: true, message: 'Por favor seleccione la cuenta de usuario ' } ],
           } )(
             <Select
               showSearch={ true }
               name="user"
-              onChange={ value => this._handleChangeSelect( { name: 'user', value } ) }
-              placeholder="Usuario"
+              onChange={ value => this._handleChangeSelect( { name: 'userAccount', value } ) }
+              placeholder="Cuenta de Usuario"
               disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
-              { this._getUserSelectOption( this.state.users ) }
+              { this._getAccountUserSelectOption( this.state.userAccounts ) }
             </Select>
           ) }
         </Form.Item>
-        <Form.Item label="Cuenta">
-          { getFieldDecorator( 'account', {
-            initialValue: accountInitValue,
-            rules: [ { required: true, message: 'Por favor indique el tipo de Cuenta' } ],
+        <Form.Item label="Tipo de Operación">
+          { getFieldDecorator( 'operationType', {
+            initialValue: operationTypeInitValue,
+            rules: [ { required: true, message: 'Por favor indique el tipo de operación' } ],
+          } )(
+            <Input name="operationType" onChange={ this._handleChange } placeholder="Tipo de Operación"/>
+          ) }
+        </Form.Item>
+        <Form.Item label="Monto">
+          { getFieldDecorator( 'amount', {
+            initialValue: amountInitValue,
+            value: amountInitValue,
+            rules: [ { required: true, message: 'Por favor indique el monto' } ],
+          } )(
+            <Input name="amount" onChange={ this._handleChange }
+                   placeholder="Monto"/>
+          ) }
+        </Form.Item>
+        <Form.Item label="Estado">
+          { getFieldDecorator( 'status', {
+            initialValue: statusInitValue,
+            rules: [ { required: true, message: 'Por favor indique el estado' } ],
           } )(
             <Select
-              showSearch={ true }
-              name="user"
-              onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }
-              placeholder="Cuenta"
+              name="status"
+              onChange={ value => this.setState({
+                status: value
+              }) }
+              placeholder="Estado"
               disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
-              { this._getSelectOption( this.state.accounts ) }
+              <Option value={1}>Activo</Option>
+              <Option value={2}>Cerrado</Option>
+              <Option value={3}>En Pausa</Option>
             </Select>
           ) }
         </Form.Item>
-        <Form.Item label="Valor de la Cuenta">
-          { getFieldDecorator( 'accountValue', {
-            initialValue: accountValueInitValue,
-            rules: [ { required: true, message: 'Por favor indique el valor de la cuenta' } ],
+        <Form.Item>
+          { getFieldDecorator( 'startDate', {
+            initialValue: startDateInitValue
           } )(
-            <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
+            <DatePicker onChange={ this._setStartDate } placeholder="Fecha de Inicio"/>
           ) }
         </Form.Item>
-        <Form.Item label="Garantías disponibles">
-          { getFieldDecorator( 'guaranteeOperation', {
-            initialValue: guaranteeOperationInitValue,
-            rules: [ { required: true, message: 'Por favor indique las garatías disponibles' } ],
+        <Form.Item>
+          { getFieldDecorator( 'endDate', {
+            initialValue: endDateInitValue
           } )(
-            <Input name="guaranteeOperation" onChange={ this._handleChange }
-                   placeholder="Garantías disponibles para operar"/>
+            <DatePicker onChange={ this._setEndDate } placeholder="Fecha de Salida"/>
           ) }
         </Form.Item>
-        <Form.Item label="Garantía/Créditos">
-          { getFieldDecorator( 'guaranteeCredits', {
-            initialValue: guaranteeCreditsInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese Garantía / Créditos' } ],
-          } )(
-            <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
-          ) }
-        </Form.Item>
-        <Form.Item label="Saldo Inicial">
-          { getFieldDecorator( 'balanceInitial', {
-            initialValue: balanceInitialInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el saldo inicial' } ],
-          } )(
-            <Input name="balanceInitial" onChange={ this._handleChange } placeholder="Saldo Inicial"/>
-          ) }
-        </Form.Item>
-        <Form.Item label="Saldo Final">
-          { getFieldDecorator( 'balanceFinal', {
-            initialValue: balanceFinalInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese el saldo final' } ],
-          } )(
-            <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
-          ) }
-        </Form.Item>
-        <Form.Item label="Margen de Mantenimiento">
-          { getFieldDecorator( 'maintenanceMargin', {
-            initialValue: maintenanceMarginInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el margen de mantenimiento' } ],
-          } )(
-            <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>
-          ) }
-        </Form.Item>
+
 
 
         <Form.Item>
@@ -249,17 +246,15 @@ class AddOrEditInvestmentForm extends PureComponent {
 
 
 function mapStateToProps(state) {
-  const { accountsState, usersState } = state;
+
   return {
-    accounts: accountsState.list,
-    users: usersState.list,
+    userAccounts: state.userAccountsState.list,
   }
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetAccounts: accountOperations.fetchGetAccounts,
-    fetchGetUsers: userOperations.fetchGetUsers,
+    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
   }, dispatch );
 
 

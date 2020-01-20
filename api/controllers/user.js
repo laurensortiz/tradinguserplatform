@@ -160,11 +160,6 @@ module.exports = {
       } );
     }
 
-    console.log('[=====  TEST  =====>');
-    console.log(userAccount);
-    console.log('<=====  /TEST  =====]');
-
-
     const updatedUser = await user.update( {
       email: req.body.email || user.email,
       username: req.body.username || user.username,

@@ -10,13 +10,13 @@ import { Sort, FormatCurrency } from '../../../common/utils';
 
 class InvestmentTable extends Component {
   state = {
-    users: [],
+    operations: [],
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual( nextProps.users, prevState.users )) {
+    if (!_.isEqual( nextProps.operations, prevState.operations )) {
       return {
-        users: nextProps.users
+        users: nextProps.operations
       }
     }
     return null;
@@ -67,76 +67,76 @@ class InvestmentTable extends Component {
     const columns = [
       {
         title: 'Usuario',
-        dataIndex: 'user',
-        key: 'username',
-        render: text => <span key={ text }>{ text.username }</span>,
+        dataIndex: 'userAccount',
+        key: 'userAccount',
+        render: text => <span key={ text }>{ text.user.username }</span>,
         sorter: (a, b) => Sort( a.user.username, b.user.username ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Tipo de Cuenta',
-        dataIndex: 'account',
-        key: 'account',
-        render: text => <span key={ text }>{ text.name }</span>,
-        sorter: (a, b) => Sort( a.account.name, b.account.name ),
+        title: 'Tipo de Operación',
+        dataIndex: 'operationType',
+        key: 'operationType',
+        render: text => <span key={ text }>{ text }</span>,
+        sorter: (a, b) => Sort( a.operationType, b.operationType ),
         sortDirections: [ 'descend', 'ascend' ],
       },
-      {
-        title: 'Comisión',
-        dataIndex: 'account',
-        key: 'percentage',
-        render: text => <span key={ text }>{ text.percentage }%</span>,
-        sorter: (a, b) => Sort( a.account.percentage, b.account.percentage ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Valor de la Cuenta',
-        dataIndex: 'accountValue',
-        key: 'accountValue',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Garantías disponibles',
-        dataIndex: 'guaranteeOperation',
-        key: 'guaranteeOperation',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.guaranteeOperation, b.guaranteeOperation ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Saldo Inicial',
-        dataIndex: 'balanceInitial',
-        key: 'balanceInitial',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.balanceInitial, b.balanceInitial ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Saldo Final',
-        dataIndex: 'balanceFinal',
-        key: 'balanceFinal',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.balanceFinal, b.balanceFinal ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Margen Mantenimiento',
-        dataIndex: 'maintenanceMargin',
-        key: 'maintenanceMargin',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Garantías / Créditos',
-        dataIndex: 'guaranteeCredits',
-        key: 'guaranteeCredits',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.guaranteeCredits, b.guaranteeCredits ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
+      // {
+      //   title: 'Comisión',
+      //   dataIndex: 'account',
+      //   key: 'percentage',
+      //   render: text => <span key={ text }>{ text.percentage }%</span>,
+      //   sorter: (a, b) => Sort( a.account.percentage, b.account.percentage ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Valor de la Cuenta',
+      //   dataIndex: 'accountValue',
+      //   key: 'accountValue',
+      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+      //   sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Garantías disponibles',
+      //   dataIndex: 'guaranteeOperation',
+      //   key: 'guaranteeOperation',
+      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+      //   sorter: (a, b) => Sort( a.guaranteeOperation, b.guaranteeOperation ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Saldo Inicial',
+      //   dataIndex: 'balanceInitial',
+      //   key: 'balanceInitial',
+      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+      //   sorter: (a, b) => Sort( a.balanceInitial, b.balanceInitial ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Saldo Final',
+      //   dataIndex: 'balanceFinal',
+      //   key: 'balanceFinal',
+      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+      //   sorter: (a, b) => Sort( a.balanceFinal, b.balanceFinal ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Margen Mantenimiento',
+      //   dataIndex: 'maintenanceMargin',
+      //   key: 'maintenanceMargin',
+      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+      //   sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Garantías / Créditos',
+      //   dataIndex: 'guaranteeCredits',
+      //   key: 'guaranteeCredits',
+      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+      //   sorter: (a, b) => Sort( a.guaranteeCredits, b.guaranteeCredits ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
       {
         title: 'Acciones',
         key: 'actions',
@@ -150,7 +150,7 @@ class InvestmentTable extends Component {
       <Table
         rowKey={ record => record.id }
         columns={ columns }
-        dataSource={ this.props.userAccounts }
+        dataSource={ this.props.investmentOperations }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
       />

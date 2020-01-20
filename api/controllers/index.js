@@ -5,4 +5,5 @@ export { default as account } from './account';
 export { default as role } from './role';
 export { default as broker } from './broker';
 export { default as userAccount } from './user-account';
+export { default as investmentOperation } from './investment-operation';
 

@@ -20,7 +20,7 @@ db.Product = ORM.import(path.join(__dirname, 'product.js'));
 db.Country = ORM.import(path.join(__dirname, 'country.js'));
 db.Broker = ORM.import(path.join(__dirname, 'broker.js'));
 db.UserAccount = ORM.import(path.join(__dirname, 'user-account.js'));
-db.OperationInvestment = ORM.import(path.join(__dirname, 'operation-investment.js'));
+db.InvestmentOperation = ORM.import(path.join(__dirname, 'investment-operation.js'));
 db.InvestmentMovement = ORM.import(path.join(__dirname, 'investment-movement.js'));
 
 Object.keys(db).forEach(modelName => {

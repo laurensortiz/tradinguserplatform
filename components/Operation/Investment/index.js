@@ -8,7 +8,8 @@ import _ from 'lodash';
 import InvestmentTable from './InvestmentTable';
 import AddOrEditInvestmentForm from './AddOrEditInvestmentForm';
 
-import { userAccountOperations } from "../../../state/modules/userAccounts";
+import { investmentOperationOperations } from "../../../state/modules/investmentOperation";
+import { fetchAddInvestmentOperation } from "../../../state/modules/investmentOperation/actions";
 
 const { TabPane } = Tabs;
 
@@ -19,9 +20,20 @@ class Investment extends Component {
     selectedOperation: {},
     isCreatingOperation: false,
     operationType: 'investment',
+    investmentOperations: [],
+    userAccounts: [],
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    let updatedState = {};
+    if (!_.isEqual(nextProps.investmentOperations, prevState.investmentOperations)) {
+      _.assignIn(updatedState, {
+        investmentOperations: nextProps.investmentOperations
+      })
+    }
+
+
+
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
       let message = 'Operación de Inversión Creada',
         description = 'La Operación de Inversión se ha creado corrrectamente';
@@ -49,7 +61,7 @@ class Investment extends Component {
 
           prevState.actionType = 'add'; // default value
 
-          nextProps.fetchGetUserAccounts();
+          nextProps.fetchGetInvestmentOperations();
           nextProps.resetAfterRequest();
         },
         duration: 1.5
@@ -66,11 +78,11 @@ class Investment extends Component {
         duration: 3
       } );
     }
-    return null;
+    return !_.isEmpty(updatedState) ? updatedState : null;
   }
 
   componentDidMount() {
-    this.props.fetchGetUserAccounts();
+    this.props.fetchGetInvestmentOperations();
   };
 
   _addUserAccount = () => {
@@ -88,11 +100,11 @@ class Investment extends Component {
     this.props.onClose();
   };
 
-  _handleAddNewUserAccount = (userAccount) => {
-    this.props.fetchAddUserAccount( userAccount )
+  _handleAddNewUserOperation = (userOperation) => {
+    this.props.fetchAddInvestmentOperation( userOperation )
   };
 
-  _handleEditUserAccount = (userAccount) => {
+  _handleEditUserOperation = (userAccount) => {
     this.props.fetchEditUserAccount( userAccount )
   };
 
@@ -122,7 +134,7 @@ class Investment extends Component {
   };
 
   _handleSelectEditUserAccount = (userId) => {
-    const selectedOperation = _.find( this.props.userAccounts, { id: userId } );
+    const selectedOperation = _.find( this.props.investmentOperations, { id: userId } );
     this.setState( {
       selectedOperation,
       isVisibleAddOrEditUserAccount: true,
@@ -133,9 +145,7 @@ class Investment extends Component {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Operación de Inversión'
       : 'Editar Operación de Inversión';
-    console.log('[=====  ACC  =====>');
-    console.log(this.props.userAccounts);
-    console.log('<=====  /ACC  =====]');
+
     return (
       <>
         <Row>
@@ -143,7 +153,7 @@ class Investment extends Component {
             <Tabs>
               <TabPane tab="Activos" key="1">
                 <InvestmentTable
-                  userAccounts={ _.filter( this.props.userAccounts, { status: 1 } ) }
+                  investmentOperations={ _.filter( this.props.investmentOperations, { status: 1 } ) }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserAccount }
@@ -151,7 +161,7 @@ class Investment extends Component {
               </TabPane>
               <TabPane tab="Inactivos" key="2">
                 <InvestmentTable
-                  userAccounts={ _.filter( this.props.userAccounts, { status: 0 } ) }
+                  investmentOperations={ _.filter( this.props.investmentOperations, { status: 0 } ) }
                   isLoading={ this.props.isLoading }
                   onActive={ this._onSelectActive }
                   status="inactive"
@@ -168,10 +178,10 @@ class Investment extends Component {
           destroyOnClose={ true }
         >
           <AddOrEditInvestmentForm
-            onAddNew={ this._handleAddNewUserAccount }
-            onEdit={ this._handleEditUserAccount }
+            onAddNew={ this._handleAddNewUserOperation }
+            onEdit={ this._handleEditUserOperation }
             isLoading={ this.props.isLoading }
-            selectedAccount={ this.state.selectedOperation }
+            selectedOperation={ this.state.selectedOperation }
             actionType={ this.state.actionType }
           />
         </Drawer>
@@ -182,21 +192,20 @@ class Investment extends Component {
 
 function mapStateToProps(state) {
   return {
-    userAccounts: state.userAccountsState.list,
-    isLoading: state.userAccountsState.isLoading,
-    isSuccess: state.userAccountsState.isSuccess,
-    isFailure: state.userAccountsState.isFailure,
-    message: state.userAccountsState.message,
+    investmentOperations: state.investmentOperationsState.list,
+    isLoading: state.investmentOperationsState.isLoading,
+    isSuccess: state.investmentOperationsState.isSuccess,
+    isFailure: state.investmentOperationsState.isFailure,
+    message: state.investmentOperationsState.message,
   }
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
-    fetchAddUserAccount: userAccountOperations.fetchAddUserAccount,
-    fetchEditUserAccount: userAccountOperations.fetchEditUserAccount,
-    fetchDeleteUserAccount: userAccountOperations.fetchDeleteUserAccount,
-    resetAfterRequest: userAccountOperations.resetAfterRequest,
+    fetchGetInvestmentOperations: investmentOperationOperations.fetchGetInvestmentOperations,
+    fetchAddInvestmentOperation: investmentOperationOperations.fetchAddInvestmentOperation,
+    fetchEditInvestmentOperation: investmentOperationOperations.fetchEditInvestmentOperation,
+    resetAfterRequest: investmentOperationOperations.resetAfterRequest,
   }, dispatch );
 
 
