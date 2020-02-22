@@ -5,8 +5,7 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import { Button, Icon, Popconfirm, Table, Tag } from 'antd';
-import { Sort, FormatCurrency } from '../../../common/utils';
-
+import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate } from '../../../common/utils';
 
 class InvestmentTable extends Component {
   state = {
@@ -40,6 +39,8 @@ class InvestmentTable extends Component {
     } else {
       return (
         <div className="cta-container">
+          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd" />Detalle</Button>
+
           <Popconfirm
             okText="Si"
             title="Está seguro ?"
@@ -70,7 +71,7 @@ class InvestmentTable extends Component {
         dataIndex: 'userAccount',
         key: 'userAccount',
         render: text => <span key={ text }>{ text.user.username }</span>,
-        sorter: (a, b) => Sort( a.user.username, b.user.username ),
+        sorter: (a, b) => Sort( a.userAccount.user.username, b.userAccount.user.username ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
@@ -81,62 +82,50 @@ class InvestmentTable extends Component {
         sorter: (a, b) => Sort( a.operationType, b.operationType ),
         sortDirections: [ 'descend', 'ascend' ],
       },
-      // {
-      //   title: 'Comisión',
-      //   dataIndex: 'account',
-      //   key: 'percentage',
-      //   render: text => <span key={ text }>{ text.percentage }%</span>,
-      //   sorter: (a, b) => Sort( a.account.percentage, b.account.percentage ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Valor de la Cuenta',
-      //   dataIndex: 'accountValue',
-      //   key: 'accountValue',
-      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-      //   sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Garantías disponibles',
-      //   dataIndex: 'guaranteeOperation',
-      //   key: 'guaranteeOperation',
-      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-      //   sorter: (a, b) => Sort( a.guaranteeOperation, b.guaranteeOperation ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Saldo Inicial',
-      //   dataIndex: 'balanceInitial',
-      //   key: 'balanceInitial',
-      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-      //   sorter: (a, b) => Sort( a.balanceInitial, b.balanceInitial ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Saldo Final',
-      //   dataIndex: 'balanceFinal',
-      //   key: 'balanceFinal',
-      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-      //   sorter: (a, b) => Sort( a.balanceFinal, b.balanceFinal ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Margen Mantenimiento',
-      //   dataIndex: 'maintenanceMargin',
-      //   key: 'maintenanceMargin',
-      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-      //   sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Garantías / Créditos',
-      //   dataIndex: 'guaranteeCredits',
-      //   key: 'guaranteeCredits',
-      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-      //   sorter: (a, b) => Sort( a.guaranteeCredits, b.guaranteeCredits ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
+      {
+        title: 'Cuenta de Usuario',
+        dataIndex: 'userAccount',
+        key: 'account',
+        render: text => <span key={ text.accountId }>{ text.account.name }</span>,
+        sorter: (a, b) => Sort( a.userAccount.account.name, b.userAccount.account.name ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Monto',
+        dataIndex: 'amount',
+        key: 'amount',
+        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        sorter: (a, b) => Sort( a.amount, b.amount ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Estado',
+        dataIndex: 'status',
+        key: 'status',
+        render: status => {
+          const {name, color} = FormatStatus(status);
+          return <Tag color={color} >{ name }</Tag>
+        },
+        sorter: (a, b) => Sort( a.status, b.status ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Fecha de Inicio',
+        dataIndex: 'startDate',
+        key: 'startDate',
+        render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
+        sorter: (a, b) => SortDate( a.startDate, b.startDate ),
+        sortDirections: [ 'descend', 'ascend' ],
+
+      },
+      {
+        title: 'Fecha de Salida',
+        dataIndex: 'endDate',
+        key: 'endDate',
+        render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
+        sorter: (a, b) => SortDate( a.endDate, b.endDate ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
       {
         title: 'Acciones',
         key: 'actions',

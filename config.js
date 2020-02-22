@@ -22,7 +22,7 @@ module.exports = {
     password: process.env.DB_STAGE_PASSWORD,
     database: process.env.DB_STAGE_DATABASE,
     host: process.env.DB_STAGE_HOST,
-    port: process.env.DB_STAGE_PORT,
+    port: process.env.exit,
     dialect: 'postgres',
     dialectOptions: {
       ssl: true,

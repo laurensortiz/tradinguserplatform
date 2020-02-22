@@ -8,6 +8,7 @@ module.exports = {
         name: req.body.name,
         percentage: Number(req.body.percentage),
         status: 1,
+        associatedOperation: req.body.associatedOperation,
         createdAt: new Date(),
       });
 
@@ -60,6 +61,7 @@ module.exports = {
     const updatedAccount = await account.update({
       name: req.body.name || account.name,
       percentage: Number(req.body.percentage) || account.percentage,
+      associatedOperation: req.body.associatedOperation || account.associatedOperation,
       updatedAt: new Date(),
     });
 

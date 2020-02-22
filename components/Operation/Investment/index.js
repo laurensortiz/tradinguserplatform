@@ -7,31 +7,58 @@ import _ from 'lodash';
 
 import InvestmentTable from './InvestmentTable';
 import AddOrEditInvestmentForm from './AddOrEditInvestmentForm';
+import OperationMovementDetail from './detail';
+import MovementsTable from './movementsTable';
 
 import { investmentOperationOperations } from "../../../state/modules/investmentOperation";
-import { fetchAddInvestmentOperation } from "../../../state/modules/investmentOperation/actions";
+import { investmentMovementOperations } from "../../../state/modules/investmentMovement";
+import { GetGP } from "../../../common/utils";
 
 const { TabPane } = Tabs;
 
 class Investment extends Component {
   state = {
-    isVisibleAddOrEditUserAccount: false,
+    isVisibleAddOrEditOperation: false,
     actionType: 'add',
     selectedOperation: {},
     isCreatingOperation: false,
     operationType: 'investment',
     investmentOperations: [],
     userAccounts: [],
+    isDetailViewVisible: false,
+    currentOperationDetail: {},
+    investmentMovements: [],
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
-    if (!_.isEqual(nextProps.investmentOperations, prevState.investmentOperations)) {
-      _.assignIn(updatedState, {
+    if (!_.isEqual( nextProps.investmentOperations, prevState.investmentOperations )) {
+      _.assignIn( updatedState, {
         investmentOperations: nextProps.investmentOperations
-      })
+      } )
+
+      if (prevState.isDetailViewVisible) {
+
+        _.assignIn( updatedState, {
+          currentOperationDetail: _.find( nextProps.investmentOperations, { id: prevState.currentOperationDetail.id } )
+        } )
+
+      }
     }
 
+
+    if (nextProps.isSuccessMovements && !_.isEmpty( nextProps.messageMovements ) && !_.isEmpty(prevState.investmentMovements)) {
+      nextProps.fetchGetInvestmentMovements( prevState.currentOperationDetail.id );
+      nextProps.fetchGetInvestmentOperations();
+      nextProps.resetAfterMovementRequest();
+    }
+
+    if (!_.isEqual( nextProps.investmentMovements, prevState.investmentMovements )) {
+      _.assignIn( updatedState, {
+        investmentMovements: nextProps.investmentMovements
+      } );
+
+    }
 
 
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
@@ -53,7 +80,7 @@ class Investment extends Component {
         description = 'La Operación de Inversión se ha activado corrrectamente';
       }
 
-      prevState.isVisibleAddOrEditUserAccount = false;
+      prevState.isVisibleAddOrEditOperation = false;
       notification[ 'success' ]( {
         message,
         description,
@@ -63,8 +90,9 @@ class Investment extends Component {
 
           nextProps.fetchGetInvestmentOperations();
           nextProps.resetAfterRequest();
+          nextProps.onClose(false)
         },
-        duration: 1.5
+        duration: .5
       } );
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
@@ -75,29 +103,31 @@ class Investment extends Component {
         onClose: () => {
           nextProps.resetAfterRequest();
         },
-        duration: 3
-      } );
+        duration: 2
+      } )
     }
-    return !_.isEmpty(updatedState) ? updatedState : null;
+
+    return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
   componentDidMount() {
     this.props.fetchGetInvestmentOperations();
   };
 
-  _addUserAccount = () => {
+  _addOperation = () => {
     this.setState( {
       actionType: 'add',
-      isVisibleAddOrEditUserAccount: true
+      isVisibleAddOrEditOperation: true
     } )
   };
 
   _onClose = () => {
     this.setState( {
-      isVisibleAddOrEditUserAccount: false,
-      selectedOperation: {}
+      isVisibleAddOrEditOperation: false,
+      selectedOperation: {},
+      actionType: 'add'
     } )
-    this.props.onClose();
+    this.props.onClose(false);
   };
 
   _handleAddNewUserOperation = (userOperation) => {
@@ -105,25 +135,25 @@ class Investment extends Component {
   };
 
   _handleEditUserOperation = (userAccount) => {
-    this.props.fetchEditUserAccount( userAccount )
+    this.props.fetchEditInvestmentOperation( userAccount )
   };
 
-  _handleDeleteUserAccount = (userId) => {
+  _handleDeleteUserOperation = (operationId) => {
     this.setState( {
       actionType: 'delete'
     } );
-    this.props.fetchDeleteUserAccount( userId );
+    this.props.fetchDeleteInvestmentOperation( operationId );
   };
 
-  _onSelectEdit = (userId) => {
+  _onSelectEdit = (operationId) => {
     this.setState( {
       actionType: 'edit'
     } );
-    this._handleSelectEditUserAccount( userId )
+    this._handleSelectEditUserOperation( operationId )
   };
 
   _onSelectActive = (userId) => {
-    this.props.fetchEditUserAccount( {
+    this.props.fetchEditInvestmentOperation( {
       id: userId,
       status: 1,
     } );
@@ -133,11 +163,45 @@ class Investment extends Component {
 
   };
 
-  _handleSelectEditUserAccount = (userId) => {
-    const selectedOperation = _.find( this.props.investmentOperations, { id: userId } );
+  _handleSelectEditUserOperation = (operationId) => {
+    const selectedOperation = _.find( this.props.investmentOperations, { id: operationId } );
     this.setState( {
       selectedOperation,
-      isVisibleAddOrEditUserAccount: true,
+      isVisibleAddOrEditOperation: true,
+    } )
+    this.props.handleFormVisible(true);
+  };
+
+  _handleDetailUserOperation = (operationId) => {
+
+    const selectedOperation = _.find( this.props.investmentOperations, { id: operationId } );
+
+    this.setState( {
+      isDetailViewVisible: true,
+      currentOperationDetail: selectedOperation
+    } );
+    this.props.fetchGetInvestmentMovements( operationId );
+  };
+
+  _onCloseDetailView = () => {
+    this.setState( {
+      isDetailViewVisible: false,
+      currentOperationDetail: {}
+    } );
+    this.props.fetchGetInvestmentOperations();
+  };
+
+  /**
+   * Add Movements
+   */
+  _handleAddMovement = (newMovement) => {
+    const { id, amount, userAccount: { account: { percentage } } } = this.state.currentOperationDetail;
+    const { gpInversion, gpAmount, createdAt } = newMovement;
+    this.props.fetchAddInvestmentMovement( {
+      investmentOperationId: id,
+      gpInversion,
+      gpAmount,
+      createdAt,
     } )
   };
 
@@ -153,13 +217,14 @@ class Investment extends Component {
             <Tabs>
               <TabPane tab="Activos" key="1">
                 <InvestmentTable
-                  investmentOperations={ _.filter( this.props.investmentOperations, { status: 1 } ) }
+                  investmentOperations={ _.filter( this.props.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
-                  onDelete={ this._handleDeleteUserAccount }
+                  onDelete={ this._handleDeleteUserOperation }
+                  onDetail={ this._handleDetailUserOperation }
                 />
               </TabPane>
-              <TabPane tab="Inactivos" key="2">
+              <TabPane tab="Eliminados" key="2">
                 <InvestmentTable
                   investmentOperations={ _.filter( this.props.investmentOperations, { status: 0 } ) }
                   isLoading={ this.props.isLoading }
@@ -185,6 +250,24 @@ class Investment extends Component {
             actionType={ this.state.actionType }
           />
         </Drawer>
+
+        <Drawer
+          title="Detalle"
+          width="70%"
+          onClose={ this._onCloseDetailView }
+          visible={ this.state.isDetailViewVisible }
+          destroyOnClose={ true }
+
+        >
+          <OperationMovementDetail
+            currentOperation={ this.state.currentOperationDetail }
+          />
+          <MovementsTable
+            movements={ this.state.investmentMovements }
+            onAdd={ this._handleAddMovement }
+            currentOperation={ this.state.currentOperationDetail }
+          />
+        </Drawer>
       </>
     );
   }
@@ -197,6 +280,10 @@ function mapStateToProps(state) {
     isSuccess: state.investmentOperationsState.isSuccess,
     isFailure: state.investmentOperationsState.isFailure,
     message: state.investmentOperationsState.message,
+
+    investmentMovements: state.investmentMovementsState.list,
+    isSuccessMovements: state.investmentMovementsState.isSuccess,
+    messageMovements: state.investmentMovementsState.message,
   }
 }
 
@@ -205,7 +292,14 @@ const mapDispatchToProps = dispatch =>
     fetchGetInvestmentOperations: investmentOperationOperations.fetchGetInvestmentOperations,
     fetchAddInvestmentOperation: investmentOperationOperations.fetchAddInvestmentOperation,
     fetchEditInvestmentOperation: investmentOperationOperations.fetchEditInvestmentOperation,
+    fetchDeleteInvestmentOperation: investmentOperationOperations.fetchDeleteInvestmentOperation,
     resetAfterRequest: investmentOperationOperations.resetAfterRequest,
+
+    fetchGetInvestmentMovements: investmentMovementOperations.fetchGetInvestmentMovements,
+    fetchAddInvestmentMovement: investmentMovementOperations.fetchAddInvestmentMovement,
+    fetchEditInvestmentMovement: investmentMovementOperations.fetchEditInvestmentMovement,
+    fetchDeleteInvestmentMovement: investmentMovementOperations.fetchDeleteInvestmentMovement,
+    resetAfterMovementRequest: investmentMovementOperations.resetAfterRequest,
   }, dispatch );
 
 

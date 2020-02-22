@@ -4,9 +4,7 @@ import { userAccountQuery, userQuery } from '../queries';
 module.exports = {
   async create(req, res) {
     try {
-      console.log('[=====  DATA  =====>');
-      console.log(req.body);
-      console.log('<=====  /DATA  =====]');
+
       const userAccount = await UserAccount.create({
         userId: req.body.user.id,
         accountId: req.body.account.id,

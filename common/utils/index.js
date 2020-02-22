@@ -4,3 +4,6 @@ export { default as Sort } from './sort-text';
 export { default as SortDate } from './sort-date';
 export { default as FormatCurrency } from './format-currency';
 export { default as FormatDate } from './format-date';
+export { default as FormatStatus } from './format-status';
+export { default as GetGP } from './get-gp';
+export { default as isOperationPositive } from './is-operation-positive';

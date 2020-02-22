@@ -21,7 +21,8 @@ class AddOrEditInvestmentForm extends PureComponent {
       id: null,
       name: ''
     },
-    amount: '',
+    amount: 0,
+    initialAmount: 0,
     startDate: null,
     endDate: null,
 
@@ -29,7 +30,8 @@ class AddOrEditInvestmentForm extends PureComponent {
     isInvalid: true,
     status: 1,
     userAccounts: [],
-
+    accountName: '',
+    accountPercentage: 0
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -54,9 +56,11 @@ class AddOrEditInvestmentForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedOperation )) {
       const { selectedOperation } = this.props;
+      const accountName = _.get(selectedOperation, 'userAccount.account.name', '')
       this.setState( {
         ...this.state,
         ...selectedOperation,
+        accountName
       } )
     }
   }
@@ -77,8 +81,8 @@ class AddOrEditInvestmentForm extends PureComponent {
           id,
           name,
         },
-        amount: selectedUserAccount.accountValue
-
+        amount: selectedUserAccount.accountValue,
+        accountPercentage: _.get(selectedUserAccount, 'account.percentage', 0)
       } )
     } else {
       this.setState( {
@@ -128,7 +132,7 @@ class AddOrEditInvestmentForm extends PureComponent {
   };
 
   _getAccountUserSelectOption = options => {
-    const accountsGrouped = _.groupBy(this.state.userAccounts, 'user.username');
+    const accountsGrouped = _.chain(this.state.userAccounts).filter(['account.associatedOperation', 2]).groupBy('user.username').value();
     return _.map(accountsGrouped, (accounts, user) => {
       return (
         <OptGroup label={user}>
@@ -136,7 +140,6 @@ class AddOrEditInvestmentForm extends PureComponent {
         </OptGroup>
       )
     })
-   // return _.map( options, ({ id, username }) => <Option key={ `${ id }_${ username }` }>{ username }</Option> )
   };
 
 
@@ -149,15 +152,15 @@ class AddOrEditInvestmentForm extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const isAddAction = _.isEqual( this.props.actionType, 'add' );
 
-
     // Default values for edit action
-    const statusInitValue = !_.isEmpty( this.state.status) ? this.state.status : undefined;
-    const userAccountInitValue = !_.isEmpty( this.state.userAccount.id ) ? this.state.userAccount.id : undefined;
+    const statusInitValue = !_.isNil( this.state.status) ? this.state.status : undefined;
+    const userAccountInitValue = !_.isEmpty( this.state.accountName ) ? this.state.accountName : undefined;
     const operationTypeInitValue = !_.isEmpty( this.state.operationType ) ? this.state.operationType : undefined;
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
+    const initialAmountInitValue = !_.isEmpty( this.state.initialAmount ) ? this.state.initialAmount : undefined;
+
     const startDateInitValue = !_.isEmpty( this.state.startDate ) ? moment.utc( this.state.startDate ) : undefined;
     const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.utc( this.state.endDate ) : undefined;
-
 
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
@@ -186,16 +189,30 @@ class AddOrEditInvestmentForm extends PureComponent {
             <Input name="operationType" onChange={ this._handleChange } placeholder="Tipo de Operación"/>
           ) }
         </Form.Item>
-        <Form.Item label="Monto">
-          { getFieldDecorator( 'amount', {
-            initialValue: amountInitValue,
-            value: amountInitValue,
-            rules: [ { required: true, message: 'Por favor indique el monto' } ],
-          } )(
-            <Input name="amount" onChange={ this._handleChange }
-                   placeholder="Monto"/>
-          ) }
-        </Form.Item>
+        {_.isEqual( this.props.actionType, 'add' ) ? (
+          <Form.Item label="Monto">
+            { getFieldDecorator( 'amount', {
+              initialValue: amountInitValue,
+              value: amountInitValue,
+              rules: [ { required: true, message: 'Por favor indique el monto' } ],
+            } )(
+              <Input name="amount" onChange={ this._handleChange }
+                     placeholder="Monto"/>
+            ) }
+          </Form.Item>
+        ) : (
+          <Form.Item label="Nuevo Monto">
+            { getFieldDecorator( 'initialAmount', {
+              initialValue: initialAmountInitValue,
+              value: initialAmountInitValue,
+              rules: [ { required: true, message: 'Por favor indique el monto' } ],
+            } )(
+              <Input name="initialAmount" onChange={ this._handleChange }
+                     placeholder="Monto"/>
+            ) }
+          </Form.Item>
+        )}
+
         <Form.Item label="Estado">
           { getFieldDecorator( 'status', {
             initialValue: statusInitValue,
@@ -207,7 +224,6 @@ class AddOrEditInvestmentForm extends PureComponent {
                 status: value
               }) }
               placeholder="Estado"
-              disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
               <Option value={1}>Activo</Option>

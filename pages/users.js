@@ -9,16 +9,20 @@ import Document from '../components/Document';
 
 import UsersTable from '../components/User/UsersTable';
 import AddOrEditUserForm from '../components/User/AddOrEditUserForm';
+import Detail from '../components/User/Detail';
 
 import { userOperations } from "../state/modules/users";
+import AddOrEditUserAccountForm from "../components/UserAccount/AddOrEditUserAccountForm";
 
 const { TabPane } = Tabs;
 
 class Users extends Component {
   state = {
     isVisibleAddOrEditUser: false,
+    isVisibleUserDetail: false,
     actionType: 'add',
     selectedUser: {},
+    currentUser: {},
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -128,6 +132,20 @@ class Users extends Component {
     } )
   };
 
+  _onCloseUserDetail = () => {
+    this.setState({
+      isVisibleUserDetail: false,
+      currentUser: {}
+    })
+  };
+
+  _setCurrentUser = (user) => {
+    this.setState({
+      isVisibleUserDetail: true,
+      currentUser: user,
+    })
+  };
+
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Usuario'
@@ -148,6 +166,7 @@ class Users extends Component {
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUser }
+                  onDetail={ this._setCurrentUser }
                 />
               </TabPane>
               <TabPane tab="Inactivos" key="2">
@@ -174,6 +193,17 @@ class Users extends Component {
             isLoading={ this.props.isLoading }
             selectedProject={ this.state.selectedUser }
             actionType={ this.state.actionType }
+          />
+        </Drawer>
+        <Drawer
+          title="Detalle de Usuario"
+          width="70%"
+          onClose={ this._onCloseUserDetail }
+          visible={ this.state.isVisibleUserDetail }
+          destroyOnClose={ true }
+        >
+          <Detail
+            currentUser={this.state.currentUser}
           />
         </Drawer>
       </Document>

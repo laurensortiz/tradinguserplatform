@@ -5,18 +5,17 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import { Button, Icon, Popconfirm, Table, Tag } from 'antd';
-import { Sort, FormatCurrency } from '../../../common/utils';
-
+import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate } from '../../../common/utils';
 
 class MarketTable extends Component {
   state = {
-    users: [],
+    operations: [],
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual( nextProps.users, prevState.users )) {
+    if (!_.isEqual( nextProps.operations, prevState.operations )) {
       return {
-        users: nextProps.users
+        users: nextProps.operations
       }
     }
     return null;
@@ -40,6 +39,8 @@ class MarketTable extends Component {
     } else {
       return (
         <div className="cta-container">
+          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd" />Detalle</Button>
+
           <Popconfirm
             okText="Si"
             title="Está seguro ?"
@@ -66,77 +67,133 @@ class MarketTable extends Component {
   render() {
     const columns = [
       {
+        title: 'Fecha de Apertura',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
+        sorter: (a, b) => SortDate( a.createdAt, b.createdAt ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Estado',
+        dataIndex: 'status',
+        key: 'status',
+        render: status => {
+          const {name, color} = FormatStatus(status);
+          return <Tag color={color} >{ name }</Tag>
+        },
+        sorter: (a, b) => Sort( a.status, b.status ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Comportamiento',
+        dataIndex: 'status',
+        key: 'move',
+        render: status => {
+          if (status == 1) {
+            return <Icon type="rise" style={ {color: '#87d068', fontSize: 30 }} />
+          } else {
+            return <Icon type="fall" style={ {color: '#f50', fontSize: 30 }} />
+          }
+        }
+
+      },
+
+      {
         title: 'Usuario',
-        dataIndex: 'user',
-        key: 'username',
-        render: text => <span key={ text }>{ text.username }</span>,
-        sorter: (a, b) => Sort( a.user.username, b.user.username ),
+        dataIndex: 'userAccount',
+        key: 'userAccount',
+        render: text => <span key={ text }>{ text.user.username }</span>,
+        sorter: (a, b) => Sort( a.userAccount.user.username, b.userAccount.user.username ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Tipo de Cuenta',
-        dataIndex: 'account',
+        title: 'Cuenta de Usuario',
+        dataIndex: 'userAccount',
         key: 'account',
-        render: text => <span key={ text }>{ text.name }</span>,
-        sorter: (a, b) => Sort( a.account.name, b.account.name ),
+        render: text => <span key={ text.accountId }>{ text.account.name }</span>,
+        sorter: (a, b) => Sort( a.userAccount.account.name, b.userAccount.account.name ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Comisión',
-        dataIndex: 'account',
-        key: 'percentage',
-        render: text => <span key={ text }>{ text.percentage }%</span>,
-        sorter: (a, b) => Sort( a.account.percentage, b.account.percentage ),
+        title: 'Producto',
+        dataIndex: 'product',
+        key: 'product',
+        render: text => <span key={`${text.code}-${text.name}`} >{ `${text.code}-${text.name}` }</span>,
+        sorter: (a, b) => Sort( a.product.name, b.product.name ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Valor de la Cuenta',
-        dataIndex: 'accountValue',
-        key: 'accountValue',
+        title: 'Monto',
+        dataIndex: 'amount',
+        key: 'amount',
         render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
+        sorter: (a, b) => Sort( a.amount, b.amount ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Garantías disponibles',
-        dataIndex: 'guaranteeOperation',
-        key: 'guaranteeOperation',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.guaranteeOperation, b.guaranteeOperation ),
+        title: 'L/S',
+        dataIndex: 'longShort',
+        key: 'longShort',
+        render: text => <span key={text} >{ text }</span>,
+        sorter: (a, b) => Sort( a.longShort, b.longShort ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Saldo Inicial',
-        dataIndex: 'balanceInitial',
-        key: 'balanceInitial',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.balanceInitial, b.balanceInitial ),
+        title: 'Lotage',
+        dataIndex: 'actionsTotal',
+        key: 'actionsTotal',
+        render: text => <span key={text} >{ text }</span>,
+        sorter: (a, b) => Sort( a.actionsTotal, b.actionsTotal ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Saldo Final',
-        dataIndex: 'balanceFinal',
-        key: 'balanceFinal',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.balanceFinal, b.balanceFinal ),
+        title: 'Precio de Compra',
+        dataIndex: 'buyPrice',
+        key: 'buyPrice',
+        render: text => <span key={text} >{ this._displayTableAmount(text) }</span>,
+        sorter: (a, b) => Sort( a.buyPrice, b.buyPrice ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Margen Mantenimiento',
-        dataIndex: 'maintenanceMargin',
-        key: 'maintenanceMargin',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
+        title: 'Taking Profit',
+        dataIndex: 'takingProfit',
+        key: 'takingProfit',
+        render: text => <span key={text} >{ text }</span>,
+        sorter: (a, b) => Sort( a.takingProfit, b.takingProfit ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Garantías / Créditos',
-        dataIndex: 'guaranteeCredits',
-        key: 'guaranteeCredits',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.guaranteeCredits, b.guaranteeCredits ),
+        title: 'Stop Lost',
+        dataIndex: 'stopLost',
+        key: 'stopLost',
+        render: text => <span key={text} >{ text }</span>,
+        sorter: (a, b) => Sort( a.stopLost, b.stopLost ),
         sortDirections: [ 'descend', 'ascend' ],
       },
+      {
+        title: 'Invesión',
+        dataIndex: 'amount',
+        key: 'amount',
+        render: amount => <span key={amount} >{ this._displayTableAmount( amount ) }</span>,
+        sorter: (a, b) => Sort( a.amount, b.amount ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+
+      {
+        title: 'Corredor',
+        dataIndex: 'broker',
+        key: 'broker',
+        render: text => <span key={text.name} >{ text.name }</span>,
+        sorter: (a, b) => Sort( a.broker.name, b.broker.name ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+
+
+
+
+
+
       {
         title: 'Acciones',
         key: 'actions',
@@ -150,7 +207,7 @@ class MarketTable extends Component {
       <Table
         rowKey={ record => record.id }
         columns={ columns }
-        dataSource={ this.props.userAccounts }
+        dataSource={ this.props.marketOperations }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
       />

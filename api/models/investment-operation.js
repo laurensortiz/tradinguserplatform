@@ -17,6 +17,10 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       allowNull: false,
     },
+    initialAmount: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: false,
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -40,8 +44,8 @@ module.exports = (Sequelize, DataTypes) => {
     });
 
     InvestmentOperation.hasMany(models.InvestmentMovement, {
-      foreignKey: 'investmentMovementId',
-      as: 'investmentMovement',
+      foreignKey: 'investmentOperationId',
+      as: 'investmentOperation',
     });
 
   };

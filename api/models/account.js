@@ -9,6 +9,10 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       allowNull: false,
     },
+    associatedOperation: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,

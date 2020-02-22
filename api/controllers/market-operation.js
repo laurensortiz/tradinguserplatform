@@ -1,0 +1,124 @@
+import _ from 'lodash';
+import { MarketOperation, UserAccount, User, Account, MarketMovement, Product, Broker } from '../models';
+import { marketOperationQuery, userQuery } from '../queries';
+
+module.exports = {
+  async create(req, res) {
+    try {
+
+      const marketOperation = await MarketOperation.create({
+        longShort: req.body.longShort,
+        userAccountId: _.get(req, 'body.userAccount.id', 0),
+        brokerId: _.get(req, 'body.broker.id', 0),
+        productId: _.get(req, 'body.product.id', 0),
+        actionsTotal: req.body.actionsTotal,
+        buyPrice: req.body.buyPrice,
+        takingProfit: req.body.takingProfit,
+        stopLost: req.body.stopLost,
+        maintenanceMargin: req.body.maintenanceMargin,
+        amount: req.body.amount,
+        initialAmount: req.body.amount,
+        orderId: req.body.orderId,
+        status: _.get(req, 'body.status', 1),
+        createdAt: req.body.createdAt || new Date(),
+      });
+
+      await MarketMovement.create({
+        gpInversion: req.body.amount,
+        marketOperationId: Number(marketOperation.id),
+        gpAmount: 0,
+        status: _.get(req, 'body.status', 1),
+        createdAt: req.body.createdAt || new Date(),
+      });
+
+      return res.status(200).send(marketOperation);
+    } catch (err) {
+      return res.status(500).send(err);
+    }
+  },
+
+  async list(req, res) {
+    const marketOperation = await MarketOperation.findAll(
+      marketOperationQuery.list({ req, UserAccount, User, Account, Product, Broker })
+    );
+
+    if (!marketOperation) {
+      return res.status(404).send({
+        message: '404 on MarketOperation get List',
+      });
+    }
+    return res.status(200).send(marketOperation);
+  },
+
+  async get(req, res) {
+    const marketOperation = await MarketOperation.findByPk(
+      req.params.marketOperationId,
+      userQuery.get( { req, UserAccount, Product, Broker } )
+    );
+
+    if (!marketOperation) {
+      return res.status(404).send({
+        message: '404 on MarketOperation get',
+      });
+    }
+
+    return res.status(200).send(marketOperation);
+  },
+
+  async update(req, res) {
+    const marketOperation = await MarketOperation.findOne({
+      where: {
+        id: req.params.marketOperationId,
+      },
+    });
+
+    if (!marketOperation) {
+      return res.status(404).send({
+        message: '404 on MarketOperation update',
+      });
+    }
+
+    const updatedMarketOperation = await marketOperation.update({
+      longShort: req.body.longShort || marketOperation.longShort,
+      userAccountId: _.get(req, 'body.userAccount.id', 0) || marketOperation.userAccountId,
+      brokerId: _.get(req, 'body.broker.id', 0) || marketOperation.brokerId,
+      productId: _.get(req, 'body.product.id', 0) || marketOperation.productId,
+      actionsTotal: req.body.actionsTotal || marketOperation.actionsTotal,
+      buyPrice: req.body.buyPrice || marketOperation.buyPrice,
+      takingProfit: req.body.takingProfit || marketOperation.takingProfit,
+      stopLost: req.body.stopLost || marketOperation.stopLost,
+      maintenanceMargin: req.body.maintenanceMargin || marketOperation.maintenanceMargin,
+      amount: req.body.amount || marketOperation.amount,
+      initialAmount: req.body.initialAmount || marketOperation.initialAmount,
+      orderId: req.body.orderId || marketOperation.orderId,
+      status: _.get(req, 'body.status', 1) || marketOperation.status,
+      createdAt: req.body.createdAt || marketOperation.createdAt,
+
+    });
+
+    return res.status(200).send(updatedMarketOperation);
+  },
+
+  async delete(req, res) {
+    const marketOperation = await MarketOperation.findOne({
+      where: {
+        id: req.params.marketOperationId,
+      },
+    });
+
+    if (!marketOperation) {
+      return res.status(404).send({
+        message: 'MarketOperation Not Found',
+      });
+    }
+
+    //await marketOperation.destroy();
+    await marketOperation.update( {
+      status: 0,
+    } );
+
+    return res.status(200).send({
+      message: 'MarketOperation has been deleted',
+    });
+  },
+};

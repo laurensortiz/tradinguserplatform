@@ -41,6 +41,12 @@ app.prepare().then(() => {
   setupAuth(server, passport);
   setupApi(server);
 
+  server.get('/operation-investment/:id', (req, res) => {
+    const actualPage = '/operation-investment';
+    const queryParams = { id: req.params.id };
+    app.render(req, res, actualPage, queryParams);
+  });
+
   server.get('*', async (req, res) => {
     return app.render(req, res, req.url);
   });

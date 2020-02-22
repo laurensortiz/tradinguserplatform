@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { InvestmentOperation, UserAccount, User, Account } from '../models';
+import { InvestmentOperation, UserAccount, User, Account, InvestmentMovement } from '../models';
 import { investmentOperationQuery, userQuery } from '../queries';
 
 module.exports = {
@@ -10,9 +10,18 @@ module.exports = {
         operationType: req.body.operationType,
         userAccountId: _.get(req, 'body.userAccount.id', 0),
         amount: req.body.amount,
+        initialAmount: req.body.amount,
         status: _.get(req, 'body.status', 1),
         startDate: req.body.startDate,
         endDate: req.body.endDate,
+        createdAt: new Date(),
+      });
+
+      await InvestmentMovement.create({
+        gpInversion: req.body.amount,
+        investmentOperationId: Number(investmentOperation.id),
+        gpAmount: 0,
+        status: _.get(req, 'body.status', 1),
         createdAt: new Date(),
       });
 
@@ -66,7 +75,8 @@ module.exports = {
     const updatedInvestmentOperation = await investmentOperation.update({
       operationType: req.body.operationType || investmentOperation.operationType,
       userAccountId: _.get(req, 'body.userAccount.id', 0) || investmentOperation.userAccountId,
-      amount: req.body.amount || investmentOperation.amount,
+      amount: investmentOperation.amount,
+      initialAmount: req.body.initialAmount || investmentOperation.initialAmount,
       status: req.body.status || investmentOperation.status,
       startDate: req.body.startDate || investmentOperation.startDate,
       endDate: req.body.status || investmentOperation.endDate,

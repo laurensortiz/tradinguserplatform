@@ -4,29 +4,35 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       allowNull: false,
       unique: true,
+      defaultValue: 0
     },
     guaranteeOperation: {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,
+      defaultValue: 0
     },
     guaranteeCredits: {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,
+      defaultValue: 0
     },
     balanceInitial: {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,
+      defaultValue: 0
     },
     balanceFinal: {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,
+      defaultValue: 0
     },
     maintenanceMargin: {
       type: DataTypes.DECIMAL(10,2),
-      allowNull: false,
+      allowNull: true,
+      defaultValue: 0
     },
     createdAt: {
-      allowNull: false,
+      allowNull: true,
       type: DataTypes.DATE,
     },
     status: {

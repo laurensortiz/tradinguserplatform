@@ -14,12 +14,12 @@ const queries = {
             {
               model: User,
               as: 'user',
-              attributes: ['username']
+              attributes: ['username', 'firstName', 'lastName']
             },
             {
               model: Account,
               as: 'account',
-              attributes: ['name']
+              attributes: ['name', 'percentage']
             },
           ],
         },

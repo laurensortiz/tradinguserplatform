@@ -24,14 +24,14 @@ module.exports = (Sequelize, DataTypes) => {
     },
   });
 
-  // Product.associate = models => {
-  //
-  //   Product.hasMany(models.Project, {
-  //     foreignKey: 'categoryId',
-  //     as: 'category',
-  //   });
-  //
-  // };
+  Product.associate = models => {
+
+    Product.hasMany(models.MarketOperation, {
+      foreignKey: 'productId',
+      as: 'product',
+    });
+
+  };
 
   return Product;
 };

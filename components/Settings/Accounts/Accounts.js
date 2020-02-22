@@ -27,6 +27,13 @@ class Accounts extends Component {
       editable: true,
     },
     {
+      title: 'Tipo de Operación Asociada',
+      dataIndex: 'associatedOperation',
+      key: 'associatedOperation',
+      editable: true,
+      render: type => _.isEqual(type, 1) ? 'Bolsa OTC' : 'Fondo de Interés'
+    },
+    {
       title: 'Acciones',
       key: 'actions',
       render: (text, record) => {
@@ -86,9 +93,6 @@ class Accounts extends Component {
   isEditing = record => record.id === this.state.editingKey;
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    console.log('[=====  accc  =====>');
-    console.log(nextProps.accounts);
-    console.log('<=====  /accc  =====]');
     if (!_.isEqual( nextProps.accounts, prevState.dataSource )) {
 
       return {

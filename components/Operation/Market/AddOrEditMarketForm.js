@@ -9,64 +9,102 @@ moment.locale( 'es' ); // Set Lang to Spanish
 import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon } from 'antd';
 
 import { accountOperations } from '../../../state/modules/accounts';
-import { userOperations } from '../../../state/modules/users';
+import { marketOperationOperations } from '../../../state/modules/marketOperation';
+import { userAccountOperations } from "../../../state/modules/userAccounts";
+import { brokerOperations } from "../../../state/modules/brokers";
+import { productOperations } from "../../../state/modules/products";
 
-const { Option } = Select;
+const { Option, OptGroup } = Select;
 
 class AddOrEditMarketForm extends PureComponent {
   state = {
-    accountValue: '',
-    guaranteeOperation: '',
-    guaranteeCredits: '',
-    balanceInitial: '',
-    balanceFinal: '',
-    maintenanceMargin: '',
-    user: {
-      id: null,
-      username: ''
-    },
-    account: {
+    longShort: '',
+    userAccount: {
       id: null,
       name: ''
     },
+    broker: {
+      id: null,
+      name: ''
+    },
+    product: {
+      id: null,
+      name: ''
+    },
+    actionsTotal: 0,
+    buyPrice: 0,
+    initialAmount: 0,
+    takingProfit: 0,
+    stopLost: '',
+    maintenanceMargin: 0,
+    amount: 0,
+    orderId: '',
+    createdAt: null,
+
     confirmDirty: false,
     isInvalid: true,
     status: 1,
-    accounts: [],
-    users: [],
+    userAccounts: [],
+    brokers: [],
+    products: [],
+    accountName: '',
+    brokerName: '',
+    productName: '',
+    accountPercentage: 0
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let stateUpdated = {};
 
-    if (!_.isEqual( nextProps.accounts, prevState.accounts )) {
+    if (!_.isEqual( nextProps.userAccounts, prevState.userAccounts )) {
       _.assign( stateUpdated, {
-        accounts: nextProps.accounts
+        userAccounts: nextProps.userAccounts
       } )
     }
-    if (!_.isEqual( nextProps.users, prevState.users )) {
+
+    if (!_.isEqual( nextProps.brokers, prevState.brokers )) {
       _.assign( stateUpdated, {
-        users: nextProps.users,
+        brokers: nextProps.brokers
       } )
     }
+
+    if (!_.isEqual( nextProps.products, prevState.products )) {
+      _.assign( stateUpdated, {
+        products: nextProps.products
+      } )
+    }
+
 
     return !_.isEmpty( stateUpdated ) ? stateUpdated : null;
   }
 
 
   componentDidMount() {
-    if (_.isEmpty( this.state.accounts )) {
-      this.props.fetchGetAccounts();
-    }
-    if (_.isEmpty( this.state.users )) {
-      this.props.fetchGetUsers();
+    if (_.isEmpty( this.state.userAccounts )) {
+      this.props.fetchGetUserAccounts();
     }
 
-    if (!_.isEmpty( this.props.selectedAccount )) {
-      const { selectedAccount } = this.props;
+    if (_.isEmpty( this.state.brokers )) {
+      this.props.fetchGetBrokers();
+    }
+
+    if (_.isEmpty( this.state.products )) {
+      this.props.fetchGetProducts();
+    }
+
+
+    if (!_.isEmpty( this.props.selectedOperation )) {
+      const { selectedOperation } = this.props;
+      const accountName = _.get(selectedOperation, 'userAccount.account.name', '');
+      const productName = _.get(selectedOperation, 'product.name', '');
+      const productCode = _.get(selectedOperation, 'product.code', '');
+      const brokerName = _.get(selectedOperation, 'broker.name', '');
       this.setState( {
         ...this.state,
-        ...selectedAccount,
+        ...selectedOperation,
+        accountName,
+        productName: `${productName}-${productCode}`,
+        brokerName
       } )
     }
   }
@@ -79,17 +117,16 @@ class AddOrEditMarketForm extends PureComponent {
     const id = Number( codeIdName[ 0 ] );
     const name = codeIdName[ 1 ];
 
-    if (_.isEqual( fieldName, 'user' )) {
-      const selectedUser = _.find( this.state.users, { id } )
+    if (_.isEqual( fieldName, 'userAccount' )) {
+      const selectedUserAccount = _.find( this.state.userAccounts, { id } );
+
       this.setState( {
-        user: {
+        userAccount: {
           id,
-          username: name,
+          name,
         },
-        account: {
-          id: selectedUser.account.id,
-          name: selectedUser.account.name
-        }
+        amount: selectedUserAccount.accountValue,
+        accountPercentage: _.get(selectedUserAccount, 'account.percentage', 0)
       } )
     } else {
       this.setState( {
@@ -99,6 +136,19 @@ class AddOrEditMarketForm extends PureComponent {
         }
       } )
     }
+  };
+
+  _setStartDate = (date) => {
+    this.setState( {
+      createdAt: moment.utc( date ).format()
+    } );
+  };
+
+  _setEndDate = (date) => {
+    this.setState( {
+      endDate: moment.utc( date ).format()
+    } );
+
   };
 
   _handleChange = e => {
@@ -125,8 +175,31 @@ class AddOrEditMarketForm extends PureComponent {
     return _.map( options, ({ id, name }) => <Option key={ `${ id }_${ name }` }>{ name }</Option> )
   };
 
-  _getUserSelectOption = options => {
-    return _.map( options, ({ id, username }) => <Option key={ `${ id }_${ username }` }>{ username }</Option> )
+  _getAccountUserSelectOption = options => {
+    const accountsGrouped = _.chain(this.state.userAccounts).filter(['account.associatedOperation', 1]).groupBy('user.username').value();
+    return _.map(accountsGrouped, (accounts, user) => {
+      return (
+        <OptGroup label={user}>
+          {_.map(accounts, account => <Option key={`${ account.id }_${ _.get(account, 'account.name', ' - ') }`}>{_.get(account, 'account.name', ' - ')}</Option>)}
+        </OptGroup>
+      )
+    })
+  };
+
+  _getBrokerSelectOption = options => {
+    return _.map(this.state.brokers, (broker) => {
+      return (
+        <Option key={`${ broker.id }_${broker.name}`}>{broker.name}</Option>
+      )
+    })
+  };
+
+  _getProductSelectOption = options => {
+    return _.map(this.state.products, (product) => {
+      return (
+        <Option key={`${ product.id }_${product.code}-${product.name}`}>{`${product.code}-${product.name}`}</Option>
+      )
+    })
   };
 
 
@@ -139,101 +212,187 @@ class AddOrEditMarketForm extends PureComponent {
     const { getFieldDecorator } = this.props.form;
     const isAddAction = _.isEqual( this.props.actionType, 'add' );
 
-
     // Default values for edit action
-    const accountInitValue = !_.isEmpty( this.state.account.name ) ? this.state.account.name : undefined;
-    const userInitValue = !_.isEmpty( this.state.user.username ) ? this.state.user.username : undefined;
-    const accountValueInitValue = !_.isEmpty( this.state.accountValue ) ? this.state.accountValue : undefined;
-    const guaranteeOperationInitValue = !_.isEmpty( this.state.guaranteeOperation ) ? this.state.guaranteeOperation : undefined;
-    const guaranteeCreditsInitValue = !_.isEmpty( this.state.guaranteeCredits ) ? this.state.guaranteeCredits : undefined;
-    const balanceInitialInitValue = !_.isEmpty( this.state.balanceInitial ) ? this.state.balanceInitial : undefined;
-    const balanceFinalInitValue = !_.isEmpty( this.state.balanceFinal ) ? this.state.balanceFinal : undefined;
+
+    const longShortInitValue = !_.isNil( this.state.longShort) ? this.state.longShort : undefined;
+
+    const statusInitValue = !_.isNil( this.state.status) ? this.state.status : undefined;
+    const userAccountInitValue = !_.isEmpty( this.state.accountName ) ? this.state.accountName : undefined;
+    const brokerInitValue = !_.isEmpty( this.state.brokerName ) ? this.state.brokerName : undefined;
+    const productInitValue = !_.isEmpty( this.state.productName ) ? this.state.productName : undefined;
+
+    const actionsTotalInitValue = !_.isEmpty( this.state.actionsTotal ) ? this.state.actionsTotal : undefined;
+    const buyPriceInitValue = !_.isEmpty( this.state.buyPrice ) ? this.state.buyPrice : undefined;
+    //const initialAmountInitValue = !_.isEmpty( this.state.initialAmount ) ? this.state.initialAmount : undefined;
+    const takingProfitInitValue = !_.isEmpty( this.state.takingProfit ) ? this.state.takingProfit : undefined;
+    const stopLostInitValue = !_.isEmpty( this.state.stopLost ) ? this.state.stopLost : undefined;
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
+    const orderIdInitValue = _.isNumber( this.state.orderId ) ? this.state.orderId : undefined;
+    const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
+    const createdAtInitValue = !_.isEmpty( this.state.createdAt ) ? moment.utc( this.state.createdAt ) : undefined;
+
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
-        <Form.Item label="Usuario">
-          { getFieldDecorator( 'user', {
-            initialValue: userInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el Usuario' } ],
+        <Form.Item label="Cuenta de Usuario">
+          { getFieldDecorator( 'userAccount', {
+            initialValue: userAccountInitValue,
+            rules: [ { required: true, message: 'Por favor seleccione la cuenta de usuario ' } ],
           } )(
             <Select
               showSearch={ true }
               name="user"
-              onChange={ value => this._handleChangeSelect( { name: 'user', value } ) }
-              placeholder="Usuario"
+              onChange={ value => this._handleChangeSelect( { name: 'userAccount', value } ) }
+              placeholder="Cuenta de Usuario"
               disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
-              { this._getUserSelectOption( this.state.users ) }
+              { this._getAccountUserSelectOption( this.state.userAccounts ) }
             </Select>
           ) }
         </Form.Item>
-        <Form.Item label="Cuenta">
-          { getFieldDecorator( 'account', {
-            initialValue: accountInitValue,
-            rules: [ { required: true, message: 'Por favor indique el tipo de Cuenta' } ],
+        <Form.Item label="Corredor">
+          { getFieldDecorator( 'broker', {
+            initialValue: brokerInitValue,
+            rules: [ { required: true, message: 'Por favor seleccione el corredor ' } ],
           } )(
             <Select
               showSearch={ true }
-              name="user"
-              onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }
-              placeholder="Cuenta"
+              name="broker"
+              onChange={ value => this._handleChangeSelect( { name: 'broker', value } ) }
+              placeholder="Corredor"
               disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
-              { this._getSelectOption( this.state.accounts ) }
+              { this._getBrokerSelectOption( this.state.brokers ) }
             </Select>
           ) }
         </Form.Item>
-        <Form.Item label="Valor de la Cuenta">
-          { getFieldDecorator( 'accountValue', {
-            initialValue: accountValueInitValue,
-            rules: [ { required: true, message: 'Por favor indique el valor de la cuenta' } ],
+        <Form.Item label="Producto">
+          { getFieldDecorator( 'product', {
+            initialValue: productInitValue,
+            rules: [ { required: true, message: 'Por favor seleccione el producto ' } ],
           } )(
-            <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
+            <Select
+              showSearch={ true }
+              name="product"
+              onChange={ value => this._handleChangeSelect( { name: 'product', value } ) }
+              placeholder="Producto"
+              disabled={ !isAddAction }
+              showArrow={ isAddAction }
+            >
+              { this._getProductSelectOption( this.state.products ) }
+            </Select>
           ) }
         </Form.Item>
-        <Form.Item label="Garantías disponibles">
-          { getFieldDecorator( 'guaranteeOperation', {
-            initialValue: guaranteeOperationInitValue,
-            rules: [ { required: true, message: 'Por favor indique las garatías disponibles' } ],
+        <Form.Item label="Long / Short">
+          { getFieldDecorator( 'longShort', {
+            initialValue: longShortInitValue,
+            value: longShortInitValue,
+            rules: [ { required: true, message: 'Por favor indique Long / Short' } ],
           } )(
-            <Input name="guaranteeOperation" onChange={ this._handleChange }
-                   placeholder="Garantías disponibles para operar"/>
+            <Input name="longShort" onChange={ this._handleChange }
+                   placeholder="Long / Shorta"/>
           ) }
         </Form.Item>
-        <Form.Item label="Garantía/Créditos">
-          { getFieldDecorator( 'guaranteeCredits', {
-            initialValue: guaranteeCreditsInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese Garantía / Créditos' } ],
+
+        <Form.Item label="Cantidad Lotaje">
+          { getFieldDecorator( 'actionsTotal', {
+            initialValue: actionsTotalInitValue,
+            rules: [ { required: true, message: 'Por favor indique la cantidad lotaje' } ],
           } )(
-            <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
+            <Input type="number" name="actionsTotal" onChange={ this._handleChange } placeholder="Cantidad Lotaje"/>
           ) }
         </Form.Item>
-        <Form.Item label="Saldo Inicial">
-          { getFieldDecorator( 'balanceInitial', {
-            initialValue: balanceInitialInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el saldo inicial' } ],
+        <Form.Item label="Precio de Compra">
+          { getFieldDecorator( 'buyPrice', {
+            initialValue: buyPriceInitValue,
+            value: buyPriceInitValue,
+            rules: [ { required: true, message: 'Por favor indique el monto de la compra' } ],
           } )(
-            <Input name="balanceInitial" onChange={ this._handleChange } placeholder="Saldo Inicial"/>
+            <Input name="buyPrice" onChange={ this._handleChange }
+                   placeholder="Precio de compra"/>
           ) }
         </Form.Item>
-        <Form.Item label="Saldo Final">
-          { getFieldDecorator( 'balanceFinal', {
-            initialValue: balanceFinalInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese el saldo final' } ],
+        <Form.Item label="Taking Profit">
+          { getFieldDecorator( 'takingProfit', {
+            initialValue: takingProfitInitValue,
+            value: takingProfitInitValue,
+            rules: [ { required: true, message: 'Por favor indique el taking profit' } ],
           } )(
-            <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
+            <Input name="takingProfit" onChange={ this._handleChange }
+                   placeholder="Taking Profit"/>
+          ) }
+        </Form.Item>
+        <Form.Item label="S/L">
+          { getFieldDecorator( 'stopLost', {
+            initialValue: stopLostInitValue,
+            value: stopLostInitValue,
+            rules: [ { required: true, message: 'Por favor indique el Stop Lost' } ],
+          } )(
+            <Input name="stopLost" onChange={ this._handleChange }
+                   placeholder="S/L"/>
           ) }
         </Form.Item>
         <Form.Item label="Margen de Mantenimiento">
           { getFieldDecorator( 'maintenanceMargin', {
             initialValue: maintenanceMarginInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el margen de mantenimiento' } ],
+            value: maintenanceMarginInitValue,
+            rules: [ { required: true, message: 'Por favor indique el Margen de mantenimiento' } ],
           } )(
-            <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>
+            <Input name="maintenanceMargin" onChange={ this._handleChange }
+                   placeholder="Margen de Mantenimiento"/>
           ) }
         </Form.Item>
+        <Form.Item label="Número de Orden">
+          { getFieldDecorator( 'orderId', {
+            initialValue: orderIdInitValue,
+            value: orderIdInitValue,
+            rules: [ { required: true, message: 'Por favor indique el Número de orden' } ],
+          } )(
+            <Input name="orderId" onChange={ this._handleChange }
+                   placeholder="Número de Orden"/>
+          ) }
+        </Form.Item>
+        <Form.Item label="Monto">
+          { getFieldDecorator( 'amount', {
+            initialValue: amountInitValue,
+            value: amountInitValue,
+            rules: [ { required: true, message: 'Por favor indique el monto' } ],
+          } )(
+            <Input name="amount" onChange={ this._handleChange }
+                   placeholder="Monto"/>
+          ) }
+        </Form.Item>
+
+
+
+        <Form.Item label="Estado">
+          { getFieldDecorator( 'status', {
+            initialValue: statusInitValue,
+            rules: [ { required: true, message: 'Por favor indique el estado' } ],
+          } )(
+            <Select
+              name="status"
+              onChange={ value => this.setState({
+                status: value
+              }) }
+              placeholder="Estado"
+              showArrow={ isAddAction }
+            >
+              <Option value={1}>Activo</Option>
+              <Option value={2}>Cerrado</Option>
+              <Option value={3}>En Pausa</Option>
+            </Select>
+          ) }
+        </Form.Item>
+        <Form.Item>
+          { getFieldDecorator( 'createdAt', {
+            initialValue: createdAtInitValue
+          } )(
+            <DatePicker onChange={ this._setStartDate } placeholder="Fecha de Inicio"/>
+          ) }
+        </Form.Item>
+
 
 
         <Form.Item>
@@ -249,17 +408,23 @@ class AddOrEditMarketForm extends PureComponent {
 
 
 function mapStateToProps(state) {
-  const { accountsState, usersState } = state;
+
+  console.log('[=====  STATE  =====>');
+  console.log(state);
+  console.log('<=====  /STATE  =====]');
+
   return {
-    accounts: accountsState.list,
-    users: usersState.list,
+    userAccounts: state.userAccountsState.list,
+    brokers: state.brokersState.list,
+    products: state.productsState.list,
   }
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetAccounts: accountOperations.fetchGetAccounts,
-    fetchGetUsers: userOperations.fetchGetUsers,
+    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
+    fetchGetBrokers: brokerOperations.fetchGetBrokers,
+    fetchGetProducts: productOperations.fetchGetProducts,
   }, dispatch );
 
 

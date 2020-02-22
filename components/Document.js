@@ -39,8 +39,7 @@ class Document extends Component {
           <meta property="og:locale" content="en_US"/>
           <meta property="og:type" content="website"/>
           <link rel="shortcut icon" href="/static/favicon.png"/>
-          <link href="https://fonts.googleapis.com/css?family=Abel&display=swap" rel="stylesheet"/>
-
+          <link href="https://fonts.googleapis.com/css?family=Roboto:300,700&display=swap" rel="stylesheet" />
         </Head>
         <Layout className="dark-mode" style={ { minHeight: '100vh' } } id={ this.props.id || 'main-page' }>
           <Header/>

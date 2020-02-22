@@ -7,41 +7,80 @@ import _ from 'lodash';
 
 import MarketTable from './MarketTable';
 import AddOrEditMarketForm from './AddOrEditMarketForm';
+import MarketMovementDetail from './detail';
+import MovementsTable from './movementsTable';
 
-import { userAccountOperations } from "../../../state/modules/userAccounts";
+import { marketOperationOperations } from "../../../state/modules/marketOperation";
+import { marketMovementOperations } from "../../../state/modules/marketMovement";
+import { GetGP } from "../../../common/utils";
 
 const { TabPane } = Tabs;
 
-class Investment extends Component {
+class Market extends Component {
   state = {
-    isVisibleAddOrEditUserAccount: false,
+    isVisibleAddOrEditOperation: false,
     actionType: 'add',
-    selectedUserAccount: {},
+    selectedOperation: {},
     isCreatingOperation: false,
-    operationType: 'investment',
+    operationType: 'market',
+    marketOperations: [],
+    userAccounts: [],
+    isDetailViewVisible: false,
+    currentOperationDetail: {},
+    marketMovements: [],
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    let updatedState = {};
+    if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
+      _.assignIn( updatedState, {
+        marketOperations: nextProps.marketOperations
+      } )
+
+      if (prevState.isDetailViewVisible) {
+
+        _.assignIn( updatedState, {
+          currentOperationDetail: _.find( nextProps.marketOperations, { id: prevState.currentOperationDetail.id } )
+        } )
+
+      }
+    }
+
+
+    if (nextProps.isSuccessMovements && !_.isEmpty( nextProps.messageMovements ) && !_.isEmpty(prevState.marketMovements)) {
+      nextProps.fetchGetMarketMovements( prevState.currentOperationDetail.id );
+      nextProps.fetchGetMarketOperations();
+      nextProps.resetAfterMovementRequest();
+    }
+
+    if (!_.isEqual( nextProps.marketMovements, prevState.marketMovements )) {
+      _.assignIn( updatedState, {
+        marketMovements: nextProps.marketMovements
+      } );
+
+    }
+
+
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-      let message = 'Cuenta de Usuario Creada',
-        description = 'La Cuenta de Usuario se ha creado corrrectamente';
+      let message = 'Operación de Inversión Creada',
+        description = 'La Operación de Inversión se ha creado corrrectamente';
 
       if (_.isEqual( prevState.actionType, 'edit' )) {
-        message = 'Cuenta de Usuario Modificado';
-        description = 'La Cuenta de Usuario se ha modificado corrrectamente';
+        message = 'Operación de Inversión Modificado';
+        description = 'La Operación de Inversión se ha modificado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'delete' )) {
-        message = 'Cuenta de Usuario Eliminado';
-        description = 'La Cuenta de Usuario se ha eliminado corrrectamente';
+        message = 'Operación de Inversión Eliminado';
+        description = 'La Operación de Inversión se ha eliminado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'active' )) {
-        message = 'Cuenta de Usuario Activado';
-        description = 'La Cuenta de Usuario se ha activado corrrectamente';
+        message = 'Operación de Inversión Activado';
+        description = 'La Operación de Inversión se ha activado corrrectamente';
       }
 
-      prevState.isVisibleAddOrEditUserAccount = false;
+      prevState.isVisibleAddOrEditOperation = false;
       notification[ 'success' ]( {
         message,
         description,
@@ -49,10 +88,11 @@ class Investment extends Component {
 
           prevState.actionType = 'add'; // default value
 
-          nextProps.fetchGetUserAccounts();
+          nextProps.fetchGetMarketOperations();
           nextProps.resetAfterRequest();
+          nextProps.onClose(false)
         },
-        duration: 1.5
+        duration: .5
       } );
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
@@ -63,55 +103,57 @@ class Investment extends Component {
         onClose: () => {
           nextProps.resetAfterRequest();
         },
-        duration: 3
-      } );
+        duration: 2
+      } )
     }
-    return null;
+
+    return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
   componentDidMount() {
-    this.props.fetchGetUserAccounts();
+    this.props.fetchGetMarketOperations();
   };
 
-  _addUserAccount = () => {
+  _addOperation = () => {
     this.setState( {
       actionType: 'add',
-      isVisibleAddOrEditUserAccount: true
+      isVisibleAddOrEditOperation: true
     } )
   };
 
   _onClose = () => {
     this.setState( {
-      isVisibleAddOrEditUserAccount: false,
-      selectedUserAccount: {}
+      isVisibleAddOrEditOperation: false,
+      selectedOperation: {},
+      actionType: 'add'
     } )
-    this.props.onClose();
+    this.props.onClose(false);
   };
 
-  _handleAddNewUserAccount = (userAccount) => {
-    this.props.fetchAddUserAccount( userAccount )
+  _handleAddNewUserOperation = (userOperation) => {
+    this.props.fetchAddMarketOperation( userOperation )
   };
 
-  _handleEditUserAccount = (userAccount) => {
-    this.props.fetchEditUserAccount( userAccount )
+  _handleEditUserOperation = (userAccount) => {
+    this.props.fetchEditMarketOperation( userAccount )
   };
 
-  _handleDeleteUserAccount = (userId) => {
+  _handleDeleteUserOperation = (operationId) => {
     this.setState( {
       actionType: 'delete'
     } );
-    this.props.fetchDeleteUserAccount( userId );
+    this.props.fetchDeleteMarketOperation( operationId );
   };
 
-  _onSelectEdit = (userId) => {
+  _onSelectEdit = (operationId) => {
     this.setState( {
       actionType: 'edit'
     } );
-    this._handleSelectEditUserAccount( userId )
+    this._handleSelectEditUserOperation( operationId )
   };
 
   _onSelectActive = (userId) => {
-    this.props.fetchEditUserAccount( {
+    this.props.fetchEditMarketOperation( {
       id: userId,
       status: 1,
     } );
@@ -121,23 +163,51 @@ class Investment extends Component {
 
   };
 
-  _handleSelectEditUserAccount = (userId) => {
-    const selectedUserAccount = _.find( this.props.userAccounts, { id: userId } );
+  _handleSelectEditUserOperation = (operationId) => {
+    const selectedOperation = _.find( this.props.marketOperations, { id: operationId } );
     this.setState( {
-      selectedUserAccount,
-      isVisibleAddOrEditUserAccount: true,
+      selectedOperation,
+      isVisibleAddOrEditOperation: true,
+    } )
+    this.props.handleFormVisible(true);
+  };
+
+  _handleDetailUserOperation = (operationId) => {
+
+    const selectedOperation = _.find( this.props.marketOperations, { id: operationId } );
+
+    this.setState( {
+      isDetailViewVisible: true,
+      currentOperationDetail: selectedOperation
+    } );
+    this.props.fetchGetMarketMovements( operationId );
+  };
+
+  _onCloseDetailView = () => {
+    this.setState( {
+      isDetailViewVisible: false,
+      currentOperationDetail: {}
+    } );
+    this.props.fetchGetMarketOperations();
+  };
+
+  /**
+   * Add Movements
+   */
+  _handleAddMovement = (newMovement) => {
+    const { id, amount, userAccount: { account: { percentage } } } = this.state.currentOperationDetail;
+    const { gpInversion, gpAmount } = newMovement
+    this.props.fetchAddMarketMovement( {
+      marketOperationId: id,
+      gpInversion,
+      gpAmount,
     } )
   };
 
-  _handleCreateOperation = (operationType) => {
-
-  }
-
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
-      ? 'Agregar Operación en la Bolsa'
-      : 'Editar Operación en la Bolsa';
-
+      ? 'Agregar Operación de Bolsa'
+      : 'Editar Operación de Bolsa';
 
     return (
       <>
@@ -146,16 +216,16 @@ class Investment extends Component {
             <Tabs>
               <TabPane tab="Activos" key="1">
                 <MarketTable
-                  userAccounts={ _.filter( this.props.userAccounts, { status: 1 } ) }
+                  marketOperations={ _.filter( this.props.marketOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
-                  onDelete={ this._handleDeleteUserAccount }
-                  onCreateOperation={ this._handleCreateOperation }
+                  onDelete={ this._handleDeleteUserOperation }
+                  onDetail={ this._handleDetailUserOperation }
                 />
               </TabPane>
-              <TabPane tab="Inactivos" key="2">
+              <TabPane tab="Eliminados" key="2">
                 <MarketTable
-                  userAccounts={ _.filter( this.props.userAccounts, { status: 0 } ) }
+                  marketOperations={ _.filter( this.props.marketOperations, { status: 0 } ) }
                   isLoading={ this.props.isLoading }
                   onActive={ this._onSelectActive }
                   status="inactive"
@@ -166,17 +236,36 @@ class Investment extends Component {
         </Row>
         <Drawer
           title={ modalTitle }
-          width={ 320 }
+          width={340}
+
           onClose={ this._onClose }
           visible={ this.props.isFormVisible }
           destroyOnClose={ true }
         >
           <AddOrEditMarketForm
-            onAddNew={ this._handleAddNewUserAccount }
-            onEdit={ this._handleEditUserAccount }
+            onAddNew={ this._handleAddNewUserOperation }
+            onEdit={ this._handleEditUserOperation }
             isLoading={ this.props.isLoading }
-            selectedAccount={ this.state.selectedUserAccount }
+            selectedOperation={ this.state.selectedOperation }
             actionType={ this.state.actionType }
+          />
+        </Drawer>
+
+        <Drawer
+          title="Detalle"
+          width="70%"
+          onClose={ this._onCloseDetailView }
+          visible={ this.state.isDetailViewVisible }
+          destroyOnClose={ true }
+
+        >
+          <MarketMovementDetail
+            currentOperation={ this.state.currentOperationDetail }
+          />
+          <MovementsTable
+            movements={ this.state.marketMovements }
+            onAdd={ this._handleAddMovement }
+            currentOperation={ this.state.currentOperationDetail }
           />
         </Drawer>
       </>
@@ -186,22 +275,32 @@ class Investment extends Component {
 
 function mapStateToProps(state) {
   return {
-    userAccounts: state.userAccountsState.list,
-    isLoading: state.userAccountsState.isLoading,
-    isSuccess: state.userAccountsState.isSuccess,
-    isFailure: state.userAccountsState.isFailure,
-    message: state.userAccountsState.message,
+    marketOperations: state.marketOperationsState.list,
+    isLoading: state.marketOperationsState.isLoading,
+    isSuccess: state.marketOperationsState.isSuccess,
+    isFailure: state.marketOperationsState.isFailure,
+    message: state.marketOperationsState.message,
+
+    marketMovements: state.marketMovementsState.list,
+    isSuccessMovements: state.marketMovementsState.isSuccess,
+    messageMovements: state.marketMovementsState.message,
   }
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
-    fetchAddUserAccount: userAccountOperations.fetchAddUserAccount,
-    fetchEditUserAccount: userAccountOperations.fetchEditUserAccount,
-    fetchDeleteUserAccount: userAccountOperations.fetchDeleteUserAccount,
-    resetAfterRequest: userAccountOperations.resetAfterRequest,
+    fetchGetMarketOperations: marketOperationOperations.fetchGetMarketOperations,
+    fetchAddMarketOperation: marketOperationOperations.fetchAddMarketOperation,
+    fetchEditMarketOperation: marketOperationOperations.fetchEditMarketOperation,
+    fetchDeleteMarketOperation: marketOperationOperations.fetchDeleteMarketOperation,
+    resetAfterRequest: marketOperationOperations.resetAfterRequest,
+
+    fetchGetMarketMovements: marketMovementOperations.fetchGetMarketMovements,
+    fetchAddMarketMovement: marketMovementOperations.fetchAddMarketMovement,
+    fetchEditMarketMovement: marketMovementOperations.fetchEditMarketMovement,
+    fetchDeleteMarketMovement: marketMovementOperations.fetchDeleteMarketMovement,
+    resetAfterMovementRequest: marketMovementOperations.resetAfterRequest,
   }, dispatch );
 
 
-export default connect( mapStateToProps, mapDispatchToProps )( Investment );
+export default connect( mapStateToProps, mapDispatchToProps )( Market );

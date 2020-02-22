@@ -43,6 +43,7 @@ class UsersTable extends Component {
     } else {
       return (
         <div className="cta-container">
+          <Button type="secondary" onClick={ () => this.props.onDetail( row ) }><Icon type="hdd" />Detalle</Button>
           <Popconfirm
             okText="Si"
             title="Está seguro ?"
@@ -129,9 +130,6 @@ class UsersTable extends Component {
       .map( item => _.get( item, context ) )
       .uniq()
       .value();
-    console.log('[=====  values  =====>');
-    console.log(uniqValues);
-    console.log('<=====  /values  =====]');
     return _.map( uniqValues, name => {
       return {
         text: name,
@@ -143,24 +141,7 @@ class UsersTable extends Component {
 
   render() {
     const columns = [
-      {
-        title: 'Nombre',
-        dataIndex: 'firstName',
-        key: 'firstName',
-        render: text => <span key={ text }>{ text }</span>,
-        sorter: (a, b) => Sort( a.firstName, b.firstName ),
-        sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'firstName' ),
-      },
-      {
-        title: 'Apellido',
-        dataIndex: 'lastName',
-        key: 'lastName',
-        render: text => <span key={ text }>{ text }</span>,
-        sorter: (a, b) => Sort( a.lastName, b.lastName ),
-        sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'lastName' ),
-      },
+
       {
         title: 'Usuario',
         dataIndex: 'username',
@@ -170,50 +151,8 @@ class UsersTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'username' ),
       },
-      {
-        title: 'Cédula',
-        dataIndex: 'userID',
-        key: 'userID',
-        render: text => <span key={ text }>{ text }</span>,
-        sorter: (a, b) => Sort( a.userID, b.userID ),
-        sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'userID' ),
-      },
-      {
-        title: 'Email',
-        dataIndex: 'email',
-        key: 'email',
-        render: email => <span key={ email }>{ email }</span>,
-        sorter: (a, b) => Sort( a.email, b.email ),
-        sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'email' ),
-      },
-      {
-        title: 'Teléfono',
-        dataIndex: 'phoneNumber',
-        key: 'phoneNumber',
-        render: phoneNumber => <span key={ phoneNumber }>{ phoneNumber }</span>,
-        sorter: (a, b) => Sort( a.phoneNumber, b.phoneNumber ),
-        sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'phoneNumber' ),
-      },
-      {
-        title: 'Fecha de Inicio',
-        dataIndex: 'startDate',
-        key: 'startDate',
-        render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
-        sorter: (a, b) => SortDate( a.startDate, b.startDate ),
-        sortDirections: [ 'descend', 'ascend' ],
 
-      },
-      {
-        title: 'Fecha de Salida',
-        dataIndex: 'endDate',
-        key: 'endDate',
-        render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
-        sorter: (a, b) => SortDate( a.endDate, b.endDate ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
+
       {
         title: 'Cuenta',
         dataIndex: 'account',
@@ -223,17 +162,6 @@ class UsersTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         filters: this._getFilterValues('account.name'),
         onFilter: (value, record) => record.account.name.includes( value ),
-      },
-      {
-        title: 'Permisos',
-        dataIndex: 'role',
-        key: 'role',
-        render: (type, row) => {
-          const colorTag = type.id === 2 ? 'orange' : 'green';
-          return <Tag color={ colorTag }>{ type.name }</Tag>
-        },
-        sorter: (a, b) => Sort( a.role.name, b.role.name ),
-        sortDirections: [ 'descend', 'ascend' ],
       },
       {
         title: 'Acciones',
@@ -251,6 +179,7 @@ class UsersTable extends Component {
         dataSource={ this.props.users }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
+        bordered={true}
       />
     );
   }

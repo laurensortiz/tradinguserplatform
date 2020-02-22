@@ -41,7 +41,7 @@ class MainHeader extends Component {
     return (
       <Header className="main-header">
         <div className="logo">
-          <Link href="/time">
+          <Link href="/operations">
             <img className="desktop" src="/static/logo_web_trader.png" alt=""/>
             <img className="mobile" src="/static/logo_web_trader_small.png" alt=""/>
           </Link>

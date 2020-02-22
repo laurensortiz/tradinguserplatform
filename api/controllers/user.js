@@ -135,15 +135,10 @@ module.exports = {
     }
 
     //return res.status(200).send(getUserProps(user));
-    return res.status( 200 ).send( getUserProps(user) );
+    return res.status( 200 ).send( user );
   },
 
   async update(req, res) {
-    // if (isEmptyOrNull( req.body.password )) {
-    //   return res.status( 500 ).send( {
-    //     message: 'You must provide a password.',
-    //   } );
-    // }
 
     const user = await User.findByPk( req.params.userId );
     const userAccount = await UserAccount.update( {

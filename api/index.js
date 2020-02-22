@@ -7,6 +7,9 @@ import {
   broker,
   userAccount,
   investmentOperation,
+  investmentMovement,
+  marketOperation,
+  marketMovement,
 } from './controllers';
 
 const authMiddleware = (req, res, next) => {
@@ -90,11 +93,34 @@ module.exports = app => {
   app.put( '/api/user-accounts/:userAccountId', userAccount.update );
   app.delete( '/api/user-accounts/:userAccountId', userAccount.delete );
 
-  // User Account
+  // Investment Operation
   app.get( '/api/investment-operation', investmentOperation.list );
   app.get( '/api/investment-operation/:investmentOperationId', investmentOperation.get );
   app.post( '/api/investment-operation', investmentOperation.create );
   app.put( '/api/investment-operation/:investmentOperationId', investmentOperation.update );
   app.delete( '/api/investment-operation/:investmentOperationId', investmentOperation.delete );
+
+  // Investment Movement
+  app.get( '/api/investment-movement/list/:investmentOperationId', investmentMovement.list );
+
+  app.get( '/api/investment-movement/:investmentMovementId', investmentMovement.get );
+  app.post( '/api/investment-movement', investmentMovement.create );
+  app.put( '/api/investment-movement/:investmentMovementId', investmentMovement.update );
+  app.delete( '/api/investment-movement/:investmentMovementId', investmentMovement.delete );
+
+  // Market Operation
+  app.get( '/api/market-operation', marketOperation.list );
+  app.get( '/api/market-operation/:marketOperationId', marketOperation.get );
+  app.post( '/api/market-operation', marketOperation.create );
+  app.put( '/api/market-operation/:marketOperationId', marketOperation.update );
+  app.delete( '/api/market-operation/:marketOperationId', marketOperation.delete );
+
+  // Market Movement
+  app.get( '/api/market-movement/list/:marketOperationId', marketMovement.list );
+
+  app.get( '/api/market-movement/:marketMovementId', marketMovement.get );
+  app.post( '/api/market-movement', marketMovement.create );
+  app.put( '/api/market-movement/:marketMovementId', marketMovement.update );
+  app.delete( '/api/market-movement/:marketMovementId', marketMovement.delete );
 
 };

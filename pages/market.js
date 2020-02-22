@@ -5,10 +5,6 @@ import { PageHeader, Row, Col } from 'antd';
 
 import Document from '../components/Document';
 
-// import marketHTML from './market.html';
-//
-// const template = { __html: marketHTML };
-
 class Calendar extends Component {
 
   render() {

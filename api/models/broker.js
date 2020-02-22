@@ -20,14 +20,14 @@ module.exports = (Sequelize, DataTypes) => {
     },
   });
 
-  // Broker.associate = models => {
-  //
-  //   Broker.hasMany(models.User, {
-  //     foreignKey: 'roleId',
-  //     as: 'role',
-  //   });
-  //
-  // };
+  Broker.associate = models => {
+
+    Broker.hasMany(models.MarketOperation, {
+      foreignKey: 'brokerId',
+      as: 'broker',
+    });
+
+  };
 
   return Broker;
 };

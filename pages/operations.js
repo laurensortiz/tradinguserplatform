@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, Radio } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, Radio, Icon } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -14,7 +14,7 @@ const { TabPane } = Tabs;
 
 class Operations extends Component {
   state = {
-    operationType: 'investment',
+    operationType: 'market',
     isFormVisible: false,
     investmentOperations: [],
     marketOperations: [],
@@ -35,9 +35,9 @@ class Operations extends Component {
     });
   };
 
-  _handleFormDisplay = () => {
+  _handleFormDisplay = (isFormVisible) => {
     this.setState({
-      isFormVisible: !this.state.isFormVisible
+      isFormVisible
     })
   };
 
@@ -46,15 +46,15 @@ class Operations extends Component {
       <Document id="userOperations-page">
         <Row>
           <Radio.Group
-            defaultValue="investment"
+            defaultValue={this.state.operationType}
             size="large"
             style={ { float: 'left' } }
             onChange={this._onSelectOperationType}
           >
-            <Radio.Button value="market">Bolsa</Radio.Button>
-            <Radio.Button value="investment">Inversión</Radio.Button>
+            <Radio.Button value="market"><Icon type="sliders" /> Bolsa OTC</Radio.Button>
+            <Radio.Button value="investment"> <Icon type="fund" /> Fondo de Interés</Radio.Button>
           </Radio.Group>
-          <Button style={ { float: 'right' } } type="primary" onClick={ this._handleFormDisplay }>
+          <Button style={ { float: 'right' } } type="primary" onClick={ () => this._handleFormDisplay(true) }>
             Agregar Operación
           </Button>
         </Row>
@@ -68,14 +68,14 @@ class Operations extends Component {
               <Market
                 isFormVisible={_.isEqual(this.state.operationType, 'market') && this.state.isFormVisible}
                 onClose={this._handleFormDisplay}
-
+                handleFormVisible={this._handleFormDisplay}
               />
             </TabPane>
             <TabPane tab key="investment">
               <Investment
                 isFormVisible={_.isEqual(this.state.operationType, 'investment') && this.state.isFormVisible}
                 onClose={this._handleFormDisplay}
-
+                handleFormVisible={this._handleFormDisplay}
               />
             </TabPane>
           </Tabs>

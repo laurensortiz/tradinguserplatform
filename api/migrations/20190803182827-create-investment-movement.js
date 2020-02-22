@@ -8,13 +8,13 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      operationInvestmentId: {
+      investmentOperationId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
-          model: 'OperationInvestment',
+          model: 'InvestmentOperation',
           key: 'id',
-          as: 'operationInvestment'
+          as: 'investmentOperation'
         }
       },
       gpInversion: {

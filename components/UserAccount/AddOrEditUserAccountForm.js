@@ -15,12 +15,12 @@ const { Option } = Select;
 
 class AddOrEditUserAccountForm extends PureComponent {
   state = {
-    accountValue: '',
-    guaranteeOperation: '',
-    guaranteeCredits: '',
-    balanceInitial: '',
-    balanceFinal: '',
-    maintenanceMargin: '',
+    accountValue: 0,
+    guaranteeOperation: 0,
+    guaranteeCredits: 0,
+    balanceInitial: 0,
+    balanceFinal: 0,
+    maintenanceMargin: 0,
     user: {
       id: null,
       username: ''

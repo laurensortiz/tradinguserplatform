@@ -3,10 +3,17 @@ html {
 }
 
 body {
-  font-family: 'Abel', sans-serif;
+  //font-family: 'Abel', sans-serif;
+  font-family: 'Roboto', sans-serif;
+
   font-size: 1.4rem;
   min-height: 100vh;
+  font-weight: 300;
   margin: 0;
+}
+
+strong {
+  font-weight:700;
 }
 
 .ant-layout {
@@ -162,4 +169,33 @@ body > div:first-of-type:not(#__next) {
 
 .ant-form-item-label {
   line-height: 23px;
+}
+
+.ant-select-dropdown-menu-item-group {
+  .ant-select-dropdown-menu-item-group-title {
+    font-size: 1.4rem;
+    color: $white;
+  }
+  .ant-select-dropdown-menu-item-group-list {
+    background-color: $gray-222;
+  }
+}
+
+.ant-table-wrapper {
+  &.hasNew .actions-col {
+    display: table-cell;
+  }
+
+  .actions-col {
+    display: none;
+  }
+
+}
+
+.positive {
+  color: $positive;
+}
+
+.negative {
+  color: $negative;
 }

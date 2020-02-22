@@ -152,7 +152,7 @@ class Accounts extends Component {
                   onDelete={ this._handleDeleteUserAccount }
                 />
               </TabPane>
-              <TabPane tab="Inactivos" key="2">
+              <TabPane tab="Eliminados" key="2">
                 <UserAccountsTable
                   userAccounts={ _.filter( this.props.userAccounts, { status: 0 } ) }
                   isLoading={ this.props.isLoading }
