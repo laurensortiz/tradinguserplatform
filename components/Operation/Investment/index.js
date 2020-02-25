@@ -9,6 +9,7 @@ import InvestmentTable from './InvestmentTable';
 import AddOrEditInvestmentForm from './AddOrEditInvestmentForm';
 import OperationMovementDetail from './detail';
 import MovementsTable from './movementsTable';
+import { AccountInformation } from '../shared';
 
 import { investmentOperationOperations } from "../../../state/modules/investmentOperation";
 import { investmentMovementOperations } from "../../../state/modules/investmentMovement";
@@ -111,7 +112,10 @@ class Investment extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchGetInvestmentOperations();
+    if (this.props.isAdmin) {
+      this.props.fetchGetInvestmentOperations();
+    }
+
   };
 
   _addOperation = () => {
@@ -173,7 +177,6 @@ class Investment extends Component {
   };
 
   _handleDetailUserOperation = (operationId) => {
-
     const selectedOperation = _.find( this.props.investmentOperations, { id: operationId } );
 
     this.setState( {
@@ -210,29 +213,49 @@ class Investment extends Component {
       ? 'Agregar Operación de Inversión'
       : 'Editar Operación de Inversión';
 
+    const currentUsername = _.get(this.state.currentOperationDetail, 'userAccount.user.username', '');
+    const currentUserFirstName = _.get(this.state.currentOperationDetail, 'userAccount.user.firstName', '');
+    const currentUserLastName = _.get(this.state.currentOperationDetail, 'userAccount.user.lastName', '');
+    const modalDetailTitle = `${currentUsername} - ${currentUserFirstName} ${currentUserLastName}`;
+
+
     return (
       <>
         <Row>
           <Col>
-            <Tabs>
-              <TabPane tab="Activos" key="1">
-                <InvestmentTable
-                  investmentOperations={ _.filter( this.props.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
-                  isLoading={ this.props.isLoading }
-                  onEdit={ this._onSelectEdit }
-                  onDelete={ this._handleDeleteUserOperation }
-                  onDetail={ this._handleDetailUserOperation }
-                />
-              </TabPane>
-              <TabPane tab="Eliminados" key="2">
-                <InvestmentTable
-                  investmentOperations={ _.filter( this.props.investmentOperations, { status: 0 } ) }
-                  isLoading={ this.props.isLoading }
-                  onActive={ this._onSelectActive }
-                  status="inactive"
-                />
-              </TabPane>
-            </Tabs>
+            {this.props.isAdmin ? (
+              <Tabs>
+                <TabPane tab="Activos" key="1">
+                  <InvestmentTable
+                    investmentOperations={ _.filter( this.props.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
+                    isLoading={ this.props.isLoading }
+                    onEdit={ this._onSelectEdit }
+                    onDelete={ this._handleDeleteUserOperation }
+                    onDetail={ this._handleDetailUserOperation }
+                    isAdmin={true}
+                  />
+                </TabPane>
+                <TabPane tab="Eliminados" key="2">
+                  <InvestmentTable
+                    investmentOperations={ _.filter( this.props.investmentOperations, { status: 0 } ) }
+                    isLoading={ this.props.isLoading }
+                    onActive={ this._onSelectActive }
+                    status="inactive"
+                    isAdmin={true}
+                  />
+                </TabPane>
+              </Tabs>
+            ) : (
+              <InvestmentTable
+                investmentOperations={ _.filter( this.props.investmentOperationsUser, ({ status }) => !_.isEqual( status, 0 ) ) }
+                isLoading={ this.props.isLoading }
+                onEdit={ this._onSelectEdit }
+                onDelete={ this._handleDeleteUserOperation }
+                onDetail={ this._handleDetailUserOperation }
+                isAdmin={false}
+              />
+            )}
+
           </Col>
         </Row>
         <Drawer
@@ -252,13 +275,16 @@ class Investment extends Component {
         </Drawer>
 
         <Drawer
-          title="Detalle"
-          width="70%"
+          title={modalDetailTitle}
+          width="85%"
           onClose={ this._onCloseDetailView }
           visible={ this.state.isDetailViewVisible }
           destroyOnClose={ true }
 
         >
+          <AccountInformation
+            currentOperation={ this.state.currentOperationDetail }
+          />
           <OperationMovementDetail
             currentOperation={ this.state.currentOperationDetail }
           />
@@ -266,6 +292,7 @@ class Investment extends Component {
             movements={ this.state.investmentMovements }
             onAdd={ this._handleAddMovement }
             currentOperation={ this.state.currentOperationDetail }
+            isAdmin={this.props.isAdmin}
           />
         </Drawer>
       </>

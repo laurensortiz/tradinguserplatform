@@ -197,7 +197,7 @@ class Users extends Component {
         </Drawer>
         <Drawer
           title="Detalle de Usuario"
-          width="70%"
+          width={320}
           onClose={ this._onCloseUserDetail }
           visible={ this.state.isVisibleUserDetail }
           destroyOnClose={ true }

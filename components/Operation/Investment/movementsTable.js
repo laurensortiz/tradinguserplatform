@@ -11,8 +11,7 @@ moment.locale( 'es' ); // Set Lang to Spanish
 import { EditableProvider, EditableConsumer } from './shared/editableContext';
 import EditableCell from './shared/editableCell';
 
-import { FormatCurrency, FormatDate, GetGP } from '../../../common/utils';
-
+import { FormatCurrency, FormatDate, GetGP, getGPInversion } from '../../../common/utils';
 
 import { investmentMovementOperations } from '../../../state/modules/investmentMovement';
 
@@ -71,7 +70,7 @@ class MovementsTable extends Component {
               <EditableConsumer>
                 { form => (
                   <a
-                    onClick={ () => this.save( form, record.key ) }
+                    onClick={ () => this.save( record.key ) }
                     style={ { marginRight: 8 } }
                   >
                     Salvar
@@ -92,14 +91,14 @@ class MovementsTable extends Component {
             {/*<a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>*/ }
             {/*  Editar*/ }
             {/*</a>*/ }
-            {/*<Popconfirm*/}
-            {/*  title="Desea eliminarlo?"*/}
-            {/*  onConfirm={ () => this.handleDelete( record.key ) }*/}
-            {/*  okText="Sí"*/}
-            {/*  cancelText="No"*/}
-            {/*>*/}
-            {/*  <Button type="danger" disabled={ editingKey !== '' }><Icon type="delete"/></Button>*/}
-            {/*</Popconfirm>*/}
+            {/*<Popconfirm*/ }
+            {/*  title="Desea eliminarlo?"*/ }
+            {/*  onConfirm={ () => this.handleDelete( record.key ) }*/ }
+            {/*  okText="Sí"*/ }
+            {/*  cancelText="No"*/ }
+            {/*>*/ }
+            {/*  <Button type="danger" disabled={ editingKey !== '' }><Icon type="delete"/></Button>*/ }
+            {/*</Popconfirm>*/ }
           </div>
         );
       },
@@ -146,35 +145,38 @@ class MovementsTable extends Component {
   };
 
   handleAdd = () => {
-
-    const { gpAmount } = GetGP( this.state.initialOperationAmount, this.state.operationPercentage )
-    const gpInversion = gpAmount + Number(this.state.currentOperationAmount)
-    const newData = {
-      ...this.state.tempDataSource,
+    const { amount, id: operationId } = this.props.currentOperation;
+    const newMovement = {
       id: uuidv1(),
-      gpInversion,
-      gpAmount,
+      gpInversion: amount,
+      gpAmount: DEFAULT_INPUT_TEXT,
       createdAt: moment.utc(),
     };
     this.setState( {
-      tempDataSource: [ newData ],
-      editingKey: newData.id,
+      tempDataSource: [ newMovement ],
+      editingKey: newMovement.id,
     } );
   };
 
   /************************/
 
   cancel = () => {
-    this.setState( { editingKey: '', tempDataSource: [] } );
+    this.setState( {
+      editingKey: '',
+      tempDataSource: [],
+      currentAmount: this.props.currentOperation.amount
+    } );
   };
 
-  save(form, key) {
-    form.validateFields( (error, row) => {
+  save = (key) => {
+    this.props.form.validateFields( (error, row) => {
       if (error) {
         return;
       }
 
+      const newMovement = _.first(this.state.tempDataSource);
       const newData = {
+        ...newMovement,
         ...row,
         id: key
       };
@@ -190,6 +192,19 @@ class MovementsTable extends Component {
   edit(key) {
     this.setState( { editingKey: key } );
   }
+
+  _onChangeInput = ({target}) => {
+    const currentAmount = getGPInversion(this.props.currentOperation.amount || 0, !_.isEmpty(target.value) ? target.value : 0);
+    const tempData = _.first(this.state.tempDataSource);
+    const tempDataSourceUpdate = {
+      ...tempData,
+      gpInversion: currentAmount
+    };
+
+    this.setState({
+      tempDataSource: [tempDataSourceUpdate]
+    })
+  };
 
   render() {
 
@@ -211,16 +226,22 @@ class MovementsTable extends Component {
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing( record ),
-          inputType: col.inputType
+          inputType: col.inputType,
+          required: col.required,
+          onChangeInput: this._onChangeInput,
+          onPressEnter: () => this.save(record.id)
         } ),
       };
     } );
     return (
       <div>
-        <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                disabled={ !_.isEmpty( this.state.tempDataSource ) }>
-          Agregar Movimiento
-        </Button>
+        {this.props.isAdmin ? (
+          <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
+                  disabled={ !_.isEmpty( this.state.tempDataSource ) }>
+            Agregar Movimiento
+          </Button>
+        ) : null}
+
         <EditableProvider value={ this.props.form }>
           <Table
             className={ !_.isEmpty( this.state.tempDataSource ) ? 'hasNew' : '' }

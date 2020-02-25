@@ -1,97 +1,95 @@
-import React, { Component } from 'react';
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React, { PureComponent } from 'react';
 import moment from 'moment';
-
 import { Row, Col, Button, Descriptions, Tag } from 'antd';
 import _ from 'lodash';
 
-import { FormatCurrency, FormatStatus, FormatDate } from '../../../common/utils';
+import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive } from '../../../common/utils';
 
-import { marketOperationOperations } from "../../../state/modules/marketOperation";
-
-import MovementsTable from './movementsTable';
-
-class Detail extends Component {
-  state = {
-    currentOperation:{
-      id: null,
-      amount: 0
-    },
-  };
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-
-    let updatedState = {};
-    if (!_.isEqual(nextProps.currentOperation, prevState.currentOperation)) {
-      _.assignIn(updatedState, {
-        currentOperation: nextProps.currentOperation
-      })
-    }
-
-    return !_.isEmpty(updatedState) ? updatedState : null;
-  }
-
-  componentDidMount() {
-    //this.props.fetchGetInvestmentOperations()
-  };
+class Detail extends PureComponent {
 
   render() {
-    const userName = _.get(this.props, 'currentOperation.userAccount.user.username', '');
-    const firstName = _.get(this.props, 'currentOperation.userAccount.user.firstName', '');
-    const lastName = _.get(this.props, 'currentOperation.userAccount.user.lastName', '');
-    const operationType = _.get(this.props, 'currentOperation.operationType', '');
+
+    const productName = _.get(this.props, 'currentOperation.product.name', '');
+    const productCode = _.get(this.props, 'currentOperation.product.code', '');
+
     const amount = _.get(this.props, 'currentOperation.amount', '0.00');
     const initialAmount = _.get(this.props, 'currentOperation.initialAmount', '0.00');
+    const startDate = _.get(this.props, 'currentOperation.createdAt', '');
+    const longShort = _.get(this.props, 'currentOperation.longShort', '');
+    const commoditiesTotal = _.get(this.props, 'currentOperation.commoditiesTotal', '0');
+    const buyPrice = _.get(this.props, 'currentOperation.buyPrice', '0.00');
+    const takingProfit = _.get(this.props, 'currentOperation.takingProfit', '0.00');
+    const stopLost = _.get(this.props, 'currentOperation.stopLost', '0');
+    const orderId = _.get(this.props, 'currentOperation.orderId', '-');
 
-    const startDate = _.get(this.props, 'currentOperation.startDate', '');
-    const endDate = _.get(this.props, 'currentOperation.endDate', '');
+    const brokerName = _.get(this.props, 'currentOperation.broker.name', '-');
+    const commodityName = _.get(this.props, 'currentOperation.commodity.name', '');
 
-    const accountName = _.get(this.props, 'currentOperation.userAccount.account.name', '');
-    const accountPercentage = _.get(this.props, 'currentOperation.userAccount.account.percentage', '0');
+
     const status = _.get(this.props, 'currentOperation.status', 1);
-    const {name, color} = FormatStatus(status);
+    const {name : statusName, color : statusColor} = FormatStatus(status);
 
     return (
       <>
         <Row>
           <Col>
-            <Descriptions title="Información de la Cuenta:">
-              <Descriptions.Item label="Usuario">{userName} - {firstName} {lastName} </Descriptions.Item>
-              <Descriptions.Item label="Tipo de Cuenta">{accountName}</Descriptions.Item>
-              <Descriptions.Item label="Comisíon sobre ganancias">{accountPercentage} %</Descriptions.Item>
-            </Descriptions>
-          </Col>
-          <Col>
             <Descriptions title="Información de la Operación:">
-              <Descriptions.Item label="Tipo de Operación">{operationType}</Descriptions.Item>
+              <Descriptions.Item label="Producto"><Tag className="product-tag">{productName}</Tag></Descriptions.Item>
               <Descriptions.Item label="Fecha de Apertura">{FormatDate(startDate)} </Descriptions.Item>
-              <Descriptions.Item label="Fecha de Cierre">{FormatDate(endDate)} </Descriptions.Item>
-              <Descriptions.Item label="Saldo Inicial">{FormatCurrency.format(initialAmount)} </Descriptions.Item>
-              <Descriptions.Item label="Saldo Actual">{FormatCurrency.format(amount)} </Descriptions.Item>
+              <Descriptions.Item label="Inversión">{FormatCurrency.format(initialAmount)} </Descriptions.Item>
+              <Descriptions.Item label="Saldo Actual"><span className={IsOperationPositive(amount, initialAmount) ? 'positive' : 'negative'}>{FormatCurrency.format(amount)}</span> </Descriptions.Item>
+              <Descriptions.Item label="L/S">{longShort}</Descriptions.Item>
+              <Descriptions.Item label="Lotage">{commoditiesTotal} <Tag>{commodityName}</Tag></Descriptions.Item>
+              <Descriptions.Item label="Precio de Compra">{FormatCurrency.format(buyPrice)}</Descriptions.Item>
+              <Descriptions.Item label="Taking Profit">{FormatCurrency.format(takingProfit)}</Descriptions.Item>
+              <Descriptions.Item label="S/L">{stopLost}%</Descriptions.Item>
+              <Descriptions.Item label="Número de Orden">{orderId}</Descriptions.Item>
+              <Descriptions.Item label="Broker">{brokerName}</Descriptions.Item>
+
+
+
               <Descriptions.Item label="Estado">
-                <Tag color={color} >{ name }</Tag>
+                <Tag color={statusColor} >{ statusName }</Tag>
               </Descriptions.Item>
             </Descriptions>
           </Col>
         </Row>
-
       </>
     );
   }
 }
 
-function mapStateToProps(state) {
-
-  return {
-
+Detail.defaultProps = {
+  currentOperation: {
+    userAccount: {
+      user: {
+        username: '',
+        firstName: '',
+        lastName: ''
+      },
+      account: {
+        name: '',
+        percentage: '0'
+      },
+      accountValue: '0.00'
+    },
+    product: {
+      name: '',
+      code: '',
+    },
+    broker: {
+      name: '',
+    },
+    longShort: '',
+    commoditiesTotal: '',
+    amount: '0.00',
+    initialAmount: '0.00',
+    startDate: '',
+    endDate: '',
+    status: 1
   }
-}
-
-const mapDispatchToProps = dispatch =>
-  bindActionCreators( {
-
-  }, dispatch );
+};
 
 
-export default connect( mapStateToProps, mapDispatchToProps )( Detail );
+
+export default Detail;

@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { MarketOperation, UserAccount, User, Account, MarketMovement } from '../models';
 import { marketMovementQuery, userQuery } from '../queries';
 
+
 module.exports = {
   async create(req, res) {
     try {
@@ -10,7 +11,7 @@ module.exports = {
         marketOperationId: Number(req.body.marketOperationId),
         gpAmount: req.body.gpAmount,
         status: _.get(req, 'body.status', 1),
-        createdAt: new Date(),
+        createdAt: req.body.createdAt,
       });
 
       return res.status(200).send(marketMovement);

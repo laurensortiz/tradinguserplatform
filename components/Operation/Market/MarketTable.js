@@ -4,25 +4,36 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { Button, Icon, Popconfirm, Table, Tag } from 'antd';
-import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate } from '../../../common/utils';
+import { Button, Icon, Input, Popconfirm, Table, Tag } from 'antd';
+import {
+  Sort,
+  FormatCurrency,
+  FormatStatus,
+  FormatDate,
+  SortDate,
+  DisplayTableAmount,
+  MarketBehaviorStatus,
+} from '../../../common/utils';
+import Highlighter from "react-highlight-words";
 
 class MarketTable extends Component {
   state = {
-    operations: [],
+    marketOperations: [],
+    searchText: '',
+    searchedColumn: '',
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual( nextProps.operations, prevState.operations )) {
+    if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
+
       return {
-        users: nextProps.operations
+        marketOperations: nextProps.marketOperations
       }
     }
     return null;
   }
 
   _getCTA = (type, row) => {
-
     if (_.isEqual( this.props.status, 'inactive' )) {
       return (
         <div className="cta-container">
@@ -40,39 +51,103 @@ class MarketTable extends Component {
       return (
         <div className="cta-container">
           <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd" />Detalle</Button>
-
-          <Popconfirm
-            okText="Si"
-            title="Está seguro ?"
-            cancelText="Cancelar"
-            onConfirm={ () => this.props.onDelete( row.id ) }
-          >
-            <Button type="danger"><Icon type="delete"/></Button>
-          </Popconfirm>
-          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
+          {this.props.isAdmin ? (
+            <>
+              <Popconfirm
+                okText="Si"
+                title="Está seguro ?"
+                cancelText="Cancelar"
+                onConfirm={ () => this.props.onDelete( row.id ) }
+              >
+                <Button type="danger"><Icon type="delete"/></Button>
+              </Popconfirm>
+              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
+            </>
+          ) : null}
         </div>
       )
     }
 
   };
 
-  _displayTableAmount = amount => {
-    if (amount) {
-      return `${ FormatCurrency.format(amount) }`
-    } else {
-      return '-'
+  getColumnSearchProps = dataIndex => ( {
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={ { padding: 8 } }>
+        <Input
+          ref={ node => {
+            this.searchInput = node;
+          } }
+          placeholder={ `Buscar` }
+          value={ selectedKeys[ 0 ] }
+          onChange={ e => setSelectedKeys( e.target.value ? [ e.target.value ] : [] ) }
+          onPressEnter={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
+          style={ { width: 188, marginBottom: 8, display: 'block' } }
+        />
+        <Button
+          type="primary"
+          onClick={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
+          icon="search"
+          size="small"
+          style={ { width: 90, marginRight: 8 } }
+        >
+          Buscar
+        </Button>
+        <Button onClick={ () => this.handleReset( clearFilters ) } size="small" style={ { width: 90 } }>
+          Limpiar
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={ { color: filtered ? '#1890ff' : undefined } }/>
+    ),
+    onFilter: (value, record) => {
+
+      return _.get(record, dataIndex)
+        .toString()
+        .toLowerCase()
+        .includes( value.toLowerCase() )
+    },
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout( () => this.searchInput.select() );
+      }
+    },
+    render: text => {
+      return this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={ { backgroundColor: '#ffc069', padding: 0 } }
+          searchWords={ [ this.state.searchText ] }
+          autoEscape
+          textToHighlight={ text.toString() }
+        />
+      ) : (
+        text
+      )
     }
+
+  } );
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState( {
+      searchText: selectedKeys[ 0 ],
+      searchedColumn: dataIndex,
+    } );
   };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState( { searchText: '' } );
+  };
+
 
   render() {
     const columns = [
       {
-        title: 'Fecha de Apertura',
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
-        sorter: (a, b) => SortDate( a.createdAt, b.createdAt ),
-        sortDirections: [ 'descend', 'ascend' ],
+        title: '',
+        dataIndex: 'behavior',
+        key: 'behavior',
+        render: status => MarketBehaviorStatus(status)
       },
       {
         title: 'Estado',
@@ -86,114 +161,105 @@ class MarketTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Comportamiento',
-        dataIndex: 'status',
-        key: 'move',
-        render: status => {
-          if (status == 1) {
-            return <Icon type="rise" style={ {color: '#87d068', fontSize: 30 }} />
-          } else {
-            return <Icon type="fall" style={ {color: '#f50', fontSize: 30 }} />
-          }
-        }
-
-      },
-
-      {
-        title: 'Usuario',
-        dataIndex: 'userAccount',
-        key: 'userAccount',
-        render: text => <span key={ text }>{ text.user.username }</span>,
-        sorter: (a, b) => Sort( a.userAccount.user.username, b.userAccount.user.username ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Cuenta de Usuario',
-        dataIndex: 'userAccount',
-        key: 'account',
-        render: text => <span key={ text.accountId }>{ text.account.name }</span>,
-        sorter: (a, b) => Sort( a.userAccount.account.name, b.userAccount.account.name ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
         title: 'Producto',
-        dataIndex: 'product',
-        key: 'product',
+        dataIndex: 'product.name',
+        key: 'product.name',
         render: text => <span key={`${text.code}-${text.name}`} >{ `${text.code}-${text.name}` }</span>,
         sorter: (a, b) => Sort( a.product.name, b.product.name ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'product.name' ),
       },
+      // {
+      //   title: 'Fecha de Apertura',
+      //   dataIndex: 'createdAt',
+      //   key: 'createdAt',
+      //   render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
+      //   sorter: (a, b) => SortDate( a.createdAt, b.createdAt ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+
       {
-        title: 'Monto',
+        title: 'Usuario',
+        dataIndex: 'userAccount.user.username',
+        key: 'userAccount.user.username',
+        render: text => <span key={ text }>{ text.user.username }</span>,
+        sorter: (a, b) => Sort( a.userAccount.user.username, b.userAccount.user.username ),
+        sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'userAccount.user.username' ),
+      },
+      // {
+      //   title: 'Cuenta de Usuario',
+      //   dataIndex: 'userAccount',
+      //   key: 'account',
+      //   render: text => <span key={ text.accountId }>{ text.account.name }</span>,
+      //   sorter: (a, b) => Sort( a.userAccount.account.name, b.userAccount.account.name ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      {
+        title: 'Saldo Inicial',
         dataIndex: 'amount',
         key: 'amount',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        render: amount => <span key={ amount }>{ DisplayTableAmount( amount ) }</span>,
         sorter: (a, b) => Sort( a.amount, b.amount ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'L/S',
-        dataIndex: 'longShort',
-        key: 'longShort',
-        render: text => <span key={text} >{ text }</span>,
-        sorter: (a, b) => Sort( a.longShort, b.longShort ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Lotage',
-        dataIndex: 'actionsTotal',
-        key: 'actionsTotal',
-        render: text => <span key={text} >{ text }</span>,
-        sorter: (a, b) => Sort( a.actionsTotal, b.actionsTotal ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Precio de Compra',
-        dataIndex: 'buyPrice',
-        key: 'buyPrice',
-        render: text => <span key={text} >{ this._displayTableAmount(text) }</span>,
-        sorter: (a, b) => Sort( a.buyPrice, b.buyPrice ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Taking Profit',
-        dataIndex: 'takingProfit',
-        key: 'takingProfit',
-        render: text => <span key={text} >{ text }</span>,
-        sorter: (a, b) => Sort( a.takingProfit, b.takingProfit ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Stop Lost',
-        dataIndex: 'stopLost',
-        key: 'stopLost',
-        render: text => <span key={text} >{ text }</span>,
-        sorter: (a, b) => Sort( a.stopLost, b.stopLost ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
         title: 'Invesión',
-        dataIndex: 'amount',
-        key: 'amount',
-        render: amount => <span key={amount} >{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.amount, b.amount ),
+        dataIndex: 'initialAmount',
+        key: 'initialAmount',
+        render: initialAmount => <span key={initialAmount} >{ DisplayTableAmount( initialAmount ) }</span>,
+        sorter: (a, b) => Sort( a.initialAmount, b.initialAmount ),
         sortDirections: [ 'descend', 'ascend' ],
       },
+      // {
+      //   title: 'L/S',
+      //   dataIndex: 'longShort',
+      //   key: 'longShort',
+      //   render: text => <span key={text} >{ text }</span>,
+      //   sorter: (a, b) => Sort( a.longShort, b.longShort ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Lotage',
+      //   dataIndex: 'commoditiesTotal',
+      //   key: 'commoditiesTotal',
+      //   render: text => <span key={text} >{ text }</span>,
+      //   sorter: (a, b) => Sort( a.commoditiesTotal, b.commoditiesTotal ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Precio de Compra',
+      //   dataIndex: 'buyPrice',
+      //   key: 'buyPrice',
+      //   render: text => <span key={text} >{ DisplayTableAmount(text) }</span>,
+      //   sorter: (a, b) => Sort( a.buyPrice, b.buyPrice ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Taking Profit',
+      //   dataIndex: 'takingProfit',
+      //   key: 'takingProfit',
+      //   render: text => <span key={text} >{ text }</span>,
+      //   sorter: (a, b) => Sort( a.takingProfit, b.takingProfit ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
+      // {
+      //   title: 'Stop Lost',
+      //   dataIndex: 'stopLost',
+      //   key: 'stopLost',
+      //   render: text => <span key={text} >{ text }</span>,
+      //   sorter: (a, b) => Sort( a.stopLost, b.stopLost ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
 
       {
         title: 'Corredor',
-        dataIndex: 'broker',
-        key: 'broker',
-        render: text => <span key={text.name} >{ text.name }</span>,
+        dataIndex: 'broker.name',
+        key: 'broker.name',
         sorter: (a, b) => Sort( a.broker.name, b.broker.name ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'broker.name' ),
       },
-
-
-
-
-
-
       {
         title: 'Acciones',
         key: 'actions',
@@ -207,7 +273,7 @@ class MarketTable extends Component {
       <Table
         rowKey={ record => record.id }
         columns={ columns }
-        dataSource={ this.props.marketOperations }
+        dataSource={ this.state.marketOperations }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
       />

@@ -1,5 +1,16 @@
-import { User, Account, UserAccount, Role } from '../models';
-import { userAccountQuery, userQuery } from '../queries';
+import {
+  User,
+  Account,
+  UserAccount,
+  Role,
+  MarketOperation,
+  InvestmentOperation,
+  Product,
+  Broker,
+  Commodity
+} from '../models';
+import { userAccountQuery, userQuery, marketOperationQuery, investmentOperationQuery } from '../queries';
+import _ from 'lodash';
 
 module.exports = {
   async create(req, res) {
@@ -38,8 +49,7 @@ module.exports = {
   },
 
   async get(req, res) {
-    const userAccount = await UserAccount.findByPk(
-      req.params.userAccountId,
+    const userAccount = await UserAccount.findAll(
       userAccountQuery.get( { req, User, Role, Account } )
     );
 
@@ -50,6 +60,32 @@ module.exports = {
     }
 
     return res.status(200).send(userAccount);
+  },
+
+  async getByUser(req, res) {
+    const userAccount = await UserAccount.findAll(
+      userAccountQuery.getByUser( { req, User, Role, Account } )
+    );
+
+    if (!userAccount) {
+      return res.status(404).send({
+        message: '404 on UserAccount get',
+      });
+    }
+
+    const accountIds = _.map(userAccount, ({id}) => id);
+    const marketOperations = await MarketOperation.findAll(
+      marketOperationQuery.getByUser({ accountIds, UserAccount, User, Account, Product, Broker, Commodity })
+    );
+
+    const investmentOperations = await InvestmentOperation.findAll(
+      investmentOperationQuery.getByUser({ accountIds, UserAccount, User, Account })
+    );
+
+    return res.status(200).send({
+      marketOperations,
+      investmentOperations,
+    });
   },
 
   async update(req, res) {

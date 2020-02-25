@@ -5,13 +5,12 @@ import { Button, Input, Divider, Icon, Table, Form, Popconfirm, DatePicker } fro
 class EditableCell extends Component {
   getInput = () => {
     if (this.props.inputType === 'number') {
-      return <InputNumber />;
+      return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
     } else if (this.props.inputType === 'date') {
       return <DatePicker format="DD-MM-YYYY" />;
     }
-    return <Input />;
+    return <Input onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
   };
-
 
   renderCell = ({ getFieldDecorator }) => {
     const {
@@ -21,6 +20,7 @@ class EditableCell extends Component {
       inputType,
       record,
       index,
+      required,
       children,
       ...restProps
     } = this.props;
@@ -31,7 +31,7 @@ class EditableCell extends Component {
             {getFieldDecorator(dataIndex, {
               rules: [
                 {
-                  required: true,
+                  required,
                   message: `Por favor ingrese ${title}`,
                 },
               ],
@@ -50,6 +50,7 @@ class EditableCell extends Component {
       editable,
       dataIndex,
       title,
+      inputType,
       record,
       index,
       handleSave,

@@ -2,10 +2,10 @@ import { getUserAccounts, addUserAccount, editUserAccount, deleteUserAccount } f
 import types from './types';
 
 // List UserAccounts
-export const fetchGetUserAccounts = () => async dispatch => {
+export const fetchGetUserAccounts = (userId) => async dispatch => {
   dispatch( requestUserAccounts() );
   try {
-    const res = await getUserAccounts();
+    const res = await getUserAccounts(userId);
     dispatch( requestUserAccountsSuccess( res.data ) )
   } catch (e) {
     dispatch( requestUserAccountsError( e.message ) )

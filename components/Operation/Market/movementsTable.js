@@ -9,7 +9,7 @@ import moment from "moment";
 import { EditableProvider, EditableConsumer } from './shared/editableContext';
 import EditableCell from './shared/editableCell';
 
-import { FormatCurrency, FormatDate, GetGP } from '../../../common/utils';
+import { FormatCurrency, FormatDate, GetGP, getGPInversion } from '../../../common/utils';
 
 import { investmentMovementOperations } from '../../../state/modules/investmentMovement';
 
@@ -30,7 +30,8 @@ class MovementsTable extends Component {
       dataIndex: 'gpInversion',
       key: 'gpInversion',
       render: value => FormatCurrency.format(value),
-      editable: true,
+      editable: false,
+      required: false
     },
     {
       title: 'G/P',
@@ -38,6 +39,7 @@ class MovementsTable extends Component {
       key: 'gpAmount',
       render: value => FormatCurrency.format(value),
       editable: true,
+      required: true
     },
     {
       title: 'Fecha de movimiento',
@@ -45,11 +47,13 @@ class MovementsTable extends Component {
       key: 'createdAt',
       render: value => FormatDate( value ),
       editable: true,
-      inputType: 'date'
+      inputType: 'date',
+      required: false,
     },
     {
       title: 'Acciones',
       key: 'actions',
+      className: 'actions-col',
       render: (text, record) => {
         record = {
           ...record,
@@ -62,7 +66,7 @@ class MovementsTable extends Component {
               <EditableConsumer>
                 { form => (
                   <a
-                    onClick={ () => this.save( form, record.key ) }
+                    onClick={ () => this.save(record.key ) }
                     style={ { marginRight: 8 } }
                   >
                     Salvar
@@ -100,21 +104,17 @@ class MovementsTable extends Component {
   isEditing = record => record.id === this.state.editingKey;
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    let updatedState = {};
     if (!_.isEqual( nextProps.movements, prevState.dataSource )) {
-
-      return {
+      _.assignIn(updatedState, {
         dataSource: nextProps.movements,
         count: _.size( nextProps.movements ),
         tempDataSource: [],
         editingKey: '',
-      }
+      })
     }
 
-
-    return null;
-  }
-
-  componentDidMount() {
+    return !_.isEmpty(updatedState) ? updatedState : null;
   }
 
   handleDelete = key => {
@@ -126,11 +126,10 @@ class MovementsTable extends Component {
   };
 
   handleAdd = () => {
-    const {amount} = this.props.currentOperation;
+    const {amount, id: operationId} = this.props.currentOperation;
     const newMovement = {
       id: uuidv1(),
-      marketOperationId: this.props.operationId,
-      gpInversion: DEFAULT_INPUT_TEXT,
+      gpInversion: amount,
       gpAmount: DEFAULT_INPUT_TEXT,
       createdAt: moment.utc(),
     };
@@ -143,16 +142,22 @@ class MovementsTable extends Component {
   /************************/
 
   cancel = () => {
-    this.setState( { editingKey: '', tempDataSource: [] } );
+    this.setState( {
+      editingKey: '',
+      tempDataSource: [],
+      currentAmount: this.props.currentOperation.amount
+    } );
   };
 
-  save(form, key) {
-    form.validateFields( (error, row) => {
+  save = (key) => {
+    this.props.form.validateFields( (error, row) => {
       if (error) {
         return;
       }
 
+      const newMovement = _.first(this.state.tempDataSource);
       const newData = {
+        ...newMovement,
         ...row,
         id: key
       };
@@ -163,16 +168,27 @@ class MovementsTable extends Component {
         this.props.fetchEditMarketMovement( newData )
       }
     } );
-  }
+  };
 
   edit(key) {
     this.setState( { editingKey: key } );
   }
 
+  _onChangeInput = ({target}) => {
+    const currentAmount = getGPInversion(this.props.currentOperation.amount || 0, !_.isEmpty(target.value) ? target.value : 0);
+    const tempData = _.first(this.state.tempDataSource);
+    const tempDataSourceUpdate = {
+      ...tempData,
+      gpInversion: currentAmount
+    };
+
+    this.setState({
+      tempDataSource: [tempDataSourceUpdate]
+    })
+  };
+
   render() {
-    console.log('[=====  state  =====>');
-    console.log(this.state);
-    console.log('<=====  /state  =====]');
+
     const { dataSource, tempDataSource } = this.state;
     const components = {
       body: {
@@ -191,17 +207,24 @@ class MovementsTable extends Component {
           dataIndex: col.dataIndex,
           title: col.title,
           editing: this.isEditing( record ),
+          inputType: col.inputType,
+          required: col.required,
+          onChangeInput: this._onChangeInput,
+          onPressEnter: () => this.save(record.id)
         } ),
       };
     } );
     return (
       <Row>
-        <Col>
-          <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                  disabled={ !_.isEmpty( this.state.tempDataSource ) }>
-            Agregar Movimiento
-          </Button>
-        </Col>
+        {this.props.isAdmin ? (
+          <Col>
+            <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
+                    disabled={ !_.isEmpty( this.state.tempDataSource ) || this.props.currentOperation.status != 1 }>
+              Agregar Movimiento
+            </Button>
+          </Col>
+        ) : null}
+
 
         <EditableProvider value={ this.props.form }>
           <Table

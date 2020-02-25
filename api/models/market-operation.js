@@ -5,7 +5,7 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
       unique: false,
     },
-    actionsTotal: {
+    commoditiesTotal: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
@@ -72,6 +72,11 @@ module.exports = (Sequelize, DataTypes) => {
     MarketOperation.belongsTo(models.Broker, {
       foreignKey: 'brokerId',
       as: 'broker',
+    });
+
+    MarketOperation.belongsTo(models.Commodity, {
+      foreignKey: 'commodityId',
+      as: 'commodity',
     });
 
     MarketOperation.hasMany(models.MarketMovement, {

@@ -5,14 +5,17 @@ import { bindActionCreators } from "redux";
 import { Row, Col, Button, Drawer, Tabs, notification, Radio } from 'antd';
 import _ from 'lodash';
 
+import { GetGP } from "../../../common/utils";
+
 import MarketTable from './MarketTable';
 import AddOrEditMarketForm from './AddOrEditMarketForm';
 import MarketMovementDetail from './detail';
 import MovementsTable from './movementsTable';
+import { AccountInformation } from '../shared';
 
 import { marketOperationOperations } from "../../../state/modules/marketOperation";
 import { marketMovementOperations } from "../../../state/modules/marketMovement";
-import { GetGP } from "../../../common/utils";
+
 
 const { TabPane } = Tabs;
 
@@ -32,6 +35,7 @@ class Market extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
+
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
       _.assignIn( updatedState, {
         marketOperations: nextProps.marketOperations
@@ -47,7 +51,7 @@ class Market extends Component {
     }
 
 
-    if (nextProps.isSuccessMovements && !_.isEmpty( nextProps.messageMovements ) && !_.isEmpty(prevState.marketMovements)) {
+    if (nextProps.isSuccessMovements && !_.isEmpty( nextProps.messageMovements ) && !_.isEmpty( prevState.marketMovements )) {
       nextProps.fetchGetMarketMovements( prevState.currentOperationDetail.id );
       nextProps.fetchGetMarketOperations();
       nextProps.resetAfterMovementRequest();
@@ -90,7 +94,7 @@ class Market extends Component {
 
           nextProps.fetchGetMarketOperations();
           nextProps.resetAfterRequest();
-          nextProps.onClose(false)
+          nextProps.onClose( false )
         },
         duration: .5
       } );
@@ -111,7 +115,10 @@ class Market extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchGetMarketOperations();
+    if (this.props.isAdmin) {
+      this.props.fetchGetMarketOperations();
+    }
+
   };
 
   _addOperation = () => {
@@ -127,7 +134,7 @@ class Market extends Component {
       selectedOperation: {},
       actionType: 'add'
     } )
-    this.props.onClose(false);
+    this.props.onClose( false );
   };
 
   _handleAddNewUserOperation = (userOperation) => {
@@ -169,7 +176,7 @@ class Market extends Component {
       selectedOperation,
       isVisibleAddOrEditOperation: true,
     } )
-    this.props.handleFormVisible(true);
+    this.props.handleFormVisible( true );
   };
 
   _handleDetailUserOperation = (operationId) => {
@@ -199,8 +206,7 @@ class Market extends Component {
     const { gpInversion, gpAmount } = newMovement
     this.props.fetchAddMarketMovement( {
       marketOperationId: id,
-      gpInversion,
-      gpAmount,
+      ...newMovement
     } )
   };
 
@@ -209,34 +215,52 @@ class Market extends Component {
       ? 'Agregar Operación de Bolsa'
       : 'Editar Operación de Bolsa';
 
+    const currentUsername = _.get( this.state.currentOperationDetail, 'userAccount.user.username', '' );
+    const currentUserFirstName = _.get( this.state.currentOperationDetail, 'userAccount.user.firstName', '' );
+    const currentUserLastName = _.get( this.state.currentOperationDetail, 'userAccount.user.lastName', '' );
+    const modalDetailTitle = `${ currentUsername } - ${ currentUserFirstName } ${ currentUserLastName }`;
+
     return (
       <>
         <Row>
           <Col>
-            <Tabs>
-              <TabPane tab="Activos" key="1">
-                <MarketTable
-                  marketOperations={ _.filter( this.props.marketOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
-                  isLoading={ this.props.isLoading }
-                  onEdit={ this._onSelectEdit }
-                  onDelete={ this._handleDeleteUserOperation }
-                  onDetail={ this._handleDetailUserOperation }
-                />
-              </TabPane>
-              <TabPane tab="Eliminados" key="2">
-                <MarketTable
-                  marketOperations={ _.filter( this.props.marketOperations, { status: 0 } ) }
-                  isLoading={ this.props.isLoading }
-                  onActive={ this._onSelectActive }
-                  status="inactive"
-                />
-              </TabPane>
-            </Tabs>
+            {this.props.isAdmin ? (
+              <Tabs>
+                <TabPane tab="Activos" key="1">
+                  <MarketTable
+                    marketOperations={ _.filter( this.props.marketOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
+                    isLoading={ this.props.isLoading }
+                    onEdit={ this._onSelectEdit }
+                    onDelete={ this._handleDeleteUserOperation }
+                    onDetail={ this._handleDetailUserOperation }
+                    isAdmin={true}
+                  />
+                </TabPane>
+                <TabPane tab="Eliminados" key="2">
+                  <MarketTable
+                    marketOperations={ _.filter( this.props.marketOperations, { status: 0 } ) }
+                    isLoading={ this.props.isLoading }
+                    onActive={ this._onSelectActive }
+                    status="inactive"
+                    isAdmin={true}
+                  />
+                </TabPane>
+              </Tabs>
+            ) : (
+              <MarketTable
+                marketOperations={ _.filter( this.props.marketOperationsUser, ({ status }) => !_.isEqual( status, 0 ) ) }
+                isLoading={ this.props.isLoading }
+                onEdit={ this._onSelectEdit }
+                onDelete={ this._handleDeleteUserOperation }
+                onDetail={ this._handleDetailUserOperation }
+                isAdmin={false}
+              />
+            )}
           </Col>
         </Row>
         <Drawer
           title={ modalTitle }
-          width={340}
+          width={ 340 }
 
           onClose={ this._onClose }
           visible={ this.props.isFormVisible }
@@ -252,13 +276,17 @@ class Market extends Component {
         </Drawer>
 
         <Drawer
-          title="Detalle"
-          width="70%"
+          title={ modalDetailTitle }
+          width="85%"
           onClose={ this._onCloseDetailView }
           visible={ this.state.isDetailViewVisible }
           destroyOnClose={ true }
 
         >
+          <AccountInformation
+            currentOperation={ this.state.currentOperationDetail }
+          />
+
           <MarketMovementDetail
             currentOperation={ this.state.currentOperationDetail }
           />
@@ -266,6 +294,7 @@ class Market extends Component {
             movements={ this.state.marketMovements }
             onAdd={ this._handleAddMovement }
             currentOperation={ this.state.currentOperationDetail }
+            isAdmin={this.props.isAdmin}
           />
         </Drawer>
       </>

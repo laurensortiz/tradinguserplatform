@@ -10,6 +10,7 @@ import {
   investmentMovement,
   marketOperation,
   marketMovement,
+  commodity
 } from './controllers';
 
 const authMiddleware = (req, res, next) => {
@@ -89,6 +90,7 @@ module.exports = app => {
   // User Account
   app.get( '/api/user-accounts', userAccount.list );
   app.get( '/api/user-accounts/:userAccountId', userAccount.get );
+  app.get( '/api/user-accounts/user/:userId', userAccount.getByUser );
   app.post( '/api/user-accounts', userAccount.create );
   app.put( '/api/user-accounts/:userAccountId', userAccount.update );
   app.delete( '/api/user-accounts/:userAccountId', userAccount.delete );
@@ -122,5 +124,12 @@ module.exports = app => {
   app.post( '/api/market-movement', marketMovement.create );
   app.put( '/api/market-movement/:marketMovementId', marketMovement.update );
   app.delete( '/api/market-movement/:marketMovementId', marketMovement.delete );
+
+  // Commodities
+  app.get( '/api/commodities', commodity.list );
+  app.get( '/api/commodities/:commodityId', commodity.get );
+  app.post( '/api/commodities', commodity.create );
+  app.put( '/api/commodities/:commodityId', commodity.update );
+  app.delete( '/api/commodities/:commodityId', commodity.delete );
 
 };

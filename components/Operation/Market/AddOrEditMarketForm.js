@@ -13,6 +13,7 @@ import { marketOperationOperations } from '../../../state/modules/marketOperatio
 import { userAccountOperations } from "../../../state/modules/userAccounts";
 import { brokerOperations } from "../../../state/modules/brokers";
 import { productOperations } from "../../../state/modules/products";
+import { commodityOperations } from "../../../state/modules/commodity";
 
 const { Option, OptGroup } = Select;
 
@@ -31,7 +32,11 @@ class AddOrEditMarketForm extends PureComponent {
       id: null,
       name: ''
     },
-    actionsTotal: 0,
+    commodity: {
+      id: null,
+      name: ''
+    },
+    commoditiesTotal: 0,
     buyPrice: 0,
     initialAmount: 0,
     takingProfit: 0,
@@ -47,9 +52,11 @@ class AddOrEditMarketForm extends PureComponent {
     userAccounts: [],
     brokers: [],
     products: [],
+    commodities: [],
     accountName: '',
     brokerName: '',
     productName: '',
+    commodityName: '',
     accountPercentage: 0
   };
 
@@ -74,6 +81,12 @@ class AddOrEditMarketForm extends PureComponent {
       } )
     }
 
+    if (!_.isEqual( nextProps.commodities, prevState.commodities )) {
+      _.assign( stateUpdated, {
+        commodities: nextProps.commodities
+      } )
+    }
+
 
     return !_.isEmpty( stateUpdated ) ? stateUpdated : null;
   }
@@ -92,6 +105,10 @@ class AddOrEditMarketForm extends PureComponent {
       this.props.fetchGetProducts();
     }
 
+    if (_.isEmpty( this.state.commodities )) {
+      this.props.fetchGetCommodities();
+    }
+
 
     if (!_.isEmpty( this.props.selectedOperation )) {
       const { selectedOperation } = this.props;
@@ -99,12 +116,14 @@ class AddOrEditMarketForm extends PureComponent {
       const productName = _.get(selectedOperation, 'product.name', '');
       const productCode = _.get(selectedOperation, 'product.code', '');
       const brokerName = _.get(selectedOperation, 'broker.name', '');
+      const commodityName = _.get(selectedOperation, 'commodity.name', '');
       this.setState( {
         ...this.state,
         ...selectedOperation,
         accountName,
         productName: `${productName}-${productCode}`,
-        brokerName
+        brokerName,
+        commodityName,
       } )
     }
   }
@@ -161,6 +180,7 @@ class AddOrEditMarketForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
       if (!err) {
+
         if (_.isEqual( this.props.actionType, 'add' )) {
           this.props.onAddNew( this.state )
         } else {
@@ -186,10 +206,10 @@ class AddOrEditMarketForm extends PureComponent {
     })
   };
 
-  _getBrokerSelectOption = options => {
-    return _.map(this.state.brokers, (broker) => {
+  _getSelectOptions = options => {
+    return _.map(options, (option) => {
       return (
-        <Option key={`${ broker.id }_${broker.name}`}>{broker.name}</Option>
+        <Option key={`${ option.id }_${option.name}`}>{option.name}</Option>
       )
     })
   };
@@ -221,7 +241,9 @@ class AddOrEditMarketForm extends PureComponent {
     const brokerInitValue = !_.isEmpty( this.state.brokerName ) ? this.state.brokerName : undefined;
     const productInitValue = !_.isEmpty( this.state.productName ) ? this.state.productName : undefined;
 
-    const actionsTotalInitValue = !_.isEmpty( this.state.actionsTotal ) ? this.state.actionsTotal : undefined;
+    const commoditiesTotalInitValue = !_.isEmpty( this.state.commoditiesTotal ) ? this.state.commoditiesTotal : undefined;
+    const commoditiesTypeInitValue = !_.isEmpty( this.state.commodityName ) ? this.state.commodityName : undefined;
+
     const buyPriceInitValue = !_.isEmpty( this.state.buyPrice ) ? this.state.buyPrice : undefined;
     //const initialAmountInitValue = !_.isEmpty( this.state.initialAmount ) ? this.state.initialAmount : undefined;
     const takingProfitInitValue = !_.isEmpty( this.state.takingProfit ) ? this.state.takingProfit : undefined;
@@ -263,7 +285,7 @@ class AddOrEditMarketForm extends PureComponent {
               disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
-              { this._getBrokerSelectOption( this.state.brokers ) }
+              { this._getSelectOptions( this.state.brokers ) }
             </Select>
           ) }
         </Form.Item>
@@ -296,11 +318,28 @@ class AddOrEditMarketForm extends PureComponent {
         </Form.Item>
 
         <Form.Item label="Cantidad Lotaje">
-          { getFieldDecorator( 'actionsTotal', {
-            initialValue: actionsTotalInitValue,
+          { getFieldDecorator( 'commoditiesTotal', {
+            initialValue: commoditiesTotalInitValue,
             rules: [ { required: true, message: 'Por favor indique la cantidad lotaje' } ],
           } )(
-            <Input type="number" name="actionsTotal" onChange={ this._handleChange } placeholder="Cantidad Lotaje"/>
+            <Input type="number" name="commoditiesTotal" onChange={ this._handleChange } placeholder="Cantidad Lotaje"/>
+          ) }
+        </Form.Item>
+        <Form.Item label="Tipo de Lotage">
+          { getFieldDecorator( 'commodity', {
+            initialValue: commoditiesTypeInitValue,
+            rules: [ { required: true, message: 'Por favor seleccione el tipo de lotage ' } ],
+          } )(
+            <Select
+              showSearch={ true }
+              name="commodity"
+              onChange={ value => this._handleChangeSelect( { name: 'commodity', value } ) }
+              placeholder="Tipo de Lotage"
+              disabled={ !isAddAction }
+              showArrow={ isAddAction }
+            >
+              { this._getSelectOptions( this.state.commodities ) }
+            </Select>
           ) }
         </Form.Item>
         <Form.Item label="Precio de Compra">
@@ -408,15 +447,12 @@ class AddOrEditMarketForm extends PureComponent {
 
 
 function mapStateToProps(state) {
-
-  console.log('[=====  STATE  =====>');
-  console.log(state);
-  console.log('<=====  /STATE  =====]');
-
+  
   return {
     userAccounts: state.userAccountsState.list,
     brokers: state.brokersState.list,
     products: state.productsState.list,
+    commodities: state.commoditiesState.list
   }
 }
 
@@ -425,6 +461,7 @@ const mapDispatchToProps = dispatch =>
     fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
     fetchGetBrokers: brokerOperations.fetchGetBrokers,
     fetchGetProducts: productOperations.fetchGetProducts,
+    fetchGetCommodities: commodityOperations.fetchGetCommodities,
   }, dispatch );
 
 

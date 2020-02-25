@@ -1,18 +1,15 @@
 import React, { Component } from 'react';
 import { EditableProvider, EditableConsumer } from './editableContext';
 import { Button, Input, Divider, Icon, Table, Form, Popconfirm, DatePicker } from 'antd';
-import moment from 'moment';
-
-moment.locale( 'es' ); // Set Lang to Spanish
 
 class EditableCell extends Component {
   getInput = () => {
     if (this.props.inputType === 'number') {
-      return <InputNumber />;
+      return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
     } else if (this.props.inputType === 'date') {
       return <DatePicker format="DD-MM-YYYY" />;
     }
-    return <Input />;
+    return <Input onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
   };
 
 

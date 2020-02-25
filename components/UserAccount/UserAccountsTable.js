@@ -4,19 +4,22 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { Button, Icon, Popconfirm, Table, Tag } from 'antd';
+import { Button, Icon, Input, Popconfirm, Table, Tag } from 'antd';
 import { Sort, FormatCurrency } from '../../common/utils';
+import Highlighter from "react-highlight-words";
 
 
 class UserAccountsTable extends Component {
   state = {
-    users: [],
+    userAccounts: [],
+    searchText: '',
+    searchedColumn: '',
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual( nextProps.users, prevState.users )) {
+    if (!_.isEqual( nextProps.userAccounts, prevState.userAccounts )) {
       return {
-        users: nextProps.users
+        userAccounts: nextProps.userAccounts
       }
     }
     return null;
@@ -70,23 +73,93 @@ class UserAccountsTable extends Component {
     }
   };
 
+  getColumnSearchProps = dataIndex => ( {
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={ { padding: 8 } }>
+        <Input
+          ref={ node => {
+            this.searchInput = node;
+          } }
+          placeholder={ `Buscar` }
+          value={ selectedKeys[ 0 ] }
+          onChange={ e => setSelectedKeys( e.target.value ? [ e.target.value ] : [] ) }
+          onPressEnter={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
+          style={ { width: 188, marginBottom: 8, display: 'block' } }
+        />
+        <Button
+          type="primary"
+          onClick={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
+          icon="search"
+          size="small"
+          style={ { width: 90, marginRight: 8 } }
+        >
+          Buscar
+        </Button>
+        <Button onClick={ () => this.handleReset( clearFilters ) } size="small" style={ { width: 90 } }>
+          Limpiar
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={ { color: filtered ? '#1890ff' : undefined } }/>
+    ),
+    onFilter: (value, record) => {
+
+      return _.get(record, dataIndex)
+        .toString()
+        .toLowerCase()
+        .includes( value.toLowerCase() )
+    },
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout( () => this.searchInput.select() );
+      }
+    },
+    render: text => {
+      return this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={ { backgroundColor: '#ffc069', padding: 0 } }
+          searchWords={ [ this.state.searchText ] }
+          autoEscape
+          textToHighlight={ text.toString() }
+        />
+      ) : (
+        text
+      )
+    }
+      
+  } );
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState( {
+      searchText: selectedKeys[ 0 ],
+      searchedColumn: dataIndex,
+    } );
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState( { searchText: '' } );
+  };
+
   render() {
     const columns = [
       {
         title: 'Usuario',
-        dataIndex: 'user',
-        key: 'username',
-        render: text => <span key={ text }>{ text.username }</span>,
-        sorter: (a, b) => Sort( a.user.username, b.user.username ),
+        dataIndex: 'user.username',
+        key: 'user.username',
+        sorter: (a, b) => Sort( a.username, b.username ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'user.username' ),
       },
       {
         title: 'Tipo de Cuenta',
-        dataIndex: 'account',
-        key: 'account',
-        render: text => <span key={ text }>{ text.name }</span>,
-        sorter: (a, b) => Sort( a.account.name, b.account.name ),
+        dataIndex: 'account.name',
+        key: 'account.name',
+        sorter: (a, b) => Sort( a.accountName, b.accountName ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'account.name' ),
       },
       {
         title: 'Comisión',
@@ -157,7 +230,7 @@ class UserAccountsTable extends Component {
       <Table
         rowKey={ record => record.id }
         columns={ columns }
-        dataSource={ this.props.userAccounts }
+        dataSource={ this.state.userAccounts }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
       />

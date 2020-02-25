@@ -12,7 +12,7 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING,
       },
-      actionsTotal: {
+      commoditiesTotal: {
         allowNull: true,
         type: Sequelize.STRING,
       },
@@ -65,6 +65,15 @@ module.exports = {
           model: 'Broker',
           key: 'id',
           as: 'broker'
+        }
+      },
+      commodityId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Commodity',
+          key: 'id',
+          as: 'commodity'
         }
       },
       amount: {

@@ -199,3 +199,10 @@ body > div:first-of-type:not(#__next) {
 .negative {
   color: $negative;
 }
+
+.product-tag {
+  background-color: $white;
+  color: $black;
+  font-weight: 700;
+  font-size: 1.4rem;
+}

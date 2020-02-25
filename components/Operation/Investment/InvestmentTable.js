@@ -5,7 +5,7 @@ import moment from 'moment';
 import _ from 'lodash';
 
 import { Button, Icon, Popconfirm, Table, Tag } from 'antd';
-import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate } from '../../../common/utils';
+import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate, DisplayTableAmount } from '../../../common/utils';
 
 class InvestmentTable extends Component {
   state = {
@@ -40,28 +40,24 @@ class InvestmentTable extends Component {
       return (
         <div className="cta-container">
           <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd" />Detalle</Button>
+          {this.props.isAdmin ? (
+            <>
+              <Popconfirm
+                okText="Si"
+                title="Está seguro ?"
+                cancelText="Cancelar"
+                onConfirm={ () => this.props.onDelete( row.id ) }
+              >
+                <Button type="danger"><Icon type="delete"/></Button>
+              </Popconfirm>
+              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
+            </>
+          ): null}
 
-          <Popconfirm
-            okText="Si"
-            title="Está seguro ?"
-            cancelText="Cancelar"
-            onConfirm={ () => this.props.onDelete( row.id ) }
-          >
-            <Button type="danger"><Icon type="delete"/></Button>
-          </Popconfirm>
-          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
         </div>
       )
     }
 
-  };
-
-  _displayTableAmount = amount => {
-    if (amount) {
-      return `${ FormatCurrency.format(amount) }`
-    } else {
-      return '-'
-    }
   };
 
   render() {
@@ -94,7 +90,7 @@ class InvestmentTable extends Component {
         title: 'Monto',
         dataIndex: 'amount',
         key: 'amount',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        render: amount => <span key={ amount }>{ DisplayTableAmount( amount ) }</span>,
         sorter: (a, b) => Sort( a.amount, b.amount ),
         sortDirections: [ 'descend', 'ascend' ],
       },

@@ -24,6 +24,7 @@ db.InvestmentOperation = ORM.import(path.join(__dirname, 'investment-operation.j
 db.InvestmentMovement = ORM.import(path.join(__dirname, 'investment-movement.js'));
 db.MarketOperation = ORM.import(path.join(__dirname, 'market-operation.js'));
 db.MarketMovement = ORM.import(path.join(__dirname, 'market-movement.js'));
+db.Commodity = ORM.import(path.join(__dirname, 'commodity.js'));
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

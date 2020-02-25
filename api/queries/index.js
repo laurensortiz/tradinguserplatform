@@ -9,3 +9,4 @@ export { default as investmentOperationQuery } from './investment-operation';
 export { default as investmentMovementQuery } from './investment-movement';
 export { default as marketOperationQuery } from './market-operation';
 export { default as marketMovementQuery } from './market-movement';
+export { default as commodityQuery } from './commodity';

@@ -2,7 +2,7 @@ module.exports = (Sequelize, DataTypes) => {
   const MarketMovement = Sequelize.define('MarketMovement', {
     gpInversion: {
       type: DataTypes.DECIMAL(10,2),
-      allowNull: false,
+      allowNull: true,
       unique: false,
     },
     gpAmount: {
@@ -11,7 +11,7 @@ module.exports = (Sequelize, DataTypes) => {
       unique: false,
     },
     createdAt: {
-      allowNull: false,
+      allowNull: true,
       type: DataTypes.DATE,
     },
     status: {

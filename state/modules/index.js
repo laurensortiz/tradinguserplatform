@@ -9,3 +9,4 @@ export { default as investmentOperationsState } from './investmentOperation';
 export { default as investmentMovementsState } from './investmentMovement';
 export { default as marketOperationsState } from './marketOperation';
 export { default as marketMovementsState } from './marketMovement';
+export { default as commoditiesState } from './commodity';

@@ -7,7 +7,7 @@ export default class MainFooter extends Component {
   render() {
     return (
       <Footer style={{ textAlign: 'center' }}>
-        © 2019 Web Trader All rights reserved | Created by LobCode
+        © 2020 Web Trader All rights reserved | Created by LobCode
       </Footer>
     );
   }

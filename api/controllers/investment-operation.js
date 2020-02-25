@@ -32,6 +32,7 @@ module.exports = {
   },
 
   async list(req, res) {
+
     const investmentOperation = await InvestmentOperation.findAll(
       investmentOperationQuery.list({ req, UserAccount, User, Account })
     );

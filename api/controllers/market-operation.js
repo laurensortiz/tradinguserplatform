@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { MarketOperation, UserAccount, User, Account, MarketMovement, Product, Broker } from '../models';
+import { MarketOperation, UserAccount, User, Account, MarketMovement, Product, Broker, Commodity } from '../models';
 import { marketOperationQuery, userQuery } from '../queries';
 
 module.exports = {
@@ -11,7 +11,8 @@ module.exports = {
         userAccountId: _.get(req, 'body.userAccount.id', 0),
         brokerId: _.get(req, 'body.broker.id', 0),
         productId: _.get(req, 'body.product.id', 0),
-        actionsTotal: req.body.actionsTotal,
+        commoditiesTotal: req.body.commoditiesTotal,
+        commodityId: _.get(req, 'body.commodity.id', 1),
         buyPrice: req.body.buyPrice,
         takingProfit: req.body.takingProfit,
         stopLost: req.body.stopLost,
@@ -39,7 +40,7 @@ module.exports = {
 
   async list(req, res) {
     const marketOperation = await MarketOperation.findAll(
-      marketOperationQuery.list({ req, UserAccount, User, Account, Product, Broker })
+      marketOperationQuery.list({ req, UserAccount, User, Account, Product, Broker, Commodity })
     );
 
     if (!marketOperation) {
@@ -53,7 +54,7 @@ module.exports = {
   async get(req, res) {
     const marketOperation = await MarketOperation.findByPk(
       req.params.marketOperationId,
-      userQuery.get( { req, UserAccount, Product, Broker } )
+      marketOperationQuery.get( { req, UserAccount, Product, Broker } )
     );
 
     if (!marketOperation) {
@@ -83,7 +84,8 @@ module.exports = {
       userAccountId: _.get(req, 'body.userAccount.id', 0) || marketOperation.userAccountId,
       brokerId: _.get(req, 'body.broker.id', 0) || marketOperation.brokerId,
       productId: _.get(req, 'body.product.id', 0) || marketOperation.productId,
-      actionsTotal: req.body.actionsTotal || marketOperation.actionsTotal,
+      commoditiesTotal: req.body.commoditiesTotal || marketOperation.commoditiesTotal,
+      commodityId: _.get(req, 'body.commodity.id', 1) || marketOperation.commodityId,
       buyPrice: req.body.buyPrice || marketOperation.buyPrice,
       takingProfit: req.body.takingProfit || marketOperation.takingProfit,
       stopLost: req.body.stopLost || marketOperation.stopLost,
