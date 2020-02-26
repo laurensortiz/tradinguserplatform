@@ -8,8 +8,8 @@ import _ from 'lodash';
 import InvestmentTable from './InvestmentTable';
 import AddOrEditInvestmentForm from './AddOrEditInvestmentForm';
 import OperationMovementDetail from './detail';
-import MovementsTable from './movementsTable';
-import { AccountInformation } from '../shared';
+
+import { AccountInformation, MovementsTable } from '../shared';
 
 import { investmentOperationOperations } from "../../../state/modules/investmentOperation";
 import { investmentMovementOperations } from "../../../state/modules/investmentMovement";
@@ -35,15 +35,16 @@ class Investment extends Component {
     let updatedState = {};
     if (!_.isEqual( nextProps.investmentOperations, prevState.investmentOperations )) {
       let investmentOperationsUser ;
+
       if (!nextProps.isAdmin) {
         investmentOperationsUser = _.filter(nextProps.investmentOperations, ['userAccount.userId', nextProps.currentUserId])
       } else {
-        investmentOperationsUser = nextProps.marketOperations
+        investmentOperationsUser = nextProps.investmentOperations
       }
 
       _.assignIn( updatedState, {
         investmentOperations: investmentOperationsUser
-      } )
+      } );
 
       if (prevState.isDetailViewVisible) {
         _.assignIn( updatedState, {

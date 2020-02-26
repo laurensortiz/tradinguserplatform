@@ -10,8 +10,8 @@ import { GetGP } from "../../../common/utils";
 import MarketTable from './MarketTable';
 import AddOrEditMarketForm from './AddOrEditMarketForm';
 import MarketMovementDetail from './detail';
-import MovementsTable from './movementsTable';
-import { AccountInformation } from '../shared';
+
+import { AccountInformation, MovementsTable } from '../shared';
 
 import { marketOperationOperations } from "../../../state/modules/marketOperation";
 import { marketMovementOperations } from "../../../state/modules/marketMovement";
