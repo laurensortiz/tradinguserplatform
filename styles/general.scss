@@ -53,7 +53,6 @@ strong {
   }
 
   .login-form-container {
-    border: 1px solid $gray-btn;
     border-radius: 10px;
 
     form {
@@ -205,4 +204,12 @@ body > div:first-of-type:not(#__next) {
   color: $black;
   font-weight: 700;
   font-size: 1.4rem;
+}
+
+.widget-box-container {
+  display: table-cell;
+
+  .tradingview-widget-container {
+    //display: table-column;
+  }
 }

@@ -63,6 +63,7 @@ module.exports = {
   },
 
   async getByUser(req, res) {
+
     const userAccount = await UserAccount.findAll(
       userAccountQuery.getByUser( { req, User, Role, Account } )
     );

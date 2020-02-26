@@ -1,12 +1,7 @@
 import fetch from '../../../common/fetch';
 
 export const getUserAccounts = async (userId) => {
-  if (userId) {
-    return fetch({
-      method: 'get',
-      url: `user-accounts/user/${userId}`,
-    });
-  }
+
 
   return fetch({
     method: 'get',

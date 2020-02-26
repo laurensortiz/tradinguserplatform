@@ -32,31 +32,14 @@ class Operations extends Component {
       } )
     }
 
-    if (!_.isEqual( nextProps.operations, prevState.operations )) {
-      _.assignIn( updatedState, {
-        operations: nextProps.operations,
-        hasMarketOperations: !_.isEmpty( nextProps.operations.marketOperations ),
-        hasInvestmentOperations: !_.isEmpty( nextProps.operations.investmentOperations ),
-      } )
-    }
-
     if (!_.isEqual( nextProps.currentUser, prevState.currentUser )) {
-
-      if (!_.isEqual( nextProps.currentUser.roleId, 1 )) {
-        nextProps.fetchGetUserAccounts( nextProps.currentUser.id )
-      }
       _.assignIn( updatedState, {
         currentUser: nextProps.currentUser
       } );
-
-
     }
 
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
-
-  componentDidMount() {
-  };
 
   _onSelectOperationType = ({ target }) => {
     this.setState( {
@@ -101,7 +84,7 @@ class Operations extends Component {
                     isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
                     onClose={ this._handleFormDisplay }
                     handleFormVisible={ this._handleFormDisplay }
-                    isAdmin={ this.state.isAdmin }
+                    isAdmin={ true }
                   />
                 </TabPane>
                 <TabPane tab key="investment">
@@ -109,7 +92,7 @@ class Operations extends Component {
                     isFormVisible={ _.isEqual( this.state.operationType, 'investment' ) && this.state.isFormVisible }
                     onClose={ this._handleFormDisplay }
                     handleFormVisible={ this._handleFormDisplay }
-                    isAdmin={ this.state.isAdmin }
+                    isAdmin={ true }
                   />
                 </TabPane>
               </Tabs>
@@ -117,29 +100,24 @@ class Operations extends Component {
           </>
         ) : (
           <div>
-            { this.state.hasMarketOperations ? (
-              <div>
-                <Market
-                  marketOperationsUser={_.get(this.state.operations, 'marketOperations', [])}
-                  isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
-                  onClose={ this._handleFormDisplay }
-                  handleFormVisible={ this._handleFormDisplay }
-                  isAdmin={ this.state.isAdmin }
-                />
-              </div>
-            ) : null }
-
-            { this.state.hasInvestmentOperations ? (
-              <div>
-                <Investment
-                  investmentOperationsUser={_.get(this.state.operations, 'investmentOperations', [])}
-                  isFormVisible={ _.isEqual( this.state.operationType, 'investment' ) && this.state.isFormVisible }
-                  onClose={ this._handleFormDisplay }
-                  handleFormVisible={ this._handleFormDisplay }
-                  isAdmin={ this.state.isAdmin }
-                />
-              </div>
-            ) : null }
+            <div>
+              <Market
+                isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
+                onClose={ this._handleFormDisplay }
+                handleFormVisible={ this._handleFormDisplay }
+                isAdmin={ false }
+                currentUserId={_.get(this.state.currentUser, 'id', 0)}
+              />
+            </div>
+            <div>
+              <Investment
+                isFormVisible={ _.isEqual( this.state.operationType, 'investment' ) && this.state.isFormVisible }
+                onClose={ this._handleFormDisplay }
+                handleFormVisible={ this._handleFormDisplay }
+                isAdmin={ false }
+                currentUserId={_.get(this.state.currentUser, 'id', 0)}
+              />
+            </div>
           </div>
         ) }
 
@@ -153,7 +131,6 @@ function mapStateToProps(state) {
 
   return {
     isAdmin: state.authState.isAdmin,
-    operations: state.userAccountsState.list,
     currentUser: state.authState.currentUser,
     isLoading: state.investmentOperationsState.isLoading,
     isSuccess: state.investmentOperationsState.isSuccess,

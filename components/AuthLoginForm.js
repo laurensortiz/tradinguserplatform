@@ -34,10 +34,10 @@ class AuthLoginForm extends Component {
     return (
       <div className="login-form-container">
         <div className="login-form-header">
-          <h2>Bienvenido</h2>
+
         </div>
         <Form onSubmit={ this._handleSubmit } className="login-form">
-          <Form.Item>
+          <Form.Item label="Usuario">
             { getFieldDecorator( 'username', {
               rules: [ { required: true, message: 'Por favor ingrese su usuario' } ],
             } )(
@@ -45,7 +45,7 @@ class AuthLoginForm extends Component {
                      prefix={ <Icon type="user" style={ { color: 'rgba(0,0,0,.25)' } }/> } placeholder="Username"/>
             ) }
           </Form.Item>
-          <Form.Item>
+          <Form.Item label="Contraseña">
             { getFieldDecorator( 'password', {
               rules: [ { required: true, message: 'Por favor ingrese su contraseña' } ],
             } )(

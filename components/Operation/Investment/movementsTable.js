@@ -235,13 +235,10 @@ class MovementsTable extends Component {
     } );
     return (
       <div>
-        {this.props.isAdmin ? (
-          <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                  disabled={ !_.isEmpty( this.state.tempDataSource ) }>
-            Agregar Movimiento
-          </Button>
-        ) : null}
-
+        <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
+                disabled={ !_.isEmpty( this.state.tempDataSource ) }>
+          Agregar Movimiento
+        </Button>
         <EditableProvider value={ this.props.form }>
           <Table
             className={ !_.isEmpty( this.state.tempDataSource ) ? 'hasNew' : '' }

@@ -314,7 +314,7 @@ class Calendar extends Component {
   render() {
     return (
       <Document>
-        <div dangerouslySetInnerHTML={this.createMarkup()} />
+        <div className="widget-box-container" dangerouslySetInnerHTML={this.createMarkup()} />
       </Document>
     );
   }

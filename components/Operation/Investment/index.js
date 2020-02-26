@@ -34,12 +34,18 @@ class Investment extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
     if (!_.isEqual( nextProps.investmentOperations, prevState.investmentOperations )) {
+      let investmentOperationsUser ;
+      if (!nextProps.isAdmin) {
+        investmentOperationsUser = _.filter(nextProps.investmentOperations, ['userAccount.userId', nextProps.currentUserId])
+      } else {
+        investmentOperationsUser = nextProps.marketOperations
+      }
+
       _.assignIn( updatedState, {
-        investmentOperations: nextProps.investmentOperations
+        investmentOperations: investmentOperationsUser
       } )
 
       if (prevState.isDetailViewVisible) {
-
         _.assignIn( updatedState, {
           currentOperationDetail: _.find( nextProps.investmentOperations, { id: prevState.currentOperationDetail.id } )
         } )
@@ -112,9 +118,7 @@ class Investment extends Component {
   }
 
   componentDidMount() {
-    if (this.props.isAdmin) {
-      this.props.fetchGetInvestmentOperations();
-    }
+    this.props.fetchGetInvestmentOperations();
 
   };
 
@@ -227,7 +231,7 @@ class Investment extends Component {
               <Tabs>
                 <TabPane tab="Activos" key="1">
                   <InvestmentTable
-                    investmentOperations={ _.filter( this.props.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
+                    investmentOperations={ _.filter( this.state.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
                     isLoading={ this.props.isLoading }
                     onEdit={ this._onSelectEdit }
                     onDelete={ this._handleDeleteUserOperation }
@@ -237,7 +241,7 @@ class Investment extends Component {
                 </TabPane>
                 <TabPane tab="Eliminados" key="2">
                   <InvestmentTable
-                    investmentOperations={ _.filter( this.props.investmentOperations, { status: 0 } ) }
+                    investmentOperations={ _.filter( this.state.investmentOperations, { status: 0 } ) }
                     isLoading={ this.props.isLoading }
                     onActive={ this._onSelectActive }
                     status="inactive"
@@ -247,7 +251,7 @@ class Investment extends Component {
               </Tabs>
             ) : (
               <InvestmentTable
-                investmentOperations={ _.filter( this.props.investmentOperationsUser, ({ status }) => !_.isEqual( status, 0 ) ) }
+                investmentOperations={ _.filter( this.state.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
                 isLoading={ this.props.isLoading }
                 onEdit={ this._onSelectEdit }
                 onDelete={ this._handleDeleteUserOperation }

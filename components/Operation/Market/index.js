@@ -37,8 +37,16 @@ class Market extends Component {
     let updatedState = {};
 
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
+
+      let marketOperationUser ;
+      if (!nextProps.isAdmin) {
+        marketOperationUser = _.filter(nextProps.marketOperations, ['userAccount.userId', nextProps.currentUserId])
+      } else {
+        marketOperationUser = nextProps.marketOperations
+      }
+
       _.assignIn( updatedState, {
-        marketOperations: nextProps.marketOperations
+        marketOperations: marketOperationUser
       } )
 
       if (prevState.isDetailViewVisible) {
@@ -115,9 +123,7 @@ class Market extends Component {
   }
 
   componentDidMount() {
-    if (this.props.isAdmin) {
-      this.props.fetchGetMarketOperations();
-    }
+    this.props.fetchGetMarketOperations();
 
   };
 
@@ -228,7 +234,7 @@ class Market extends Component {
               <Tabs>
                 <TabPane tab="Activos" key="1">
                   <MarketTable
-                    marketOperations={ _.filter( this.props.marketOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
+                    marketOperations={ _.filter( this.state.marketOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
                     isLoading={ this.props.isLoading }
                     onEdit={ this._onSelectEdit }
                     onDelete={ this._handleDeleteUserOperation }
@@ -238,7 +244,7 @@ class Market extends Component {
                 </TabPane>
                 <TabPane tab="Eliminados" key="2">
                   <MarketTable
-                    marketOperations={ _.filter( this.props.marketOperations, { status: 0 } ) }
+                    marketOperations={ _.filter( this.state.marketOperations, { status: 0 } ) }
                     isLoading={ this.props.isLoading }
                     onActive={ this._onSelectActive }
                     status="inactive"
@@ -248,7 +254,7 @@ class Market extends Component {
               </Tabs>
             ) : (
               <MarketTable
-                marketOperations={ _.filter( this.props.marketOperationsUser, ({ status }) => !_.isEqual( status, 0 ) ) }
+                marketOperations={ _.filter( this.state.marketOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
                 isLoading={ this.props.isLoading }
                 onEdit={ this._onSelectEdit }
                 onDelete={ this._handleDeleteUserOperation }

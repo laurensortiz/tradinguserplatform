@@ -24,83 +24,6 @@ class MovementsTable extends Component {
     editingKey: '',
   };
 
-  columns = [
-    {
-      title: 'G/P',
-      dataIndex: 'gpInversion',
-      key: 'gpInversion',
-      render: value => FormatCurrency.format(value),
-      editable: false,
-      required: false
-    },
-    {
-      title: 'G/P',
-      dataIndex: 'gpAmount',
-      key: 'gpAmount',
-      render: value => FormatCurrency.format(value),
-      editable: true,
-      required: true
-    },
-    {
-      title: 'Fecha de movimiento',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: value => FormatDate( value ),
-      editable: true,
-      inputType: 'date',
-      required: false,
-    },
-    {
-      title: 'Acciones',
-      key: 'actions',
-      className: 'actions-col',
-      render: (text, record) => {
-        record = {
-          ...record,
-          key: record.id
-        };
-        const { editingKey } = this.state;
-        const editable = this.isEditing( record );
-        return editable ? (
-          <span>
-              <EditableConsumer>
-                { form => (
-                  <a
-                    onClick={ () => this.save(record.key ) }
-                    style={ { marginRight: 8 } }
-                  >
-                    Salvar
-                  </a>
-                ) }
-              </EditableConsumer>
-              <Popconfirm
-                title="Desea cancelar?"
-                onConfirm={ () => this.cancel( record.key ) }
-                okText="Sí"
-                cancelText="No"
-              >
-                <a>Cancelar</a>
-              </Popconfirm>
-            </span>
-        ) : (
-          <div>
-            {/*<a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>*/}
-            {/*  Editar*/}
-            {/*</a>*/}
-            {/*<Popconfirm*/}
-            {/*  title="Desea eliminarlo?"*/}
-            {/*  onConfirm={ () => this.handleDelete( record.key ) }*/}
-            {/*  okText="Sí"*/}
-            {/*  cancelText="No"*/}
-            {/*>*/}
-            {/*  <Button type="danger" disabled={ editingKey !== '' } ><Icon type="delete"/></Button>*/}
-            {/*</Popconfirm>*/}
-          </div>
-        );
-      },
-    },
-  ];
-
   isEditing = record => record.id === this.state.editingKey;
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -195,7 +118,8 @@ class MovementsTable extends Component {
         cell: EditableCell,
       },
     };
-    const columns = this.columns.map( col => {
+
+    const columns = this._getColumns().map( col => {
       if (!col.editable) {
         return col;
       }
