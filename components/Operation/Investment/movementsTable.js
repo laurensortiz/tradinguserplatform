@@ -1,11 +1,16 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import { Button, Table, Form, Popconfirm, Icon } from 'antd';
+import { Button, Table, Form, Popconfirm, Icon, Select, DatePicker } from 'antd';
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
 import moment from 'moment';
 
+import momentDurationFormat from 'moment-duration-format';
+import { extendMoment } from 'moment-range';
+
+momentDurationFormat( moment );
+extendMoment( moment );
 moment.locale( 'es' ); // Set Lang to Spanish
 
 import { EditableProvider, EditableConsumer } from './shared/editableContext';
@@ -15,7 +20,11 @@ import { FormatCurrency, FormatDate, GetGP, getGPInversion } from '../../../comm
 
 import { investmentMovementOperations } from '../../../state/modules/investmentMovement';
 
+const { Option } = Select;
+const { RangePicker } = DatePicker;
+
 const DEFAULT_INPUT_TEXT = '';
+const FORMAT_DATE = 'DD-MM-YYYY';
 
 class MovementsTable extends Component {
   state = {
@@ -25,85 +34,15 @@ class MovementsTable extends Component {
     editingKey: '',
     currentOperationAmount: 0,
     initialOperationAmount: 0,
-    operationPercentage: 0
+    operationPercentage: 0,
+    filteredInfo: {},
+    sortedInfo: {},
+    searchText: '',
   };
 
-  columns = [
-    {
-      title: 'G/P',
-      dataIndex: 'gpInversion',
-      key: 'gpInversion',
-      render: value => FormatCurrency.format( value ),
-      editable: true,
-      required: false
-    },
-    {
-      title: 'G/P',
-      dataIndex: 'gpAmount',
-      key: 'gpAmount',
-      render: value => FormatCurrency.format( value ),
-      editable: true,
-      required: true
-    },
-    {
-      title: 'Fecha de movimiento',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: value => FormatDate( value ),
-      editable: true,
-      inputType: 'date',
-      required: false
-    },
-    {
-      title: 'Acciones',
-      key: 'actions',
-      className: 'actions-col',
-      render: (text, record) => {
-        record = {
-          ...record,
-          key: record.id
-        };
-        const { editingKey } = this.state;
-        const editable = this.isEditing( record );
-        return editable ? (
-          <span>
-              <EditableConsumer>
-                { form => (
-                  <a
-                    onClick={ () => this.save( record.key ) }
-                    style={ { marginRight: 8 } }
-                  >
-                    Salvar
-                  </a>
-                ) }
-              </EditableConsumer>
-              <Popconfirm
-                title="Desea cancelar?"
-                onConfirm={ () => this.cancel( record.key ) }
-                okText="Sí"
-                cancelText="No"
-              >
-                <a>Cancelar</a>
-              </Popconfirm>
-            </span>
-        ) : (
-          <div>
-            {/*<a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>*/ }
-            {/*  Editar*/ }
-            {/*</a>*/ }
-            {/*<Popconfirm*/ }
-            {/*  title="Desea eliminarlo?"*/ }
-            {/*  onConfirm={ () => this.handleDelete( record.key ) }*/ }
-            {/*  okText="Sí"*/ }
-            {/*  cancelText="No"*/ }
-            {/*>*/ }
-            {/*  <Button type="danger" disabled={ editingKey !== '' }><Icon type="delete"/></Button>*/ }
-            {/*</Popconfirm>*/ }
-          </div>
-        );
-      },
-    },
-  ];
+  dateMode = 0;
+  timeDateRange = [];
+  defaultDate = null;
 
   isEditing = record => record.id === this.state.editingKey;
 
@@ -133,8 +72,6 @@ class MovementsTable extends Component {
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
-  componentDidMount() {
-  }
 
   handleDelete = key => {
     if (_.isString( key )) {
@@ -205,6 +142,232 @@ class MovementsTable extends Component {
       tempDataSource: [tempDataSourceUpdate]
     })
   };
+  /*
+  * RANGE
+  *
+  * */
+
+  _handleSearch = (selectedKeys, confirm) => {
+    confirm();
+    this.setState( {
+      searchText: selectedKeys[ 0 ],
+    } );
+  };
+
+  _handleReset = (selectedKeys, clearFilters) => {
+    if (!_.isEmpty( selectedKeys )) {
+      clearFilters();
+      this.setState( {
+        searchText: '',
+      } );
+    }
+
+  };
+
+  _sortDates = (start, end) => {
+    if (_.isNil( start )) start = '00-00-0000';
+    if (_.isNil( end )) end = '00-00-0000';
+    
+    console.log('[=====  test  =====>');
+    console.log( moment( start ).unix() - moment( end ).unix());
+    console.log('<=====  /test  =====]');
+
+    return moment( start ).unix() - moment( end ).unix()
+  };
+
+  _handleDateFilterChange = (dateModeValue) => {
+    this.dateMode = dateModeValue;
+    this.forceUpdate();
+    this.defaultDate = null;
+  };
+
+  _datesInRange = (record, dataIndex) => {
+
+    const dateRange = this.timeDateRange;
+    if (!_.isEmpty( dateRange )) {
+      return _.includes( dateRange, moment.utc( _.get( record, dataIndex ) ).format( FORMAT_DATE ) )
+    }
+
+  };
+
+  _createDateRange = (date, setSelectedKeys, minDate, maxDate, dataIndex) => {
+    this.defaultDate = moment.utc( date );
+
+    let dateRange = [],
+      range = '';
+
+    const dateMode = this.dateMode;
+
+    switch (dateMode) {
+      case 'single':
+        range = moment.range( date, date );
+        break;
+      case 'range':
+        range = moment.range( date[ 0 ], date[ 1 ] );
+        break;
+      default:
+    }
+
+    let arrayOfDates = _.toArray( range.by( 'days' ) );
+
+    _.map( arrayOfDates, date => {
+      dateRange.push( moment( date ).format( FORMAT_DATE ) )
+    } );
+
+    this.timeDateRange = dateRange;
+
+    return setSelectedKeys( date ? [ date ] : [] );
+  };
+
+  _getColumnDateProps = (dataIndex, minDate, maxDate) => ( {
+    filterDropdown: ({
+                       setSelectedKeys,
+                       selectedKeys,
+                       confirm,
+                       clearFilters,
+                     }) => (
+      <div className="custom-filter-dropdown">
+        <Select
+          placeholder="Seleccione el tipo de filtro"
+          onChange={ e => this._handleDateFilterChange( e ) }
+        >
+          <Option value="single">Por día</Option>
+          <Option value="range">Rango de fechas</Option>
+        </Select>
+
+        { this.dateMode === 'range' ?
+          <RangePicker
+            onChange={ e => this._createDateRange( e, setSelectedKeys, minDate, maxDate, dataIndex ) }
+            format={ FORMAT_DATE }
+            allowClear={ false }
+          />
+          : null
+        }
+
+        { this.dateMode === 'single' ?
+          <DatePicker
+            value={ this.defaultDate }
+            onChange={ e => this._createDateRange( e, setSelectedKeys, minDate, maxDate, dataIndex ) }
+            format={ FORMAT_DATE }
+            allowClear={ false }
+          />
+          : null
+        }
+        <Button
+          onClick={ () => this._handleSearch( selectedKeys, confirm ) }
+          icon="search"
+          size="small"
+        >
+          Filtrar
+        </Button>
+        <Button
+          ref={ e => this.clearFilterDatesBtn = e }
+          onClick={ () => this._handleReset( selectedKeys, clearFilters ) }
+          size="small"
+        >
+          Limpiar
+        </Button>
+      </div>
+    ),
+    onFilter: (value, record) => {
+      return this._datesInRange( record, dataIndex )
+    }
+  } );
+
+  _getColumns = () => {
+    const sortDirections = [ 'descend', 'ascend' ];
+    const datesInTimes = _.map( this.state.dataSource, record => moment( record.createdAt ) ),
+      maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
+      minDatesInTimes = moment.min( datesInTimes ).subtract( 1, 'days' );
+
+    return [
+      {
+        title: 'G/P',
+        dataIndex: 'gpInversion',
+        key: 'gpInversion',
+        render: value => FormatCurrency.format( value ),
+        editable: true,
+        required: false
+      },
+      {
+        title: 'G/P',
+        dataIndex: 'gpAmount',
+        key: 'gpAmount',
+        render: value => FormatCurrency.format( value ),
+        editable: true,
+        required: true
+      },
+      {
+        title: 'Fecha de movimiento',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: value => FormatDate( value ),
+        editable: true,
+        inputType: 'date',
+        required: false,
+        rowKey: d => {
+          return FormatDate( d.createdAt )
+        },
+        sorter: (a, b) => {
+          return this._sortDates( a.createdAt, b.createdAt );
+        },
+        ...this._getColumnDateProps(
+          'createdAt',
+          minDatesInTimes,
+          maxDatesInTimes,
+        )
+      },
+      {
+        title: 'Acciones',
+        key: 'actions',
+        className: 'actions-col',
+        render: (text, record) => {
+          record = {
+            ...record,
+            key: record.id
+          };
+          const { editingKey } = this.state;
+          const editable = this.isEditing( record );
+          return editable ? (
+            <span>
+              <EditableConsumer>
+                { form => (
+                  <a
+                    onClick={ () => this.save( record.key ) }
+                    style={ { marginRight: 8 } }
+                  >
+                    Salvar
+                  </a>
+                ) }
+              </EditableConsumer>
+              <Popconfirm
+                title="Desea cancelar?"
+                onConfirm={ () => this.cancel( record.key ) }
+                okText="Sí"
+                cancelText="No"
+              >
+                <a>Cancelar</a>
+              </Popconfirm>
+            </span>
+          ) : (
+            <div>
+              {/*<a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>*/ }
+              {/*  Editar*/ }
+              {/*</a>*/ }
+              {/*<Popconfirm*/ }
+              {/*  title="Desea eliminarlo?"*/ }
+              {/*  onConfirm={ () => this.handleDelete( record.key ) }*/ }
+              {/*  okText="Sí"*/ }
+              {/*  cancelText="No"*/ }
+              {/*>*/ }
+              {/*  <Button type="danger" disabled={ editingKey !== '' }><Icon type="delete"/></Button>*/ }
+              {/*</Popconfirm>*/ }
+            </div>
+          );
+        },
+      },
+    ];
+  }
 
   render() {
 
@@ -214,7 +377,7 @@ class MovementsTable extends Component {
         cell: EditableCell,
       },
     };
-    const columns = this.columns.map( col => {
+    const columns = this._getColumns().map( col => {
       if (!col.editable) {
         return col;
       }
@@ -235,10 +398,13 @@ class MovementsTable extends Component {
     } );
     return (
       <div>
-        <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                disabled={ !_.isEmpty( this.state.tempDataSource ) }>
-          Agregar Movimiento
-        </Button>
+        {this.props.isAdmin ? (
+          <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
+                  disabled={ !_.isEmpty( this.state.tempDataSource ) }>
+            Agregar Movimiento
+          </Button>
+        ) : null}
+
         <EditableProvider value={ this.props.form }>
           <Table
             className={ !_.isEmpty( this.state.tempDataSource ) ? 'hasNew' : '' }
