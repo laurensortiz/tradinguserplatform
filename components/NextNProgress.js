@@ -27,6 +27,7 @@ class NextNProgress extends React.Component {
   };
 
   render() {
+
     const { color, height } = this.props;
 
     return (

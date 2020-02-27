@@ -63,6 +63,17 @@ class InvestmentTable extends Component {
   render() {
     const columns = [
       {
+        title: 'Estado',
+        dataIndex: 'status',
+        key: 'status',
+        render: status => {
+          const {name, color} = FormatStatus(status);
+          return <Tag color={color} >{ name }</Tag>
+        },
+        sorter: (a, b) => Sort( a.status, b.status ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
         title: 'Usuario',
         dataIndex: 'userAccount',
         key: 'userAccount',
@@ -92,17 +103,6 @@ class InvestmentTable extends Component {
         key: 'amount',
         render: amount => <span key={ amount }>{ DisplayTableAmount( amount ) }</span>,
         sorter: (a, b) => Sort( a.amount, b.amount ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
-      {
-        title: 'Estado',
-        dataIndex: 'status',
-        key: 'status',
-        render: status => {
-          const {name, color} = FormatStatus(status);
-          return <Tag color={color} >{ name }</Tag>
-        },
-        sorter: (a, b) => Sort( a.status, b.status ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {

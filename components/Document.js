@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Layout, Menu, Icon, } from 'antd';
+import Router from "next/router";
+import _ from 'lodash';
 
 import Head from 'next/head';
 
@@ -27,6 +29,10 @@ class Document extends Component {
   };
 
   render() {
+    const isLoginPage = _.isEqual(_.get(Router, 'router.route'), '/')
+    console.log('[=====  TEST  =====>');
+    console.log(isLoginPage);
+    console.log('<=====  /TEST  =====]');
     return (
       <React.Fragment>
         <Head>
