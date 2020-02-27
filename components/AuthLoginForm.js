@@ -34,7 +34,7 @@ class AuthLoginForm extends Component {
     return (
       <div className="login-form-container">
         <div className="login-form-header">
-
+          <img className="desktop" src="/static/logo_web_trader.png" alt=""/>
         </div>
         <Form onSubmit={ this._handleSubmit } className="login-form">
           <Form.Item label="Usuario">

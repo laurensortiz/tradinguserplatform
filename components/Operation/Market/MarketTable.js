@@ -3,6 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 import { Button, Icon, Input, Popconfirm, Table, Tag } from 'antd';
 import {
@@ -142,6 +143,7 @@ class MarketTable extends Component {
 
 
   render() {
+
     const columns = [
       {
         title: '',
@@ -276,6 +278,7 @@ class MarketTable extends Component {
         dataSource={ this.state.marketOperations }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
+        className={classNames({'hidden-table': !this.props.isAdmin && _.isEmpty(this.state.marketOperations)})}
       />
     );
   }

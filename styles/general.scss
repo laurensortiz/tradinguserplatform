@@ -211,5 +211,15 @@ body > div:first-of-type:not(#__next) {
 
   .tradingview-widget-container {
     //display: table-column;
+    float: left;
+    width: 100%;
+
+    @media screen and (min-width: $md) {
+      width: 45%;
+    }
   }
+}
+
+.hidden-table {
+  display: none!important;
 }

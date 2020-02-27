@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Layout, Menu, Icon, } from 'antd';
 import Router from "next/router";
 import _ from 'lodash';
+import classNames from 'classnames';
 
 import Head from 'next/head';
 
@@ -30,9 +31,7 @@ class Document extends Component {
 
   render() {
     const isLoginPage = _.isEqual(_.get(Router, 'router.route'), '/')
-    console.log('[=====  TEST  =====>');
-    console.log(isLoginPage);
-    console.log('<=====  /TEST  =====]');
+
     return (
       <React.Fragment>
         <Head>
@@ -47,7 +46,7 @@ class Document extends Component {
           <link rel="shortcut icon" href="/static/favicon.png"/>
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,700&display=swap" rel="stylesheet" />
         </Head>
-        <Layout className="dark-mode" style={ { minHeight: '100vh' } } id={ this.props.id || 'main-page' }>
+        <Layout className={classNames('dark-mode', {'login-page' : isLoginPage})} style={ { minHeight: '100vh' } } id={ this.props.id || 'main-page' } >
           <Header/>
           <Sider collapsible collapsed={ this.state.collapsed } onCollapse={ this.onCollapse }>
             <Header/>

@@ -6,6 +6,7 @@ import _ from 'lodash';
 
 import { Button, Icon, Popconfirm, Table, Tag } from 'antd';
 import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate, DisplayTableAmount } from '../../../common/utils';
+import classNames from "classnames";
 
 class InvestmentTable extends Component {
   state = {
@@ -138,6 +139,8 @@ class InvestmentTable extends Component {
         dataSource={ this.props.investmentOperations }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
+        className={classNames({'hidden-table': !this.props.isAdmin && _.isEmpty(this.props.investmentOperations)})}
+
       />
     );
   }
