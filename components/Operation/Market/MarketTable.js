@@ -198,7 +198,7 @@ class MarketTable extends Component {
       //   sortDirections: [ 'descend', 'ascend' ],
       // },
       {
-        title: 'Saldo Inicial',
+        title: 'Saldo Actual',
         dataIndex: 'amount',
         key: 'amount',
         render: amount => <span key={ amount }>{ DisplayTableAmount( amount ) }</span>,
