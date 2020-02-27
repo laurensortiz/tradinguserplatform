@@ -391,11 +391,14 @@ class MovementsTable extends Component {
         } ),
       };
     } );
+
+    const disableAddBtn = !_.isEqual(_.get(this.props, 'currentOperation.status', 1), 1);
+
     return (
       <div>
         {this.props.isAdmin ? (
           <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                  disabled={ !_.isEmpty( this.state.tempDataSource ) }>
+                  disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn}>
             Agregar Movimiento
           </Button>
         ) : null}
