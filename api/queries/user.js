@@ -1,5 +1,5 @@
 const queries = {
-  list: ({ req, User, Role, Account }) => {
+  list: ({ req, User, Role }) => {
     return {
       attributes: {
         exclude: [ 'salt', 'password' ],
@@ -8,16 +8,12 @@ const queries = {
         {
           model: Role,
           as: 'role',
-        },
-        {
-          model: Account,
-          as: 'account',
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  get: ({ req, User, Role, Account }) => {
+  get: ({ req, User, Role }) => {
     return {
       attributes: {
         exclude: [ 'salt', 'password' ],
@@ -26,10 +22,6 @@ const queries = {
         {
           model: Role,
           as: 'role',
-        },
-        {
-          model: Account,
-          as: 'account',
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],

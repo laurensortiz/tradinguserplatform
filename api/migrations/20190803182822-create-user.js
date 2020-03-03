@@ -61,15 +61,6 @@ module.exports = {
           as: 'role'
         }
       },
-      accountId: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Account',
-          key: 'id',
-          as: 'account'
-        }
-      },
       status: {
         allowNull: false,
         type: Sequelize.INTEGER,

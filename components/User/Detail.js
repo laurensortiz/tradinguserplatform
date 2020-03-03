@@ -38,7 +38,6 @@ class Detail extends Component {
     const email = _.get(this.props, 'currentUser.email', '');
     const phoneNumber = _.get(this.props, 'currentUser.phoneNumber', '');
     const startDate = _.get(this.props, 'currentUser.startDate', null);
-    const account = _.get(this.props, 'currentUser.account.name', '');
 
     const status = _.get(this.props, 'currentUser.status', 1);
     const {name, color} = FormatStatus(status);
@@ -52,7 +51,6 @@ class Detail extends Component {
           <Descriptions.Item label="Correo Electrónico">{email}</Descriptions.Item>
           <Descriptions.Item label="Número de Teléfono">{phoneNumber}</Descriptions.Item>
           <Descriptions.Item label="Fecha de Inicio">{FormatDate(startDate)}</Descriptions.Item>
-          <Descriptions.Item label="Cuenta Asociada">{account}</Descriptions.Item>
 
         </Descriptions>
       </>

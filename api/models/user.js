@@ -20,9 +20,6 @@ module.exports = (Sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       allowNull: true,
-      validate: {
-        isEmail: true,
-      },
     },
     password: {
       type: DataTypes.STRING,
@@ -66,9 +63,9 @@ module.exports = (Sequelize, DataTypes) => {
       as: 'role',
     });
 
-    User.belongsTo(models.Account, {
-      foreignKey: 'accountId',
-      as: 'account',
+    User.hasMany(models.Account, {
+      foreignKey: 'userId',
+      as: 'user',
     });
 
   };

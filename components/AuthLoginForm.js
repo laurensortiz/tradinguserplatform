@@ -49,7 +49,7 @@ class AuthLoginForm extends Component {
             { getFieldDecorator( 'password', {
               rules: [ { required: true, message: 'Por favor ingrese su contraseña' } ],
             } )(
-              <Input name="password" onChange={ this._handleChange }
+              <Input.Password name="password" onChange={ this._handleChange }
                      prefix={ <Icon type="lock" style={ { color: 'rgba(0,0,0,.25)' } }/> } type="password"
                      placeholder="Password"/>
             ) }

@@ -12,9 +12,6 @@ import setupAuth from './api/auth';
 import setupApi from './api';
 import enforceSSL from './common/enforce-ssl';
 
-import {userQuery} from './api/queries';
-import { User, Role, Account } from './api/models';
-
 const dev = process.env.NODE_ENV !== 'production';
 const port = parseInt(process.env.PORT, 10) || 8000;
 const app = next({ dev, quiet: false });
@@ -41,11 +38,6 @@ app.prepare().then(() => {
   setupAuth(server, passport);
   setupApi(server);
 
-  server.get('/operation-investment/:id', (req, res) => {
-    const actualPage = '/operation-investment';
-    const queryParams = { id: req.params.id };
-    app.render(req, res, actualPage, queryParams);
-  });
 
   server.get('*', async (req, res) => {
     return app.render(req, res, req.url);

@@ -30,12 +30,10 @@ module.exports = {
     const verifyPassword = req.body.verifyPassword;
     const phoneNumber = req.body.phoneNumber;
     const roleId = _.get(req, 'body.role.id', 2);
-    const accountId = _.get(req, 'body.account.id', 0);
     const status = req.body.status || 1;
 
     if (
       isEmptyOrNull( username ) ||
-      isEmptyOrNull( email ) ||
       isEmptyOrNull( password ) ||
       isEmptyOrNull( verifyPassword )
     ) {
@@ -59,7 +57,6 @@ module.exports = {
         lastName,
         salt,
         password: hashPassword(password),
-        accountId,
         startDate,
         roleId,
         phoneNumber,
@@ -116,7 +113,7 @@ module.exports = {
 
   async list(req, res) {
     const users = await User.findAll(
-      userQuery.list( { req, User, Role, Account } )
+      userQuery.list( { req, User, Role } )
     );
 
     return res.status( 200 ).send( users );
@@ -125,7 +122,7 @@ module.exports = {
   async get(req, res) {
     const user = await User.findByPk(
       req.params.userId,
-      userQuery.get( { req, User, Role, Account } )
+      userQuery.get( { req, User, Role } )
     );
 
     if (!user) {
@@ -141,13 +138,6 @@ module.exports = {
   async update(req, res) {
 
     const user = await User.findByPk( req.params.userId );
-    const userAccount = await UserAccount.update( {
-      accountId: _.get(req, 'body.account.id', user.accountId),
-    }, {
-      where: {
-        userId: req.params.userId
-      }
-    } );
 
     if (!user) {
       return res.status( 404 ).send( {
@@ -164,7 +154,6 @@ module.exports = {
       startDate: req.body.startDate || user.startDate,
       endDate: req.body.endDate || user.endDate,
       roleId: _.get(req, 'body.role.id', user.roleId),
-      accountId: _.get(req, 'body.account.id', user.accountId),
       status: req.body.status || user.status,
       phoneNumber: req.body.phoneNumber || user.phoneNumber,
       password: req.body.password ? hashPassword(req.body.password) : user.password,

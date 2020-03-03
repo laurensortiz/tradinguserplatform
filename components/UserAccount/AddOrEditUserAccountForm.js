@@ -46,7 +46,7 @@ class AddOrEditUserAccountForm extends PureComponent {
     }
     if (!_.isEqual( nextProps.users, prevState.users )) {
       _.assign( stateUpdated, {
-        users: nextProps.users,
+        users: _.filter(nextProps.users, {roleId: 2}),
       } )
     }
 
@@ -178,7 +178,6 @@ class AddOrEditUserAccountForm extends PureComponent {
               name="user"
               onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }
               placeholder="Cuenta"
-              disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
               { this._getSelectOption( this.state.accounts ) }

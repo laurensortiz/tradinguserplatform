@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { Button, Icon, Popconfirm, Table, Tag, Input } from 'antd';
+import { Button, Icon, Popconfirm, Table, Tag, Input, Radio } from 'antd';
 import Highlighter from 'react-highlight-words';
 
 import { Sort, SortDate, FormatDate } from '../../common/utils';
@@ -14,6 +14,7 @@ class UsersTable extends Component {
     users: [],
     searchText: '',
     searchedColumn: '',
+    isAdminUsersSelected: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -139,6 +140,22 @@ class UsersTable extends Component {
 
   };
 
+  _handleSelectUserType = ({target}) => {
+    this.setState({
+      isAdminUsersSelected: _.isEqual(target.value, 'admin')
+    })
+  };
+
+  _displayTableHeader = () => {
+    return (
+      <Radio.Group onChange={this._handleSelectUserType} defaultValue="regular" buttonStyle="solid" size="large">
+        <Radio.Button value="regular"><Icon type="user" /> Clientes</Radio.Button>
+        <Radio.Button value="admin"><Icon type="crown" /> Administradores</Radio.Button>
+      </Radio.Group>
+    )
+  };
+
+
   render() {
     const columns = [
 
@@ -151,18 +168,6 @@ class UsersTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'username' ),
       },
-
-
-      {
-        title: 'Cuenta',
-        dataIndex: 'account',
-        key: 'account',
-        render: account => <span>{ `${ account.percentage }% - ${ account.name }` }</span>,
-        sorter: (a, b) => Sort( a.account.name, b.account.name ),
-        sortDirections: [ 'descend', 'ascend' ],
-        filters: this._getFilterValues('account.name'),
-        onFilter: (value, record) => record.account.name.includes( value ),
-      },
       {
         title: 'Acciones',
         key: 'actions',
@@ -172,14 +177,18 @@ class UsersTable extends Component {
       },
     ];
 
+    const userData = _.filter(this.state.users, user =>
+      this.state.isAdminUsersSelected ? _.isEqual(user.roleId, 1) : _.isEqual(user.roleId, 2))
+
     return (
       <Table
         rowKey={ record => record.id }
         columns={ columns }
-        dataSource={ this.props.users }
+        dataSource={ userData }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
         bordered={true}
+        title={this._displayTableHeader}
       />
     );
   }

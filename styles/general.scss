@@ -40,6 +40,12 @@ strong {
   }
 }
 
+.ant-radio-group-solid {
+  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
+    color: $white;
+  }
+}
+
 .main-container {
   padding: 24px;
   min-height: 380px;
@@ -220,6 +226,6 @@ body > div:first-of-type:not(#__next) {
   }
 }
 
-.hidden-table {
+.hidden-table, .hidden {
   display: none!important;
 }
