@@ -76,6 +76,15 @@ module.exports = {
           as: 'commodity'
         }
       },
+      assetClassId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'AssetClass',
+          key: 'id',
+          as: 'assetClass'
+        }
+      },
       amount: {
         type: Sequelize.DECIMAL(10,2),
         allowNull: true,

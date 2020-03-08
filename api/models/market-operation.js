@@ -79,6 +79,11 @@ module.exports = (Sequelize, DataTypes) => {
       as: 'commodity',
     });
 
+    MarketOperation.belongsTo(models.AssetClass, {
+      foreignKey: 'assetClassId',
+      as: 'assetClass',
+    });
+
     MarketOperation.hasMany(models.MarketMovement, {
       foreignKey: 'marketOperationId',
       as: 'marketOperation',

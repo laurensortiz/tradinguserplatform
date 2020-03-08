@@ -61,7 +61,7 @@ class AddOrEditUserForm extends PureComponent {
       this.setState( {
         ...this.state,
         ...selectedProject,
-        isAdminUser: _.isEqual(selectedProject.roleId, 1)
+        isAdminUser: _.isEqual( selectedProject.roleId, 1 )
       } )
     }
   }
@@ -158,9 +158,9 @@ class AddOrEditUserForm extends PureComponent {
     this.setState( { confirmDirty: this.state.confirmDirty || !!value } );
   };
 
-  _handleSelectUserType = ({target}) => {
-    const isAdminUser = _.isEqual(target.value, 'admin')
-    this.setState({
+  _handleSelectUserType = ({ target }) => {
+    const isAdminUser = _.isEqual( target.value, 'admin' )
+    this.setState( {
       isAdminUser,
       role: {
         id: isAdminUser ? 1 : 2
@@ -168,7 +168,7 @@ class AddOrEditUserForm extends PureComponent {
       account: {
         id: 0
       }
-    })
+    } )
   }
 
   render() {
@@ -184,15 +184,19 @@ class AddOrEditUserForm extends PureComponent {
     const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.utc( this.state.endDate ) : undefined;
     return (
       <div className="add-edit-user-modal">
-        <Radio.Group onChange={this._handleSelectUserType} value={isAdminUser ? 'admin' : 'regular'} buttonStyle="solid" size="large">
-          <Radio.Button value="regular"><Icon type="user-add" /> Cliente</Radio.Button>
-          <Radio.Button value="admin"><Icon type="crown" /> Administrador</Radio.Button>
-        </Radio.Group>
+        { _.isEqual( this.props.actionType, 'add' ) ? (
+          <Radio.Group onChange={ this._handleSelectUserType } value={ isAdminUser ? 'admin' : 'regular' }
+                       buttonStyle="solid" size="large">
+            <Radio.Button value="regular"><Icon type="user-add"/> Cliente</Radio.Button>
+            <Radio.Button value="admin"><Icon type="crown"/> Administrador</Radio.Button>
+          </Radio.Group>
+        ) : null }
+
         <Form onSubmit={ this._handleSubmit } className="auth-form">
           <Form.Item label="Nombre">
             { getFieldDecorator( 'firstName', {
               initialValue: this.state.firstName,
-              rules: [ {  message: 'Por favor ingrese su Nombre' } ],
+              rules: [ { message: 'Por favor ingrese su Nombre' } ],
             } )(
               <Input name="firstName" onChange={ this._handleChange } placeholder="Nombre"/>
             ) }
@@ -200,7 +204,7 @@ class AddOrEditUserForm extends PureComponent {
           <Form.Item label="Apellido">
             { getFieldDecorator( 'lastName', {
               initialValue: this.state.lastName,
-              rules: [ {  message: 'Por favor ingrese su Apellido' } ],
+              rules: [ { message: 'Por favor ingrese su Apellido' } ],
             } )(
               <Input name="lastName" onChange={ this._handleChange } placeholder="Apellido"/>
             ) }
@@ -213,10 +217,10 @@ class AddOrEditUserForm extends PureComponent {
               <Input name="username" onChange={ this._handleChange } placeholder="Usuario"/>
             ) }
           </Form.Item>
-          <Form.Item label="Cédula" className={classNames({'hidden': isAdminUser})}>
+          <Form.Item label="Cédula" className={ classNames( { 'hidden': isAdminUser } ) }>
             { getFieldDecorator( 'userID', {
               initialValue: this.state.userID,
-              rules: [ {  message: 'Por favor ingrese su número de cédula' } ],
+              rules: [ { message: 'Por favor ingrese su número de cédula' } ],
             } )(
               <Input name="userID" onChange={ this._handleChange } placeholder="Cédula"/>
             ) }
@@ -227,17 +231,17 @@ class AddOrEditUserForm extends PureComponent {
               rules: [ {
                 type: 'email', message: 'No es un Email válido',
               }, {
-                 message: 'Por favor ingrese el Email',
+                message: 'Por favor ingrese el Email',
               } ],
             } )(
               <Input name="email" type="email" onChange={ this._handleChange }
                      prefix={ <Icon type="mail" style={ { color: 'rgba(0,0,0,.25)' } }/> } placeholder="Email"/>
             ) }
           </Form.Item>
-          <Form.Item label="Teléfono" className={classNames({'hidden': isAdminUser})}>
+          <Form.Item label="Teléfono" className={ classNames( { 'hidden': isAdminUser } ) }>
             { getFieldDecorator( 'phoneNumber', {
               initialValue: phoneNumberInitValue,
-              rules: [ {  message: 'Por favor ingrese su número de teléfono' } ],
+              rules: [ { message: 'Por favor ingrese su número de teléfono' } ],
             } )(
               <Input name="phoneNumber" onChange={ this._handleChange } placeholder="Teléfono"/>
             ) }
@@ -286,20 +290,20 @@ class AddOrEditUserForm extends PureComponent {
               <DatePicker onChange={ this._setEndDate } placeholder="Fecha de Salida"/>
             ) }
           </Form.Item>
-          {/*<Form.Item label="Tipo de Cuenta" className={classNames({'hidden': isAdminUser})}>*/}
-          {/*  { getFieldDecorator( 'account', {*/}
-          {/*    initialValue: accountInitValue,*/}
-          {/*    rules: [ {*/}
-          {/*      message: 'Por favor ingrese el tipo de cuenta',*/}
-          {/*      required: _.isEqual( this.props.actionType, 'add' ) || !this.state.isAdminUser,*/}
-          {/*    } ],*/}
-          {/*  } )(*/}
-          {/*    <Select name="account" onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }*/}
-          {/*            placeholder="Tipo de Cuenta">*/}
-          {/*      { this._getSelectOption( this.state.accounts ) }*/}
-          {/*    </Select>*/}
-          {/*  ) }*/}
-          {/*</Form.Item>*/}
+          {/*<Form.Item label="Tipo de Cuenta" className={classNames({'hidden': isAdminUser})}>*/ }
+          {/*  { getFieldDecorator( 'account', {*/ }
+          {/*    initialValue: accountInitValue,*/ }
+          {/*    rules: [ {*/ }
+          {/*      message: 'Por favor ingrese el tipo de cuenta',*/ }
+          {/*      required: _.isEqual( this.props.actionType, 'add' ) || !this.state.isAdminUser,*/ }
+          {/*    } ],*/ }
+          {/*  } )(*/ }
+          {/*    <Select name="account" onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }*/ }
+          {/*            placeholder="Tipo de Cuenta">*/ }
+          {/*      { this._getSelectOption( this.state.accounts ) }*/ }
+          {/*    </Select>*/ }
+          {/*  ) }*/ }
+          {/*</Form.Item>*/ }
 
 
           <Form.Item>

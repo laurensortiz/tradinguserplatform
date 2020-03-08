@@ -46,7 +46,7 @@ class AddOrEditUserAccountForm extends PureComponent {
     }
     if (!_.isEqual( nextProps.users, prevState.users )) {
       _.assign( stateUpdated, {
-        users: _.filter(nextProps.users, {roleId: 2}),
+        users: _.filter( nextProps.users, { roleId: 2, status: 1 } ),
       } )
     }
 
@@ -86,10 +86,6 @@ class AddOrEditUserAccountForm extends PureComponent {
           id,
           username: name,
         },
-        account: {
-          id: selectedUser.account.id,
-          name: selectedUser.account.name
-        }
       } )
     } else {
       this.setState( {
@@ -187,7 +183,7 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Valor de la Cuenta">
           { getFieldDecorator( 'accountValue', {
             initialValue: accountValueInitValue,
-            rules: [ { required: true, message: 'Por favor indique el valor de la cuenta' } ],
+            rules: [ { required: false, message: 'Por favor indique el valor de la cuenta' } ],
           } )(
             <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
           ) }
@@ -195,7 +191,7 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Garantías disponibles">
           { getFieldDecorator( 'guaranteeOperation', {
             initialValue: guaranteeOperationInitValue,
-            rules: [ { required: true, message: 'Por favor indique las garatías disponibles' } ],
+            rules: [ { required: false, message: 'Por favor indique las garatías disponibles' } ],
           } )(
             <Input name="guaranteeOperation" onChange={ this._handleChange }
                    placeholder="Garantías disponibles para operar"/>
@@ -204,7 +200,7 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Garantía/Créditos">
           { getFieldDecorator( 'guaranteeCredits', {
             initialValue: guaranteeCreditsInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese Garantía / Créditos' } ],
+            rules: [ { required: false, message: 'Por favor ingrese Garantía / Créditos' } ],
           } )(
             <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
           ) }
@@ -212,7 +208,7 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Saldo Inicial">
           { getFieldDecorator( 'balanceInitial', {
             initialValue: balanceInitialInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el saldo inicial' } ],
+            rules: [ { required: false, message: 'Por favor ingrese el saldo inicial' } ],
           } )(
             <Input name="balanceInitial" onChange={ this._handleChange } placeholder="Saldo Inicial"/>
           ) }
@@ -228,7 +224,7 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Margen de Mantenimiento">
           { getFieldDecorator( 'maintenanceMargin', {
             initialValue: maintenanceMarginInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el margen de mantenimiento' } ],
+            rules: [ { required: false, message: 'Por favor ingrese el margen de mantenimiento' } ],
           } )(
             <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>
           ) }

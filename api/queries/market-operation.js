@@ -1,7 +1,6 @@
-import { UserAccount, User, Account, Product, Broker, Commodity } from "../models";
 
 const queries = {
-  list: ({ req, UserAccount, Product, Broker, Commodity }) => {
+  list: ({ req, UserAccount, User, Product, Broker, Commodity, AssetClass, Account }) => {
     return {
       attributes: {
         exclude: [],
@@ -39,11 +38,16 @@ const queries = {
           as: 'commodity',
           attributes: ['name']
         },
+        {
+          model: AssetClass,
+          as: 'assetClass',
+          attributes: ['name']
+        },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  getByUser: ({ accountIds, UserAccount, Product, Broker, Commodity }) => {
+  getByUser: ({ accountIds, UserAccount, Product, Broker, Commodity, User, Account, AssetClass }) => {
     return {
       where: {
         userAccountId: accountIds
@@ -82,6 +86,11 @@ const queries = {
         {
           model: Commodity,
           as: 'commodity',
+          attributes: ['name']
+        },
+        {
+          model: AssetClass,
+          as: 'assetClass',
           attributes: ['name']
         },
       ],

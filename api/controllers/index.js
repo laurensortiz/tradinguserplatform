@@ -10,3 +10,4 @@ export { default as investmentMovement } from './investment-movement';
 export { default as marketOperation } from './market-operation';
 export { default as marketMovement } from './market-movement';
 export { default as commodity } from './commodity';
+export { default as assetClass } from './asset-class';

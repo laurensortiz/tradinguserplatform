@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { MarketOperation, UserAccount, User, Account, MarketMovement, Product, Broker, Commodity } from '../models';
+import { MarketOperation, UserAccount, User, Account, MarketMovement, Product, Broker, Commodity, AssetClass } from '../models';
 import { marketOperationQuery, userQuery } from '../queries';
 
 module.exports = {
@@ -13,6 +13,7 @@ module.exports = {
         productId: _.get(req, 'body.product.id', 0),
         commoditiesTotal: req.body.commoditiesTotal,
         commodityId: _.get(req, 'body.commodity.id', 1),
+        assetClassId: _.get(req, 'body.assetClass.id', 1),
         buyPrice: req.body.buyPrice,
         takingProfit: req.body.takingProfit,
         stopLost: req.body.stopLost,
@@ -40,7 +41,7 @@ module.exports = {
 
   async list(req, res) {
     const marketOperation = await MarketOperation.findAll(
-      marketOperationQuery.list({ req, UserAccount, User, Account, Product, Broker, Commodity })
+      marketOperationQuery.list({ req, UserAccount, User, Account, Product, Broker, Commodity, AssetClass })
     );
 
     if (!marketOperation) {
@@ -86,6 +87,7 @@ module.exports = {
       productId: _.get(req, 'body.product.id', 0) || marketOperation.productId,
       commoditiesTotal: req.body.commoditiesTotal || marketOperation.commoditiesTotal,
       commodityId: _.get(req, 'body.commodity.id', 1) || marketOperation.commodityId,
+      assetClassId: _.get(req, 'body.assetClass.id', 1) || marketOperation.assetClassId,
       buyPrice: req.body.buyPrice || marketOperation.buyPrice,
       takingProfit: req.body.takingProfit || marketOperation.takingProfit,
       stopLost: req.body.stopLost || marketOperation.stopLost,

@@ -14,6 +14,7 @@ import { userAccountOperations } from "../../../state/modules/userAccounts";
 import { brokerOperations } from "../../../state/modules/brokers";
 import { productOperations } from "../../../state/modules/products";
 import { commodityOperations } from "../../../state/modules/commodity";
+import { assetClassOperations } from "../../../state/modules/assetClasses";
 
 const { Option, OptGroup } = Select;
 
@@ -33,6 +34,10 @@ class AddOrEditMarketForm extends PureComponent {
       name: ''
     },
     commodity: {
+      id: null,
+      name: ''
+    },
+    assetClass: {
       id: null,
       name: ''
     },
@@ -57,6 +62,7 @@ class AddOrEditMarketForm extends PureComponent {
     brokerName: '',
     productName: '',
     commodityName: '',
+    assetClassName: '',
     accountPercentage: 0
   };
 
@@ -64,6 +70,7 @@ class AddOrEditMarketForm extends PureComponent {
     let stateUpdated = {};
 
     if (!_.isEqual( nextProps.userAccounts, prevState.userAccounts )) {
+
       _.assign( stateUpdated, {
         userAccounts: nextProps.userAccounts
       } )
@@ -84,6 +91,12 @@ class AddOrEditMarketForm extends PureComponent {
     if (!_.isEqual( nextProps.commodities, prevState.commodities )) {
       _.assign( stateUpdated, {
         commodities: nextProps.commodities
+      } )
+    }
+
+    if (!_.isEqual( nextProps.assetClasses, prevState.assetClasses )) {
+      _.assign( stateUpdated, {
+        assetClasses: nextProps.assetClasses
       } )
     }
 
@@ -109,6 +122,9 @@ class AddOrEditMarketForm extends PureComponent {
       this.props.fetchGetCommodities();
     }
 
+    if (_.isEmpty( this.state.assetClasses )) {
+      this.props.fetchGetAssetClasses();
+    }
 
     if (!_.isEmpty( this.props.selectedOperation )) {
       const { selectedOperation } = this.props;
@@ -117,6 +133,7 @@ class AddOrEditMarketForm extends PureComponent {
       const productCode = _.get(selectedOperation, 'product.code', '');
       const brokerName = _.get(selectedOperation, 'broker.name', '');
       const commodityName = _.get(selectedOperation, 'commodity.name', '');
+      const assetClassName = _.get(selectedOperation, 'assetClass.name', '');
       this.setState( {
         ...this.state,
         ...selectedOperation,
@@ -124,6 +141,7 @@ class AddOrEditMarketForm extends PureComponent {
         productName: `${productName}-${productCode}`,
         brokerName,
         commodityName,
+        assetClassName,
       } )
     }
   }
@@ -243,6 +261,7 @@ class AddOrEditMarketForm extends PureComponent {
 
     const commoditiesTotalInitValue = !_.isEmpty( this.state.commoditiesTotal ) ? this.state.commoditiesTotal : undefined;
     const commoditiesTypeInitValue = !_.isEmpty( this.state.commodityName ) ? this.state.commodityName : undefined;
+    const assetClassInitValue = !_.isEmpty( this.state.assetClassName ) ? this.state.assetClassName : undefined;
 
     const buyPriceInitValue = !_.isEmpty( this.state.buyPrice ) ? this.state.buyPrice : undefined;
     //const initialAmountInitValue = !_.isEmpty( this.state.initialAmount ) ? this.state.initialAmount : undefined;
@@ -313,7 +332,7 @@ class AddOrEditMarketForm extends PureComponent {
             rules: [ { required: true, message: 'Por favor indique Long / Short' } ],
           } )(
             <Input name="longShort" onChange={ this._handleChange }
-                   placeholder="Long / Shorta"/>
+                   placeholder="Long / Short"/>
           ) }
         </Form.Item>
 
@@ -335,10 +354,25 @@ class AddOrEditMarketForm extends PureComponent {
               name="commodity"
               onChange={ value => this._handleChangeSelect( { name: 'commodity', value } ) }
               placeholder="Tipo de Lotage"
-              disabled={ !isAddAction }
-              showArrow={ isAddAction }
+
             >
               { this._getSelectOptions( this.state.commodities ) }
+            </Select>
+          ) }
+        </Form.Item>
+        <Form.Item label="Categoría de Lotage">
+          { getFieldDecorator( 'assetClass', {
+            initialValue: assetClassInitValue,
+            rules: [ { required: true, message: 'Por favor seleccione la categoría de lotage ' } ],
+          } )(
+            <Select
+              showSearch={ true }
+              name="assetClass"
+              onChange={ value => this._handleChangeSelect( { name: 'assetClass', value } ) }
+              placeholder="Categoría de Lotage"
+
+            >
+              { this._getSelectOptions( this.state.assetClasses ) }
             </Select>
           ) }
         </Form.Item>
@@ -452,7 +486,8 @@ function mapStateToProps(state) {
     userAccounts: state.userAccountsState.list,
     brokers: state.brokersState.list,
     products: state.productsState.list,
-    commodities: state.commoditiesState.list
+    commodities: state.commoditiesState.list,
+    assetClasses: state.assetClassesState.list,
   }
 }
 
@@ -462,6 +497,7 @@ const mapDispatchToProps = dispatch =>
     fetchGetBrokers: brokerOperations.fetchGetBrokers,
     fetchGetProducts: productOperations.fetchGetProducts,
     fetchGetCommodities: commodityOperations.fetchGetCommodities,
+    fetchGetAssetClasses: assetClassOperations.fetchGetAssetClasses,
   }, dispatch );
 
 

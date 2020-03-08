@@ -9,6 +9,7 @@ import SettingsProducts from '../components/Settings/Products';
 import SettingsBrokers from '../components/Settings/Brokers';
 import SettingsAccounts from '../components/Settings/Accounts';
 import SettingsCommodities from '../components/Settings/Commodities';
+import SettingsAssetClasses from '../components/Settings/AssetClasses';
 
 const { TabPane } = Tabs;
 
@@ -36,6 +37,9 @@ class Settings extends Component {
               </TabPane>
               <TabPane tab="Tipos Lotage" key="5">
                 <SettingsCommodities />
+              </TabPane>
+              <TabPane tab="Categoría Lotage" key="6">
+                <SettingsAssetClasses />
               </TabPane>
             </Tabs>
           </Col>

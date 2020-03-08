@@ -10,7 +10,8 @@ import {
   investmentMovement,
   marketOperation,
   marketMovement,
-  commodity
+  commodity,
+  assetClass,
 } from './controllers';
 
 const authMiddleware = (req, res, next) => {
@@ -131,5 +132,12 @@ module.exports = app => {
   app.post( '/api/commodities', commodity.create );
   app.put( '/api/commodities/:commodityId', commodity.update );
   app.delete( '/api/commodities/:commodityId', commodity.delete );
+
+  // AssetClasses
+  app.get( '/api/asset-classes', assetClass.list );
+  app.get( '/api/asset-classes/:assetClassId', assetClass.get );
+  app.post( '/api/asset-classes', assetClass.create );
+  app.put( '/api/asset-classes/:assetClassId', assetClass.update );
+  app.delete( '/api/asset-classes/:assetClassId', assetClass.delete );
 
 };
