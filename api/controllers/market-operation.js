@@ -20,7 +20,7 @@ module.exports = {
         maintenanceMargin: req.body.maintenanceMargin,
         amount: req.body.amount,
         initialAmount: req.body.amount,
-        orderId: req.body.orderId,
+        orderId: req.body.orderId || 0,
         status: _.get(req, 'body.status', 1),
         createdAt: req.body.createdAt || new Date(),
       });

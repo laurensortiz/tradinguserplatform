@@ -112,7 +112,7 @@ strong {
   white-space: nowrap;
 }
 
-.export-excel-cta {
+.export-excel-cta, .export-excel-cta.ant-btn-primary {
   background-color: $green-excel;
   color: $white;
   border-color: $green-excel-hover;
@@ -205,6 +205,15 @@ body > div:first-of-type:not(#__next) {
   color: $negative;
 }
 
+.positive-bg {
+  background: $positive;
+  color: $white;
+}
+.negative-bg {
+  background: $negative;
+  color: $white;
+}
+
 .product-tag {
   background-color: $white;
   color: $black;
@@ -228,4 +237,10 @@ body > div:first-of-type:not(#__next) {
 
 .hidden-table, .hidden {
   display: none!important;
+}
+
+.asset-class {
+  color: $white;
+  background-color: #F6891A;
+
 }

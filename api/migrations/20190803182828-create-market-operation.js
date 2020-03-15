@@ -18,11 +18,11 @@ module.exports = {
       },
       buyPrice: {
         type: Sequelize.DECIMAL(10,2),
-        allowNull: false,
+        allowNull: true,
       },
       initialAmount: {
         type: Sequelize.DECIMAL(10,2),
-        allowNull: false,
+        allowNull: true,
       },
       takingProfit: {
         type: Sequelize.DECIMAL(10,2),
@@ -34,7 +34,7 @@ module.exports = {
       },
       maintenanceMargin: {
         type: Sequelize.DECIMAL(10,2),
-        allowNull: false,
+        allowNull: true,
       },
       orderId: {
         type: Sequelize.INTEGER,
@@ -104,12 +104,12 @@ module.exports = {
         type: Sequelize.DATE,
       },
       updatedAt: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
       },
       behavior: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        allowNull: true,
         defaultValue: 1,
       },
     });

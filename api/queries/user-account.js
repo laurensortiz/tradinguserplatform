@@ -49,6 +49,9 @@ const queries = {
         {
           model: User,
           as: 'user',
+          attributes: {
+            exclude: [ 'salt', 'password' ],
+          },
         },
         {
           model: Account,

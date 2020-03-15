@@ -40,7 +40,7 @@ class Detail extends PureComponent {
               <Descriptions.Item label="Inversión">{FormatCurrency.format(initialAmount)} </Descriptions.Item>
               <Descriptions.Item label="Saldo Actual"><span className={IsOperationPositive(amount, initialAmount) ? 'positive' : 'negative'}>{FormatCurrency.format(amount)}</span> </Descriptions.Item>
               <Descriptions.Item label="L/S">{longShort}</Descriptions.Item>
-              <Descriptions.Item label="Lotage">{commoditiesTotal} <Tag>{commodityName}</Tag> <Tag color="red">{assetClassName}</Tag></Descriptions.Item>
+              <Descriptions.Item label="Lotage">{commoditiesTotal} <Tag>{commodityName}</Tag> <Tag className="asset-class">{assetClassName}</Tag></Descriptions.Item>
               <Descriptions.Item label="Precio de Compra">{FormatCurrency.format(buyPrice)}</Descriptions.Item>
               <Descriptions.Item label="Taking Profit">{FormatCurrency.format(takingProfit)}</Descriptions.Item>
               <Descriptions.Item label="S/L">{stopLost}%</Descriptions.Item>

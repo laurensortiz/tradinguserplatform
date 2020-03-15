@@ -42,7 +42,7 @@ class AuthLoginForm extends Component {
               rules: [ { required: true, message: 'Por favor ingrese su usuario' } ],
             } )(
               <Input name="username" onChange={ this._handleChange }
-                     prefix={ <Icon type="user" style={ { color: 'rgba(0,0,0,.25)' } }/> } placeholder="Username"/>
+                     prefix={ <Icon type="user" style={ { color: 'rgba(0,0,0,.25)' } }/> } placeholder="Usuario" size="large"/>
             ) }
           </Form.Item>
           <Form.Item label="Contraseña">
@@ -51,12 +51,12 @@ class AuthLoginForm extends Component {
             } )(
               <Input.Password name="password" onChange={ this._handleChange }
                      prefix={ <Icon type="lock" style={ { color: 'rgba(0,0,0,.25)' } }/> } type="password"
-                     placeholder="Password"/>
+                     placeholder="Contraseña" size="large"/>
             ) }
           </Form.Item>
           <Form.Item>
             {/*<a className="login-form-forgot" href="">Forgot password</a>*/ }
-            <Button type="primary" htmlType="submit" className="login-form-button">
+            <Button type="primary" htmlType="submit" className="login-form-button" size="large">
               Ingresar
             </Button>
           </Form.Item>

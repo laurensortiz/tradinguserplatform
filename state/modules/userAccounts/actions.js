@@ -1,5 +1,37 @@
-import { getUserAccounts, addUserAccount, editUserAccount, deleteUserAccount } from './api';
+import { getAllUserAccounts, getUserAccounts, addUserAccount, editUserAccount, deleteUserAccount } from './api';
 import types from './types';
+
+// All User Accounts
+export const fetchGetAllUserAccounts = () => async dispatch => {
+  dispatch( requestUserAccounts() );
+  try {
+    const res = await getAllUserAccounts();
+    dispatch( requestUserAccountsSuccess( res.data ) )
+  } catch (e) {
+    dispatch( requestUserAccountsError( e.message ) )
+  }
+
+};
+
+const requestAllUserAccounts = () => {
+  return {
+    type: types.ALL_USER_ACCOUNTS_REQUEST
+  }
+};
+
+const requestAllUserAccountsSuccess = (accounts) => {
+  return {
+    type: types.ALL_USER_ACCOUNTS_SUCCESS,
+    payload: accounts
+  }
+};
+
+const requestAllUserAccountsError = (error) => {
+  return {
+    type: types.ALL_USER_ACCOUNTS_ERROR,
+    payload: error
+  }
+};
 
 // List UserAccounts
 export const fetchGetUserAccounts = (userId) => async dispatch => {
@@ -137,6 +169,7 @@ export const resetAfterRequest = () => {
 };
 
 export default {
+  fetchGetAllUserAccounts,
   fetchGetUserAccounts,
   fetchAddUserAccount,
   fetchEditUserAccount,

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, message as antMessage, Icon } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -46,29 +46,21 @@ class Users extends Component {
       }
 
       prevState.isVisibleAddOrEditUser = false;
-      notification[ 'success' ]( {
-        message,
-        description,
-        onClose: () => {
 
-          prevState.actionType = 'add'; // default value
+      antMessage.success(message, 1.5, () => {
+        prevState.actionType = 'add'; // default value
 
-          nextProps.fetchGetUsers();
-          nextProps.resetAfterRequest();
-        },
-        duration: 1.5
-      } );
+        nextProps.fetchGetUsers();
+        nextProps.resetAfterRequest();
+      });
+
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-      notification[ 'error' ]( {
-        message: 'Ha ocurrido un error',
-        description:
-          'Por favor verifique la información',
-        onClose: () => {
-          nextProps.resetAfterRequest();
-        },
-        duration: 3
-      } );
+
+      antMessage.error('Ha ocurrido un error', 1.5, () => {
+        nextProps.resetAfterRequest();
+      });
+
     }
     return null;
   }
@@ -153,8 +145,8 @@ class Users extends Component {
     return (
       <Document id="users-page">
         <Row>
-          <Button style={ { float: 'right' } } type="primary" onClick={ this._addUser }>
-            Agregar Usuario
+          <Button style={ { float: 'right' } } type="primary" onClick={ this._addUser } size="large">
+            <Icon type="user-add" /> Agregar Usuario
           </Button>
         </Row>
         <Row>
@@ -169,7 +161,7 @@ class Users extends Component {
                   onDetail={ this._setCurrentUser }
                 />
               </TabPane>
-              <TabPane tab="Inactivos" key="2">
+              <TabPane tab="Eliminados" key="2">
                 <UsersTable
                   users={ _.filter( this.props.users, { status: 0 } ) }
                   isLoading={ this.props.isLoading }

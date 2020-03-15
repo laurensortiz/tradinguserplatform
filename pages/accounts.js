@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, message as antMessage, Icon } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -44,35 +44,34 @@ class Accounts extends Component {
       }
 
       prevState.isVisibleAddOrEditUserAccount = false;
-      notification[ 'success' ]( {
-        message,
-        description,
-        onClose: () => {
+      antMessage.success(message, 1.5, () => {
+        prevState.actionType = 'add'; // default value
 
-          prevState.actionType = 'add'; // default value
-
-          nextProps.fetchGetUserAccounts();
-          nextProps.resetAfterRequest();
-        },
-        duration: 1.5
-      } );
+        nextProps.fetchGetAllUserAccounts();
+        nextProps.resetAfterRequest();
+      });
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-      notification[ 'error' ]( {
-        message: 'Ha ocurrido un error',
-        description:
-          'Por favor verifique la información',
-        onClose: () => {
-          nextProps.resetAfterRequest();
-        },
-        duration: 3
-      } );
+      antMessage.error('Ha ocurrido un error', 1.5, () => {
+        nextProps.resetAfterRequest();
+      });
+
+      //
+      // notification[ 'error' ]( {
+      //   message: 'Ha ocurrido un error',
+      //   description:
+      //     'Por favor verifique la información',
+      //   onClose: () => {
+      //     nextProps.resetAfterRequest();
+      //   },
+      //   duration: 3
+      // } );
     }
     return null;
   }
 
   componentDidMount() {
-    this.props.fetchGetUserAccounts();
+    this.props.fetchGetAllUserAccounts();
   };
 
   _addUserAccount = () => {
@@ -137,8 +136,8 @@ class Accounts extends Component {
     return (
       <Document id="userAccounts-page">
         <Row>
-          <Button style={ { float: 'right' } } type="primary" onClick={ this._addUserAccount }>
-            Agregar Cuenta
+          <Button style={ { float: 'right' } } type="primary" onClick={ this._addUserAccount } size="large">
+            <Icon type="plus-circle" /> Agregar Cuenta
           </Button>
         </Row>
         <Row>
@@ -195,7 +194,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
+    fetchGetAllUserAccounts: userAccountOperations.fetchGetAllUserAccounts,
     fetchAddUserAccount: userAccountOperations.fetchAddUserAccount,
     fetchEditUserAccount: userAccountOperations.fetchEditUserAccount,
     fetchDeleteUserAccount: userAccountOperations.fetchDeleteUserAccount,

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, Radio } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, Radio, message as antMessage } from 'antd';
 import _ from 'lodash';
 
 import { GetGP } from "../../../common/utils";
@@ -15,7 +15,6 @@ import { AccountInformation, MovementsTable } from '../shared';
 
 import { marketOperationOperations } from "../../../state/modules/marketOperation";
 import { marketMovementOperations } from "../../../state/modules/marketMovement";
-
 
 const { TabPane } = Tabs;
 
@@ -93,30 +92,22 @@ class Market extends Component {
       }
 
       prevState.isVisibleAddOrEditOperation = false;
-      notification[ 'success' ]( {
-        message,
-        description,
-        onClose: () => {
 
-          prevState.actionType = 'add'; // default value
+      antMessage.success(message, 1.5, () => {
+        prevState.actionType = 'add'; // default value
 
-          nextProps.fetchGetMarketOperations();
-          nextProps.resetAfterRequest();
-          nextProps.onClose( false )
-        },
-        duration: .5
-      } );
+        nextProps.fetchGetMarketOperations();
+        nextProps.resetAfterRequest();
+        nextProps.onClose( false )
+      });
     }
+
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-      notification[ 'error' ]( {
-        message: 'Ha ocurrido un error',
-        description:
-          'Por favor verifique la información',
-        onClose: () => {
-          nextProps.resetAfterRequest();
-        },
-        duration: 2
-      } )
+
+      antMessage.error('Ha ocurrido un error', 1.5, () => {
+        nextProps.resetAfterRequest();
+      });
+
     }
 
     return !_.isEmpty( updatedState ) ? updatedState : null;
@@ -226,6 +217,10 @@ class Market extends Component {
     const currentUserLastName = _.get( this.state.currentOperationDetail, 'userAccount.user.lastName', '' );
     const modalDetailTitle = `${ currentUsername } - ${ currentUserFirstName } ${ currentUserLastName }`;
 
+    const activeMarketOperations = _.filter( this.state.marketOperations, ({ status }) => !_.isEqual( status, 0 ) );
+    const deletedMarketOperations = _.filter( this.state.marketOperations, { status: 0 } );
+
+
     return (
       <>
         <Row>
@@ -234,7 +229,7 @@ class Market extends Component {
               <Tabs>
                 <TabPane tab="Activos" key="1">
                   <MarketTable
-                    marketOperations={ _.filter( this.state.marketOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
+                    marketOperations={ activeMarketOperations }
                     isLoading={ this.props.isLoading }
                     onEdit={ this._onSelectEdit }
                     onDelete={ this._handleDeleteUserOperation }
@@ -244,7 +239,7 @@ class Market extends Component {
                 </TabPane>
                 <TabPane tab="Eliminados" key="2">
                   <MarketTable
-                    marketOperations={ _.filter( this.state.marketOperations, { status: 0 } ) }
+                    marketOperations={  deletedMarketOperations }
                     isLoading={ this.props.isLoading }
                     onActive={ this._onSelectActive }
                     status="inactive"
@@ -253,14 +248,18 @@ class Market extends Component {
                 </TabPane>
               </Tabs>
             ) : (
-              <MarketTable
-                marketOperations={ _.filter( this.state.marketOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
-                isLoading={ this.props.isLoading }
-                onEdit={ this._onSelectEdit }
-                onDelete={ this._handleDeleteUserOperation }
-                onDetail={ this._handleDetailUserOperation }
-                isAdmin={false}
-              />
+              <>
+                {!_.isEmpty(activeMarketOperations) ? <h2>Operciones de Bolsa OTC</h2> : null}
+                <MarketTable
+                  marketOperations={ activeMarketOperations }
+                  isLoading={ this.props.isLoading }
+                  onEdit={ this._onSelectEdit }
+                  onDelete={ this._handleDeleteUserOperation }
+                  onDetail={ this._handleDetailUserOperation }
+                  isAdmin={false}
+                />
+              </>
+
             )}
           </Col>
         </Row>
@@ -296,6 +295,7 @@ class Market extends Component {
           <MarketMovementDetail
             currentOperation={ this.state.currentOperationDetail }
           />
+
           <MovementsTable
             movements={ this.state.marketMovements }
             onAdd={ this._handleAddMovement }

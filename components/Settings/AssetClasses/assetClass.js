@@ -124,7 +124,7 @@ class AssetClass extends Component {
       <div>
         <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
                 disabled={ !_.isEmpty( this.state.tempDataSource ) }>
-          Agregar Tipo de Lotage
+          Agregar Categoría de Lotage
         </Button>
         <Alert message="Para editar el nombre sólo debe hacer click en el campo del puesto que desea modificar. " type="info" showIcon />
 

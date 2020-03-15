@@ -1,4 +1,5 @@
 import  {
+  fetchGetAllUserAccounts,
   fetchGetUserAccounts,
   fetchAddUserAccount,
   fetchEditUserAccount,
@@ -7,6 +8,7 @@ import  {
 } from './actions';
 
 export default {
+  fetchGetAllUserAccounts,
   fetchGetUserAccounts,
   fetchAddUserAccount,
   fetchEditUserAccount,

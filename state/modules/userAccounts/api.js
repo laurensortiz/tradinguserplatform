@@ -1,11 +1,17 @@
 import fetch from '../../../common/fetch';
 
-export const getUserAccounts = async (userId) => {
-
-
+export const getAllUserAccounts = async () => {
   return fetch({
     method: 'get',
-    url: 'user-accounts',
+    url: `user-accounts`,
+  });
+};
+
+
+export const getUserAccounts = async (userId) => {
+  return fetch({
+    method: 'get',
+    url: `user-accounts/user/${userId}`,
   });
 };
 

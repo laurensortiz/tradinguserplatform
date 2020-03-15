@@ -14,6 +14,30 @@ const initialStateUsers = {
 export function users(state = initialStateUsers, action) {
   switch (action.type) {
     // List All Users
+    case types.ALL_USER_ACCOUNTS_REQUEST:
+      return {
+        ...state,
+        isFailure: false,
+        isLoading: true,
+        isSuccess: false,
+      };
+    case types.ALL_USER_ACCOUNTS_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        isFailure: false,
+        isLoading: false,
+        list: action.payload,
+      };
+    case types.ALL_USER_ACCOUNTS_ERROR:
+      return {
+        ...state,
+        isSuccess: false,
+        isFailure: true,
+        isLoading: false,
+        message: action.payload,
+      };
+    // User Accounts
     case types.USER_ACCOUNTS_REQUEST:
       return {
         ...state,

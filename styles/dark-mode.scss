@@ -10,7 +10,9 @@
 
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
     color: $white;
-    background: #1890ff;
+    background: #F6891A;
+    border-color: #F6891A;
+    box-shadow: none;
     &:hover {
       color: $white;
     }

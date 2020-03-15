@@ -48,7 +48,7 @@ class AddOrEditMarketForm extends PureComponent {
     stopLost: '',
     maintenanceMargin: 0,
     amount: 0,
-    orderId: '',
+    orderId: null,
     createdAt: null,
 
     confirmDirty: false,
@@ -107,7 +107,7 @@ class AddOrEditMarketForm extends PureComponent {
 
   componentDidMount() {
     if (_.isEmpty( this.state.userAccounts )) {
-      this.props.fetchGetUserAccounts();
+      this.props.fetchGetAllUserAccounts();
     }
 
     if (_.isEmpty( this.state.brokers )) {
@@ -329,7 +329,7 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'longShort', {
             initialValue: longShortInitValue,
             value: longShortInitValue,
-            rules: [ { required: true, message: 'Por favor indique Long / Short' } ],
+            rules: [ { required: false, message: 'Por favor indique Long / Short' } ],
           } )(
             <Input name="longShort" onChange={ this._handleChange }
                    placeholder="Long / Short"/>
@@ -380,7 +380,7 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'buyPrice', {
             initialValue: buyPriceInitValue,
             value: buyPriceInitValue,
-            rules: [ { required: true, message: 'Por favor indique el monto de la compra' } ],
+            rules: [ { required: false, message: 'Por favor indique el monto de la compra' } ],
           } )(
             <Input name="buyPrice" onChange={ this._handleChange }
                    placeholder="Precio de compra"/>
@@ -390,7 +390,7 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'takingProfit', {
             initialValue: takingProfitInitValue,
             value: takingProfitInitValue,
-            rules: [ { required: true, message: 'Por favor indique el taking profit' } ],
+            rules: [ { required: false, message: 'Por favor indique el taking profit' } ],
           } )(
             <Input name="takingProfit" onChange={ this._handleChange }
                    placeholder="Taking Profit"/>
@@ -400,33 +400,13 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'stopLost', {
             initialValue: stopLostInitValue,
             value: stopLostInitValue,
-            rules: [ { required: true, message: 'Por favor indique el Stop Lost' } ],
+            rules: [ { required: false, message: 'Por favor indique el Stop Lost' } ],
           } )(
             <Input name="stopLost" onChange={ this._handleChange }
                    placeholder="S/L"/>
           ) }
         </Form.Item>
-        <Form.Item label="Margen de Mantenimiento">
-          { getFieldDecorator( 'maintenanceMargin', {
-            initialValue: maintenanceMarginInitValue,
-            value: maintenanceMarginInitValue,
-            rules: [ { required: true, message: 'Por favor indique el Margen de mantenimiento' } ],
-          } )(
-            <Input name="maintenanceMargin" onChange={ this._handleChange }
-                   placeholder="Margen de Mantenimiento"/>
-          ) }
-        </Form.Item>
-        <Form.Item label="Número de Orden">
-          { getFieldDecorator( 'orderId', {
-            initialValue: orderIdInitValue,
-            value: orderIdInitValue,
-            rules: [ { required: true, message: 'Por favor indique el Número de orden' } ],
-          } )(
-            <Input name="orderId" onChange={ this._handleChange }
-                   placeholder="Número de Orden"/>
-          ) }
-        </Form.Item>
-        <Form.Item label="Monto">
+        <Form.Item label="Inversión">
           { getFieldDecorator( 'amount', {
             initialValue: amountInitValue,
             value: amountInitValue,
@@ -436,9 +416,26 @@ class AddOrEditMarketForm extends PureComponent {
                    placeholder="Monto"/>
           ) }
         </Form.Item>
-
-
-
+        <Form.Item label="Margen de Mantenimiento">
+          { getFieldDecorator( 'maintenanceMargin', {
+            initialValue: maintenanceMarginInitValue,
+            value: maintenanceMarginInitValue,
+            rules: [ { required: false, message: 'Por favor indique el Margen de mantenimiento' } ],
+          } )(
+            <Input name="maintenanceMargin" onChange={ this._handleChange }
+                   placeholder="Margen de Mantenimiento"/>
+          ) }
+        </Form.Item>
+        <Form.Item label="Número de Orden">
+          { getFieldDecorator( 'orderId', {
+            initialValue: orderIdInitValue,
+            value: orderIdInitValue,
+            rules: [ { required: false, message: 'Por favor indique el Número de orden' } ],
+          } )(
+            <Input name="orderId" onChange={ this._handleChange }
+                   placeholder="Número de Orden"/>
+          ) }
+        </Form.Item>
         <Form.Item label="Estado">
           { getFieldDecorator( 'status', {
             initialValue: statusInitValue,
@@ -465,9 +462,6 @@ class AddOrEditMarketForm extends PureComponent {
             <DatePicker onChange={ this._setStartDate } placeholder="Fecha de Inicio"/>
           ) }
         </Form.Item>
-
-
-
         <Form.Item>
           <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
             { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }
@@ -478,7 +472,6 @@ class AddOrEditMarketForm extends PureComponent {
     );
   }
 }
-
 
 function mapStateToProps(state) {
   
@@ -493,7 +486,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
+    fetchGetAllUserAccounts: userAccountOperations.fetchGetAllUserAccounts,
     fetchGetBrokers: brokerOperations.fetchGetBrokers,
     fetchGetProducts: productOperations.fetchGetProducts,
     fetchGetCommodities: commodityOperations.fetchGetCommodities,

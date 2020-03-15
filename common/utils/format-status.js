@@ -9,7 +9,7 @@ const formatStatus = status => {
       color: '#f50'
     },
     3: {
-      name: 'En Pausa',
+      name: 'Hold',
       color: '#edc01c'
     }
   };

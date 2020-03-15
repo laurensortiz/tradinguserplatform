@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import { Button, Table, Form, Popconfirm, Icon, Select, DatePicker } from 'antd';
+import { Button, Table, Form, Popconfirm, Icon, Select, DatePicker, Row, Col } from 'antd';
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
 import moment from 'moment';
@@ -15,6 +15,7 @@ import EditableCell from './editable/editableCell';
 import { FormatCurrency, FormatDate, GetGP, getGPInversion } from '../../../common/utils';
 
 import { investmentMovementOperations } from '../../../state/modules/investmentMovement';
+import { Export } from "./index";
 
 momentDurationFormat( moment );
 extendMoment( moment );
@@ -38,11 +39,13 @@ class MovementsTable extends Component {
     filteredInfo: {},
     sortedInfo: {},
     searchText: '',
+    exportData: []
   };
 
   dateMode = 0;
   timeDateRange = [];
   defaultDate = null;
+
 
   isEditing = record => record.id === this.state.editingKey;
 
@@ -52,6 +55,7 @@ class MovementsTable extends Component {
 
       _.assignIn( updatedState, {
         dataSource: nextProps.movements,
+        exportData: nextProps.movements,
         count: _.size( nextProps.movements ),
         tempDataSource: [],
         editingKey: '',
@@ -78,6 +82,12 @@ class MovementsTable extends Component {
     } else {
       this.props.fetchDeleteInvestmentMovement( Number( key ) );
     }
+  };
+
+  _handleChange = (pagination, filters, sorter, extra) => {
+    this.setState( {
+      exportData: extra.currentDataSource,
+    } );
   };
 
   handleAdd = () => {
@@ -396,12 +406,22 @@ class MovementsTable extends Component {
 
     return (
       <div>
-        {this.props.isAdmin ? (
-          <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                  disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn}>
-            Agregar Movimiento
-          </Button>
-        ) : null}
+        <Row style={{marginBottom: 30}}>
+          <Col sm={12}>
+            {this.props.isAdmin ? (
+              <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
+                      disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn}>
+                Agregar Movimiento
+              </Button>
+            ) : null}
+          </Col>
+          <Col sm={12}>
+            <Export
+              currentOperation={ this.props.currentOperation }
+              exportData={ this.state.exportData }
+            />
+          </Col>
+        </Row>
 
         <EditableProvider value={ this.props.form }>
           <Table
@@ -415,6 +435,7 @@ class MovementsTable extends Component {
               onChange: this.cancel,
             } }
             loading={ this.props.isLoading }
+            onChange={ this._handleChange }
           />
         </EditableProvider>
 

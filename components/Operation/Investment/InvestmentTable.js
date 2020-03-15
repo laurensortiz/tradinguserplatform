@@ -99,7 +99,7 @@ class InvestmentTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Monto',
+        title: 'Saldo Actual',
         dataIndex: 'amount',
         key: 'amount',
         render: amount => <span key={ amount }>{ DisplayTableAmount( amount ) }</span>,

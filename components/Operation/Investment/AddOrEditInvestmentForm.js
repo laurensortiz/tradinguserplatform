@@ -50,7 +50,7 @@ class AddOrEditInvestmentForm extends PureComponent {
 
   componentDidMount() {
     if (_.isEmpty( this.state.userAccounts )) {
-      this.props.fetchGetUserAccounts();
+      this.props.fetchGetAllUserAccounts();
     }
 
 
@@ -270,7 +270,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
+    fetchGetAllUserAccounts: userAccountOperations.fetchGetAllUserAccounts,
   }, dispatch );
 
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, Radio } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, Radio, message as antMessage } from 'antd';
 import _ from 'lodash';
 
 import InvestmentTable from './InvestmentTable';
@@ -34,10 +34,10 @@ class Investment extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
     if (!_.isEqual( nextProps.investmentOperations, prevState.investmentOperations )) {
-      let investmentOperationsUser ;
+      let investmentOperationsUser;
 
       if (!nextProps.isAdmin) {
-        investmentOperationsUser = _.filter(nextProps.investmentOperations, ['userAccount.userId', nextProps.currentUserId])
+        investmentOperationsUser = _.filter( nextProps.investmentOperations, [ 'userAccount.userId', nextProps.currentUserId ] )
       } else {
         investmentOperationsUser = nextProps.investmentOperations
       }
@@ -55,7 +55,7 @@ class Investment extends Component {
     }
 
 
-    if (nextProps.isSuccessMovements && !_.isEmpty( nextProps.messageMovements ) && !_.isEmpty(prevState.investmentMovements)) {
+    if (nextProps.isSuccessMovements && !_.isEmpty( nextProps.messageMovements ) && !_.isEmpty( prevState.investmentMovements )) {
       nextProps.fetchGetInvestmentMovements( prevState.currentOperationDetail.id );
       nextProps.fetchGetInvestmentOperations();
       nextProps.resetAfterMovementRequest();
@@ -89,30 +89,22 @@ class Investment extends Component {
       }
 
       prevState.isVisibleAddOrEditOperation = false;
-      notification[ 'success' ]( {
-        message,
-        description,
-        onClose: () => {
 
-          prevState.actionType = 'add'; // default value
+      antMessage.success( message, 1.5, () => {
+        prevState.actionType = 'add'; // default value
 
-          nextProps.fetchGetInvestmentOperations();
-          nextProps.resetAfterRequest();
-          nextProps.onClose(false)
-        },
-        duration: .5
+        nextProps.fetchGetInvestmentOperations();
+        nextProps.resetAfterRequest();
+        nextProps.onClose( false )
       } );
+
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-      notification[ 'error' ]( {
-        message: 'Ha ocurrido un error',
-        description:
-          'Por favor verifique la información',
-        onClose: () => {
-          nextProps.resetAfterRequest();
-        },
-        duration: 2
-      } )
+      antMessage.error( 'Ha ocurrido un error', 1.5, () => {
+        nextProps.resetAfterRequest();
+      } );
+
+
     }
 
     return !_.isEmpty( updatedState ) ? updatedState : null;
@@ -136,7 +128,7 @@ class Investment extends Component {
       selectedOperation: {},
       actionType: 'add'
     } )
-    this.props.onClose(false);
+    this.props.onClose( false );
   };
 
   _handleAddNewUserOperation = (userOperation) => {
@@ -178,7 +170,7 @@ class Investment extends Component {
       selectedOperation,
       isVisibleAddOrEditOperation: true,
     } )
-    this.props.handleFormVisible(true);
+    this.props.handleFormVisible( true );
   };
 
   _handleDetailUserOperation = (operationId) => {
@@ -218,48 +210,53 @@ class Investment extends Component {
       ? 'Agregar Operación de Inversión'
       : 'Editar Operación de Inversión';
 
-    const currentUsername = _.get(this.state.currentOperationDetail, 'userAccount.user.username', '');
-    const currentUserFirstName = _.get(this.state.currentOperationDetail, 'userAccount.user.firstName', '');
-    const currentUserLastName = _.get(this.state.currentOperationDetail, 'userAccount.user.lastName', '');
-    const modalDetailTitle = `${currentUsername} - ${currentUserFirstName} ${currentUserLastName}`;
+    const currentUsername = _.get( this.state.currentOperationDetail, 'userAccount.user.username', '' );
+    const currentUserFirstName = _.get( this.state.currentOperationDetail, 'userAccount.user.firstName', '' );
+    const currentUserLastName = _.get( this.state.currentOperationDetail, 'userAccount.user.lastName', '' );
+    const modalDetailTitle = `${ currentUsername } - ${ currentUserFirstName } ${ currentUserLastName }`;
 
-
+    const activeInvestmentOperations = _.filter( this.state.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) );
+    const deletedInvestmentOperations = _.filter( this.state.investmentOperations, { status: 0 } );
     return (
       <>
         <Row>
           <Col>
-            {this.props.isAdmin ? (
+            { this.props.isAdmin ? (
               <Tabs>
                 <TabPane tab="Activos" key="1">
                   <InvestmentTable
-                    investmentOperations={ _.filter( this.state.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
+                    investmentOperations={ activeInvestmentOperations }
                     isLoading={ this.props.isLoading }
                     onEdit={ this._onSelectEdit }
                     onDelete={ this._handleDeleteUserOperation }
                     onDetail={ this._handleDetailUserOperation }
-                    isAdmin={true}
+                    isAdmin={ true }
                   />
                 </TabPane>
                 <TabPane tab="Eliminados" key="2">
                   <InvestmentTable
-                    investmentOperations={ _.filter( this.state.investmentOperations, { status: 0 } ) }
+                    investmentOperations={ deletedInvestmentOperations }
                     isLoading={ this.props.isLoading }
                     onActive={ this._onSelectActive }
                     status="inactive"
-                    isAdmin={true}
+                    isAdmin={ true }
                   />
                 </TabPane>
               </Tabs>
             ) : (
-              <InvestmentTable
-                investmentOperations={ _.filter( this.state.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
-                isLoading={ this.props.isLoading }
-                onEdit={ this._onSelectEdit }
-                onDelete={ this._handleDeleteUserOperation }
-                onDetail={ this._handleDetailUserOperation }
-                isAdmin={false}
-              />
-            )}
+              <>
+                { !_.isEmpty( activeInvestmentOperations ) ? <h2>Operciones Fondo de Interés</h2> : null }
+                <InvestmentTable
+                  investmentOperations={ _.filter( this.state.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
+                  isLoading={ this.props.isLoading }
+                  onEdit={ this._onSelectEdit }
+                  onDelete={ this._handleDeleteUserOperation }
+                  onDetail={ this._handleDetailUserOperation }
+                  isAdmin={ false }
+                />
+              </>
+
+            ) }
 
           </Col>
         </Row>
@@ -280,7 +277,7 @@ class Investment extends Component {
         </Drawer>
 
         <Drawer
-          title={modalDetailTitle}
+          title={ modalDetailTitle }
           width="85%"
           onClose={ this._onCloseDetailView }
           visible={ this.state.isDetailViewVisible }
@@ -297,7 +294,7 @@ class Investment extends Component {
             movements={ this.state.investmentMovements }
             onAdd={ this._handleAddMovement }
             currentOperation={ this.state.currentOperationDetail }
-            isAdmin={this.props.isAdmin}
+            isAdmin={ this.props.isAdmin }
           />
         </Drawer>
       </>

@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 import Document from '../components/Document';
 
-import { Investment, Market } from '../components/Operation';
+import { Investment, Market, UserAccount } from '../components/Operation';
 import { userAccountOperations } from "../state/modules/userAccounts";
 
 const { TabPane } = Tabs;
@@ -17,7 +17,9 @@ class Operations extends Component {
     operationType: 'market',
     isFormVisible: false,
     isAdmin: false,
-    currentUser: {},
+    currentUser: {
+      id: null
+    },
     operations: {},
     hasMarketOperations: false,
     hasInvestmentOperations: false,
@@ -35,6 +37,14 @@ class Operations extends Component {
     if (!_.isEqual( nextProps.currentUser, prevState.currentUser )) {
       _.assignIn( updatedState, {
         currentUser: nextProps.currentUser
+      } );
+      
+      nextProps.fetchGetUserAccounts(nextProps.currentUser.id)
+    }
+    if (!_.isEqual( nextProps.accounts, prevState.accounts )) {
+
+      _.assignIn( updatedState, {
+        accounts: nextProps.accounts
       } );
     }
 
@@ -65,12 +75,13 @@ class Operations extends Component {
                 size="large"
                 style={ { float: 'left' } }
                 onChange={ this._onSelectOperationType }
+                buttonStyle="solid"
               >
                 <Radio.Button value="market"><Icon type="sliders"/> Bolsa OTC</Radio.Button>
                 <Radio.Button value="investment"> <Icon type="fund"/> Fondo de Interés</Radio.Button>
               </Radio.Group>
-              <Button style={ { float: 'right' } } type="primary" onClick={ () => this._handleFormDisplay( true ) }>
-                Agregar Operación
+              <Button style={ { float: 'right' } } type="primary" onClick={ () => this._handleFormDisplay( true ) } size="large">
+                <Icon type="plus-circle" /> Agregar Operación
               </Button>
             </Row>
             <Row>
@@ -100,6 +111,7 @@ class Operations extends Component {
           </>
         ) : (
           <div>
+            <UserAccount currentUserId={this.state.currentUser.id} />
             <div>
               <Market
                 isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
@@ -132,6 +144,7 @@ function mapStateToProps(state) {
   return {
     isAdmin: state.authState.isAdmin,
     currentUser: state.authState.currentUser,
+    accounts: state.userAccountsState.list,
     isLoading: state.investmentOperationsState.isLoading,
     isSuccess: state.investmentOperationsState.isSuccess,
     isFailure: state.investmentOperationsState.isFailure,
@@ -141,6 +154,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
+    fetchGeAllUserAccounts: userAccountOperations.fetchGetUserAccounts,
     fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts
   }, dispatch );
 

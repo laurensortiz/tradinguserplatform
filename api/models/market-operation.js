@@ -11,11 +11,11 @@ module.exports = (Sequelize, DataTypes) => {
     },
     buyPrice: {
       type: DataTypes.DECIMAL(10,2),
-      allowNull: false,
+      allowNull: true,
     },
     initialAmount: {
       type: DataTypes.DECIMAL(10,2),
-      allowNull: false,
+      allowNull: true,
     },
     takingProfit: {
       type: DataTypes.DECIMAL(10,2),
@@ -27,7 +27,7 @@ module.exports = (Sequelize, DataTypes) => {
     },
     maintenanceMargin: {
       type: DataTypes.DECIMAL(10,2),
-      allowNull: false,
+      allowNull: true,
     },
     amount: {
       type: DataTypes.DECIMAL(10,2),
@@ -52,7 +52,7 @@ module.exports = (Sequelize, DataTypes) => {
     },
     behavior: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       defaultValue: 1,
     },
   });

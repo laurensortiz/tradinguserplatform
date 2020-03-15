@@ -74,19 +74,21 @@ module.exports = {
       });
     }
 
-    const accountIds = _.map(userAccount, ({id}) => id);
-    const marketOperations = await MarketOperation.findAll(
-      marketOperationQuery.getByUser({ accountIds, UserAccount, User, Account, Product, Broker, Commodity })
-    );
+    return res.status(200).send(userAccount);
 
-    const investmentOperations = await InvestmentOperation.findAll(
-      investmentOperationQuery.getByUser({ accountIds, UserAccount, User, Account })
-    );
-
-    return res.status(200).send({
-      marketOperations,
-      investmentOperations,
-    });
+    // const accountIds = _.map(userAccount, ({id}) => id);
+    // const marketOperations = await MarketOperation.findAll(
+    //   marketOperationQuery.getByUser({ accountIds, UserAccount, User, Account, Product, Broker, Commodity })
+    // );
+    //
+    // const investmentOperations = await InvestmentOperation.findAll(
+    //   investmentOperationQuery.getByUser({ accountIds, UserAccount, User, Account })
+    // );
+    //
+    // return res.status(200).send({
+    //   marketOperations,
+    //   investmentOperations,
+    // });
   },
 
   async update(req, res) {
@@ -111,6 +113,7 @@ module.exports = {
       balanceInitial: req.body.balanceInitial || userAccount.balanceInitial,
       balanceFinal: req.body.balanceFinal || userAccount.balanceFinal,
       maintenanceMargin: req.body.maintenanceMargin || userAccount.maintenanceMargin,
+      status: req.body.status || userAccount.status,
       updatedAt: new Date(),
     });
 
