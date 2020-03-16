@@ -10,7 +10,7 @@ import Document from '../components/Document';
 class Calendar extends Component {
   createMarkup = () => {
     return {__html:
-        `<h3 style="text-align: center;">Calendario económico muestra los próximos eventos económicos, anuncios y noticias.</h3>
+        `<h3 style="text-align: center; color:#000">Calendario económico muestra los próximos eventos económicos, anuncios y noticias.</h3>
 &nbsp;
 
 <!-- TradingView Widget BEGIN -->
@@ -37,7 +37,7 @@ class Calendar extends Component {
 
   render() {
     return (
-      <Document>
+      <Document className="static-page">
         <div dangerouslySetInnerHTML={this.createMarkup()} />
       </Document>
     );

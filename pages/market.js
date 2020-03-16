@@ -313,7 +313,7 @@ class Calendar extends Component {
 
   render() {
     return (
-      <Document>
+      <Document className="static-page">
         <div className="widget-box-container" dangerouslySetInnerHTML={this.createMarkup()} />
       </Document>
     );

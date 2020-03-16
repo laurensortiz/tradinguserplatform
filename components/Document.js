@@ -36,6 +36,7 @@ class Document extends Component {
       <React.Fragment>
         <Head>
           <title>{ this.props.title }</title>
+          <link rel="manifest" href="manifest.json" />
           <meta name="description" content={ this.props.description }/>
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <meta charSet="UTF-8"/>
@@ -46,7 +47,7 @@ class Document extends Component {
           <link rel="shortcut icon" href="/static/favicon.png"/>
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,700&display=swap" rel="stylesheet" />
         </Head>
-        <Layout className={classNames('dark-mode', {'login-page' : isLoginPage})} style={ { minHeight: '100vh' } } id={ this.props.id || 'main-page' } >
+        <Layout className={classNames(`dark-mode ${this.props.className || ''}`, {'login-page' : isLoginPage})} style={ { minHeight: '100vh' } } id={ this.props.id || 'main-page' } >
           <Header/>
           <Sider collapsible collapsed={ this.state.collapsed } onCollapse={ this.onCollapse }>
             <Header/>

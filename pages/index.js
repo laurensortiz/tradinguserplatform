@@ -7,6 +7,12 @@ import Document from '../components/Document';
 import AuthLoginForm from '../components/AuthLoginForm';
 
 class Index extends Component {
+  
+  componentDidMount() {
+    const video = document.getElementById("intro-video");
+    if (video) video.playbackRate = .2;
+
+  }
 
   renderLoggedIn = () => {
     if (process.browser) {
@@ -18,11 +24,12 @@ class Index extends Component {
   renderLoggedOut = () => {
     return (
       <Row align="middle" type="flex" justify="center" className="login-container">
-        <video alt="WebTrader"
-               src="./static/bg-intro-video.mp4"
-               poster="./static/bg-intro.gif"
-               autoPlay={true} loop={true} className="intro-video" playbackRate="0.5"
-               style={{position: 'fixed', top:0, left:0, right:0, bottom:0, minWidth: '100%', minHeight: '100%', opacity: .1, zIndex:0}}
+        <video
+          id="intro-video"
+          src="./static/bg-intro-video.mp4"
+          poster="./static/bg-intro.gif"
+          autoPlay={true} loop={true} className="intro-video" playbackRate="0.5"
+          style={{position: 'fixed', top:0, left:0, right:0, bottom:0, minWidth: '100%', minHeight: '100%', opacity: .2, zIndex:0}}
         />
         <Col xs={24} md={12} lg={12} className="login-form">
           <AuthLoginForm />

@@ -9,7 +9,7 @@ class NextNProgress extends React.Component {
     color: '#FAA113',
     startPosition: 0.3,
     stopDelayMs: 200,
-    height: 3,
+    height: 5,
   };
 
   timer = null;

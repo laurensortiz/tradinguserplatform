@@ -4,8 +4,19 @@
   .ant-menu-dark {
     background-color: $black;
   }
-  .ant-layout {
-    background-color: $gray-1b1;
+
+  &.ant-layout {
+    background-color: $white;
+
+    @media screen and (min-width: $lg) {
+      background-color: $gray-1b1;
+
+      &.static-page {
+        background-color: $white!important;
+      }
+    }
+
+
   }
 
   .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
@@ -18,3 +29,4 @@
     }
   }
 }
+
