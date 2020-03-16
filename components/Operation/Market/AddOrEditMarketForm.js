@@ -362,32 +362,32 @@ class AddOrEditMarketForm extends PureComponent {
             <Input type="number" name="commoditiesTotal" onChange={ this._handleChange } placeholder="Cantidad Lotaje"/>
           ) }
         </Form.Item>
-        <Form.Item label="Tipo de Lotage">
+        <Form.Item label="Mercados a Operar">
           { getFieldDecorator( 'commodity', {
             initialValue: commoditiesTypeInitValue,
-            rules: [ { required: true, message: 'Por favor seleccione el tipo de lotage ' } ],
+            rules: [ { required: true, message: 'Por favor seleccione el mercado a operar ' } ],
           } )(
             <Select
               showSearch={ true }
               name="commodity"
               onChange={ value => this._handleChangeSelect( { name: 'commodity', value } ) }
-              placeholder="Tipo de Lotage"
+              placeholder="Mercados a Operar"
 
             >
               { this._getSelectOptions( this.state.commodities ) }
             </Select>
           ) }
         </Form.Item>
-        <Form.Item label="Categoría de Lotage">
+        <Form.Item label="Derivados de Inversión">
           { getFieldDecorator( 'assetClass', {
             initialValue: assetClassInitValue,
-            rules: [ { required: true, message: 'Por favor seleccione la categoría de lotage ' } ],
+            rules: [ { required: true, message: 'Por favor seleccione el derivado de inversión ' } ],
           } )(
             <Select
               showSearch={ true }
               name="assetClass"
               onChange={ value => this._handleChangeSelect( { name: 'assetClass', value } ) }
-              placeholder="Categoría de Lotage"
+              placeholder="Derivados de Inversión"
 
             >
               { this._getSelectOptions( this.state.assetClasses ) }
@@ -472,7 +472,7 @@ class AddOrEditMarketForm extends PureComponent {
             >
               <Option value={1}>Activo</Option>
               <Option value={2}>Cerrado</Option>
-              <Option value={3}>En Pausa</Option>
+              <Option value={3}>On Hold</Option>
             </Select>
           ) }
         </Form.Item>

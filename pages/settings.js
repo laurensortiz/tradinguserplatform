@@ -35,10 +35,10 @@ class Settings extends Component {
               <TabPane tab="Cuentas" key="4">
                 <SettingsAccounts />
               </TabPane>
-              <TabPane tab="Tipos Lotage" key="5">
+              <TabPane tab="Mercados a Operar" key="5">
                 <SettingsCommodities />
               </TabPane>
-              <TabPane tab="Categoría Lotage" key="6">
+              <TabPane tab="Derivados de Inversión" key="6">
                 <SettingsAssetClasses />
               </TabPane>
             </Tabs>

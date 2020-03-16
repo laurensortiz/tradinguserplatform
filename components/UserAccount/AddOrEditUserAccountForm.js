@@ -221,14 +221,14 @@ class AddOrEditUserAccountForm extends PureComponent {
             <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
           ) }
         </Form.Item>
-        <Form.Item label="Margen de Mantenimiento">
-          { getFieldDecorator( 'maintenanceMargin', {
-            initialValue: maintenanceMarginInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese el margen de mantenimiento' } ],
-          } )(
-            <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>
-          ) }
-        </Form.Item>
+        {/*<Form.Item label="Margen de Mantenimiento">*/}
+        {/*  { getFieldDecorator( 'maintenanceMargin', {*/}
+        {/*    initialValue: maintenanceMarginInitValue,*/}
+        {/*    rules: [ { required: false, message: 'Por favor ingrese el margen de mantenimiento' } ],*/}
+        {/*  } )(*/}
+        {/*    <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>*/}
+        {/*  ) }*/}
+        {/*</Form.Item>*/}
 
 
         <Form.Item>
