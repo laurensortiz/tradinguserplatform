@@ -6,10 +6,10 @@
   }
 
   &.ant-layout {
-    background-color: $white;
+    background-color: $gray-1b1;
 
     @media screen and (min-width: $lg) {
-      background-color: $gray-1b1;
+
 
       &.static-page {
         background-color: $white!important;

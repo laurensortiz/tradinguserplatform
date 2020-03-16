@@ -16,6 +16,23 @@ strong {
   font-weight:700;
 }
 
+.page-loader {
+  width: 300px;
+  height: 300px;
+  position: fixed;
+  z-index: 100;
+
+  margin: auto;
+  top:20%;
+  left: 0;
+  right: 0;
+  display: none;
+}
+
+.nprogress-busy .login-page .page-loader {
+  display: block;
+
+}
 
 
 .ant-layout-sider {
