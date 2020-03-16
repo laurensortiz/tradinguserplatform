@@ -21,7 +21,7 @@ class Index extends Component {
         <video alt="WebTrader"
                src="/static/bg-intro-video.mp4"
                poster="/static/bg-intro.gif"
-               autoPlay="true" loop="true" className="intro-video" playbackRate="0.5"></video>
+               autoPlay={true} loop={true} className="intro-video" playbackRate={0.5}></video>
         <Col xs={24} md={12} lg={12} className="login-form">
           <AuthLoginForm />
         </Col>
