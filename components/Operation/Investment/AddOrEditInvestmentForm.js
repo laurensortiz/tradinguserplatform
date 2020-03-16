@@ -31,7 +31,8 @@ class AddOrEditInvestmentForm extends PureComponent {
     status: 1,
     userAccounts: [],
     accountName: '',
-    accountPercentage: 0
+    accountPercentage: 0,
+    accountGuarantee: 0,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -82,7 +83,8 @@ class AddOrEditInvestmentForm extends PureComponent {
           name,
         },
         amount: selectedUserAccount.accountValue,
-        accountPercentage: _.get(selectedUserAccount, 'account.percentage', 0)
+        accountPercentage: _.get(selectedUserAccount, 'account.percentage', 0),
+        accountGuarantee: _.get(selectedUserAccount, 'guaranteeOperation', 0)
       } )
     } else {
       this.setState( {
@@ -148,6 +150,23 @@ class AddOrEditInvestmentForm extends PureComponent {
     this.setState( { confirmDirty: this.state.confirmDirty || !!value } );
   };
 
+  handleInversion = (rule, value, callback) => {
+    const { getFieldValue } = this.props.form;
+
+    return new Promise((resolve, reject) => {
+
+      if (parseFloat(value) == 0) {
+        reject("La opereración debe ser mayor a 0");
+      }
+
+      if ((parseFloat(this.state.accountGuarantee ) - parseFloat(value)) < 0) {
+        reject("El usuario no cuenta con Garantías disponibles");  // reject with error message
+      } else {
+        resolve();
+      }
+    });
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const isAddAction = _.isEqual( this.props.actionType, 'add' );
@@ -194,7 +213,10 @@ class AddOrEditInvestmentForm extends PureComponent {
             { getFieldDecorator( 'amount', {
               initialValue: amountInitValue,
               value: amountInitValue,
-              rules: [ { required: true, message: 'Por favor indique el monto' } ],
+              rules: [ { required: true, message: 'Por favor indique el monto' },
+                {
+                  validator: this.handleInversion
+                }],
             } )(
               <Input name="amount" onChange={ this._handleChange }
                      placeholder="Monto"/>

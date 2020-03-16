@@ -262,7 +262,7 @@ class Investment extends Component {
         </Row>
         <Drawer
           title={ modalTitle }
-          width={ 320 }
+          width={ 340 }
           onClose={ this._onClose }
           visible={ this.props.isFormVisible }
           destroyOnClose={ true }
