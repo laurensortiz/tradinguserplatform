@@ -45,7 +45,8 @@ module.exports = app => {
 
   app.post( '/api/signup', user.create );
   app.post( '/api/login', user.auth );
-  app.post( '/api/logout', authMiddleware, user.logout );
+  //app.post( '/api/logout', authMiddleware, user.logout );
+  app.post( '/api/logout', user.logout );
 
   app.post( '/api/users', user.create );
   app.get( '/api/users', user.list );
