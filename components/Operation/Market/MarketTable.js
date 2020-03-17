@@ -213,6 +213,14 @@ class MarketTable extends Component {
         sorter: (a, b) => Sort( a.initialAmount, b.initialAmount ),
         sortDirections: [ 'descend', 'ascend' ],
       },
+      {
+        title: 'Margen de Mantenimiento',
+        dataIndex: 'maintenanceMargin',
+        key: 'maintenanceMargin',
+        render: maintenanceMargin => <span key={maintenanceMargin} >{ DisplayTableAmount( maintenanceMargin ) }</span>,
+        sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
       // {
       //   title: 'L/S',
       //   dataIndex: 'longShort',

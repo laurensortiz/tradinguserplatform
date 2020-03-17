@@ -19,6 +19,7 @@ class Detail extends PureComponent {
     const commoditiesTotal = _.get(this.props, 'currentOperation.commoditiesTotal', '0');
     const buyPrice = _.get(this.props, 'currentOperation.buyPrice', '0.00');
     const takingProfit = _.get(this.props, 'currentOperation.takingProfit', '0.00');
+    const maintenanceMargin = _.get(this.props, 'currentOperation.maintenanceMargin', '0.00');
     const stopLost = _.get(this.props, 'currentOperation.stopLost', '0');
     const orderId = _.get(this.props, 'currentOperation.orderId', '-');
 
@@ -40,6 +41,7 @@ class Detail extends PureComponent {
               <Descriptions.Item label="Inversión">{FormatCurrency.format(initialAmount)} </Descriptions.Item>
               <Descriptions.Item label="Saldo Actual"><span className={IsOperationPositive(amount, initialAmount) ? 'positive' : 'negative'}>{FormatCurrency.format(amount)}</span> </Descriptions.Item>
               <Descriptions.Item label="L/S">{longShort}</Descriptions.Item>
+              <Descriptions.Item label="Margen de Mantenimiento">{FormatCurrency.format(maintenanceMargin)}</Descriptions.Item>
               <Descriptions.Item label="Lotage">{commoditiesTotal} <Tag>{commodityName}</Tag> <Tag className="asset-class">{assetClassName}</Tag></Descriptions.Item>
               <Descriptions.Item label="Precio de Compra">{FormatCurrency.format(buyPrice)}</Descriptions.Item>
               <Descriptions.Item label="Taking Profit">{FormatCurrency.format(takingProfit)}</Descriptions.Item>

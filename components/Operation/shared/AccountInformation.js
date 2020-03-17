@@ -44,7 +44,6 @@ class AccountInformation extends PureComponent {
 
               <Descriptions.Item label="Garantías disponibles">{FormatCurrency.format(guaranteeOperation)}</Descriptions.Item>
               <Descriptions.Item label="Saldo Inicial">{FormatCurrency.format(balanceInitial)}</Descriptions.Item>
-              <Descriptions.Item label="Margen de Mantenimiento">{FormatCurrency.format(maintenanceMargin)}</Descriptions.Item>
 
             </Descriptions>
           </Col>

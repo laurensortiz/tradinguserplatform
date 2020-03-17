@@ -247,10 +247,15 @@ class AddOrEditMarketForm extends PureComponent {
     const value = e.target.value;
     this.setState( { confirmDirty: this.state.confirmDirty || !!value } );
   };
+  
   handleInversion = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
 
     return new Promise((resolve, reject) => {
+      
+      if (_.isEqual( this.props.actionType, 'edit') && _.isEqual(parseFloat(this.state.amount ), parseFloat(value))) {
+        resolve();
+      }
 
       if (parseFloat(value) == 0) {
         reject("La opereración debe ser mayor a 0");

@@ -201,14 +201,14 @@ class UserAccountsTable extends Component {
         sorter: (a, b) => Sort( a.balanceFinal, b.balanceFinal ),
         sortDirections: [ 'descend', 'ascend' ],
       },
-      {
-        title: 'Margen Mantenimiento',
-        dataIndex: 'maintenanceMargin',
-        key: 'maintenanceMargin',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-        sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
-        sortDirections: [ 'descend', 'ascend' ],
-      },
+      // {
+      //   title: 'Margen Mantenimiento',
+      //   dataIndex: 'maintenanceMargin',
+      //   key: 'maintenanceMargin',
+      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+      //   sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
+      //   sortDirections: [ 'descend', 'ascend' ],
+      // },
       {
         title: 'Garantías / Créditos',
         dataIndex: 'guaranteeCredits',
