@@ -13,15 +13,17 @@ class NavPublic extends PureComponent {
       <Menu
         theme="dark"
         mode="horizontal"
+        forceSubMenuRender={false}
+        inlineCollapsed={false}
       >
         <MenuItem>
-          <Anchor href="/market"><Icon type="hourglass"/> <span>Mercado</span></Anchor>
+          <Anchor href="/market"><Icon type="sliders"/> <span>Mercado</span></Anchor>
         </MenuItem>
         <MenuItem>
-          <Anchor href="/calendar"><Icon type="hourglass"/> <span>Calendario Económico</span></Anchor>
+          <Anchor href="/calendar"><Icon type="fund"/> <span>Calendario Económico</span></Anchor>
         </MenuItem>
         <MenuItem>
-          <Link href="/operations"><Icon type="hourglass"/> <span>Operaciones</span></Link>
+          <Link href="/operations"><Icon type="area-chart"/> <span>Operaciones</span></Link>
         </MenuItem>
         <MenuItem>
           <Link onClick={ this.props.onLogout }><Icon type="logout"/> <span>Salir</span></Link>

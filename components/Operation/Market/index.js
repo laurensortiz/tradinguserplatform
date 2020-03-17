@@ -71,24 +71,23 @@ class Market extends Component {
 
     }
 
-
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-      let message = 'Operación de Inversión Creada',
-        description = 'La Operación de Inversión se ha creado corrrectamente';
+      let message = 'Operación de Bolsa OTC Creada',
+        description = 'La Operación de Bolsa OTC se ha creado corrrectamente';
 
       if (_.isEqual( prevState.actionType, 'edit' )) {
-        message = 'Operación de Inversión Modificado';
-        description = 'La Operación de Inversión se ha modificado corrrectamente';
+        message = 'Operación de Bolsa OTC Modificado';
+        description = 'La Operación de Bolsa OTC se ha modificado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'delete' )) {
-        message = 'Operación de Inversión Eliminado';
-        description = 'La Operación de Inversión se ha eliminado corrrectamente';
+        message = 'Operación de Bolsa OTC Eliminado';
+        description = 'La Operación de Bolsa OTC se ha eliminado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'active' )) {
-        message = 'Operación de Inversión Activado';
-        description = 'La Operación de Inversión se ha activado corrrectamente';
+        message = 'Operación de Bolsa OTC Activado';
+        description = 'La Operación de Bolsa OTC se ha activado corrrectamente';
       }
 
       prevState.isVisibleAddOrEditOperation = false;

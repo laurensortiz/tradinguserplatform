@@ -11,7 +11,7 @@ garatias numeric(10,2);
                         Where id = new."userAccountId");
 
 	UPDATE "UserAccount"
-    SET "guaranteeOperation" = (garatias - NEW."initialAmount")
+    SET "guaranteeOperation" = (garatias - NEW."initialAmount" - new."maintenanceMargin")
    	WHERE id = new."userAccountId";
 
 

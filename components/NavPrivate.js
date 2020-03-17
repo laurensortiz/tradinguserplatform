@@ -12,12 +12,6 @@ class NavPrivate extends PureComponent {
         theme="dark"
         mode="horizontal"
       >
-        {/*<MenuItem>*/}
-        {/*  <Link href="/market"><Icon type="sliders" /> <span>Mercado</span></Link>*/}
-        {/*</MenuItem>*/}
-        {/*<MenuItem>*/}
-        {/*  <Link href="/calendar"><Icon type="calendar" /> <span>Calendario Económico</span></Link>*/}
-        {/*</MenuItem>*/}
         <MenuItem>
           <Link href="/users"><Icon type="user" /> <span>Usuarios</span></Link>
         </MenuItem>

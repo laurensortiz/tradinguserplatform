@@ -129,7 +129,11 @@ class AddOrEditMarketForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedOperation )) {
       const { selectedOperation } = this.props;
+      console.log('[=====  HERE  =====>');
+      console.log(selectedOperation);
+      console.log('<=====  /HERE  =====]');
       const accountName = _.get(selectedOperation, 'userAccount.account.name', '');
+      const accountGuarantee = _.get(selectedOperation, 'userAccount.guaranteeOperation', 0);
       const productName = _.get(selectedOperation, 'product.name', '');
       const productCode = _.get(selectedOperation, 'product.code', '');
       const brokerName = _.get(selectedOperation, 'broker.name', '');
@@ -139,6 +143,7 @@ class AddOrEditMarketForm extends PureComponent {
         ...this.state,
         ...selectedOperation,
         accountName,
+        accountGuarantee,
         productName: `${productName}-${productCode}`,
         brokerName,
         commodityName,
