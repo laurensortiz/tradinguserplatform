@@ -12,6 +12,7 @@ module.exports = {
         gpAmount: req.body.gpAmount,
         status: _.get(req, 'body.status', 1),
         createdAt: req.body.createdAt || new Date(),
+        updatedAt: new Date()
       });
 
       return res.status(200).send(investmentMovement);

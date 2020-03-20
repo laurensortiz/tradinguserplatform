@@ -199,11 +199,17 @@ class Market extends Component {
    * Add Movements
    */
   _handleAddMovement = (newMovement) => {
-    const { id, amount, userAccount: { account: { percentage } } } = this.state.currentOperationDetail;
-    const { gpInversion, gpAmount } = newMovement
+    const { id : marketOperationId } = this.state.currentOperationDetail;
+    const { gpInversion, gpAmount } = newMovement;
+    console.log('[=====  test  =====>');
+    console.log( parseFloat(gpInversion).toFixed(2));
+    console.log(parseFloat(gpAmount).toFixed(2));
+    console.log('<=====  /test  =====]');
     this.props.fetchAddMarketMovement( {
-      marketOperationId: id,
-      ...newMovement
+      ...newMovement,
+      marketOperationId,
+      gpInversion: parseFloat(gpInversion).toFixed(2),
+      gpAmount: parseFloat(gpAmount).toFixed(2),
     } )
   };
 
@@ -214,8 +220,8 @@ class Market extends Component {
     const { gpInversion, gpAmount, createdAt, id } = newMovement;
     this.props.fetchEditMarketMovement( {
       id,
-      gpInversion,
-      gpAmount,
+      gpInversion: parseFloat(gpInversion).toFixed(2),
+      gpAmount: parseFloat(gpAmount).toFixed(2),
       createdAt: moment.utc(createdAt),
     } )
   };

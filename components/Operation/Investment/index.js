@@ -197,12 +197,13 @@ class Investment extends Component {
    * Add Movements
    */
   _handleAddMovement = (newMovement) => {
-    const { id, amount, userAccount: { account: { percentage } } } = this.state.currentOperationDetail;
+    const { id : investmentOperationId } = this.state.currentOperationDetail;
     const { gpInversion, gpAmount, createdAt } = newMovement;
     this.props.fetchAddInvestmentMovement( {
-      investmentOperationId: id,
-      gpInversion,
-      gpAmount,
+      ...newMovement,
+      investmentOperationId,
+      gpInversion: parseFloat(gpInversion).toFixed(2),
+      gpAmount: parseFloat(gpAmount).toFixed(2),
       createdAt,
     } )
   };
@@ -214,8 +215,8 @@ class Investment extends Component {
     const { gpInversion, gpAmount, createdAt, id } = newMovement;
     this.props.fetchEditInvestmentMovement( {
       id,
-      gpInversion,
-      gpAmount,
+      gpInversion: parseFloat(gpInversion).toFixed(2),
+      gpAmount: parseFloat(gpAmount).toFixed(2),
       createdAt: moment.utc(createdAt),
     } )
   };

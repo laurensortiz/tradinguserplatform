@@ -28,9 +28,9 @@ operationAmount numeric(10,2);
 						From "MarketMovement"
                         Where "marketOperationId" = new."id");
 
-	UPDATE "UserAccount"
-    SET "accountValue" = (currentAccountAmount + garatias + totalOperationAmount)
-   	WHERE id = new."userAccountId";
+--	UPDATE "UserAccount"
+--    SET "accountValue" = (currentAccountAmount + garatias + totalOperationAmount)
+--   	WHERE id = new."userAccountId";
 
 
         RETURN NEW;

@@ -27,7 +27,8 @@ class AddOrEditUserAccountForm extends PureComponent {
     },
     account: {
       id: null,
-      name: ''
+      name: '',
+      associatedOperation: 1,
     },
     confirmDirty: false,
     isInvalid: true,
@@ -64,6 +65,9 @@ class AddOrEditUserAccountForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedAccount )) {
       const { selectedAccount } = this.props;
+      console.log('[=====  heeeeee  =====>');
+      console.log(selectedAccount);
+      console.log('<=====  /heeeeee  =====]');
       this.setState( {
         ...this.state,
         ...selectedAccount,
@@ -85,6 +89,14 @@ class AddOrEditUserAccountForm extends PureComponent {
         user: {
           id,
           username: name,
+        },
+      } )
+    } else if (_.isEqual( fieldName, 'account' )) {
+      this.setState( {
+        account: {
+          id,
+          name,
+          associatedOperation: Number(codeIdName[2] || 1)
         },
       } )
     } else {
@@ -121,6 +133,11 @@ class AddOrEditUserAccountForm extends PureComponent {
     return _.map( options, ({ id, name }) => <Option key={ `${ id }_${ name }` }>{ name }</Option> )
   };
 
+  _getAccountSelectOption = options => {
+    return _.map( options, ({ id, name, associatedOperation }) => <Option
+      key={ `${ id }_${ name }_${ associatedOperation }` }>{ name }</Option> )
+  };
+
   _getUserSelectOption = options => {
     return _.map( options, ({ id, username }) => <Option key={ `${ id }_${ username }` }>{ username }</Option> )
   };
@@ -134,6 +151,7 @@ class AddOrEditUserAccountForm extends PureComponent {
   render() {
     const { getFieldDecorator } = this.props.form;
     const isAddAction = _.isEqual( this.props.actionType, 'add' );
+    const associatedOperation =  _.get(this.state, 'account.associatedOperation', 1);
 
 
     // Default values for edit action
@@ -176,7 +194,7 @@ class AddOrEditUserAccountForm extends PureComponent {
               placeholder="Cuenta"
               showArrow={ isAddAction }
             >
-              { this._getSelectOption( this.state.accounts ) }
+              { this._getAccountSelectOption( this.state.accounts ) }
             </Select>
           ) }
         </Form.Item>
@@ -188,15 +206,18 @@ class AddOrEditUserAccountForm extends PureComponent {
             <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
           ) }
         </Form.Item>
-        <Form.Item label="Garantías disponibles">
-          { getFieldDecorator( 'guaranteeOperation', {
-            initialValue: guaranteeOperationInitValue,
-            rules: [ { required: false, message: 'Por favor indique las garatías disponibles' } ],
-          } )(
-            <Input name="guaranteeOperation" onChange={ this._handleChange }
-                   placeholder="Garantías disponibles para operar"/>
-          ) }
-        </Form.Item>
+        {_.isEqual(associatedOperation, 1) ? (
+          <Form.Item label="Garantías disponibles">
+            { getFieldDecorator( 'guaranteeOperation', {
+              initialValue: guaranteeOperationInitValue,
+              rules: [ { required: false, message: 'Por favor indique las garatías disponibles' } ],
+            } )(
+              <Input name="guaranteeOperation" onChange={ this._handleChange }
+                     placeholder="Garantías disponibles para operar"/>
+            ) }
+          </Form.Item>
+        ) : null}
+
         <Form.Item label="Garantía/Créditos">
           { getFieldDecorator( 'guaranteeCredits', {
             initialValue: guaranteeCreditsInitValue,
@@ -221,14 +242,14 @@ class AddOrEditUserAccountForm extends PureComponent {
             <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
           ) }
         </Form.Item>
-        {/*<Form.Item label="Margen de Mantenimiento">*/}
-        {/*  { getFieldDecorator( 'maintenanceMargin', {*/}
-        {/*    initialValue: maintenanceMarginInitValue,*/}
-        {/*    rules: [ { required: false, message: 'Por favor ingrese el margen de mantenimiento' } ],*/}
-        {/*  } )(*/}
-        {/*    <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>*/}
-        {/*  ) }*/}
-        {/*</Form.Item>*/}
+        {/*<Form.Item label="Margen de Mantenimiento">*/ }
+        {/*  { getFieldDecorator( 'maintenanceMargin', {*/ }
+        {/*    initialValue: maintenanceMarginInitValue,*/ }
+        {/*    rules: [ { required: false, message: 'Por favor ingrese el margen de mantenimiento' } ],*/ }
+        {/*  } )(*/ }
+        {/*    <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>*/ }
+        {/*  ) }*/ }
+        {/*</Form.Item>*/ }
 
 
         <Form.Item>

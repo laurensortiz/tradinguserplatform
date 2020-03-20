@@ -19,9 +19,9 @@ totalOperationAmount numeric(10,2);
 
 
 
-	UPDATE "UserAccount"
-    SET "accountValue" = (garatias + totalOperationAmount)
-   	WHERE id = new."userAccountId";
+--	UPDATE "UserAccount"
+--    SET "accountValue" = (garatias + totalOperationAmount)
+--   	WHERE id = new."userAccountId";
 
 
         RETURN NEW;

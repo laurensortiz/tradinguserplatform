@@ -147,7 +147,7 @@ class MovementsTable extends Component {
       const tempData = _.first(this.state.tempDataSource);
       const tempDataSourceUpdate = {
         ...tempData,
-        gpInversion: currentAmount
+        gpInversion: parseFloat(currentAmount).toFixed(2)
       };
 
       this.setState({
@@ -417,7 +417,7 @@ class MovementsTable extends Component {
 
     return (
       <div>
-        <Row style={{marginBottom: 30}}>
+        <Row style={{marginBottom: 30, marginTop: 30}}>
           <Col sm={12}>
             {this.props.isAdmin ? (
               <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }

@@ -20,7 +20,7 @@ const queries = {
             {
               model: Account,
               as: 'account',
-              attributes: ['name', 'percentage']
+              attributes: ['name', 'percentage', 'associatedOperation']
             },
           ],
         },
@@ -49,7 +49,7 @@ const queries = {
             {
               model: Account,
               as: 'account',
-              attributes: ['name', 'percentage']
+              attributes: ['name', 'percentage', 'associatedOperation']
             },
           ],
         },

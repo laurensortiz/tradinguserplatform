@@ -31,6 +31,8 @@ class AccountInformation extends PureComponent {
 
     const status = _.get(this.props, 'currentOperation.status', 1);
     const {name : statusName, color : statusColor} = FormatStatus(status);
+    
+    const associatedOperation = _.get(this.props, 'currentOperation.userAccount.account.associatedOperation', 1);
 
     return (
       <>
@@ -41,8 +43,9 @@ class AccountInformation extends PureComponent {
 
               <Descriptions.Item label="Tipo de cuenta">{accountName}</Descriptions.Item>
               <Descriptions.Item label="Comisíon sobre ganancias">{accountPercentage} %</Descriptions.Item>
-
-              <Descriptions.Item label="Garantías disponibles">{FormatCurrency.format(guaranteeOperation)}</Descriptions.Item>
+              {_.isEqual(associatedOperation, 1) ? (
+                <Descriptions.Item label="Garantías disponibles">{FormatCurrency.format(guaranteeOperation)}</Descriptions.Item>
+              ) : null}
               <Descriptions.Item label="Saldo Inicial">{FormatCurrency.format(balanceInitial)}</Descriptions.Item>
 
             </Descriptions>

@@ -24,10 +24,10 @@ diffNewOldAmount numeric(10,2);
 
 	  --RAISE EXCEPTION 'Yo there I''m number %, eso%', currentAmount, newAmount;
 
-    IF (currentAmount != newAmount) then
-	 UPDATE "UserAccount"
-    SET "guaranteeOperation" = diffNewOldAmount + currentGuarantee where id = old.id;
- 	end if;
+--    IF (currentAmount != newAmount) then
+--	 UPDATE "UserAccount"
+--    SET "guaranteeOperation" = diffNewOldAmount + currentGuarantee where id = old.id;
+-- 	end if;
 
         RETURN NEW;
     END;

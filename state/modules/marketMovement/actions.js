@@ -34,10 +34,13 @@ const requestMarketMovementsError = (error) => {
 };
 
 // Add
-export const fetchAddMarketMovement = (operation) => async dispatch => {
+export const fetchAddMarketMovement = (movement) => async dispatch => {
+  console.log('[=====  MOVIMIENTO  =====>');
+  console.log(movement);
+  console.log('<=====  /MOVIMIENTO  =====]');
   dispatch( requestAddMarketMovement() );
   try {
-    const res = await addMarketMovement(operation);
+    const res = await addMarketMovement(movement);
     dispatch( requestAddMarketMovementSuccess( res.data ) )
   } catch (e) {
     dispatch( requestAddMarketMovementError( e.message ) )
@@ -67,6 +70,7 @@ const requestAddMarketMovementError = (error) => {
 
 // Edit
 export const fetchEditMarketMovement = (movement) => async dispatch => {
+
   dispatch( requestEditMarketMovement() );
   try {
     const res = await editMarketMovement(movement);
