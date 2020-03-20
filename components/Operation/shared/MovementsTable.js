@@ -80,7 +80,7 @@ class MovementsTable extends Component {
     if (_.isString( key )) {
       this.cancel()
     } else {
-      this.props.fetchDeleteInvestmentMovement( Number( key ) );
+      this.props.onDelete( Number( key ) );
     }
   };
 
@@ -130,26 +130,31 @@ class MovementsTable extends Component {
       if (_.isString( key )) {
         this.props.onAdd( newData )
       } else {
-        this.props.fetchEditInvestmentMovement( newData )
+        this.props.onEdit( newData )
       }
     } );
   }
 
-  edit(key) {
+  edit = (key) => {
     this.setState( { editingKey: key } );
   }
 
-  _onChangeInput = ({target}) => {
-    const currentAmount = getGPInversion(this.props.currentOperation.amount || 0, !_.isEmpty(target.value) ? target.value : 0);
-    const tempData = _.first(this.state.tempDataSource);
-    const tempDataSourceUpdate = {
-      ...tempData,
-      gpInversion: currentAmount
-    };
 
-    this.setState({
-      tempDataSource: [tempDataSourceUpdate]
-    })
+  _onChangeInput = ({target}) => {
+
+    if (!_.isNumber(this.state.editingKey)) {
+      const currentAmount = getGPInversion(this.props.currentOperation.amount || 0, !_.isEmpty(target.value) ? target.value : 0);
+      const tempData = _.first(this.state.tempDataSource);
+      const tempDataSourceUpdate = {
+        ...tempData,
+        gpInversion: currentAmount
+      };
+
+      this.setState({
+        tempDataSource: [tempDataSourceUpdate]
+      })
+    }
+
   };
   /*
   * RANGE
@@ -284,7 +289,7 @@ class MovementsTable extends Component {
     const datesInTimes = _.map( this.state.dataSource, record => moment( record.createdAt ) ),
       maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
       minDatesInTimes = moment.min( datesInTimes ).subtract( 1, 'days' );
-
+    const showBasedAdmin = this.props.isAdmin ? 'show' : 'hidden';
     return [
       {
         title: 'G/P',
@@ -325,24 +330,29 @@ class MovementsTable extends Component {
       {
         title: 'Acciones',
         key: 'actions',
-        className: 'actions-col',
+        className: `${showBasedAdmin}`,
         render: (text, record) => {
           record = {
             ...record,
             key: record.id
           };
           const { editingKey } = this.state;
+
           const editable = this.isEditing( record );
           return editable ? (
             <span>
               <EditableConsumer>
                 { form => (
-                  <a
-                    onClick={ () => this.save( record.key ) }
-                    style={ { marginRight: 8 } }
-                  >
+                  <span>
+                    <a
+                      onClick={ () => this.save( record.key ) }
+                      style={ { marginRight: 8 } }
+                    >
                     Salvar
                   </a>
+
+                  </span>
+
                 ) }
               </EditableConsumer>
               <Popconfirm
@@ -355,18 +365,19 @@ class MovementsTable extends Component {
               </Popconfirm>
             </span>
           ) : (
-            <div>
-              {/*<a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>*/ }
-              {/*  Editar*/ }
-              {/*</a>*/ }
-              {/*<Popconfirm*/ }
-              {/*  title="Desea eliminarlo?"*/ }
-              {/*  onConfirm={ () => this.handleDelete( record.key ) }*/ }
-              {/*  okText="Sí"*/ }
-              {/*  cancelText="No"*/ }
-              {/*>*/ }
-              {/*  <Button type="danger" disabled={ editingKey !== '' }><Icon type="delete"/></Button>*/ }
-              {/*</Popconfirm>*/ }
+            <div className="cta-container">
+              <Button type="secondary" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }><Icon type="edit"/></Button>
+              {/*<a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>*/}
+              {/*  Editar*/}
+              {/*</a>*/}
+              <Popconfirm
+                title="Desea eliminarlo?"
+                onConfirm={ () => this.handleDelete( record.key ) }
+                okText="Sí"
+                cancelText="No"
+              >
+                <Button type="danger" disabled={ editingKey !== '' }><Icon type="delete"/></Button>
+              </Popconfirm>
             </div>
           );
         },

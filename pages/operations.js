@@ -85,51 +85,28 @@ class Operations extends Component {
               </Button>
             </Row>
             <Row>
-              <Tabs
-                defaultActiveKey={ this.state.operationType }
-                activeKey={ this.state.operationType }
-                animated={ false }
-              >
-                <TabPane tab key="market">
-                  <Market
-                    isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
-                    onClose={ this._handleFormDisplay }
-                    handleFormVisible={ this._handleFormDisplay }
-                    isAdmin={ true }
-                  />
-                </TabPane>
-                <TabPane tab key="investment">
-                  <Investment
-                    isFormVisible={ _.isEqual( this.state.operationType, 'investment' ) && this.state.isFormVisible }
-                    onClose={ this._handleFormDisplay }
-                    handleFormVisible={ this._handleFormDisplay }
-                    isAdmin={ true }
-                  />
-                </TabPane>
-              </Tabs>
+              <Col className={_.isEqual( this.state.operationType, 'market' ) ? 'show' : 'hidden'}>
+                <Market
+                  isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
+                  onClose={ this._handleFormDisplay }
+                  handleFormVisible={ this._handleFormDisplay }
+                  isAdmin={ true }
+                />
+              </Col>
+              <Col className={_.isEqual( this.state.operationType, 'investment' ) ? 'show' : 'hidden'}>
+                <Investment
+                  isFormVisible={ _.isEqual( this.state.operationType, 'investment' ) && this.state.isFormVisible }
+                  onClose={ this._handleFormDisplay }
+                  handleFormVisible={ this._handleFormDisplay }
+                  isAdmin={ true }
+                />
+              </Col>
+
             </Row>
           </>
         ) : (
           <div>
-            <UserAccount currentUserId={this.state.currentUser.id} />
-            <div>
-              <Market
-                isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
-                onClose={ this._handleFormDisplay }
-                handleFormVisible={ this._handleFormDisplay }
-                isAdmin={ false }
-                currentUserId={_.get(this.state.currentUser, 'id', 0)}
-              />
-            </div>
-            <div>
-              <Investment
-                isFormVisible={ _.isEqual( this.state.operationType, 'investment' ) && this.state.isFormVisible }
-                onClose={ this._handleFormDisplay }
-                handleFormVisible={ this._handleFormDisplay }
-                isAdmin={ false }
-                currentUserId={_.get(this.state.currentUser, 'id', 0)}
-              />
-            </div>
+            <UserAccount currentUser={this.state.currentUser} />
           </div>
         ) }
 

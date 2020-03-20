@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Row, Col, Button, Descriptions, Tag } from 'antd';
 import _ from 'lodash';
 
-import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive } from '../../../common/utils';
+import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive, AssetClassColor } from '../../../common/utils';
 
 class Detail extends PureComponent {
 
@@ -42,7 +42,7 @@ class Detail extends PureComponent {
               <Descriptions.Item label="Saldo Actual"><span className={IsOperationPositive(amount, initialAmount) ? 'positive' : 'negative'}>{FormatCurrency.format(amount)}</span> </Descriptions.Item>
               <Descriptions.Item label="L/S">{longShort}</Descriptions.Item>
               <Descriptions.Item label="Margen de Mantenimiento">{FormatCurrency.format(maintenanceMargin)}</Descriptions.Item>
-              <Descriptions.Item label="Lotage">{commoditiesTotal} <Tag>{commodityName}</Tag> <Tag className="asset-class">{assetClassName}</Tag></Descriptions.Item>
+              <Descriptions.Item label="Lotage">{commoditiesTotal} <Tag>{commodityName}</Tag> <Tag className={`asset-class ${AssetClassColor(assetClassName).name}`}>{assetClassName}</Tag></Descriptions.Item>
               <Descriptions.Item label="Precio de Compra">{FormatCurrency.format(buyPrice)}</Descriptions.Item>
               <Descriptions.Item label="Taking Profit">{FormatCurrency.format(takingProfit)}</Descriptions.Item>
               <Descriptions.Item label="S/L">{stopLost}%</Descriptions.Item>

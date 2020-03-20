@@ -53,6 +53,7 @@ module.exports = {
       where: {
         id: req.params.marketMovementId,
       },
+      silence: true
     });
 
     if (!marketMovement) {
@@ -61,13 +62,13 @@ module.exports = {
       });
     }
 
+
+
     const updatedMarketMovement = await marketMovement.update({
-      operationType: req.body.operationType || marketMovement.operationType,
-      userAccountId: _.get(req, 'body.userAccount.id', 0) || marketMovement.userAccountId,
-      amount: req.body.amount || marketMovement.amount,
-      status: req.body.status || marketMovement.status,
-      startDate: req.body.startDate || marketMovement.startDate,
-      endDate: req.body.status || marketMovement.endDate,
+      gpInversion: req.body.gpInversion || marketMovement.gpInversion,
+      gpAmount: req.body.gpAmount || marketMovement.gpAmount,
+      status: _.get(req, 'body.status', 1),
+      createdAt: req.body.createdAt || marketMovement.createdAt,
       updatedAt: new Date(),
     });
 
@@ -87,10 +88,10 @@ module.exports = {
       });
     }
 
-    //await marketMovement.destroy();
-    await marketMovement.update( {
-      status: 0,
-    } );
+    await marketMovement.destroy();
+    // await marketMovement.update( {
+    //   status: 0,
+    // } );
 
     return res.status(200).send({
       message: 'MarketMovement has been deleted',

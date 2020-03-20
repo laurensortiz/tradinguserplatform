@@ -217,12 +217,12 @@ class AddOrEditUserForm extends PureComponent {
               <Input name="username" onChange={ this._handleChange } placeholder="Usuario"/>
             ) }
           </Form.Item>
-          <Form.Item label="Cédula" className={ classNames( { 'hidden': isAdminUser } ) }>
+          <Form.Item label="Usuario ID" className={ classNames( { 'hidden': isAdminUser } ) }>
             { getFieldDecorator( 'userID', {
               initialValue: this.state.userID,
-              rules: [ { message: 'Por favor ingrese su número de cédula' } ],
+              rules: [ { message: 'Por favor ingrese el ID del usuario' } ],
             } )(
-              <Input name="userID" onChange={ this._handleChange } placeholder="Cédula"/>
+              <Input name="userID" onChange={ this._handleChange } placeholder="Cuenta Cliente"/>
             ) }
           </Form.Item>
           <Form.Item label="Email">

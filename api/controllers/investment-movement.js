@@ -62,12 +62,10 @@ module.exports = {
     }
 
     const updatedInvestmentMovement = await investmentMovement.update({
-      operationType: req.body.operationType || investmentMovement.operationType,
-      userAccountId: _.get(req, 'body.userAccount.id', 0) || investmentMovement.userAccountId,
-      amount: req.body.amount || investmentMovement.amount,
-      status: req.body.status || investmentMovement.status,
-      startDate: req.body.startDate || investmentMovement.startDate,
-      endDate: req.body.status || investmentMovement.endDate,
+      gpInversion: req.body.gpInversion || investmentMovement.gpInversion,
+      gpAmount: req.body.gpAmount || investmentMovement.gpAmount,
+      status: _.get(req, 'body.status', 1),
+      createdAt: req.body.createdAt || investmentMovement.createdAt,
       updatedAt: new Date(),
     });
 
@@ -87,10 +85,10 @@ module.exports = {
       });
     }
 
-    //await investmentMovement.destroy();
-    await investmentMovement.update( {
-      status: 0,
-    } );
+    await investmentMovement.destroy();
+    // await investmentMovement.update( {
+    //   status: 0,
+    // } );
 
     return res.status(200).send({
       message: 'InvestmentMovement has been deleted',

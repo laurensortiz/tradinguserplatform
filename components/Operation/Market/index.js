@@ -4,8 +4,9 @@ import { bindActionCreators } from "redux";
 
 import { Row, Col, Button, Drawer, Tabs, notification, Radio, message as antMessage } from 'antd';
 import _ from 'lodash';
+import moment from 'moment';
 
-import { GetGP } from "../../../common/utils";
+import { GetGP, FormatDate } from "../../../common/utils";
 
 import MarketTable from './MarketTable';
 import AddOrEditMarketForm from './AddOrEditMarketForm';
@@ -206,6 +207,26 @@ class Market extends Component {
     } )
   };
 
+  /**
+   * Edit Movements
+   */
+  _handleEditMovement = (newMovement) => {
+    const { gpInversion, gpAmount, createdAt, id } = newMovement;
+    this.props.fetchEditMarketMovement( {
+      id,
+      gpInversion,
+      gpAmount,
+      createdAt: moment.utc(createdAt),
+    } )
+  };
+
+  /**
+   * Delete Movements
+   */
+  _handleDeleteMovement = (movementId) => {
+    this.props.fetchDeleteMarketMovement( movementId)
+  };
+
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Operación de Bolsa'
@@ -218,7 +239,6 @@ class Market extends Component {
 
     const activeMarketOperations = _.filter( this.state.marketOperations, ({ status }) => !_.isEqual( status, 0 ) );
     const deletedMarketOperations = _.filter( this.state.marketOperations, { status: 0 } );
-
 
     return (
       <>
@@ -250,7 +270,7 @@ class Market extends Component {
               <>
                 {!_.isEmpty(activeMarketOperations) ? <h2>Operciones de Bolsa OTC</h2> : null}
                 <MarketTable
-                  marketOperations={ activeMarketOperations }
+                  marketOperations={ _.filter(activeMarketOperations, {userAccountId: this.props.userAccountId}) }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserOperation }
@@ -298,6 +318,8 @@ class Market extends Component {
           <MovementsTable
             movements={ this.state.marketMovements }
             onAdd={ this._handleAddMovement }
+            onEdit={ this._handleEditMovement }
+            onDelete={ this._handleDeleteMovement }
             currentOperation={ this.state.currentOperationDetail }
             isAdmin={this.props.isAdmin}
           />

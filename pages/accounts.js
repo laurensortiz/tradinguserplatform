@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, message as antMessage, Icon } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, message as antMessage, Icon, Radio } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -11,6 +11,7 @@ import UserAccountsTable from '../components/UserAccount/UserAccountsTable';
 import AddOrEditUserAccountForm from '../components/UserAccount/AddOrEditUserAccountForm';
 
 import { userAccountOperations } from "../state/modules/userAccounts";
+import { Investment, Market } from "../components/Operation";
 
 const { TabPane } = Tabs;
 
@@ -20,7 +21,7 @@ class Accounts extends Component {
     actionType: 'add',
     selectedUserAccount: {},
     isCreatingOperation: false,
-    operationType: 'investment',
+    operationType: 1,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -129,23 +130,43 @@ class Accounts extends Component {
     } )
   };
 
+  _onSelectOperationType = ({ target }) => {
+    this.setState( {
+      operationType: target.value,
+    } );
+  };
+
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Cuenta de Usuario'
       : 'Editar Cuenta de Usuario';
+
+    const userAccount  = _.filter(this.props.userAccounts, ['account.associatedOperation', this.state.operationType]);
+
     return (
       <Document id="userAccounts-page">
         <Row>
+          <Radio.Group
+            defaultValue={ this.state.operationType }
+            size="large"
+            style={ { float: 'left' } }
+            onChange={ this._onSelectOperationType }
+            buttonStyle="solid"
+          >
+            <Radio.Button value={1}><Icon type="sliders"/> Standard</Radio.Button>
+            <Radio.Button value={2}> <Icon type="fund"/> Profit Month</Radio.Button>
+          </Radio.Group>
           <Button style={ { float: 'right' } } type="primary" onClick={ this._addUserAccount } size="large">
             <Icon type="plus-circle" /> Agregar Cuenta
           </Button>
         </Row>
+
         <Row>
           <Col>
             <Tabs>
               <TabPane tab="Activos" key="1">
                 <UserAccountsTable
-                  userAccounts={ _.filter( this.props.userAccounts, { status: 1 } ) }
+                  userAccounts={ _.filter( userAccount, { status: 1 } ) }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserAccount }
@@ -153,7 +174,7 @@ class Accounts extends Component {
               </TabPane>
               <TabPane tab="Eliminados" key="2">
                 <UserAccountsTable
-                  userAccounts={ _.filter( this.props.userAccounts, { status: 0 } ) }
+                  userAccounts={ _.filter( userAccount, { status: 0 } ) }
                   isLoading={ this.props.isLoading }
                   onActive={ this._onSelectActive }
                   status="inactive"

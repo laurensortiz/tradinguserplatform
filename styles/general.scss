@@ -216,13 +216,26 @@ body > div:first-of-type:not(#__next) {
   color: $negative;
 }
 
-.positive-bg {
-  background: $positive;
-  color: $white;
+.stock {
+  color: $stock;
 }
-.negative-bg {
-  background: $negative;
+
+.positive-bg {
   color: $white;
+  background: $positive;
+  background: linear-gradient(90deg, $positive 0%, rgba(0,0,0,0) 100%);
+}
+
+.negative-bg {
+  color: $white;
+  background: $negative;
+  background: linear-gradient(90deg, $negative 0%, rgba(0,0,0,0) 100%);
+}
+
+.neutral-bg {
+  color: $white;
+  background: $blue;
+  background: linear-gradient(90deg, $blue 0%, rgba(0,0,0,0) 100%);
 }
 
 .product-tag {
@@ -252,6 +265,26 @@ body > div:first-of-type:not(#__next) {
 
 .asset-class {
   color: $white;
-  background-color: #F6891A;
+
+  &.green {
+    background: $green;
+  }
+
+  &.red {
+    background: $red;
+  }
+  &.yellow {
+    background: $yellow;
+  }
+  &.purple {
+    background: $purple;
+  }
+  &.orange {
+    background: $orange;
+  }
+  &.blue {
+    background: $blue;
+  }
+
 
 }

@@ -47,7 +47,7 @@ class Detail extends Component {
         <Descriptions title="" column={1} size="small">
           <Descriptions.Item label="Usuario">{userName}</Descriptions.Item>
           <Descriptions.Item label="Nombre Completo">{firstName} {lastName}</Descriptions.Item>
-          <Descriptions.Item label="Número de Cédula">{userID}</Descriptions.Item>
+          <Descriptions.Item label="Usuario ID">{userID}</Descriptions.Item>
           <Descriptions.Item label="Correo Electrónico">{email}</Descriptions.Item>
           <Descriptions.Item label="Número de Teléfono">{phoneNumber}</Descriptions.Item>
           <Descriptions.Item label="Fecha de Inicio">{FormatDate(startDate)}</Descriptions.Item>

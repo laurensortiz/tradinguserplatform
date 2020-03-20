@@ -169,6 +169,24 @@ class UsersTable extends Component {
         ...this.getColumnSearchProps( 'username' ),
       },
       {
+        title: 'Nombre',
+        dataIndex: 'firstName',
+        key: 'firstName',
+        render: text => <span key={ text }>{ text }</span>,
+        sorter: (a, b) => Sort( a.firstName, b.firstName ),
+        sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'firstName' ),
+      },
+      {
+        title: 'Apellido',
+        dataIndex: 'lastName',
+        key: 'lastName',
+        render: text => <span key={ text }>{ text }</span>,
+        sorter: (a, b) => Sort( a.lastName, b.lastName ),
+        sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'lastName' ),
+      },
+      {
         title: 'Acciones',
         key: 'actions',
         render: this._getCTA,
@@ -187,7 +205,6 @@ class UsersTable extends Component {
         dataSource={ userData }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
-        bordered={true}
         title={this._displayTableHeader}
       />
     );

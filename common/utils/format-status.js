@@ -2,15 +2,15 @@ const formatStatus = status => {
   const detailStatus = {
     1: {
       name: 'Activo',
-      color: '#87d068'
+      color: '#039B01'
     },
     2: {
       name: 'Cerrado',
-      color: '#f50'
+      color: '#D63930'
     },
     3: {
       name: 'Hold',
-      color: '#edc01c'
+      color: '#E2A11A'
     }
   };
   return detailStatus[status] || 'Sin Definir'

@@ -13,7 +13,9 @@ import { AccountInformation, MovementsTable } from '../shared';
 
 import { investmentOperationOperations } from "../../../state/modules/investmentOperation";
 import { investmentMovementOperations } from "../../../state/modules/investmentMovement";
-import { GetGP } from "../../../common/utils";
+import { FormatDate, GetGP } from "../../../common/utils";
+import MarketTable from "../Market/MarketTable";
+import moment from "moment";
 
 const { TabPane } = Tabs;
 
@@ -205,6 +207,27 @@ class Investment extends Component {
     } )
   };
 
+  /**
+   * Edit Movements
+   */
+  _handleEditMovement = (newMovement) => {
+    const { gpInversion, gpAmount, createdAt, id } = newMovement;
+    this.props.fetchEditInvestmentMovement( {
+      id,
+      gpInversion,
+      gpAmount,
+      createdAt: moment.utc(createdAt),
+    } )
+  };
+
+  /**
+   * Delete Movements
+   */
+  _handleDeleteMovement = (movementId) => {
+    this.props.fetchDeleteInvestmentMovement( movementId)
+  };
+
+
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Operación de Inversión'
@@ -226,6 +249,7 @@ class Investment extends Component {
                 <TabPane tab="Activos" key="1">
                   <InvestmentTable
                     investmentOperations={ activeInvestmentOperations }
+
                     isLoading={ this.props.isLoading }
                     onEdit={ this._onSelectEdit }
                     onDelete={ this._handleDeleteUserOperation }
@@ -247,7 +271,7 @@ class Investment extends Component {
               <>
                 { !_.isEmpty( activeInvestmentOperations ) ? <h2>Operciones Fondo de Interés</h2> : null }
                 <InvestmentTable
-                  investmentOperations={ _.filter( this.state.investmentOperations, ({ status }) => !_.isEqual( status, 0 ) ) }
+                  investmentOperations={ _.filter(activeInvestmentOperations, {userAccountId: this.props.userAccountId})  }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserOperation }
@@ -293,6 +317,8 @@ class Investment extends Component {
           <MovementsTable
             movements={ this.state.investmentMovements }
             onAdd={ this._handleAddMovement }
+            onEdit={ this._handleEditMovement }
+            onDelete={ this._handleDeleteMovement }
             currentOperation={ this.state.currentOperationDetail }
             isAdmin={ this.props.isAdmin }
           />

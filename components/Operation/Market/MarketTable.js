@@ -13,7 +13,7 @@ import {
   FormatDate,
   SortDate,
   DisplayTableAmount,
-  MarketBehaviorStatus,
+  MarketBehaviorStatus, IsOperationPositive,
 } from '../../../common/utils';
 import Highlighter from "react-highlight-words";
 
@@ -144,6 +144,8 @@ class MarketTable extends Component {
 
   render() {
 
+    const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
+
     const columns = [
       {
         title: '',
@@ -171,37 +173,20 @@ class MarketTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'product.name' ),
       },
-      // {
-      //   title: 'Fecha de Apertura',
-      //   dataIndex: 'createdAt',
-      //   key: 'createdAt',
-      //   render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
-      //   sorter: (a, b) => SortDate( a.createdAt, b.createdAt ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-
       {
         title: 'Usuario',
         dataIndex: 'userAccount.user.username',
         key: 'userAccount.user.username',
-        render: text => <span key={ text }>{ text.user.username }</span>,
+        className: `${showHandleClass} `,
         sorter: (a, b) => Sort( a.userAccount.user.username, b.userAccount.user.username ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'userAccount.user.username' ),
       },
-      // {
-      //   title: 'Cuenta de Usuario',
-      //   dataIndex: 'userAccount',
-      //   key: 'account',
-      //   render: text => <span key={ text.accountId }>{ text.account.name }</span>,
-      //   sorter: (a, b) => Sort( a.userAccount.account.name, b.userAccount.account.name ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
+
       {
         title: 'Saldo Actual',
-        dataIndex: 'amount',
         key: 'amount',
-        render: amount => <span key={ amount }>{ DisplayTableAmount( amount ) }</span>,
+        render: data => <span className={IsOperationPositive(data.amount, data.initialAmount) ? 'positive' : 'negative'} key={ data.amount }>{ DisplayTableAmount( data.amount ) }</span>,
         sorter: (a, b) => Sort( a.amount, b.amount ),
         sortDirections: [ 'descend', 'ascend' ],
       },
@@ -221,46 +206,6 @@ class MarketTable extends Component {
         sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
         sortDirections: [ 'descend', 'ascend' ],
       },
-      // {
-      //   title: 'L/S',
-      //   dataIndex: 'longShort',
-      //   key: 'longShort',
-      //   render: text => <span key={text} >{ text }</span>,
-      //   sorter: (a, b) => Sort( a.longShort, b.longShort ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Lotage',
-      //   dataIndex: 'commoditiesTotal',
-      //   key: 'commoditiesTotal',
-      //   render: text => <span key={text} >{ text }</span>,
-      //   sorter: (a, b) => Sort( a.commoditiesTotal, b.commoditiesTotal ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Precio de Compra',
-      //   dataIndex: 'buyPrice',
-      //   key: 'buyPrice',
-      //   render: text => <span key={text} >{ DisplayTableAmount(text) }</span>,
-      //   sorter: (a, b) => Sort( a.buyPrice, b.buyPrice ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Taking Profit',
-      //   dataIndex: 'takingProfit',
-      //   key: 'takingProfit',
-      //   render: text => <span key={text} >{ text }</span>,
-      //   sorter: (a, b) => Sort( a.takingProfit, b.takingProfit ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
-      // {
-      //   title: 'Stop Lost',
-      //   dataIndex: 'stopLost',
-      //   key: 'stopLost',
-      //   render: text => <span key={text} >{ text }</span>,
-      //   sorter: (a, b) => Sort( a.stopLost, b.stopLost ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
 
       {
         title: 'Corredor',

@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { Button, Icon, Input, Popconfirm, Table, Tag } from 'antd';
-import { Sort, FormatCurrency } from '../../common/utils';
+import { Button, Icon, Input, Popconfirm, Radio, Table, Tag } from 'antd';
+import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
 import Highlighter from "react-highlight-words";
 
 
@@ -143,6 +143,7 @@ class UserAccountsTable extends Component {
     this.setState( { searchText: '' } );
   };
 
+
   render() {
     const columns = [
       {
@@ -171,9 +172,8 @@ class UserAccountsTable extends Component {
       },
       {
         title: 'Valor de la Cuenta',
-        dataIndex: 'accountValue',
         key: 'accountValue',
-        render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
+        render: data => <span className={IsOperationPositive(data.accountValue, data.balanceInitial) ? 'positive' : 'negative'} key={ data.accountValue }>{ DisplayTableAmount( data.accountValue ) }</span>,
         sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
         sortDirections: [ 'descend', 'ascend' ],
       },
@@ -201,14 +201,6 @@ class UserAccountsTable extends Component {
         sorter: (a, b) => Sort( a.balanceFinal, b.balanceFinal ),
         sortDirections: [ 'descend', 'ascend' ],
       },
-      // {
-      //   title: 'Margen Mantenimiento',
-      //   dataIndex: 'maintenanceMargin',
-      //   key: 'maintenanceMargin',
-      //   render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
-      //   sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
-      //   sortDirections: [ 'descend', 'ascend' ],
-      // },
       {
         title: 'Garantías / Créditos',
         dataIndex: 'guaranteeCredits',
@@ -233,6 +225,7 @@ class UserAccountsTable extends Component {
         dataSource={ this.state.userAccounts }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
+        title={this._displayTableHeader}
       />
     );
   }

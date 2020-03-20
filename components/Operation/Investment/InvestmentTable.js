@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { Button, Icon, Popconfirm, Table, Tag } from 'antd';
+import { Button, Icon, Input, Popconfirm, Table, Tag } from 'antd';
 import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate, DisplayTableAmount } from '../../../common/utils';
 import classNames from "classnames";
+import Highlighter from "react-highlight-words";
 
 class InvestmentTable extends Component {
   state = {
@@ -61,7 +62,80 @@ class InvestmentTable extends Component {
 
   };
 
+  getColumnSearchProps = dataIndex => ( {
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={ { padding: 8 } }>
+        <Input
+          ref={ node => {
+            this.searchInput = node;
+          } }
+          placeholder={ `Buscar` }
+          value={ selectedKeys[ 0 ] }
+          onChange={ e => setSelectedKeys( e.target.value ? [ e.target.value ] : [] ) }
+          onPressEnter={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
+          style={ { width: 188, marginBottom: 8, display: 'block' } }
+        />
+        <Button
+          type="primary"
+          onClick={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
+          icon="search"
+          size="small"
+          style={ { width: 90, marginRight: 8 } }
+        >
+          Buscar
+        </Button>
+        <Button onClick={ () => this.handleReset( clearFilters ) } size="small" style={ { width: 90 } }>
+          Limpiar
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={ { color: filtered ? '#1890ff' : undefined } }/>
+    ),
+    onFilter: (value, record) => {
+
+      return _.get(record, dataIndex)
+        .toString()
+        .toLowerCase()
+        .includes( value.toLowerCase() )
+    },
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout( () => this.searchInput.select() );
+      }
+    },
+    render: text => {
+      return this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={ { backgroundColor: '#ffc069', padding: 0 } }
+          searchWords={ [ this.state.searchText ] }
+          autoEscape
+          textToHighlight={ text.toString() }
+        />
+      ) : (
+        text
+      )
+    }
+
+  } );
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState( {
+      searchText: selectedKeys[ 0 ],
+      searchedColumn: dataIndex,
+    } );
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState( { searchText: '' } );
+  };
+
+
   render() {
+    const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
+
     const columns = [
       {
         title: 'Estado',
@@ -76,11 +150,12 @@ class InvestmentTable extends Component {
       },
       {
         title: 'Usuario',
-        dataIndex: 'userAccount',
-        key: 'userAccount',
-        render: text => <span key={ text }>{ text.user.username }</span>,
+        dataIndex: 'userAccount.user.username',
+        key: 'userAccount.user.username',
+        className: `${showHandleClass} `,
         sorter: (a, b) => Sort( a.userAccount.user.username, b.userAccount.user.username ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'userAccount.user.username' ),
       },
       {
         title: 'Tipo de Operación',

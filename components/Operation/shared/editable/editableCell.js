@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import { EditableProvider, EditableConsumer } from './editableContext';
 import { Button, Input, Divider, Icon, Table, Form, Popconfirm, DatePicker } from 'antd';
 
@@ -37,7 +38,7 @@ class EditableCell extends Component {
                   message: `Por favor ingrese ${title}`,
                 },
               ],
-              initialValue: record[dataIndex],
+              initialValue: inputType === 'date' ? moment.utc(record[dataIndex]) : record[dataIndex],
             })(this.getInput())}
           </Form.Item>
         ) : (
