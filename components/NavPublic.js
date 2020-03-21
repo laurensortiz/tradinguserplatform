@@ -10,25 +10,22 @@ class NavPublic extends PureComponent {
 
   render() {
     return (
-      <Menu
-        theme="dark"
-        mode="horizontal"
-        forceSubMenuRender={false}
-        inlineCollapsed={false}
+
+      <ul className="main-menu"
       >
-        <MenuItem>
-          <Anchor href="/market"><Icon type="sliders"/> <span>Mercado</span></Anchor>
-        </MenuItem>
-        <MenuItem>
-          <Anchor href="/calendar"><Icon type="fund"/> <span>Calendario Económico</span></Anchor>
-        </MenuItem>
-        <MenuItem>
-          <Link href="/operations"><Icon type="area-chart"/> <span>Operaciones</span></Link>
-        </MenuItem>
-        <MenuItem>
-          <Link onClick={ this.props.onLogout }><Icon type="logout"/> <span>Salir</span></Link>
-        </MenuItem>
-      </Menu>
+        <li>
+          <Anchor className="menu-item" href="/market"><Icon type="sliders"/> <span>Mercado</span></Anchor>
+        </li>
+        <li>
+          <Anchor className="menu-item" href="/calendar"><Icon type="fund"/> <span>Calendario Económico</span></Anchor>
+        </li>
+        <li>
+          <Link className="menu-item" href="/operations"><Icon type="area-chart" /> <span>Operaciones</span></Link>
+        </li>
+        <li>
+          <Link className="menu-item" onClick={ this.props.onLogout } href="/"><Icon type="logout"/> <span>Salir</span></Link>
+        </li>
+      </ul>
     );
   }
 }
