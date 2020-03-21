@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import { Strategy } from 'passport-local';
 import { session } from '../config.js';
 import { User } from './models';
+import _ from 'lodash';
 
 module.exports = (app, passport) => {
   const newExpressSession = expressSession({
@@ -32,7 +33,7 @@ module.exports = (app, passport) => {
       try {
         const user = await User.findOne({
           where: {
-            username: username,
+            username: _.toLower(username),
             status: 1,
           },
           raw:true,

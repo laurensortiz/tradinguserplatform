@@ -140,11 +140,12 @@ class MovementsTable extends Component {
   }
 
 
-  _onChangeInput = ({target}) => {
+  _onChangeInput = (value) => {
 
     if (!_.isNumber(this.state.editingKey)) {
-      const currentAmount = getGPInversion(this.props.currentOperation.amount || 0, !_.isEmpty(target.value) ? target.value : 0);
+      const currentAmount = getGPInversion(this.props.currentOperation.amount || 0, _.isNumber(value) ? parseFloat(value).toFixed(2) : 0);
       const tempData = _.first(this.state.tempDataSource);
+
       const tempDataSourceUpdate = {
         ...tempData,
         gpInversion: parseFloat(currentAmount).toFixed(2)
@@ -297,7 +298,8 @@ class MovementsTable extends Component {
         key: 'gpInversion',
         render: value => FormatCurrency.format( value ),
         editable: true,
-        required: false
+        required: false,
+        inputType: 'number'
       },
       {
         title: 'G/P',
@@ -305,7 +307,8 @@ class MovementsTable extends Component {
         key: 'gpAmount',
         render: value => FormatCurrency.format( value ),
         editable: true,
-        required: true
+        required: true,
+        inputType: 'number'
       },
       {
         title: 'Fecha de movimiento',
@@ -422,7 +425,7 @@ class MovementsTable extends Component {
             {this.props.isAdmin ? (
               <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
                       disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn}>
-                Agregar Movimiento
+                <Icon type="dollar" /> Agregar Movimiento
               </Button>
             ) : null}
           </Col>

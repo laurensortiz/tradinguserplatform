@@ -83,14 +83,9 @@ class Document extends Component {
             </div>
             </>
           ) : null}
-
-
           <Header/>
-          <Sider collapsible collapsed={ this.state.collapsed } onCollapse={ this.onCollapse }>
-            <Header/>
-          </Sider>
           <Layout>
-            <Content style={ { padding: '0 50px', marginTop: 80 } }>
+            <Content>
               <div className="main-container">
                 { this.props.children }
               </div>

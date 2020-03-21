@@ -1,26 +1,7 @@
-.ant-layout-sider {
-  .main-header {
-    display: block;
-  }
 
-  @media screen and (min-width: $lg) {
-    display: none;
-    .main-header {
-      display: none;
-    }
-  }
-
-  .ant-menu-horizontal {
-    white-space: normal;
-    @media screen and (min-width: $lg) {
-
-    }
-  }
-}
 
 .main-header {
-  display: none;
-  padding: 10px;
+  height: auto;
   @media screen and (min-width: $lg) {
     position: fixed;
     z-index: 1;
@@ -32,15 +13,15 @@
   }
 
   .ant-menu {
-    float: left;
-    padding: 50px 0;
+    float: right;
+    padding: 9px 0;
     @media screen and (min-width: $lg) {
 
       border: 0;
       -webkit-box-shadow: none;
       box-shadow: none;
       float: right;
-      padding: 9px 0;
+
 
     }
 
@@ -65,7 +46,6 @@
   .logo {
     float: left;
     text-align: center;
-    width: 100%;
 
 
     img {
@@ -89,6 +69,54 @@
     @media screen and (min-width: $lg) {
       width: 235px;
       padding: 6px 0;
+    }
+  }
+}
+
+.main-menu-sm {
+  & > div:first-of-type {
+    float: right;
+    padding-top: 5px;
+    height: 40px;
+    cursor: pointer;
+  }
+}
+
+.main-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  float: right;
+  position: relative;
+  z-index: 10;
+  li {
+    list-style: none;
+    padding: 0;
+    display: inline-block;
+
+    .menu-item, & > span:first-of-type {
+      padding: 20px;
+      color: $gray-primary;
+      font-size: 1.6rem;
+      cursor: pointer;
+      display: inline-block;
+      line-height: 1rem;
+      width: 100%;
+
+      @media screen and (min-width: 800px) {
+        width: auto;
+      }
+
+      &:hover {
+        color:$white;
+      }
+      &.active {
+        color: $blue-44a;
+      }
+
+      i {
+        color: $yellow;
+      }
     }
   }
 }

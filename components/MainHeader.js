@@ -2,12 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from 'lodash';
-import { Layout } from 'antd';
+import { Layout, Icon } from 'antd';
 
 import Link from '../components/Link';
 import NavPublic from './NavPublic';
 import NavPrivate from './NavPrivate';
 import { authOperations } from "../state/modules/auth";
+import ResponsiveMenu from 'react-responsive-navbar';
+
 
 const { Header } = Layout;
 
@@ -36,8 +38,19 @@ class MainHeader extends Component {
     this.props.logout();
   };
 
-  render() {
+  _getMenu = () => {
     const { isAdmin, isAuthenticated } = this.state;
+    return isAuthenticated ?
+      isAdmin ? (
+        <NavPrivate onLogout={ this._onLogout }/>
+      ) : (
+        <NavPublic onLogout={ this._onLogout }/>
+      )
+      : null
+  }
+
+  render() {
+
     return (
       <Header className="main-header">
         <div className="logo">
@@ -46,13 +59,14 @@ class MainHeader extends Component {
             <img className="mobile" src="/static/logo_web_trader_small.png" alt=""/>
           </Link>
         </div>
-        { isAuthenticated ?
-          isAdmin ? (
-            <NavPrivate onLogout={ this._onLogout }/>
-          ) : (
-            <NavPublic onLogout={ this._onLogout }/>
-          )
-          : null }
+        <ResponsiveMenu
+          menuOpenButton={<Icon style={{fontSize: 30}} type="menu" />}
+          menuCloseButton={<Icon style={{fontSize: 30}} type="close" />}
+          changeMenuOn="800px"
+          largeMenuClassName="large-menu-classname"
+          smallMenuClassName="main-menu-sm"
+          menu={this._getMenu()}
+        />
       </Header>
     );
   }

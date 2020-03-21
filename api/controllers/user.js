@@ -22,7 +22,7 @@ module.exports = {
   async create(req, res) {
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
-    const username = req.body.username;
+    const username = _.toLower(req.body.username);
     const email = req.body.email;
     const userID = req.body.userID;
     const startDate = req.body.startDate;
@@ -147,7 +147,7 @@ module.exports = {
 
     const updatedUser = await user.update( {
       email: req.body.email || user.email,
-      username: req.body.username || user.username,
+      username: _.toLower(req.body.username) || user.username,
       firstName: req.body.firstName || user.firstName,
       lastName: req.body.lastName || user.lastName,
       userID: req.body.userID || user.userID,

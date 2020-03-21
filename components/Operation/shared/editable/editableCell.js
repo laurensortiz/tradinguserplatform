@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { EditableProvider, EditableConsumer } from './editableContext';
-import { Button, Input, Divider, Icon, Table, Form, Popconfirm, DatePicker } from 'antd';
+import { Button, Input, Divider, Icon, Table, Form, Popconfirm, DatePicker, InputNumber } from 'antd';
 
 class EditableCell extends Component {
   getInput = () => {

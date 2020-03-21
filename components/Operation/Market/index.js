@@ -328,6 +328,7 @@ class Market extends Component {
             onDelete={ this._handleDeleteMovement }
             currentOperation={ this.state.currentOperationDetail }
             isAdmin={this.props.isAdmin}
+            isLoading={this.props.isLoading}
           />
         </Drawer>
       </>

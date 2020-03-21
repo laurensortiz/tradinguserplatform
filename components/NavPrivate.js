@@ -8,27 +8,24 @@ class NavPrivate extends PureComponent {
 
   render() {
     return (
-      <Menu
-        theme="dark"
-        mode="horizontal"
+      <ul className="main-menu"
       >
-        <MenuItem>
-          <Link href="/users"><Icon type="user" /> <span>Usuarios</span></Link>
-        </MenuItem>
-        <MenuItem>
-          <Link href="/accounts"><Icon type="branches" /> <span>Cuentas</span></Link>
-        </MenuItem>
-        <MenuItem>
-          <Link href="/operations"><Icon type="area-chart" /> <span>Operaciones</span></Link>
-        </MenuItem>
-
-        <MenuItem>
-          <Link href="/settings"><Icon type="setting" /> <span>Ajustes</span></Link>
-        </MenuItem>
-        <MenuItem>
-          <Link onClick={ this.props.onLogout }><Icon type="logout"/> <span>Salir</span></Link>
-        </MenuItem>
-      </Menu>
+        <li>
+          <Link className="menu-item" href="/users"><Icon type="user" /> <span>Usuarios</span></Link>
+        </li>
+        <li>
+          <Link className="menu-item" href="/accounts"><Icon type="branches" /> <span>Cuentas</span></Link>
+        </li>
+        <li>
+          <Link className="menu-item" href="/operations"><Icon type="area-chart" /> <span>Operaciones</span></Link>
+        </li>
+        <li>
+          <Link className="menu-item" href="/settings"><Icon type="setting" /> <span>Ajustes</span></Link>
+        </li>
+        <li>
+          <Link className="menu-item" onClick={ this.props.onLogout } href="/"><Icon type="logout"/> <span>Salir</span></Link>
+        </li>
+      </ul>
     );
   }
 }
