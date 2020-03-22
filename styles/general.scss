@@ -132,6 +132,18 @@ strong {
   }
 }
 
+.export-pdf-cta, .export-pdf-cta.ant-btn-primary {
+  background-color: $orange-btn-h;
+  color: $white;
+  border-color:$orange-btn-h;
+  &:hover, &:focus, &:active {
+    background-color: $negative;
+    border-color: $negative;
+  }
+}
+
+
+
 .ant-table-tbody > tr > td {
   padding: 5px;
   

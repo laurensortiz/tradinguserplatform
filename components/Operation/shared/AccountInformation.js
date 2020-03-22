@@ -8,6 +8,7 @@ import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive } from '.
 class AccountInformation extends PureComponent {
 
   render() {
+
     const accountValue = _.get(this.props, 'currentOperation.userAccount.accountValue', '0.00');
     const balanceInitial = _.get(this.props, 'currentOperation.userAccount.balanceInitial', '0.00');
     const maintenanceMargin = _.get(this.props, 'currentOperation.userAccount.maintenanceMargin', '0.00');
@@ -16,6 +17,7 @@ class AccountInformation extends PureComponent {
     const accountPercentage = _.get(this.props, 'currentOperation.userAccount.account.percentage', '0');
 
     const guaranteeOperation = _.get(this.props, 'currentOperation.userAccount.guaranteeOperation', '0.00');
+    const guaranteeCredits = _.get(this.props, 'currentOperation.userAccount.guaranteeCredits', '0.00');
 
 
     const productName = _.get(this.props, 'currentOperation.product.name', '');
@@ -47,7 +49,7 @@ class AccountInformation extends PureComponent {
                 <Descriptions.Item label="Garantías disponibles">{FormatCurrency.format(guaranteeOperation)}</Descriptions.Item>
               ) : null}
               <Descriptions.Item label="Saldo Inicial">{FormatCurrency.format(balanceInitial)}</Descriptions.Item>
-
+              <Descriptions.Item label="Garantías / Créditos">{FormatCurrency.format(guaranteeCredits)}</Descriptions.Item>
             </Descriptions>
           </Col>
         </Row>

@@ -26,22 +26,18 @@ const queries = {
         {
           model: Product,
           as: 'product',
-          attributes: ['name', 'code']
         },
         {
           model: Broker,
           as: 'broker',
-          attributes: ['name']
         },
         {
           model: Commodity,
           as: 'commodity',
-          attributes: ['name']
         },
         {
           model: AssetClass,
           as: 'assetClass',
-          attributes: ['name']
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
@@ -76,22 +72,18 @@ const queries = {
         {
           model: Product,
           as: 'product',
-          attributes: ['name', 'code']
         },
         {
           model: Broker,
           as: 'broker',
-          attributes: ['name']
         },
         {
           model: Commodity,
           as: 'commodity',
-          attributes: ['name']
         },
         {
           model: AssetClass,
           as: 'assetClass',
-          attributes: ['name']
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
@@ -110,12 +102,10 @@ const queries = {
         {
           model: Product,
           as: 'product',
-          attributes: ['name', 'code']
         },
         {
           model: Broker,
           as: 'broker',
-          attributes: ['name']
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],

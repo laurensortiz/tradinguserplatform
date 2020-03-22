@@ -10,6 +10,7 @@ import { userAccountOperations } from "../../state/modules/userAccounts";
 import { connect } from "react-redux";
 
 import UserAccountInformation from './UserAccountInformation';
+import {ExportUserAccounts} from './shared'
 
 const { Title } = Typography;
 
@@ -72,6 +73,7 @@ class UserAccount extends Component {
 
   render() {
     const {firstName, lastName, userID, username} = this.state.currentUser;
+
     return (
       <>
         <Row style={{marginBottom: 30}}>
@@ -80,6 +82,13 @@ class UserAccount extends Component {
           </Col>
           <Col sm={24} md={12}>
             <Title level={3}>{ firstName } {lastName} <Tag style={{fontSize: 14} }>{username}</Tag></Title>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <ExportUserAccounts
+              userAccounts={this.state.accounts}
+            />
           </Col>
         </Row>
         <Row>

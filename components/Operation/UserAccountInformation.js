@@ -21,7 +21,7 @@ class AccountInformation extends PureComponent {
     const accountPercentage = _.get( this.props, 'userAccount.account.percentage', '0' );
 
     const guaranteeOperation = _.get( this.props, 'userAccount.guaranteeOperation', '0.00' );
-
+    const guaranteeCredits = _.get( this.props, 'userAccount.guaranteeCredits', '0.00' );
 
     const isOperationPositive = IsOperationPositive( accountValue, balanceInitial );
 
@@ -35,6 +35,9 @@ class AccountInformation extends PureComponent {
 
               <Descriptions.Item
                 label="Garantías disponibles">{ FormatCurrency.format( guaranteeOperation ) }</Descriptions.Item>
+
+              <Descriptions.Item
+                label="Garantías / Créditos">{ FormatCurrency.format( guaranteeCredits ) }</Descriptions.Item>
 
             </Descriptions>
           </Col>

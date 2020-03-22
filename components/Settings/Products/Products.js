@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import { Button, Table, Form, Popconfirm } from 'antd';
+import { Button, Table, Form, Popconfirm, Input, Icon } from 'antd';
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
 
@@ -9,73 +9,12 @@ import { EditableProvider, EditableConsumer } from './shared/editableContext';
 import EditableCell from './shared/editableCell';
 
 import { productOperations } from '../../../state/modules/products';
+import Highlighter from "react-highlight-words";
+import { Sort, SortDate } from "../../../common/utils";
 
 const DEFAULT_INPUT_TEXT = '';
 
 class Products extends Component {
-  columns = [
-    {
-      title: 'Código',
-      dataIndex: 'code',
-      key: 'code',
-      editable: true,
-    },
-    {
-      title: 'Nombre',
-      dataIndex: 'name',
-      key: 'name',
-      editable: true,
-    },
-    {
-      title: 'Acciones',
-      key: 'actions',
-      render: (text, record) => {
-        record = {
-          ...record,
-          key: record.id
-        };
-        const { editingKey } = this.state;
-        const editable = this.isEditing( record );
-        return editable ? (
-          <span>
-              <EditableConsumer>
-                { form => (
-                  <a
-                    onClick={ () => this.save( form, record.key ) }
-                    style={ { marginRight: 8 } }
-                  >
-                    Salvar
-                  </a>
-                ) }
-              </EditableConsumer>
-              <Popconfirm
-                title="Desea cancelar?"
-                onConfirm={ () => this.cancel( record.key ) }
-                okText="Sí"
-                cancelText="No"
-              >
-                <a>Cancelar</a>
-              </Popconfirm>
-            </span>
-        ) : (
-          <div>
-            <a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>
-               Editar
-            </a>
-            <Popconfirm
-              title="Desea eliminarlo?"
-              onConfirm={ () => this.handleDelete( record.key ) }
-              okText="Sí"
-              cancelText="No"
-            >
-              <a disabled={ editingKey !== '' } className="cta-actions"> Eliminar </a>
-            </Popconfirm>
-          </div>
-        );
-      },
-    },
-  ];
-
   state = {
     dataSource: [],
     tempDataSource: [],
@@ -131,6 +70,76 @@ class Products extends Component {
     } );
   };
 
+  getColumnSearchProps = dataIndex => ( {
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div style={ { padding: 8 } }>
+        <Input
+          ref={ node => {
+            this.searchInput = node;
+          } }
+          placeholder={ `Buscar` }
+          value={ selectedKeys[ 0 ] }
+          onChange={ e => setSelectedKeys( e.target.value ? [ e.target.value ] : [] ) }
+          onPressEnter={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
+          style={ { width: 188, marginBottom: 8, display: 'block' } }
+        />
+        <Button
+          type="primary"
+          onClick={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
+          icon="search"
+          size="small"
+          style={ { width: 90, marginRight: 8 } }
+        >
+          Buscar
+        </Button>
+        <Button onClick={ () => this.handleReset( clearFilters ) } size="small" style={ { width: 90 } }>
+          Limpiar
+        </Button>
+      </div>
+    ),
+    filterIcon: filtered => (
+      <Icon type="search" style={ { color: filtered ? '#1890ff' : undefined } }/>
+    ),
+    onFilter: (value, record) => {
+
+      return _.get(record, dataIndex)
+        .toString()
+        .toLowerCase()
+        .includes( value.toLowerCase() )
+    },
+    onFilterDropdownVisibleChange: visible => {
+      if (visible) {
+        setTimeout( () => this.searchInput.select() );
+      }
+    },
+    render: text => {
+      return this.state.searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={ { backgroundColor: '#ffc069', padding: 0 } }
+          searchWords={ [ this.state.searchText ] }
+          autoEscape
+          textToHighlight={ text.toString() }
+        />
+      ) : (
+        text
+      )
+    }
+
+  } );
+
+  handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    this.setState( {
+      searchText: selectedKeys[ 0 ],
+      searchedColumn: dataIndex,
+    } );
+  };
+
+  handleReset = clearFilters => {
+    clearFilters();
+    this.setState( { searchText: '' } );
+  };
+
   /************************/
 
   cancel = () => {
@@ -167,7 +176,78 @@ class Products extends Component {
         cell: EditableCell,
       },
     };
-    const columns = this.columns.map( col => {
+
+    const columnsSource = [
+      {
+        title: 'Código',
+        dataIndex: 'code',
+        key: 'code',
+        editable: true,
+        sorter: (a, b) => Sort( a.code, b.code ),
+        sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'code' ),
+      },
+      {
+        title: 'Nombre',
+        dataIndex: 'name',
+        key: 'name',
+        editable: true,
+        sorter: (a, b) => Sort( a.name, b.name ),
+        sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'name' ),
+      },
+      {
+        title: 'Acciones',
+        key: 'actions',
+        render: (text, record) => {
+          record = {
+            ...record,
+            key: record.id
+          };
+          const { editingKey } = this.state;
+          const editable = this.isEditing( record );
+          return editable ? (
+            <span>
+              <EditableConsumer>
+                { form => (
+                  <a
+                    onClick={ () => this.save( form, record.key ) }
+                    style={ { marginRight: 8 } }
+                  >
+                    Salvar
+                  </a>
+                ) }
+              </EditableConsumer>
+              <Popconfirm
+                title="Desea cancelar?"
+                onConfirm={ () => this.cancel( record.key ) }
+                okText="Sí"
+                cancelText="No"
+              >
+                <a>Cancelar</a>
+              </Popconfirm>
+            </span>
+          ) : (
+            <div>
+              <a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>
+                Editar
+              </a>
+              <Popconfirm
+                title="Desea eliminarlo?"
+                onConfirm={ () => this.handleDelete( record.key ) }
+                okText="Sí"
+                cancelText="No"
+              >
+                <a disabled={ editingKey !== '' } className="cta-actions"> Eliminar </a>
+              </Popconfirm>
+            </div>
+          );
+        },
+      },
+    ];
+
+
+    const columns = columnsSource.map( col => {
       if (!col.editable) {
         return col;
       }
@@ -182,6 +262,8 @@ class Products extends Component {
         } ),
       };
     } );
+
+
     return (
       <div>
         <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }

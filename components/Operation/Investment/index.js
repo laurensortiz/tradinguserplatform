@@ -92,7 +92,7 @@ class Investment extends Component {
 
       prevState.isVisibleAddOrEditOperation = false;
 
-      antMessage.success( message, 1.5, () => {
+      antMessage.success( message, 1, () => {
         prevState.actionType = 'add'; // default value
 
         nextProps.fetchGetInvestmentOperations();
@@ -102,7 +102,7 @@ class Investment extends Component {
 
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-      antMessage.error( 'Ha ocurrido un error', 1.5, () => {
+      antMessage.error( 'Ha ocurrido un error', 1, () => {
         nextProps.resetAfterRequest();
       } );
 

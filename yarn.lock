@@ -5856,6 +5856,10 @@ pretty-error@^2.0.2:
     renderkid "^2.0.1"
     utila "~0.4"
 
+print-html-element@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/print-html-element/-/print-html-element-0.5.1.tgz#ad8a4b32045e0e8411bc55a30116b1f136bd7e86"
+
 printj@~1.1.0, printj@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/printj/-/printj-1.1.2.tgz#d90deb2975a8b9f600fb3a1c94e3f4c53c78a222"

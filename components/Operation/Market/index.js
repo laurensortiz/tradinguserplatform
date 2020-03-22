@@ -93,7 +93,7 @@ class Market extends Component {
 
       prevState.isVisibleAddOrEditOperation = false;
 
-      antMessage.success(message, 1.5, () => {
+      antMessage.success(message, 1, () => {
         prevState.actionType = 'add'; // default value
 
         nextProps.fetchGetMarketOperations();
@@ -104,7 +104,7 @@ class Market extends Component {
 
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
 
-      antMessage.error('Ha ocurrido un error', 1.5, () => {
+      antMessage.error('Ha ocurrido un error', 1, () => {
         nextProps.resetAfterRequest();
       });
 
@@ -201,10 +201,7 @@ class Market extends Component {
   _handleAddMovement = (newMovement) => {
     const { id : marketOperationId } = this.state.currentOperationDetail;
     const { gpInversion, gpAmount } = newMovement;
-    console.log('[=====  test  =====>');
-    console.log( parseFloat(gpInversion).toFixed(2));
-    console.log(parseFloat(gpAmount).toFixed(2));
-    console.log('<=====  /test  =====]');
+
     this.props.fetchAddMarketMovement( {
       ...newMovement,
       marketOperationId,

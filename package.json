@@ -58,6 +58,7 @@
     "passport-local": "^1.0.0",
     "pg": "^7.9.0",
     "pg-hstore": "^2.3.2",
+    "print-html-element": "^0.5.1",
     "react": "^16.8.4",
     "react-datepicker": "^2.9.6",
     "react-dom": "^16.8.4",
