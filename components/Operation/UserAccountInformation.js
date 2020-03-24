@@ -31,10 +31,21 @@ class AccountInformation extends PureComponent {
           <Col>
             <Descriptions title="">
               <Descriptions.Item label="Tipo de cuenta">{ accountName }</Descriptions.Item>
-              <Descriptions.Item label="Comisíon sobre ganancias">{ accountPercentage } %</Descriptions.Item>
+              {
+                _.isEqual(accountType, 1) ? (
+                  <Descriptions.Item label="Comisíon sobre ganancias">{ accountPercentage } %</Descriptions.Item>
+                ) : (
+                  <Descriptions.Item label="Tipo de Interés">{ accountPercentage } %</Descriptions.Item>
+                )
+              }
 
-              <Descriptions.Item
-                label="Garantías disponibles">{ FormatCurrency.format( guaranteeOperation ) }</Descriptions.Item>
+              {
+                _.isEqual(accountType, 1) ? (
+                  <Descriptions.Item
+                    label="Garantías disponibles">{ FormatCurrency.format( guaranteeOperation ) }</Descriptions.Item>
+                ) : null
+              }
+
 
               <Descriptions.Item
                 label="Garantías / Créditos">{ FormatCurrency.format( guaranteeCredits ) }</Descriptions.Item>

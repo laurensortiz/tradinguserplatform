@@ -126,7 +126,7 @@ class Accounts extends Component {
       : 'Editar Cuenta de Usuario';
 
     const userAccount  = _.filter(this.props.userAccounts, ['account.associatedOperation', this.state.operationType]);
-console.log(this.state.operationType);
+
     return (
       <Document id="userAccounts-page">
         <Row>

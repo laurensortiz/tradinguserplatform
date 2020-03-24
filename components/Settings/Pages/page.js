@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import { Button, Table, Popconfirm, Alert, Input, Card, Icon, Switch,Tabs } from 'antd';
+import { Button, Table, Popconfirm, message as antMessage, Input, Card, Icon, Switch,Tabs } from 'antd';
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
 import InnerHTML from "dangerously-set-html-content";
@@ -19,7 +19,8 @@ class Page extends Component {
   state = {
     pages: [],
     currentPage: {},
-    editingPage: {}
+    editingPage: {},
+    editingPageId: 0,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -31,8 +32,22 @@ class Page extends Component {
     }
 
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-      nextProps.fetchGetPages();
-      nextProps.resetAfterRequest();
+      antMessage.success('Página Actualizada', 1, () => {
+
+        nextProps.fetchGetPages();
+        nextProps.resetAfterRequest();
+      });
+      return {
+        currentPage: {},
+        editingPage: '',
+        editingPageId: 0,
+      }
+    }
+
+    if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
+      antMessage.error('Ha ocurrido un error', 1, () => {
+        nextProps.resetAfterRequest();
+      });
     }
 
     return null;
@@ -45,32 +60,38 @@ class Page extends Component {
     }
   }
 
-  handleSave = data => {
-    console.log('[=====  save  =====>');
-    console.log(data);
-    console.log('<=====  /save  =====]');
-    // this.props.fetchEditPage({
-    //   id,
-    //   name,
-    //   content
-    // })
+  _handleSave = data => {
+    const {editingPageId: id, editingPage: content} = this.state;
+    this.props.fetchEditPage({
+      id,
+      content
+    })
 
   };
 
   _updateContent = ({target}) => {
-    console.log('[=====  content  =====>');
-    console.log(target.value);
-    console.log('<=====  /content  =====]');
+    this.setState({
+      editingPage: target.value
+    })
   }
   
-  _handleEdit = (id) => {
-    console.log('[=====  di  =====>');
-    console.log(id);
-    console.log('<=====  /di  =====]');
+  _handleEdit = (editingPageId) => {
+    this.setState({
+      editingPageId
+    })
+  }
+
+  _handleCancel = () => {
+    this.setState({
+      editingPageId: 0,
+      editingPage: {}
+    })
   }
 
   _displayContent = () => {
+
     return _.map(this.state.pages, page => {
+      const isPageEditing = _.isEqual(this.state.editingPageId, page.id);
       return(
         <Card
           title={page.name}
@@ -78,9 +99,11 @@ class Page extends Component {
         >
           <Tabs defaultActiveKey="1" animated={false}>
             <TabPane tab="Código" key="1">
-              <TextArea disabled={true} rows={8} defaultValue={page.content} onChange={this._updateContent} />
+              <TextArea disabled={!isPageEditing} rows={8} defaultValue={page.content} onChange={this._updateContent} />
               <div className="cta-container" style={{marginTop: 20}}>
-                <Button type="primary" onClick={() => this._handleEdit(page.id)}>Editar</Button>
+                <Button icon="form" className={isPageEditing ? 'hidden' : 'show'} type="secondary" onClick={() => this._handleEdit(page.id)}>Editar</Button>
+                <Button icon="check-circle" disabled={_.isEmpty(this.state.editingPage)} className={isPageEditing ? 'show' : 'hidden'} type="primary" onClick={this._handleSave}>Salvar</Button>
+                <Button icon="close-circle" className={isPageEditing ? 'show' : 'hidden'} type="danger" onClick={this._handleCancel}>Cancelar</Button>
               </div>
 
             </TabPane>
