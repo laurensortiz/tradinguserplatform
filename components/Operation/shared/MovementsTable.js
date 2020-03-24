@@ -133,11 +133,11 @@ class MovementsTable extends Component {
         this.props.onEdit( newData )
       }
     } );
-  }
+  };
 
   edit = (key) => {
     this.setState( { editingKey: key } );
-  }
+  };
 
 
   _onChangeInput = (value) => {
@@ -286,7 +286,6 @@ class MovementsTable extends Component {
   } );
 
   _getColumns = () => {
-    const sortDirections = [ 'descend', 'ascend' ];
     const datesInTimes = _.map( this.state.dataSource, record => moment( record.createdAt ) ),
       maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
       minDatesInTimes = moment.min( datesInTimes ).subtract( 1, 'days' );
@@ -299,7 +298,7 @@ class MovementsTable extends Component {
         render: value => FormatCurrency.format( value ),
         editable: true,
         required: false,
-        inputType: 'number'
+        inputType: 'number',
       },
       {
         title: 'G/P',
@@ -386,7 +385,7 @@ class MovementsTable extends Component {
         },
       },
     ];
-  }
+  };
 
   render() {
 

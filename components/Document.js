@@ -31,7 +31,7 @@ class Document extends Component {
   };
 
   render() {
-    const isLoginPage = _.isEqual(_.get(Router, 'router.route'), '/')
+    const isLoginPage = _.isEqual(_.get(Router, 'router.route'), '/');
 
     return (
       <React.Fragment>
@@ -47,6 +47,7 @@ class Document extends Component {
           <meta property="og:type" content="website"/>
           <link rel="shortcut icon" href="/static/favicon.png"/>
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,700&display=swap" rel="stylesheet" />
+          <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
         </Head>
         <Layout className={classNames(`dark-mode ${this.props.className || ''}`, {'login-page' : isLoginPage})} style={ { minHeight: '100vh' } } id={ this.props.id || 'main-page' } >
           {isLoginPage ? (

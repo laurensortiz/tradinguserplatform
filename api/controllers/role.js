@@ -1,5 +1,5 @@
 import { Role } from '../models';
-import { brokerQuery } from '../queries';
+import { roleQuery } from '../queries';
 
 module.exports = {
   async create(req, res) {

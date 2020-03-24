@@ -84,7 +84,7 @@ class AddOrEditUserAccountForm extends PureComponent {
     const name = codeIdName[ 1 ];
 
     if (_.isEqual( fieldName, 'user' )) {
-      const selectedUser = _.find( this.state.users, { id } )
+      const selectedUser = _.find( this.state.users, { id } );
       this.setState( {
         user: {
           id,

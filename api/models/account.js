@@ -8,6 +8,7 @@ module.exports = (Sequelize, DataTypes) => {
     percentage: {
       type: DataTypes.DECIMAL(10,2),
       allowNull: false,
+      unique: false,
     },
     associatedOperation: {
       type: DataTypes.INTEGER,

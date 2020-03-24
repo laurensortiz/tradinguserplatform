@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, message as antMessage, Icon } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, message as antMessage, Icon } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -12,7 +12,6 @@ import AddOrEditUserForm from '../components/User/AddOrEditUserForm';
 import Detail from '../components/User/Detail';
 
 import { userOperations } from "../state/modules/users";
-import AddOrEditUserAccountForm from "../components/UserAccount/AddOrEditUserAccountForm";
 
 const { TabPane } = Tabs;
 
@@ -27,22 +26,18 @@ class Users extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-      let message = 'Usuario Creado',
-        description = 'El Usuario se ha creado corrrectamente';
+      let message = 'Usuario Creado';
 
       if (_.isEqual( prevState.actionType, 'edit' )) {
         message = 'Usuario Modificado';
-        description = 'El Usuario se ha modificado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'delete' )) {
         message = 'Usuario Eliminado';
-        description = 'El Usuario se ha eliminado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'active' )) {
         message = 'Usuario Activado';
-        description = 'El Usuario se ha activado corrrectamente';
       }
 
       prevState.isVisibleAddOrEditUser = false;

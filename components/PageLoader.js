@@ -1,3 +1,4 @@
+import React from 'react';
 const pageLoader = <div className="page-loader">
     <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
          viewBox="0 0 70 70" enableBackground="new 0 0 0 0">

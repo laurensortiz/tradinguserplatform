@@ -12,6 +12,7 @@ import {
   marketMovement,
   commodity,
   assetClass,
+  page,
 } from './controllers';
 
 const authMiddleware = (req, res, next) => {
@@ -67,6 +68,13 @@ module.exports = app => {
   app.post( '/api/roles', role.create );
   app.put( '/api/roles/:roleId', role.update );
   app.delete( '/api/roles/:roleId', role.delete );
+
+  // Page
+  app.get( '/api/pages', page.list );
+  app.get( '/api/pages/:pageId', page.get );
+  app.post( '/api/pages', page.create );
+  app.put( '/api/pages/:pageId', page.update );
+  app.delete( '/api/pages/:pageId', page.delete );
 
   // Broker
   app.get( '/api/brokers', broker.list );

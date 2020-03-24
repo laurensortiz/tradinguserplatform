@@ -159,7 +159,7 @@ class AddOrEditUserForm extends PureComponent {
   };
 
   _handleSelectUserType = ({ target }) => {
-    const isAdminUser = _.isEqual( target.value, 'admin' )
+    const isAdminUser = _.isEqual( target.value, 'admin' );
     this.setState( {
       isAdminUser,
       role: {
@@ -169,7 +169,7 @@ class AddOrEditUserForm extends PureComponent {
         id: 0
       }
     } )
-  }
+  };
 
   render() {
 

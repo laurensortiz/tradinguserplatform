@@ -16,7 +16,7 @@ export const addProduct = async (product) => {
 };
 
 export const editProduct = async (product) => {
-  return await fetch( {
+  return fetch( {
     method: 'put',
     url: `products/${ product.id }`,
     data: product
@@ -24,7 +24,7 @@ export const editProduct = async (product) => {
 };
 
 export const deleteProduct = async (productId) => {
-  return await fetch( {
+  return fetch( {
     method: 'delete',
     url: `products/${ productId }`,
   } );

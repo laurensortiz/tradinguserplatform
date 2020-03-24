@@ -196,7 +196,7 @@ class UsersTable extends Component {
     ];
 
     const userData = _.filter(this.state.users, user =>
-      this.state.isAdminUsersSelected ? _.isEqual(user.roleId, 1) : _.isEqual(user.roleId, 2))
+      this.state.isAdminUsersSelected ? _.isEqual(user.roleId, 1) : _.isEqual(user.roleId, 2));
 
     return (
       <Table

@@ -65,11 +65,11 @@ class AuthSignupFor extends Component {
 
   _getJobTitleOptions = () => {
     return jobTitle.map(({name, id}) => <Option key={id}>{name}</Option>)
-  }
+  };
 
   _handleChangeSelect = () => {
 
-  }
+  };
 
 
   render() {

@@ -82,7 +82,7 @@ class Export extends PureComponent {
     const html = XLSX.utils.sheet_to_html( ws );
     const opts = {
       styles: ['color', 'black']
-    }
+    };
 
     // Generate XLSX file and send to client
     const wbout = XLSX.write( wb, wopts );

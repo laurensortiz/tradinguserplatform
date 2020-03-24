@@ -32,7 +32,7 @@ class AddOrEditInvestmentForm extends PureComponent {
     userAccounts: [],
     accountName: '',
     accountPercentage: 0,
-    accountGuarantee: 0,
+    accountAvailable: 0,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -57,7 +57,7 @@ class AddOrEditInvestmentForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedOperation )) {
       const { selectedOperation } = this.props;
-      const accountName = _.get(selectedOperation, 'userAccount.account.name', '')
+      const accountName = _.get(selectedOperation, 'userAccount.account.name', '');
       this.setState( {
         ...this.state,
         ...selectedOperation,
@@ -84,7 +84,7 @@ class AddOrEditInvestmentForm extends PureComponent {
         },
         amount: selectedUserAccount.accountValue,
         accountPercentage: _.get(selectedUserAccount, 'account.percentage', 0),
-        accountGuarantee: _.get(selectedUserAccount, 'guaranteeOperation', 0)
+        accountAvailable: selectedUserAccount.accountValue
       } )
     } else {
       this.setState( {
@@ -158,14 +158,16 @@ class AddOrEditInvestmentForm extends PureComponent {
       if (parseFloat(value) == 0) {
         reject("La opereración debe ser mayor a 0");
       }
-
-      if ((parseFloat(this.state.accountGuarantee ) - parseFloat(value)) < 0) {
-        reject("El usuario no cuenta con Garantías disponibles");  // reject with error message
+console.log('[=====  amount  =====>');
+console.log(this.state.accountAvailable );
+console.log('<=====  /amount  =====]');
+      if ((parseFloat(this.state.accountAvailable ) - parseFloat(value)) < 0) {
+        reject("El usuario no cuenta con Dinero disponibles");  // reject with error message
       } else {
         resolve();
       }
     });
-  }
+  };
 
   render() {
     const { getFieldDecorator } = this.props.form;

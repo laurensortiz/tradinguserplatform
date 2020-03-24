@@ -25,13 +25,6 @@ class UserAccountsTable extends Component {
     return null;
   }
 
-  _selectItemsOperationType = () => (
-    <Menu onClick={this.props.onCreateOperation}>
-      <Menu.Item key="market">Bolsa</Menu.Item>
-      <Menu.Item key="investment">Inversión</Menu.Item>
-    </Menu>
-  );
-
   _getCTA = (type, row) => {
 
     if (_.isEqual( this.props.status, 'inactive' )) {
@@ -145,6 +138,8 @@ class UserAccountsTable extends Component {
 
 
   render() {
+    const dynamicClass = this.props.isOperationStandard ? 'show' : 'hidden';
+
     const columns = [
       {
         title: 'Usuario',
@@ -181,6 +176,7 @@ class UserAccountsTable extends Component {
         title: 'Garantías disponibles',
         dataIndex: 'guaranteeOperation',
         key: 'guaranteeOperation',
+        className: dynamicClass,
         render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
         sorter: (a, b) => Sort( a.guaranteeOperation, b.guaranteeOperation ),
         sortDirections: [ 'descend', 'ascend' ],

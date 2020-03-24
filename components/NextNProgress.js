@@ -1,7 +1,6 @@
 import React from 'react';
 import NProgress from 'nprogress';
 import Router from "next/router";
-import PropTypes from 'prop-types';
 
 /* eslint-disable react/prefer-stateless-function */
 class NextNProgress extends React.Component {
@@ -113,12 +112,5 @@ class NextNProgress extends React.Component {
     Router.events.on('routeChangeError', this.routeChangeEnd);
   }
 }
-
-NextNProgress.propTypes = {
-  color: PropTypes.string,
-  startPosition: PropTypes.number,
-  stopDelayMs: PropTypes.number,
-  options: PropTypes.object,
-};
 
 export default NextNProgress;

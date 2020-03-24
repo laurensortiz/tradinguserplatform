@@ -129,7 +129,7 @@ class Investment extends Component {
       isVisibleAddOrEditOperation: false,
       selectedOperation: {},
       actionType: 'add'
-    } )
+    } );
     this.props.onClose( false );
   };
 
@@ -171,7 +171,7 @@ class Investment extends Component {
     this.setState( {
       selectedOperation,
       isVisibleAddOrEditOperation: true,
-    } )
+    } );
     this.props.handleFormVisible( true );
   };
 

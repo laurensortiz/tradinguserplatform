@@ -7,7 +7,7 @@ import uuidv1 from 'uuid/v1';
 
 import { commodityOperations } from '../../../state/modules/commodity';
 
-import EditableCell, {EditableFormRow} from './shared/editableCell';
+import EditableCell, {EditableFormRow} from '../shared/SingleEditable/editableCell';
 
 const DEFAULT_INPUT_TEXT = '';
 
@@ -124,7 +124,7 @@ class Commodity extends Component {
       <div>
         <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
                 disabled={ !_.isEmpty( this.state.tempDataSource ) }>
-          Agregar Tipo de Lotage
+          Agregar Mercado
         </Button>
         <Alert message="Para editar el nombre sólo debe hacer click en el campo del puesto que desea modificar. " type="info" showIcon />
 

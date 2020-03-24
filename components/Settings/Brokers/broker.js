@@ -7,7 +7,7 @@ import uuidv1 from 'uuid/v1';
 
 import { brokerOperations } from '../../../state/modules/brokers';
 
-import EditableCell, {EditableFormRow} from './shared/editableCell';
+import EditableCell, {EditableFormRow} from '../shared/SingleEditable/editableCell';
 
 const DEFAULT_INPUT_TEXT = '';
 

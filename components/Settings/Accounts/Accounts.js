@@ -5,8 +5,8 @@ import { Button, Table, Form, Popconfirm } from 'antd';
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
 
-import { EditableProvider, EditableConsumer } from './shared/editableContext';
-import EditableCell from './shared/editableCell';
+import { EditableProvider, EditableConsumer } from '../shared/MultipleEditable/editableContext';
+import EditableCell from '../shared/MultipleEditable/editableCell';
 
 import { accountOperations } from '../../../state/modules/accounts';
 

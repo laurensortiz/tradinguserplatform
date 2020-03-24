@@ -69,7 +69,7 @@ class UserAccount extends Component {
         return _.map(this.state.accounts, account => <UserAccountInformation userAccount={account} />)
       }
     }
-  }
+  };
 
   render() {
     const {firstName, lastName, userID, username} = this.state.currentUser;

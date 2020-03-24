@@ -47,7 +47,7 @@ class MainHeader extends Component {
         <NavPublic onLogout={ this._onLogout }/>
       )
       : null
-  }
+  };
 
   render() {
 

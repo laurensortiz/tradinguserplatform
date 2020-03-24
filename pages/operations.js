@@ -2,15 +2,13 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, Radio, Icon } from 'antd';
+import { Row, Col, Button, Radio, Icon } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
 
 import { Investment, Market, UserAccount } from '../components/Operation';
 import { userAccountOperations } from "../state/modules/userAccounts";
-
-const { TabPane } = Tabs;
 
 class Operations extends Component {
   state = {

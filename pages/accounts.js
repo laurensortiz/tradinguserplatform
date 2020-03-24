@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, message as antMessage, Icon, Radio } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, message as antMessage, Icon, Radio} from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -11,7 +11,6 @@ import UserAccountsTable from '../components/UserAccount/UserAccountsTable';
 import AddOrEditUserAccountForm from '../components/UserAccount/AddOrEditUserAccountForm';
 
 import { userAccountOperations } from "../state/modules/userAccounts";
-import { Investment, Market } from "../components/Operation";
 
 const { TabPane } = Tabs;
 
@@ -26,26 +25,22 @@ class Accounts extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-      let message = 'Cuenta de Usuario Creada',
-        description = 'La Cuenta de Usuario se ha creado corrrectamente';
+      let message = 'Cuenta de Usuario Creada';
 
       if (_.isEqual( prevState.actionType, 'edit' )) {
         message = 'Cuenta de Usuario Modificado';
-        description = 'La Cuenta de Usuario se ha modificado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'delete' )) {
         message = 'Cuenta de Usuario Eliminado';
-        description = 'La Cuenta de Usuario se ha eliminado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'active' )) {
         message = 'Cuenta de Usuario Activado';
-        description = 'La Cuenta de Usuario se ha activado corrrectamente';
       }
 
       prevState.isVisibleAddOrEditUserAccount = false;
-      antMessage.success(message, 1.5, () => {
+      antMessage.success(message, 1, () => {
         prevState.actionType = 'add'; // default value
 
         nextProps.fetchGetAllUserAccounts();
@@ -53,20 +48,9 @@ class Accounts extends Component {
       });
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-      antMessage.error('Ha ocurrido un error', 1.5, () => {
+      antMessage.error('Ha ocurrido un error', 1, () => {
         nextProps.resetAfterRequest();
       });
-
-      //
-      // notification[ 'error' ]( {
-      //   message: 'Ha ocurrido un error',
-      //   description:
-      //     'Por favor verifique la información',
-      //   onClose: () => {
-      //     nextProps.resetAfterRequest();
-      //   },
-      //   duration: 3
-      // } );
     }
     return null;
   }
@@ -142,7 +126,7 @@ class Accounts extends Component {
       : 'Editar Cuenta de Usuario';
 
     const userAccount  = _.filter(this.props.userAccounts, ['account.associatedOperation', this.state.operationType]);
-
+console.log(this.state.operationType);
     return (
       <Document id="userAccounts-page">
         <Row>
@@ -170,6 +154,7 @@ class Accounts extends Component {
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserAccount }
+                  isOperationStandard={_.isEqual(this.state.operationType, 1)}
                 />
               </TabPane>
               <TabPane tab="Eliminados" key="2">
@@ -178,6 +163,7 @@ class Accounts extends Component {
                   isLoading={ this.props.isLoading }
                   onActive={ this._onSelectActive }
                   status="inactive"
+                  isOperationStandard={_.isEqual(this.state.operationType, 1)}
                 />
               </TabPane>
             </Tabs>

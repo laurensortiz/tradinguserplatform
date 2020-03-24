@@ -47,7 +47,7 @@ class Market extends Component {
 
       _.assignIn( updatedState, {
         marketOperations: marketOperationUser
-      } )
+      } );
 
       if (prevState.isDetailViewVisible) {
 
@@ -130,7 +130,7 @@ class Market extends Component {
       isVisibleAddOrEditOperation: false,
       selectedOperation: {},
       actionType: 'add'
-    } )
+    } );
     this.props.onClose( false );
   };
 
@@ -172,7 +172,7 @@ class Market extends Component {
     this.setState( {
       selectedOperation,
       isVisibleAddOrEditOperation: true,
-    } )
+    } );
     this.props.handleFormVisible( true );
   };
 

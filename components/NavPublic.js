@@ -14,10 +14,10 @@ class NavPublic extends PureComponent {
       <ul className="main-menu"
       >
         <li>
-          <Anchor className="menu-item" href="/market"><Icon type="sliders"/> <span>Mercado</span></Anchor>
+          <Link className="menu-item" href="/market"><Icon type="sliders"/> <span>Mercado</span></Link>
         </li>
         <li>
-          <Anchor className="menu-item" href="/calendar"><Icon type="fund"/> <span>Calendario Económico</span></Anchor>
+          <Link className="menu-item" href="/calendar"><Icon type="fund"/> <span>Calendario Económico</span></Link>
         </li>
         <li>
           <Link className="menu-item" href="/operations"><Icon type="area-chart" /> <span>Operaciones</span></Link>

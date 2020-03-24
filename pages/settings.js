@@ -10,6 +10,8 @@ import SettingsBrokers from '../components/Settings/Brokers';
 import SettingsAccounts from '../components/Settings/Accounts';
 import SettingsCommodities from '../components/Settings/Commodities';
 import SettingsAssetClasses from '../components/Settings/AssetClasses';
+import SettingsPages from '../components/Settings/Pages';
+
 
 const { TabPane } = Tabs;
 
@@ -40,6 +42,9 @@ class Settings extends Component {
               </TabPane>
               <TabPane tab="Derivados de Inversión" key="6">
                 <SettingsAssetClasses />
+              </TabPane>
+              <TabPane tab="Páginas" key="7">
+                <SettingsPages />
               </TabPane>
             </Tabs>
           </Col>

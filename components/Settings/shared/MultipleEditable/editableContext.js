@@ -1,6 +1,6 @@
 import React from 'react'
 
-const EditableContext = React.createContext({})
+const EditableContext = React.createContext({});
 
 export const EditableProvider = EditableContext.Provider;
 export const EditableConsumer = EditableContext.Consumer;

@@ -1,16 +1,16 @@
 import path from 'path';
-import sequelize from 'sequelize';
+import Sequelize from 'sequelize';
 
 const db = {};
 const env = process.env.NODE_ENV || 'development';
 const sequelizeConfig = require(`${__dirname}/../../config.js`)[env];
 
-const ORM = new sequelize(
+const ORM = new Sequelize(
   sequelizeConfig.database,
   sequelizeConfig.username,
   sequelizeConfig.password,
   sequelizeConfig,
-)
+);
 
 
 db.User = ORM.import(path.join(__dirname, 'user.js'));
@@ -26,6 +26,7 @@ db.MarketOperation = ORM.import(path.join(__dirname, 'market-operation.js'));
 db.MarketMovement = ORM.import(path.join(__dirname, 'market-movement.js'));
 db.Commodity = ORM.import(path.join(__dirname, 'commodity.js'));
 db.AssetClass = ORM.import(path.join(__dirname, 'asset-class.js'));
+db.Page = ORM.import(path.join(__dirname, 'page.js'));
 
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
@@ -34,6 +35,6 @@ Object.keys(db).forEach(modelName => {
 });
 
 db.ORM = ORM;
-db.sequelize = sequelize;
+db.sequelize = Sequelize;
 
 module.exports = db;

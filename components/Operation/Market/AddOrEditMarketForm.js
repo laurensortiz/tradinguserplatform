@@ -269,7 +269,7 @@ class AddOrEditMarketForm extends PureComponent {
         resolve();
       }
     });
-  }
+  };
 
   render() {
     const { getFieldDecorator } = this.props.form;

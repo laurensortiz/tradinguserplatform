@@ -107,7 +107,7 @@ class Export extends PureComponent {
     ];
     ws[ '!cols' ] = wscols;
 
-    const displayTemplate = _.isNil(currentOperation.commodity) ? this._getAccountTemplateInvestment( currentOperation ) : this._getAccountTemplateMarket( currentOperation )
+    const displayTemplate = _.isNil(currentOperation.commodity) ? this._getAccountTemplateInvestment( currentOperation ) : this._getAccountTemplateMarket( currentOperation );
 
     XLSX.utils.sheet_add_aoa( ws, displayTemplate, { origin: 'A1' } );
     XLSX.utils.book_append_sheet( wb, ws, "Estado de cuenta" );

@@ -7,7 +7,7 @@ import uuidv1 from 'uuid/v1';
 
 import { assetClassOperations } from '../../../state/modules/assetClasses';
 
-import EditableCell, {EditableFormRow} from './shared/editableCell';
+import EditableCell, { EditableFormRow } from '../shared/SingleEditable/editableCell';
 
 const DEFAULT_INPUT_TEXT = '';
 
@@ -124,9 +124,10 @@ class AssetClass extends Component {
       <div>
         <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
                 disabled={ !_.isEmpty( this.state.tempDataSource ) }>
-          Agregar Categoría de Lotage
+          Agregar Derivado de Inversión
         </Button>
-        <Alert message="Para editar el nombre sólo debe hacer click en el campo del puesto que desea modificar. " type="info" showIcon />
+        <Alert message="Para editar el nombre sólo debe hacer click en el campo del puesto que desea modificar. "
+               type="info" showIcon/>
 
         <p></p>
         <Table
@@ -136,7 +137,7 @@ class AssetClass extends Component {
           bordered
           dataSource={ [ ...tempDataSource, ...dataSource ] }
           columns={ columns }
-          loading={this.props.isLoading}
+          loading={ this.props.isLoading }
         />
       </div>
     );
