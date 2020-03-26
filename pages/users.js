@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, message as antMessage, Icon } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, Icon } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -42,19 +42,28 @@ class Users extends Component {
 
       prevState.isVisibleAddOrEditUser = false;
 
-      antMessage.success(message, 1.5, () => {
-        prevState.actionType = 'add'; // default value
+      notification.success({
+        message,
+        onClose: () => {
+          prevState.actionType = 'add'; // default value
 
-        nextProps.fetchGetUsers();
-        nextProps.resetAfterRequest();
-      });
+          nextProps.fetchGetUsers();
+          nextProps.resetAfterRequest();
+        },
+        duration: 1
+      })
 
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
 
-      antMessage.error('Ha ocurrido un error', 1.5, () => {
-        nextProps.resetAfterRequest();
-      });
+      notification.error({
+        message: 'Ha ocurrido un error',
+        description: nextProps.message,
+        onClose: () => {
+          nextProps.resetAfterRequest();
+        },
+        duration: 3
+      })
 
     }
     return null;

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, Radio, message as antMessage } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, Radio } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -73,39 +73,45 @@ class Market extends Component {
     }
 
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-      let message = 'Operación de Bolsa OTC Creada',
-        description = 'La Operación de Bolsa OTC se ha creado corrrectamente';
+      let message = 'Operación de Bolsa OTC Creada';
 
       if (_.isEqual( prevState.actionType, 'edit' )) {
         message = 'Operación de Bolsa OTC Modificado';
-        description = 'La Operación de Bolsa OTC se ha modificado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'delete' )) {
         message = 'Operación de Bolsa OTC Eliminado';
-        description = 'La Operación de Bolsa OTC se ha eliminado corrrectamente';
       }
 
       if (_.isEqual( prevState.actionType, 'active' )) {
         message = 'Operación de Bolsa OTC Activado';
-        description = 'La Operación de Bolsa OTC se ha activado corrrectamente';
       }
 
       prevState.isVisibleAddOrEditOperation = false;
 
-      antMessage.success(message, 1, () => {
-        prevState.actionType = 'add'; // default value
+      notification.success({
+        message,
+        onClose: () => {
+          prevState.actionType = 'add'; // default value
 
-        nextProps.fetchGetMarketOperations();
-        nextProps.resetAfterRequest();
-        nextProps.onClose( false )
+          nextProps.fetchGetMarketOperations();
+          nextProps.resetAfterRequest();
+          nextProps.onClose( false )
+        },
+        duration: 1
       });
+
     }
 
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
 
-      antMessage.error('Ha ocurrido un error', 1, () => {
-        nextProps.resetAfterRequest();
+      notification.error({
+        message: 'Ha ocurrido un error',
+        description: nextProps.message,
+        onClose: () => {
+          nextProps.resetAfterRequest();
+        },
+        duration: 3
       });
 
     }

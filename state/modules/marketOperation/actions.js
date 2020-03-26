@@ -1,5 +1,6 @@
 import { getMarketOperations, addMarketOperation, editMarketOperation, deleteMarketOperation } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List MarketOperations
 export const fetchGetMarketOperations = () => async dispatch => {
@@ -29,7 +30,7 @@ const requestMarketOperationsSuccess = (markets) => {
 const requestMarketOperationsError = (error) => {
   return {
     type: types.MARKET_OPERATIONS_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestAddMarketOperationSuccess = (market) => {
 const requestAddMarketOperationError = (error) => {
   return {
     type: types.MARKET_OPERATION_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestEditMarketOperationSuccess = (market) => {
 const requestEditMarketOperationError = (error) => {
   return {
     type: types.MARKET_OPERATION_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestDeleteMarketOperationSuccess = (market) => {
 const requestDeleteMarketOperationError = (error) => {
   return {
     type: types.MARKET_OPERATION_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

@@ -1,5 +1,6 @@
 import { getCommodities, addCommodity, editCommodity, deleteCommodity } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List Commodities
 export const fetchGetCommodities = () => async dispatch => {
@@ -29,7 +30,7 @@ const requestCommoditiesSuccess = (products) => {
 const requestCommoditiesError = (error) => {
   return {
     type: types.COMMODITIES_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestAddCommoditySuccess = (commodity) => {
 const requestAddCommodityError = (error) => {
   return {
     type: types.COMMODITY_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestEditCommoditySuccess = (commodity) => {
 const requestEditCommodityError = (error) => {
   return {
     type: types.COMMODITY_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestDeleteCommoditySuccess = (commodity) => {
 const requestDeleteCommodityError = (error) => {
   return {
     type: types.COMMODITY_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

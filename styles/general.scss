@@ -231,6 +231,19 @@ body > div:first-of-type:not(#__next) {
   color: $stock;
 }
 
+@keyframes gradient {
+  0% {
+    //background-position: 0%;
+    background-size: 200%;
+  }
+
+  100% {
+    //background-position: 100%;
+    background-size: 100%;
+  }
+}
+
+
 .positive-bg {
   color: $white;
   background: $positive;
@@ -247,6 +260,7 @@ body > div:first-of-type:not(#__next) {
   color: $white;
   background: $blue;
   background: linear-gradient(90deg, $blue 0%, rgba(0,0,0,0) 100%);
+  transition: background 2s ease-in;
 }
 
 .product-tag {

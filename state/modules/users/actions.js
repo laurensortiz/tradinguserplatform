@@ -1,4 +1,6 @@
 import { getUsers, addUser, editUser, deleteUser } from './api';
+import { formatAxiosError } from '../../../common/utils';
+
 import types from './types';
 
 // List Users
@@ -29,7 +31,7 @@ const requestUsersSuccess = (projects) => {
 const requestUsersError = (error) => {
   return {
     type: types.USERS_ERROR,
-    payload: error
+    payload:  formatAxiosError(error.response)
   }
 };
 
@@ -37,10 +39,10 @@ const requestUsersError = (error) => {
 export const fetchAddUser = (user) => async dispatch => {
   dispatch( requestAddUser() );
   try {
-    const res = await addUser(user);
+    const res = await addUser( user );
     dispatch( requestAddUserSuccess( res.data ) )
   } catch (e) {
-    dispatch( requestAddUserError( e.message ) )
+    dispatch( requestAddUserError( e ) )
   }
 
 };
@@ -61,7 +63,7 @@ const requestAddUserSuccess = (project) => {
 const requestAddUserError = (error) => {
   return {
     type: types.USER_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -69,7 +71,7 @@ const requestAddUserError = (error) => {
 export const fetchEditUser = (project) => async dispatch => {
   dispatch( requestEditUser() );
   try {
-    const res = await editUser(project);
+    const res = await editUser( project );
     dispatch( requestEditUserSuccess( res.data ) )
   } catch (e) {
     dispatch( requestEditUserError( e.message ) )
@@ -93,7 +95,7 @@ const requestEditUserSuccess = (project) => {
 const requestEditUserError = (error) => {
   return {
     type: types.USER_EDIT_ERROR,
-    payload: error
+    payload:  formatAxiosError(error.response)
   }
 };
 
@@ -101,8 +103,8 @@ const requestEditUserError = (error) => {
 export const fetchDeleteUser = (projectId) => async dispatch => {
   dispatch( requestDeleteUser() );
   try {
-    const res = await deleteUser(projectId);
-    dispatch( requestDeleteUserSuccess(res.data) )
+    const res = await deleteUser( projectId );
+    dispatch( requestDeleteUserSuccess( res.data ) )
   } catch (e) {
     dispatch( requestDeleteUserError( e.message ) )
   }
@@ -125,7 +127,7 @@ const requestDeleteUserSuccess = (project) => {
 const requestDeleteUserError = (error) => {
   return {
     type: types.USER_DELETE_ERROR,
-    payload: error
+    payload:  formatAxiosError(error.response)
   }
 };
 

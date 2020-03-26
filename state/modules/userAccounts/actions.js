@@ -1,5 +1,6 @@
 import { getAllUserAccounts, getUserAccounts, addUserAccount, editUserAccount, deleteUserAccount } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // All User Accounts
 export const fetchGetAllUserAccounts = () => async dispatch => {
@@ -29,7 +30,7 @@ const requestAllUserAccountsSuccess = (accounts) => {
 const requestAllUserAccountsError = (error) => {
   return {
     type: types.ALL_USER_ACCOUNTS_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestUserAccountsSuccess = (projects) => {
 const requestUserAccountsError = (error) => {
   return {
     type: types.USER_ACCOUNTS_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestAddUserAccountSuccess = (project) => {
 const requestAddUserAccountError = (error) => {
   return {
     type: types.USER_ACCOUNT_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestEditUserAccountSuccess = (project) => {
 const requestEditUserAccountError = (error) => {
   return {
     type: types.USER_ACCOUNT_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -157,7 +158,7 @@ const requestDeleteUserAccountSuccess = (project) => {
 const requestDeleteUserAccountError = (error) => {
   return {
     type: types.USER_ACCOUNT_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

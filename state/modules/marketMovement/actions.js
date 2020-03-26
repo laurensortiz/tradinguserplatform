@@ -1,5 +1,6 @@
 import { getMarketMovements, addMarketMovement, editMarketMovement, deleteMarketMovement } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List MarketMovements
 export const fetchGetMarketMovements = (operationId) => async dispatch => {
@@ -29,15 +30,12 @@ const requestMarketMovementsSuccess = (movements) => {
 const requestMarketMovementsError = (error) => {
   return {
     type: types.MARKET_MOVEMENTS_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
 // Add
 export const fetchAddMarketMovement = (movement) => async dispatch => {
-  console.log('[=====  MOVIMIENTO  =====>');
-  console.log(movement);
-  console.log('<=====  /MOVIMIENTO  =====]');
   dispatch( requestAddMarketMovement() );
   try {
     const res = await addMarketMovement(movement);
@@ -64,7 +62,7 @@ const requestAddMarketMovementSuccess = (movement) => {
 const requestAddMarketMovementError = (error) => {
   return {
     type: types.MARKET_MOVEMENT_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -97,7 +95,7 @@ const requestEditMarketMovementSuccess = (movement) => {
 const requestEditMarketMovementError = (error) => {
   return {
     type: types.MARKET_MOVEMENT_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -129,7 +127,7 @@ const requestDeleteMarketMovementSuccess = (movement) => {
 const requestDeleteMarketMovementError = (error) => {
   return {
     type: types.MARKET_MOVEMENT_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

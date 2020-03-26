@@ -9,6 +9,10 @@ import { Investment, Market } from "./index";
 
 class AccountInformation extends PureComponent {
 
+  countUp = () => {
+
+  }
+
   render() {
     const userId = _.get( this.props, 'userAccount.user.id', 0 );
     const userAccountId = _.get( this.props, 'userAccount.id');

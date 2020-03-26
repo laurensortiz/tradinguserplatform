@@ -1,5 +1,6 @@
 import { getBrokers, addBroker, editBroker, deleteBroker } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List Brokers
 export const fetchGetBrokers = () => async dispatch => {
@@ -29,7 +30,7 @@ const requestBrokersSuccess = (products) => {
 const requestBrokersError = (error) => {
   return {
     type: types.BROKERS_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestAddBrokerSuccess = (broker) => {
 const requestAddBrokerError = (error) => {
   return {
     type: types.BROKER_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestEditBrokerSuccess = (broker) => {
 const requestEditBrokerError = (error) => {
   return {
     type: types.BROKER_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestDeleteBrokerSuccess = (broker) => {
 const requestDeleteBrokerError = (error) => {
   return {
     type: types.BROKER_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

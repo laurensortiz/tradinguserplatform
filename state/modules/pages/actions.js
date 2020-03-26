@@ -1,5 +1,6 @@
 import { getPages, getPage, addPage, editPage, deletePage } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List Pages
 export const fetchGetPages = () => async dispatch => {
@@ -29,7 +30,7 @@ const requestPagesSuccess = (projects) => {
 const requestPagesError = (error) => {
   return {
     type: types.PAGES_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestPageSuccess = (projects) => {
 const requestPageError = (error) => {
   return {
     type: types.PAGE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestAddPageSuccess = (project) => {
 const requestAddPageError = (error) => {
   return {
     type: types.PAGE_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestEditPageSuccess = (project) => {
 const requestEditPageError = (error) => {
   return {
     type: types.PAGE_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -157,7 +158,7 @@ const requestDeletePageSuccess = (project) => {
 const requestDeletePageError = (error) => {
   return {
     type: types.PAGE_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

@@ -1,5 +1,6 @@
 import { getAssetClasses, addAssetClass, editAssetClass, deleteAssetClass } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List AssetClasses
 export const fetchGetAssetClasses = () => async dispatch => {
@@ -29,7 +30,7 @@ const requestAssetClassesSuccess = (products) => {
 const requestAssetClassesError = (error) => {
   return {
     type: types.ASSET_CLASSES_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestAddAssetClassSuccess = (assetClass) => {
 const requestAddAssetClassError = (error) => {
   return {
     type: types.ASSET_CLASS_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestEditAssetClassSuccess = (assetClass) => {
 const requestEditAssetClassError = (error) => {
   return {
     type: types.ASSET_CLASS_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestDeleteAssetClassSuccess = (assetClass) => {
 const requestDeleteAssetClassError = (error) => {
   return {
     type: types.ASSET_CLASS_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

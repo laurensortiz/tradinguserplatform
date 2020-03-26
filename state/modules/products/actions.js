@@ -1,5 +1,6 @@
 import { getProducts, addProduct, editProduct, deleteProduct } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List Products
 export const fetchGetProducts = () => async dispatch => {
@@ -29,7 +30,7 @@ const requestProductsSuccess = (products) => {
 const requestProductsError = (error) => {
   return {
     type: types.PRODUCTS_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestAddProductSuccess = (jobTitle) => {
 const requestAddProductError = (error) => {
   return {
     type: types.PRODUCT_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestEditProductSuccess = (jobTitle) => {
 const requestEditProductError = (error) => {
   return {
     type: types.PRODUCT_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestDeleteProductSuccess = (jobTitle) => {
 const requestDeleteProductError = (error) => {
   return {
     type: types.PRODUCT_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

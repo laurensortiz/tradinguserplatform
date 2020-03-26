@@ -1,5 +1,6 @@
 import { getAccounts, addAccount, editAccount, deleteAccount } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List Accounts
 export const fetchGetAccounts = () => async dispatch => {
@@ -29,7 +30,7 @@ const requestAccountsSuccess = (products) => {
 const requestAccountsError = (error) => {
   return {
     type: types.ACCOUNTS_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestAddAccountSuccess = (account) => {
 const requestAddAccountError = (error) => {
   return {
     type: types.ACCOUNT_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestEditAccountSuccess = (account) => {
 const requestEditAccountError = (error) => {
   return {
     type: types.ACCOUNT_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestDeleteAccountSuccess = (account) => {
 const requestDeleteAccountError = (error) => {
   return {
     type: types.ACCOUNT_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

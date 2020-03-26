@@ -1,5 +1,6 @@
 import types from './types';
 import { fetchLogin, fetchLogout } from './api';
+import { formatAxiosError } from "../../../common/utils";
 
 const exception = error => {
   throw new Error(error);
@@ -37,35 +38,9 @@ const requestLoginSuccess = (user) => {
 const requestLoginError = (error) => {
   return {
     type: types.LOGIN_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
-
-
-
-
-// export const requestLogout = () => {
-//   return async dispatch => {
-//     const response = await HTTP.logout();
-//
-//     if (response.status === 200) {
-//       return redirect('/');
-//     }
-//
-//     if (response.status === 403) {
-//       return redirect('/');
-//     }
-//
-//     return exception('error');
-//   };
-// };
-
-
-// export async function logout() {
-//   return {
-//     type: types.LOGIN_SUCCESS
-//   }
-// }
 
 export const logout = () => async dispatch => {
   dispatch(requestLogout());
@@ -95,7 +70,7 @@ const requestLogoutSuccess = (user) => {
 const requestLogoutError = (error) => {
   return {
     type: types.LOGOUT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 

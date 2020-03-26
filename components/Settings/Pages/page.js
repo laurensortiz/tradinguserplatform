@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import { Button, Table, Popconfirm, message as antMessage, Input, Card, Icon, Switch,Tabs } from 'antd';
+import { Button, Table, Popconfirm, message as antMessage, Input, Card, Icon, Switch, Tabs, notification } from 'antd';
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
 import InnerHTML from "dangerously-set-html-content";
@@ -32,11 +32,15 @@ class Page extends Component {
     }
 
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-      antMessage.success('Página Actualizada', 1, () => {
-
-        nextProps.fetchGetPages();
-        nextProps.resetAfterRequest();
+      notification.success({
+        message: 'Página Actualizada',
+        onClose: () => {
+          nextProps.fetchGetPages();
+          nextProps.resetAfterRequest();
+        },
+        duration: 1
       });
+
       return {
         currentPage: {},
         editingPage: '',
@@ -45,8 +49,13 @@ class Page extends Component {
     }
 
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-      antMessage.error('Ha ocurrido un error', 1, () => {
-        nextProps.resetAfterRequest();
+      notification.error({
+        message: 'Ha ocurrido un error',
+        description: nextProps.message,
+        onClose: () => {
+          nextProps.resetAfterRequest();
+        },
+        duration: 3
       });
     }
 

@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-
-import { Row, Col, Button, Drawer, message as antMessage, Icon, Skeleton } from 'antd';
+import { Skeleton } from 'antd';
 import _ from 'lodash';
-
 
 import Document from '../components/Document';
 

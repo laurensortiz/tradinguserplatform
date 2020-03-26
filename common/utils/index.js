@@ -10,4 +10,5 @@ export { default as getGPInversion } from './get-gp-inversion';
 export { default as DisplayTableAmount } from './display-table-amount';
 export { default as MarketBehaviorStatus } from './market-behavior-status';
 export { default as AssetClassColor } from './asset-class-color';
+export { default as formatAxiosError } from './format-axios-error';
 

@@ -1,5 +1,6 @@
 import { getInvestmentMovements, addInvestmentMovement, editInvestmentMovement, deleteInvestmentMovement } from './api';
 import types from './types';
+import { formatAxiosError } from "../../../common/utils";
 
 // List InvestmentMovements
 export const fetchGetInvestmentMovements = (operationId) => async dispatch => {
@@ -29,7 +30,7 @@ const requestInvestmentMovementsSuccess = (movements) => {
 const requestInvestmentMovementsError = (error) => {
   return {
     type: types.INVESTMENT_MOVEMENTS_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -61,7 +62,7 @@ const requestAddInvestmentMovementSuccess = (movement) => {
 const requestAddInvestmentMovementError = (error) => {
   return {
     type: types.INVESTMENT_MOVEMENT_ADD_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -93,7 +94,7 @@ const requestEditInvestmentMovementSuccess = (movement) => {
 const requestEditInvestmentMovementError = (error) => {
   return {
     type: types.INVESTMENT_MOVEMENT_EDIT_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
@@ -125,7 +126,7 @@ const requestDeleteInvestmentMovementSuccess = (movement) => {
 const requestDeleteInvestmentMovementError = (error) => {
   return {
     type: types.INVESTMENT_MOVEMENT_DELETE_ERROR,
-    payload: error
+    payload: formatAxiosError(error.response)
   }
 };
 
