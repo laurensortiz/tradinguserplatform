@@ -182,7 +182,24 @@ class MarketTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'userAccount.user.username' ),
       },
-
+      {
+        title: 'Nombre',
+        dataIndex: 'userAccount.user.firstName',
+        key: 'userAccount.user.firstName',
+        render: text => <span key={ text }>{ text }</span>,
+        sorter: (a, b) => Sort( a.firstName, b.firstName ),
+        sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'userAccount.user.firstName' ),
+      },
+      {
+        title: 'Apellido',
+        dataIndex: 'userAccount.user.lastName',
+        key: 'userAccount.user.lastName',
+        render: text => <span key={ text }>{ text }</span>,
+        sorter: (a, b) => Sort( a.lastName, b.lastName ),
+        sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'userAccount.user.lastName' ),
+      },
       {
         title: 'Saldo Actual',
         key: 'amount',
