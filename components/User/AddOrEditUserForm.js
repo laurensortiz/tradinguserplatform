@@ -105,14 +105,13 @@ class AddOrEditUserForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
       if (!err) {
-        const user = {
-          ...this.state,
-        };
+
+        const saveState = _.omit(this.state, ['accounts']);
 
         if (_.isEqual( this.props.actionType, 'add' )) {
-          this.props.onAddNew( user )
+          this.props.onAddNew( saveState )
         } else {
-          this.props.onEdit( user )
+          this.props.onEdit( saveState )
         }
       }
     } );

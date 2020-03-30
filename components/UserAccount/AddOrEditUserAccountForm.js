@@ -65,9 +65,6 @@ class AddOrEditUserAccountForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedAccount )) {
       const { selectedAccount } = this.props;
-      console.log('[=====  heeeeee  =====>');
-      console.log(selectedAccount);
-      console.log('<=====  /heeeeee  =====]');
       this.setState( {
         ...this.state,
         ...selectedAccount,
@@ -119,10 +116,12 @@ class AddOrEditUserAccountForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
       if (!err) {
+        const saveState = _.omit(this.state, ['accounts', 'users']);
+
         if (_.isEqual( this.props.actionType, 'add' )) {
-          this.props.onAddNew( this.state )
+          this.props.onAddNew( saveState )
         } else {
-          this.props.onEdit( this.state )
+          this.props.onEdit( saveState )
         }
       }
     } );

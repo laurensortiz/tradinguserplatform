@@ -23,6 +23,7 @@ module.exports = {
         orderId: req.body.orderId || 0,
         status: _.get(req, 'body.status', 1),
         createdAt: req.body.createdAt || new Date(),
+        updatedAt: new Date()
       });
 
       await MarketMovement.create({
@@ -31,6 +32,7 @@ module.exports = {
         gpAmount: 0,
         status: _.get(req, 'body.status', 1),
         createdAt: req.body.createdAt || new Date(),
+        updatedAt: new Date()
       });
 
       return res.status(200).send(marketOperation);

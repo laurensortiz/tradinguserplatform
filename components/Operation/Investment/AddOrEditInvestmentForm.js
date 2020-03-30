@@ -119,10 +119,12 @@ class AddOrEditInvestmentForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
       if (!err) {
+        const saveState = _.omit(this.state, ['userAccounts']);
+
         if (_.isEqual( this.props.actionType, 'add' )) {
-          this.props.onAddNew( this.state )
+          this.props.onAddNew( saveState )
         } else {
-          this.props.onEdit( this.state )
+          this.props.onEdit( saveState )
         }
       }
     } );
