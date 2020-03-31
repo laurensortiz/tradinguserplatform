@@ -12,6 +12,8 @@ import { accountOperations } from '../../../state/modules/accounts';
 import { investmentOperationOperations } from '../../../state/modules/investmentOperation';
 import { userAccountOperations } from "../../../state/modules/userAccounts";
 
+import { AmountFormatValidation, AmountOperationValidation } from '../../../common/utils';
+
 const { Option, OptGroup } = Select;
 
 class AddOrEditInvestmentForm extends PureComponent {
@@ -57,7 +59,7 @@ class AddOrEditInvestmentForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedOperation )) {
       const { selectedOperation } = this.props;
-      const accountName = _.get(selectedOperation, 'userAccount.account.name', '');
+      const accountName = _.get( selectedOperation, 'userAccount.account.name', '' );
       this.setState( {
         ...this.state,
         ...selectedOperation,
@@ -83,7 +85,7 @@ class AddOrEditInvestmentForm extends PureComponent {
           name,
         },
         amount: selectedUserAccount.accountValue,
-        accountPercentage: _.get(selectedUserAccount, 'account.percentage', 0),
+        accountPercentage: _.get( selectedUserAccount, 'account.percentage', 0 ),
         accountAvailable: selectedUserAccount.accountValue
       } )
     } else {
@@ -119,7 +121,7 @@ class AddOrEditInvestmentForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
       if (!err) {
-        const saveState = _.omit(this.state, ['userAccounts']);
+        const saveState = _.omit( this.state, [ 'userAccounts' ] );
 
         if (_.isEqual( this.props.actionType, 'add' )) {
           this.props.onAddNew( saveState )
@@ -136,14 +138,15 @@ class AddOrEditInvestmentForm extends PureComponent {
   };
 
   _getAccountUserSelectOption = options => {
-    const accountsGrouped = _.chain(this.state.userAccounts).filter(['account.associatedOperation', 2]).groupBy('user.username').value();
-    return _.map(accountsGrouped, (accounts, user) => {
+    const accountsGrouped = _.chain( this.state.userAccounts ).filter( [ 'account.associatedOperation', 2 ] ).groupBy( 'user.username' ).value();
+    return _.map( accountsGrouped, (accounts, user) => {
       return (
-        <OptGroup label={user}>
-          {_.map(accounts, account => <Option key={`${ account.id }_${ _.get(account, 'account.name', ' - ') }`}>{_.get(account, 'account.name', ' - ')}</Option>)}
+        <OptGroup label={ user }>
+          { _.map( accounts, account => <Option
+            key={ `${ account.id }_${ _.get( account, 'account.name', ' - ' ) }` }>{ _.get( account, 'account.name', ' - ' ) }</Option> ) }
         </OptGroup>
       )
-    })
+    } )
   };
 
 
@@ -152,31 +155,13 @@ class AddOrEditInvestmentForm extends PureComponent {
     this.setState( { confirmDirty: this.state.confirmDirty || !!value } );
   };
 
-  handleInversion = (rule, value, callback) => {
-    const { getFieldValue } = this.props.form;
-
-    return new Promise((resolve, reject) => {
-
-      if (parseFloat(value) == 0) {
-        reject("La opereración debe ser mayor a 0");
-      }
-console.log('[=====  amount  =====>');
-console.log(this.state.accountAvailable );
-console.log('<=====  /amount  =====]');
-      if ((parseFloat(this.state.accountAvailable ) - parseFloat(value)) < 0) {
-        reject("El usuario no cuenta con Dinero disponibles");  // reject with error message
-      } else {
-        resolve();
-      }
-    });
-  };
-
   render() {
+
     const { getFieldDecorator } = this.props.form;
     const isAddAction = _.isEqual( this.props.actionType, 'add' );
 
     // Default values for edit action
-    const statusInitValue = !_.isNil( this.state.status) ? this.state.status : undefined;
+    const statusInitValue = !_.isNil( this.state.status ) ? this.state.status : undefined;
     const userAccountInitValue = !_.isEmpty( this.state.accountName ) ? this.state.accountName : undefined;
     const operationTypeInitValue = !_.isEmpty( this.state.operationType ) ? this.state.operationType : undefined;
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
@@ -212,15 +197,15 @@ console.log('<=====  /amount  =====]');
             <Input name="operationType" onChange={ this._handleChange } placeholder="Tipo de Operación"/>
           ) }
         </Form.Item>
-        {_.isEqual( this.props.actionType, 'add' ) ? (
+        { _.isEqual( this.props.actionType, 'add' ) ? (
           <Form.Item label="Monto">
             { getFieldDecorator( 'amount', {
               initialValue: amountInitValue,
               value: amountInitValue,
               rules: [ { required: true, message: 'Por favor indique el monto' },
                 {
-                  validator: this.handleInversion
-                }],
+                  validator: (rule, value) => AmountOperationValidation(this.state.accountAvailable, value)
+                } ],
             } )(
               <Input name="amount" onChange={ this._handleChange }
                      placeholder="Monto"/>
@@ -231,13 +216,16 @@ console.log('<=====  /amount  =====]');
             { getFieldDecorator( 'initialAmount', {
               initialValue: initialAmountInitValue,
               value: initialAmountInitValue,
-              rules: [ { required: true, message: 'Por favor indique el monto' } ],
+              rules: [ { required: true, message: 'Por favor indique el monto' },
+                {
+                  validator: AmountFormatValidation
+                }],
             } )(
               <Input name="initialAmount" onChange={ this._handleChange }
                      placeholder="Monto"/>
             ) }
           </Form.Item>
-        )}
+        ) }
 
         <Form.Item label="Estado">
           { getFieldDecorator( 'status', {
@@ -246,15 +234,15 @@ console.log('<=====  /amount  =====]');
           } )(
             <Select
               name="status"
-              onChange={ value => this.setState({
+              onChange={ value => this.setState( {
                 status: value
-              }) }
+              } ) }
               placeholder="Estado"
               showArrow={ isAddAction }
             >
-              <Option value={1}>Activo</Option>
-              <Option value={2}>Cerrado</Option>
-              <Option value={3}>En Pausa</Option>
+              <Option value={ 1 }>Activo</Option>
+              <Option value={ 2 }>Cerrado</Option>
+              <Option value={ 3 }>En Pausa</Option>
             </Select>
           ) }
         </Form.Item>
@@ -272,7 +260,6 @@ console.log('<=====  /amount  =====]');
             <DatePicker onChange={ this._setEndDate } placeholder="Fecha de Salida"/>
           ) }
         </Form.Item>
-
 
 
         <Form.Item>

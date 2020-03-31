@@ -29,7 +29,7 @@ class Document extends Component {
   componentDidMount() {
     if (!_.isNil(window)) {
       if (!_.isEqual(window.location.hostname, 'localhost')) {
-        console.log('INNN');
+
         document.addEventListener('contextmenu', event => event.preventDefault())
       }
     }

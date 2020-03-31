@@ -16,6 +16,8 @@ import { productOperations } from "../../../state/modules/products";
 import { commodityOperations } from "../../../state/modules/commodity";
 import { assetClassOperations } from "../../../state/modules/assetClasses";
 
+import { AmountFormatValidation, AmountOperationValidation } from '../../../common/utils';
+
 const { Option, OptGroup } = Select;
 
 class AddOrEditMarketForm extends PureComponent {
@@ -253,11 +255,16 @@ class AddOrEditMarketForm extends PureComponent {
   
   handleInversion = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
+    const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
 
     return new Promise((resolve, reject) => {
       
       if (_.isEqual( this.props.actionType, 'edit') && _.isEqual(parseFloat(this.state.amount ), parseFloat(value))) {
         resolve();
+      }
+
+      if (!_.isEmpty(value) && !regex.test(value)) {
+        reject( "Formato inválido del monto" );  // reject with error message
       }
 
       if (parseFloat(value) == 0) {
@@ -405,7 +412,11 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'buyPrice', {
             initialValue: buyPriceInitValue,
             value: buyPriceInitValue,
-            rules: [ { required: false, message: 'Por favor indique el monto de la compra' } ],
+            rules: [ { required: false, message: 'Por favor indique el monto de la compra' },
+              {
+                validator: (rule, amount) => AmountFormatValidation(rule, amount)
+              }
+            ],
           } )(
             <Input name="buyPrice" onChange={ this._handleChange }
                    placeholder="Precio de compra"/>
@@ -448,7 +459,11 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'maintenanceMargin', {
             initialValue: maintenanceMarginInitValue,
             value: maintenanceMarginInitValue,
-            rules: [ { required: false, message: 'Por favor indique el Margen de mantenimiento' } ],
+            rules: [ { required: false, message: 'Por favor indique el Margen de mantenimiento' },
+              {
+                validator: (rule, amount) => AmountFormatValidation(rule, amount)
+              }
+            ],
           } )(
             <Input name="maintenanceMargin" onChange={ this._handleChange }
                    placeholder="Margen de Mantenimiento"/>

@@ -67,7 +67,7 @@ class Operations extends Component {
       <Document id="userOperations-page">
         { this.state.isAdmin ? (
           <>
-            <Row>
+            <Row style={{marginBottom:30}}>
               <Radio.Group
                 defaultValue={ this.state.operationType }
                 size="large"

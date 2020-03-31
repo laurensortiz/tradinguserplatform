@@ -140,7 +140,7 @@ class Accounts extends Component {
 
     return (
       <Document id="userAccounts-page">
-        <Row>
+        <Row style={{marginBottom:30}}>
           <Radio.Group
             defaultValue={ this.state.operationType }
             size="large"
