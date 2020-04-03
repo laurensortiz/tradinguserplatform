@@ -220,11 +220,12 @@ class Market extends Component {
    * Edit Movements
    */
   _handleEditMovement = (newMovement) => {
-    const { gpInversion, gpAmount, createdAt, id } = newMovement;
+    const { gpInversion, gpAmount, marketPrice, createdAt, id } = newMovement;
     this.props.fetchEditMarketMovement( {
       id,
       gpInversion: parseFloat(gpInversion).toFixed(2),
       gpAmount: parseFloat(gpAmount).toFixed(2),
+      marketPrice: parseFloat(marketPrice).toFixed(2),
       createdAt: moment.utc(createdAt),
     } )
   };
@@ -332,6 +333,7 @@ class Market extends Component {
             currentOperation={ this.state.currentOperationDetail }
             isAdmin={this.props.isAdmin}
             isLoading={this.props.isLoading}
+            isMarketMovement={true}
           />
         </Drawer>
       </>

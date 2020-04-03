@@ -14,6 +14,14 @@ const EXCEL_HEADER = [
   'Fecha',
 ];
 
+const EXCEL_HEADER_MARKET = [
+  'Balance',
+  'Movimiento',
+  'MP',
+  'Fecha',
+];
+
+
 const addCommentToCell = (context, column, comment) => {
   if (!context[ column ].c) context[ column ].c = [];
 
@@ -31,11 +39,22 @@ class Export extends PureComponent {
 
   _formatData = (data) => {
     return _.map( data, movement => {
-      return {
-        'Balance': FormatCurrency.format( movement.gpInversion ),
-        'Movimiento': FormatCurrency.format( movement.gpAmount ),
-        'Fecha': FormatDate( movement.createdAt )
+      if (this.props.isMarketMovement) {
+        return {
+          'Balance': FormatCurrency.format( movement.gpInversion ),
+          'Movimiento': FormatCurrency.format( movement.gpAmount ),
+          'MP': FormatCurrency.format( movement.marketPrice ),
+          'Fecha': FormatDate( movement.createdAt )
+        }
+
+      } else {
+        return {
+          'Balance': FormatCurrency.format( movement.gpInversion ),
+          'Movimiento': FormatCurrency.format( movement.gpAmount ),
+          'Fecha': FormatDate( movement.createdAt )
+        }
       }
+
     } )
   };
 
@@ -82,7 +101,7 @@ class Export extends PureComponent {
     const ws = XLSX.utils.json_to_sheet(
       workbook,
       {
-        header: EXCEL_HEADER,
+        header: this.props.isMarketMovement ? EXCEL_HEADER_MARKET : EXCEL_HEADER,
         origin: 'A15'
       } );
     const wb = XLSX.utils.book_new();

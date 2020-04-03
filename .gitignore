@@ -10,6 +10,7 @@ logs
 npm-debug.log*
 .idea/workspace.xml
 .idea/
+ssl/
 
 # Runtime data
 pids

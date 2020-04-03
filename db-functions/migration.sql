@@ -210,6 +210,8 @@ CREATE TABLE public."MarketMovement" (
 
 ALTER TABLE public."MarketMovement" ADD CONSTRAINT "MarketMovement_marketOperationId_fkey" FOREIGN KEY ("marketOperationId") REFERENCES "MarketOperation"(id);
 
+ALTER TABLE public."MarketMovement" ADD "marketPrice" numeric(10,2) NULL;
+
 INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
 (1,1,2000.00,0.00,1,'2020-03-16 16:59:05.000','2020-03-16 16:59:08.530')
 ,(2,1,2030.00,30.00,1,'2020-03-16 17:03:27.978','2020-03-16 17:03:40.056')

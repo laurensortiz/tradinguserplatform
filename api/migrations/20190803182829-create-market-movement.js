@@ -27,6 +27,11 @@ module.exports = {
         allowNull: true,
         unique: false,
       },
+      marketPrice: {
+        type: Sequelize.DECIMAL(10,2),
+        allowNull: true,
+        unique: false,
+      },
       status: {
         allowNull: false,
         type: Sequelize.INTEGER,

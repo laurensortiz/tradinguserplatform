@@ -10,6 +10,7 @@ module.exports = {
         gpInversion: req.body.gpInversion,
         marketOperationId: Number(req.body.marketOperationId),
         gpAmount: req.body.gpAmount,
+        marketPrice: req.body.marketPrice,
         status: _.get(req, 'body.status', 1),
         createdAt: req.body.createdAt || new Date(),
         updatedAt: new Date()
@@ -68,6 +69,7 @@ module.exports = {
     const updatedMarketMovement = await marketMovement.update({
       gpInversion: req.body.gpInversion || marketMovement.gpInversion,
       gpAmount: req.body.gpAmount || marketMovement.gpAmount,
+      marketPrice: req.body.marketPrice || marketMovement.marketPrice,
       status: _.get(req, 'body.status', 1),
       createdAt: req.body.createdAt || marketMovement.createdAt,
       updatedAt: new Date(),

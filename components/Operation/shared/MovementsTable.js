@@ -96,6 +96,7 @@ class MovementsTable extends Component {
       id: uuidv1(),
       gpInversion: amount,
       gpAmount: DEFAULT_INPUT_TEXT,
+      marketPrice: DEFAULT_INPUT_TEXT,
       createdAt: moment.utc(),
     };
     this.setState( {
@@ -120,7 +121,7 @@ class MovementsTable extends Component {
         return;
       }
 
-      const newMovement = _.first(this.state.tempDataSource);
+      const newMovement = _.first( this.state.tempDataSource );
       const newData = {
         ...newMovement,
         ...row,
@@ -141,19 +142,18 @@ class MovementsTable extends Component {
 
 
   _onChangeInput = (value) => {
-
-    if (!_.isNumber(this.state.editingKey)) {
-      const currentAmount = getGPInversion(this.props.currentOperation.amount || 0, _.isNumber(value) ? parseFloat(value).toFixed(2) : 0);
-      const tempData = _.first(this.state.tempDataSource);
+    if (!_.isNumber( this.state.editingKey )) {
+      const currentAmount = getGPInversion( this.props.currentOperation.amount || 0, _.isNumber( value ) ? parseFloat( value ).toFixed( 2 ) : 0 );
+      const tempData = _.first( this.state.tempDataSource );
 
       const tempDataSourceUpdate = {
         ...tempData,
-        gpInversion: parseFloat(currentAmount).toFixed(2)
+        gpInversion: parseFloat( currentAmount ).toFixed( 2 )
       };
 
-      this.setState({
-        tempDataSource: [tempDataSourceUpdate]
-      })
+      this.setState( {
+        tempDataSource: [ tempDataSourceUpdate ]
+      } )
     }
 
   };
@@ -290,6 +290,7 @@ class MovementsTable extends Component {
       maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
       minDatesInTimes = moment.min( datesInTimes ).subtract( 1, 'days' );
     const showBasedAdmin = this.props.isAdmin ? 'show' : 'hidden';
+    const isMarketMovement = _.get( this.props, 'isMarketMovement', false );
     return [
       {
         title: 'G/P',
@@ -308,6 +309,16 @@ class MovementsTable extends Component {
         editable: true,
         required: true,
         inputType: 'number'
+      },
+      {
+        title: 'MP',
+        dataIndex: 'marketPrice',
+        key: 'marketPrice',
+        render: value => FormatCurrency.format( value ),
+        editable: true,
+        required: false,
+        inputType: 'number',
+        className: isMarketMovement ? 'show' : 'hidden'
       },
       {
         title: 'Fecha de movimiento',
@@ -332,7 +343,7 @@ class MovementsTable extends Component {
       {
         title: 'Acciones',
         key: 'actions',
-        className: `${showBasedAdmin}`,
+        className: `${ showBasedAdmin }`,
         render: (text, record) => {
           record = {
             ...record,
@@ -368,10 +379,11 @@ class MovementsTable extends Component {
             </span>
           ) : (
             <div className="cta-container">
-              <Button type="secondary" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }><Icon type="edit"/></Button>
-              {/*<a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>*/}
-              {/*  Editar*/}
-              {/*</a>*/}
+              <Button type="secondary" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }><Icon
+                type="edit"/></Button>
+              {/*<a className="cta-actions" disabled={ editingKey !== '' } onClick={ () => this.edit( record.key ) }>*/ }
+              {/*  Editar*/ }
+              {/*</a>*/ }
               <Popconfirm
                 title="Desea eliminarlo?"
                 onConfirm={ () => this.handleDelete( record.key ) }
@@ -410,28 +422,29 @@ class MovementsTable extends Component {
           inputType: col.inputType,
           required: col.required,
           onChangeInput: this._onChangeInput,
-          onPressEnter: () => this.save(record.id)
+          onPressEnter: () => this.save( record.id )
         } ),
       };
     } );
 
-    const disableAddBtn = !_.isEqual(_.get(this.props, 'currentOperation.status', 1), 1);
-
+    const disableAddBtn = !_.isEqual( _.get( this.props, 'currentOperation.status', 1 ), 1 );
+    const isMarketMovement = _.get( this.props, 'isMarketMovement', false );
     return (
       <div>
-        <Row style={{marginBottom: 30, marginTop: 30}}>
-          <Col sm={12}>
-            {this.props.isAdmin ? (
+        <Row style={ { marginBottom: 30, marginTop: 30 } }>
+          <Col sm={ 12 }>
+            { this.props.isAdmin ? (
               <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                      disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn}>
-                <Icon type="dollar" /> Agregar Movimiento
+                      disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn }>
+                <Icon type="dollar"/> Agregar Movimiento
               </Button>
-            ) : null}
+            ) : null }
           </Col>
-          <Col sm={12}>
+          <Col sm={ 12 }>
             <Export
               currentOperation={ this.props.currentOperation }
               exportData={ this.state.exportData }
+              isMarketMovement={ isMarketMovement }
             />
           </Col>
         </Row>
