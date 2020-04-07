@@ -317,7 +317,7 @@ class MovementsTable extends Component {
         render: value => FormatCurrency.format( value ),
         editable: true,
         required: false,
-        inputType: 'number',
+        inputType: 'number-mp',
         className: isMarketMovement ? 'show' : 'hidden'
       },
       {
