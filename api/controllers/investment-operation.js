@@ -82,7 +82,7 @@ module.exports = {
       initialAmount: req.body.initialAmount || investmentOperation.initialAmount,
       status: req.body.status || investmentOperation.status,
       startDate: req.body.startDate || investmentOperation.startDate,
-      endDate: req.body.status || investmentOperation.endDate,
+      endDate: req.body.endDate || investmentOperation.endDate,
       updatedAt: new Date(),
     });
 
