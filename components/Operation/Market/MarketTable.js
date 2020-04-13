@@ -208,7 +208,7 @@ class MarketTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Invesión',
+        title: 'Inversión',
         dataIndex: 'initialAmount',
         key: 'initialAmount',
         render: initialAmount => <span key={initialAmount} >{ DisplayTableAmount( initialAmount ) }</span>,
