@@ -30,6 +30,7 @@ module.exports = {
         gpInversion: req.body.amount,
         marketOperationId: Number(marketOperation.id),
         gpAmount: 0,
+        marketPrice: 0,
         status: _.get(req, 'body.status', 1),
         createdAt: req.body.createdAt || new Date(),
         updatedAt: new Date()
