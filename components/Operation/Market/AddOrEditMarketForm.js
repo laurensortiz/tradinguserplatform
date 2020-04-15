@@ -73,7 +73,6 @@ class AddOrEditMarketForm extends PureComponent {
     let stateUpdated = {};
 
     if (!_.isEqual( nextProps.userAccounts, prevState.userAccounts )) {
-
       _.assign( stateUpdated, {
         userAccounts: nextProps.userAccounts
       } )

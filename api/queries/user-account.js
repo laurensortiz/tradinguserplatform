@@ -1,6 +1,9 @@
 const queries = {
   list: ({ req, User, Account }) => {
     return {
+      where: {
+        status: 1,
+      },
       attributes: {
         exclude: [ 'salt', 'password' ],
       },
