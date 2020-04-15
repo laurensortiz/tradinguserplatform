@@ -97,7 +97,7 @@ class MovementsTable extends Component {
       gpInversion: amount,
       gpAmount: DEFAULT_INPUT_TEXT,
       marketPrice: DEFAULT_INPUT_TEXT,
-      createdAt: moment.utc(),
+      createdAt: moment.parseZone(),
     };
     this.setState( {
       tempDataSource: [ newMovement ],
@@ -196,13 +196,13 @@ class MovementsTable extends Component {
 
     const dateRange = this.timeDateRange;
     if (!_.isEmpty( dateRange )) {
-      return _.includes( dateRange, moment.utc( _.get( record, dataIndex ) ).format( FORMAT_DATE ) )
+      return _.includes( dateRange, moment.parseZone( _.get( record, dataIndex ) ).format( FORMAT_DATE ) )
     }
 
   };
 
   _createDateRange = (date, setSelectedKeys, minDate, maxDate, dataIndex) => {
-    this.defaultDate = moment.utc( date );
+    this.defaultDate = moment.parseZone( date );
 
     let dateRange = [],
       range = '';

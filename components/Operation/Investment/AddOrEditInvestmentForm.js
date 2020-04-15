@@ -100,13 +100,13 @@ class AddOrEditInvestmentForm extends PureComponent {
 
   _setStartDate = (date) => {
     this.setState( {
-      startDate: moment.utc( date ).format()
+      startDate: moment.parseZone( date ).format()
     } );
   };
 
   _setEndDate = (date) => {
     this.setState( {
-      endDate: moment.utc( date ).format()
+      endDate: moment.parseZone( date ).format()
     } );
 
   };
@@ -167,8 +167,8 @@ class AddOrEditInvestmentForm extends PureComponent {
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
     const initialAmountInitValue = !_.isEmpty( this.state.initialAmount ) ? this.state.initialAmount : undefined;
 
-    const startDateInitValue = !_.isEmpty( this.state.startDate ) ? moment.utc( this.state.startDate ) : undefined;
-    const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.utc( this.state.endDate ) : undefined;
+    const startDateInitValue = !_.isEmpty( this.state.startDate ) ? moment.parseZone( this.state.startDate ) : undefined;
+    const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.parseZone( this.state.endDate ) : undefined;
 
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">

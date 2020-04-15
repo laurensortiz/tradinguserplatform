@@ -183,13 +183,13 @@ class AddOrEditMarketForm extends PureComponent {
 
   _setStartDate = (date) => {
     this.setState( {
-      createdAt: moment.utc( date ).format()
+      createdAt: moment.parseZone( date ).format()
     } );
   };
 
   _setEndDate = (date) => {
     this.setState( {
-      endDate: moment.utc( date ).format()
+      endDate: moment.parseZone( date ).format()
     } );
 
   };
@@ -303,7 +303,7 @@ class AddOrEditMarketForm extends PureComponent {
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
     const orderIdInitValue = _.isNumber( this.state.orderId ) ? this.state.orderId : undefined;
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
-    const createdAtInitValue = !_.isEmpty( this.state.createdAt ) ? moment.utc( this.state.createdAt ) : undefined;
+    const createdAtInitValue = !_.isEmpty( this.state.createdAt ) ? moment.parseZone( this.state.createdAt ) : undefined;
 
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
@@ -350,7 +350,6 @@ class AddOrEditMarketForm extends PureComponent {
               name="product"
               onChange={ value => this._handleChangeSelect( { name: 'product', value } ) }
               placeholder="Producto"
-              disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
               { this._getProductSelectOption( this.state.products ) }
@@ -495,6 +494,7 @@ class AddOrEditMarketForm extends PureComponent {
               <Option value={1}>Activo</Option>
               <Option value={2}>Cerrado</Option>
               <Option value={3}>On Hold</Option>
+              <Option value={4}>Vendido</Option>
             </Select>
           ) }
         </Form.Item>

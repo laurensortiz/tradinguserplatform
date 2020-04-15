@@ -60,7 +60,10 @@ class Market extends Component {
 
 
     if (nextProps.isSuccessMovements && !_.isEmpty( nextProps.messageMovements ) && !_.isEmpty( prevState.marketMovements )) {
-      nextProps.fetchGetMarketMovements( prevState.currentOperationDetail.id );
+      if (!_.isNil(prevState.currentOperationDetail.id)) {
+        nextProps.fetchGetMarketMovements( prevState.currentOperationDetail.id );
+      }
+
       nextProps.fetchGetMarketOperations();
       nextProps.resetAfterMovementRequest();
     }
@@ -226,7 +229,7 @@ class Market extends Component {
       gpInversion: parseFloat(gpInversion).toFixed(2),
       gpAmount: parseFloat(gpAmount).toFixed(2),
       marketPrice: parseFloat(marketPrice).toFixed(2),
-      createdAt: moment.utc(createdAt),
+      createdAt: moment.parseZone(createdAt),
     } )
   };
 

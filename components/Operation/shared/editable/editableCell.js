@@ -40,7 +40,7 @@ class EditableCell extends Component {
                   message: `Por favor ingrese ${title}`,
                 },
               ],
-              initialValue: inputType === 'date' ? moment.utc(record[dataIndex]) : record[dataIndex],
+              initialValue: inputType === 'date' ? moment.parseZone(record[dataIndex]) : record[dataIndex],
             })(this.getInput())}
           </Form.Item>
         ) : (

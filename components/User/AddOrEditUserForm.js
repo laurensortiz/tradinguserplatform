@@ -124,13 +124,13 @@ class AddOrEditUserForm extends PureComponent {
 
   _setStartDate = (date) => {
     this.setState( {
-      startDate: moment.utc( date ).format()
+      startDate: moment.parseZone( date ).format()
     } );
   };
 
   _setEndDate = (date) => {
     this.setState( {
-      endDate: moment.utc( date ).format()
+      endDate: moment.parseZone( date ).format()
     } );
 
   };
@@ -179,8 +179,8 @@ class AddOrEditUserForm extends PureComponent {
     const accountInitValue = !_.isEmpty( this.state.account.name ) ? this.state.account.name : undefined;
     const emailInitValue = !_.isEmpty( this.state.email ) ? this.state.email : undefined;
     const phoneNumberInitValue = !_.isEmpty( this.state.phoneNumber ) ? this.state.phoneNumber : undefined;
-    const startDateInitValue = !_.isEmpty( this.state.startDate ) ? moment.utc( this.state.startDate ) : undefined;
-    const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.utc( this.state.endDate ) : undefined;
+    const startDateInitValue = !_.isEmpty( this.state.startDate ) ? moment.parseZone( this.state.startDate ) : undefined;
+    const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.parseZone( this.state.endDate ) : undefined;
     return (
       <div className="add-edit-user-modal">
         { _.isEqual( this.props.actionType, 'add' ) ? (

@@ -11,7 +11,11 @@ const formatStatus = status => {
     3: {
       name: 'Hold',
       color: '#E2A11A'
-    }
+    },
+    4: {
+      name: 'Vendido',
+      color: '#414241'
+    },
   };
   return detailStatus[status] || 'Sin Definir'
 };

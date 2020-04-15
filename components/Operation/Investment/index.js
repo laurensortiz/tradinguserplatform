@@ -220,7 +220,7 @@ class Investment extends Component {
       id,
       gpInversion: parseFloat(gpInversion).toFixed(2),
       gpAmount: parseFloat(gpAmount).toFixed(2),
-      createdAt: moment.utc(createdAt),
+      createdAt: moment.parseZone(createdAt),
     } )
   };
 
