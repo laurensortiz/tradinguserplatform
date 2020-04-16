@@ -501,7 +501,7 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'createdAt', {
             initialValue: createdAtInitValue
           } )(
-            <DatePicker onChange={ this._setStartDate } placeholder="Fecha de Inicio"/>
+            <DatePicker onChange={ this._setStartDate } defaultPickerValue={moment.parseZone()} placeholder="Fecha de Inicio"/>
           ) }
         </Form.Item>
         <Form.Item>
