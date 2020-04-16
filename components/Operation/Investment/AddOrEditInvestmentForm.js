@@ -167,8 +167,8 @@ class AddOrEditInvestmentForm extends PureComponent {
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
     const initialAmountInitValue = !_.isEmpty( this.state.initialAmount ) ? this.state.initialAmount : undefined;
 
-    const startDateInitValue = !_.isEmpty( this.state.startDate ) ? moment.parseZone( this.state.startDate ) : undefined;
-    const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.parseZone( this.state.endDate ) : undefined;
+    const startDateInitValue = !_.isNull( this.state.startDate ) ? moment.parseZone( this.state.startDate ) : undefined;
+    const endDateInitValue = !_.isNull( this.state.endDate ) ? moment.parseZone( this.state.endDate ) : undefined;
 
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
@@ -204,7 +204,7 @@ class AddOrEditInvestmentForm extends PureComponent {
               value: amountInitValue,
               rules: [ { required: true, message: 'Por favor indique el monto' },
                 {
-                  validator: (rule, value) => AmountOperationValidation(this.state.accountAvailable, value)
+                  validator: (rule, value) => AmountOperationValidation( this.state.accountAvailable, value )
                 } ],
             } )(
               <Input name="amount" onChange={ this._handleChange }
@@ -219,7 +219,7 @@ class AddOrEditInvestmentForm extends PureComponent {
               rules: [ { required: true, message: 'Por favor indique el monto' },
                 {
                   validator: AmountFormatValidation
-                }],
+                } ],
             } )(
               <Input name="initialAmount" onChange={ this._handleChange }
                      placeholder="Monto"/>
@@ -250,14 +250,16 @@ class AddOrEditInvestmentForm extends PureComponent {
           { getFieldDecorator( 'startDate', {
             initialValue: startDateInitValue
           } )(
-            <DatePicker onChange={ this._setStartDate } placeholder="Fecha de Inicio"/>
+            <DatePicker onChange={ this._setStartDate } defaultPickerValue={ moment.parseZone() }
+                        placeholder="Fecha de Inicio"/>
           ) }
         </Form.Item>
         <Form.Item>
           { getFieldDecorator( 'endDate', {
             initialValue: endDateInitValue
           } )(
-            <DatePicker onChange={ this._setEndDate } placeholder="Fecha de Salida"/>
+            <DatePicker onChange={ this._setEndDate } defaultPickerValue={ moment.parseZone() }
+                        placeholder="Fecha de Salida"/>
           ) }
         </Form.Item>
 

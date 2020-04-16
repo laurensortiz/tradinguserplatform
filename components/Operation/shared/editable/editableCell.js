@@ -8,7 +8,7 @@ class EditableCell extends Component {
     if (this.props.inputType === 'number') {
       return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
     } else if (this.props.inputType === 'date') {
-      return <DatePicker format="DD-MM-YYYY" />;
+      return <DatePicker format="DD-MM-YYYY" defaultPickerValue={moment.parseZone()} />;
     } else if (this.props.inputType === 'number-mp') {
       return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} />;
     }

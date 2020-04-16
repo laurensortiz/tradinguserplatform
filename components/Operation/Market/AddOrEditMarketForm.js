@@ -302,7 +302,7 @@ class AddOrEditMarketForm extends PureComponent {
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
     const orderIdInitValue = _.isNumber( this.state.orderId ) ? this.state.orderId : undefined;
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
-    const createdAtInitValue = !_.isEmpty( this.state.createdAt ) ? moment.parseZone( this.state.createdAt ) : undefined;
+    const createdAtInitValue = !_.isNull( this.state.createdAt ) ? moment.parseZone( this.state.createdAt ) : undefined;
 
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
