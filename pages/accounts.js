@@ -158,7 +158,7 @@ class Accounts extends Component {
 
         <Row>
           <Col>
-            <Tabs>
+            <Tabs animated={false}>
               <TabPane tab="Activos" key="1">
                 <UserAccountsTable
                   userAccounts={ _.filter( userAccount, { status: 1 } ) }

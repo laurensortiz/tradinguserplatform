@@ -155,7 +155,7 @@ class Users extends Component {
         </Row>
         <Row>
           <Col>
-            <Tabs>
+            <Tabs animated={false}>
               <TabPane tab="Activos" key="1">
                 <UsersTable
                   users={ _.filter( this.props.users, { status: 1 } ) }

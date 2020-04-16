@@ -249,7 +249,7 @@ class Investment extends Component {
         <Row>
           <Col>
             { this.props.isAdmin ? (
-              <Tabs>
+              <Tabs animated={false}>
                 <TabPane tab="Activos" key="1">
                   <InvestmentTable
                     investmentOperations={ activeInvestmentOperations }

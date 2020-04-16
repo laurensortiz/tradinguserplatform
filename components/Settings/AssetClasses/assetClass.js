@@ -126,7 +126,7 @@ class AssetClass extends Component {
                 disabled={ !_.isEmpty( this.state.tempDataSource ) }>
           Agregar Derivado de Inversión
         </Button>
-        <Alert message="Para editar el nombre sólo debe hacer click en el campo del puesto que desea modificar. "
+        <Alert message="Para editar el nombre sólo debe hacer click en el campo que desea modificar. "
                type="info" showIcon/>
 
         <p></p>
