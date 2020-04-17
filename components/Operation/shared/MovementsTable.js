@@ -324,7 +324,7 @@ class MovementsTable extends Component {
         title: 'Fecha de movimiento',
         dataIndex: 'createdAt',
         key: 'createdAt',
-        render: value => moment( value ).format('DD-MM-YYYY'),
+        render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
         editable: true,
         inputType: 'date',
         required: false,
