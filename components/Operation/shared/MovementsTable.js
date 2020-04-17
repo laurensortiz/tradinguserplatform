@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Button, Table, Form, Popconfirm, Icon, Select, DatePicker, Row, Col } from 'antd';
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import momentDurationFormat from 'moment-duration-format';
 import { extendMoment } from 'moment-range';
@@ -324,7 +324,7 @@ class MovementsTable extends Component {
         title: 'Fecha de movimiento',
         dataIndex: 'createdAt',
         key: 'createdAt',
-        render: value => FormatDate( value ),
+        render: value => moment( value ).format('DD-MM-YYYY'),
         editable: true,
         inputType: 'date',
         required: false,

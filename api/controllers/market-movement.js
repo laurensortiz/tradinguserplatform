@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { MarketOperation, UserAccount, User, Account, MarketMovement } from '../models';
 import { marketMovementQuery, userQuery } from '../queries';
+import moment from "moment-timezone";
 
 
 module.exports = {
@@ -12,8 +13,8 @@ module.exports = {
         gpAmount: req.body.gpAmount,
         marketPrice: req.body.marketPrice || 0,
         status: _.get(req, 'body.status', 1),
-        createdAt: req.body.createdAt || new Date(),
-        updatedAt: new Date()
+        createdAt: moment(req.body.createdAt).tz('America/New_York').format() || moment(new Date()).tz('America/New_York').format(),
+        updatedAt: moment(new Date()).tz('America/New_York').format()
       });
 
       return res.status(200).send(marketMovement);

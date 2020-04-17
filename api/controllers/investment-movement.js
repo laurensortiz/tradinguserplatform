@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import { InvestmentOperation, UserAccount, User, Account, InvestmentMovement } from '../models';
 import { investmentMovementQuery, userQuery } from '../queries';
 
@@ -11,8 +12,8 @@ module.exports = {
         investmentOperationId: Number(req.body.investmentOperationId),
         gpAmount: req.body.gpAmount,
         status: _.get(req, 'body.status', 1),
-        createdAt: req.body.createdAt || new Date(),
-        updatedAt: new Date()
+        createdAt: moment(req.body.createdAt).tz('America/New_York').format() || moment().tz('America/New_York').format(),
+        updatedAt: moment().tz('America/New_York').format()
       });
 
       return res.status(200).send(investmentMovement);
@@ -54,6 +55,7 @@ module.exports = {
       where: {
         id: req.params.investmentMovementId,
       },
+      silence: true
     });
 
     if (!investmentMovement) {
@@ -66,8 +68,8 @@ module.exports = {
       gpInversion: req.body.gpInversion || investmentMovement.gpInversion,
       gpAmount: req.body.gpAmount || investmentMovement.gpAmount,
       status: _.get(req, 'body.status', 1),
-      createdAt: req.body.createdAt || investmentMovement.createdAt,
-      updatedAt: new Date(),
+      createdAt: moment(req.body.createdAt).tz('America/New_York').format() || investmentMovement.createdAt,
+      updatedAt: moment().tz('America/New_York').format(),
     });
 
     return res.status(200).send(updatedInvestmentMovement);

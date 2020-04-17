@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const sortDate = (start, end) => {
   if (_.isNil( start )) start = '00-00-0000';

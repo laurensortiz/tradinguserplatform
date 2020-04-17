@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { MarketOperation, UserAccount, User, Account, MarketMovement, Product, Broker, Commodity, AssetClass } from '../models';
 import { marketOperationQuery, userQuery } from '../queries';
+import moment from "moment-timezone";
 
 module.exports = {
   async create(req, res) {
@@ -22,9 +23,10 @@ module.exports = {
         initialAmount: req.body.amount,
         orderId: req.body.orderId || 0,
         status: _.get(req, 'body.status', 1),
-        createdAt: req.body.createdAt || new Date(),
-        updatedAt: new Date()
+        createdAt: moment(req.body.createdAt).tz('America/New_York').format() || moment(new Date()).tz('America/New_York').format(),
+        updatedAt: moment(new Date()).tz('America/New_York').format()
       });
+
 
       await MarketMovement.create({
         gpInversion: req.body.amount,
@@ -32,8 +34,8 @@ module.exports = {
         gpAmount: 0,
         marketPrice: 0,
         status: _.get(req, 'body.status', 1),
-        createdAt: req.body.createdAt || new Date(),
-        updatedAt: new Date()
+        createdAt: moment(req.body.createdAt).tz('America/New_York').format() || moment(new Date()).tz('America/New_York').format(),
+        updatedAt: moment(new Date()).tz('America/New_York').format()
       });
 
       return res.status(200).send(marketOperation);
@@ -75,6 +77,7 @@ module.exports = {
       where: {
         id: req.params.marketOperationId,
       },
+      silence: true
     });
 
     if (!marketOperation) {

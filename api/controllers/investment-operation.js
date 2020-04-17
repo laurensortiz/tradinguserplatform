@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import moment from 'moment-timezone';
 import { InvestmentOperation, UserAccount, User, Account, InvestmentMovement } from '../models';
 import { investmentOperationQuery, userQuery } from '../queries';
 
@@ -14,8 +15,8 @@ module.exports = {
         status: _.get(req, 'body.status', 1),
         startDate: req.body.startDate,
         endDate: req.body.endDate,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: moment(new Date()).tz('America/New_York').format(),
+        updatedAt: moment(new Date()).tz('America/New_York').format(),
       });
 
       await InvestmentMovement.create({
@@ -23,8 +24,8 @@ module.exports = {
         investmentOperationId: Number(investmentOperation.id),
         gpAmount: 0,
         status: _.get(req, 'body.status', 1),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: moment(new Date()).tz('America/New_York').format(),
+        updatedAt: moment(new Date()).tz('America/New_York').format(),
       });
 
       return res.status(200).send(investmentOperation);
@@ -67,6 +68,7 @@ module.exports = {
       where: {
         id: req.params.investmentOperationId,
       },
+      silence: true
     });
 
     if (!investmentOperation) {
@@ -81,10 +83,11 @@ module.exports = {
       amount: investmentOperation.amount,
       initialAmount: req.body.initialAmount || investmentOperation.initialAmount,
       status: req.body.status || investmentOperation.status,
-      startDate: req.body.startDate || investmentOperation.startDate,
-      endDate: req.body.endDate || investmentOperation.endDate,
-      updatedAt: new Date(),
+      startDate: moment(req.body.startDate ).tz('America/New_York').format() || investmentOperation.startDate,
+      endDate: moment(req.body.endDate ).tz('America/New_York').format() || investmentOperation.endDate,
+      updatedAt: moment().tz('America/New_York').format(),
     });
+
 
     return res.status(200).send(updatedInvestmentOperation);
   },

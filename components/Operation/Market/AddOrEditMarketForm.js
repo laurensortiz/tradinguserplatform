@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import _ from 'lodash';
 
 moment.locale( 'es' ); // Set Lang to Spanish
@@ -181,14 +181,15 @@ class AddOrEditMarketForm extends PureComponent {
   };
 
   _setStartDate = (date) => {
+
     this.setState( {
-      createdAt: moment.parseZone( date ).format()
+      createdAt:  moment.tz(date, 'America/New_York').format()
     } );
   };
 
   _setEndDate = (date) => {
     this.setState( {
-      endDate: moment.parseZone( date ).format()
+      endDate:  moment.tz(date, 'America/New_York').format()
     } );
 
   };
@@ -302,7 +303,7 @@ class AddOrEditMarketForm extends PureComponent {
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
     const orderIdInitValue = _.isNumber( this.state.orderId ) ? this.state.orderId : undefined;
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
-    const createdAtInitValue = !_.isNull( this.state.createdAt ) ? moment.parseZone( this.state.createdAt ) : undefined;
+    const createdAtInitValue = !_.isNull( this.state.createdAt ) ? moment.tz(this.state.createdAt, 'America/New_York') : undefined;
 
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
@@ -501,7 +502,7 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'createdAt', {
             initialValue: createdAtInitValue
           } )(
-            <DatePicker onChange={ this._setStartDate } defaultPickerValue={moment.parseZone()} placeholder="Fecha de Inicio"/>
+            <DatePicker onChange={ this._setStartDate } defaultPickerValue={moment().tz('America/New_York')} placeholder="Fecha de Inicio"/>
           ) }
         </Form.Item>
         <Form.Item>

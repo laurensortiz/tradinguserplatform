@@ -1,3 +1,4 @@
+import moment from 'moment-timezone';
 module.exports = (Sequelize, DataTypes) => {
   const InvestmentMovement = Sequelize.define( 'InvestmentMovement', {
       gpInversion: {
@@ -13,6 +14,9 @@ module.exports = (Sequelize, DataTypes) => {
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
+        get() {
+          return moment.tz(this.getDataValue('createdAt'), 'America/New_York').format();
+        }
       },
       status: {
         type: DataTypes.INTEGER,

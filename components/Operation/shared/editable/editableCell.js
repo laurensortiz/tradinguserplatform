@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { EditableProvider, EditableConsumer } from './editableContext';
 import { Button, Input, Divider, Icon, Table, Form, Popconfirm, DatePicker, InputNumber } from 'antd';
 
@@ -8,7 +8,7 @@ class EditableCell extends Component {
     if (this.props.inputType === 'number') {
       return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
     } else if (this.props.inputType === 'date') {
-      return <DatePicker format="DD-MM-YYYY" defaultPickerValue={moment.parseZone()} />;
+      return <DatePicker format="DD-MM-YYYY"  />;
     } else if (this.props.inputType === 'number-mp') {
       return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} />;
     }

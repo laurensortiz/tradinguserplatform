@@ -1,3 +1,5 @@
+import moment from "moment-timezone";
+
 module.exports = (Sequelize, DataTypes) => {
   const MarketOperation = Sequelize.define('MarketOperation', {
     longShort: {
@@ -40,6 +42,9 @@ module.exports = (Sequelize, DataTypes) => {
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
+      get() {
+        return moment.tz(this.getDataValue('createdAt'), 'America/New_York').format();
+      }
     },
     status: {
       type: DataTypes.INTEGER,
@@ -55,7 +60,9 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: 1,
     },
-  });
+  },{
+    timestamps: false,
+  } );
 
   MarketOperation.associate = models => {
 
