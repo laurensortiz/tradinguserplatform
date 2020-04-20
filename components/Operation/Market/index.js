@@ -148,9 +148,6 @@ class Market extends Component {
   };
 
   _handleEditUserOperation = (userAccount) => {
-    console.log('[=====  jjjjjj  =====>');
-    console.log(userAccount);
-    console.log('<=====  /jjjjjj  =====]');
     this.props.fetchEditMarketOperation( userAccount )
   };
 

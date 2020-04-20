@@ -21,6 +21,7 @@ class AddOrEditUserAccountForm extends PureComponent {
     balanceInitial: 0,
     balanceFinal: 0,
     maintenanceMargin: 0,
+    marginUsed: 0,
     user: {
       id: null,
       username: ''
@@ -162,6 +163,9 @@ class AddOrEditUserAccountForm extends PureComponent {
     const balanceInitialInitValue = !_.isEmpty( this.state.balanceInitial ) ? this.state.balanceInitial : undefined;
     const balanceFinalInitValue = !_.isEmpty( this.state.balanceFinal ) ? this.state.balanceFinal : undefined;
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
+    const marginUsedInitValue = !_.isEmpty( this.state.marginUsed ) ? this.state.marginUsed : undefined;
+
+
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
         <Form.Item label="Usuario">
@@ -225,6 +229,16 @@ class AddOrEditUserAccountForm extends PureComponent {
             <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
           ) }
         </Form.Item>
+        <Form.Item label="Margen Utilizado">
+          { getFieldDecorator( 'marginUsed', {
+            initialValue: marginUsedInitValue,
+            value: marginUsedInitValue,
+            rules: [ { required: false, message: 'Por favor indique el margen utilizado' } ],
+          } )(
+            <Input name="marginUsed" onChange={ this._handleChange }
+                   placeholder="Margen Utilizado"/>
+          ) }
+        </Form.Item>
         <Form.Item label="Saldo Inicial">
           { getFieldDecorator( 'balanceInitial', {
             initialValue: balanceInitialInitValue,
@@ -241,16 +255,6 @@ class AddOrEditUserAccountForm extends PureComponent {
             <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
           ) }
         </Form.Item>
-        {/*<Form.Item label="Margen de Mantenimiento">*/ }
-        {/*  { getFieldDecorator( 'maintenanceMargin', {*/ }
-        {/*    initialValue: maintenanceMarginInitValue,*/ }
-        {/*    rules: [ { required: false, message: 'Por favor ingrese el margen de mantenimiento' } ],*/ }
-        {/*  } )(*/ }
-        {/*    <Input name="maintenanceMargin" onChange={ this._handleChange } placeholder="Margen de Mantenimiento"/>*/ }
-        {/*  ) }*/ }
-        {/*</Form.Item>*/ }
-
-
         <Form.Item>
           <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
             { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }

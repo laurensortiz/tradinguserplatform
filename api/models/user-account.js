@@ -44,6 +44,10 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE,
     },
+    marginUsed: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
   });
 
   UserAccount.associate = models => {

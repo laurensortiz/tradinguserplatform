@@ -27,6 +27,7 @@ module.exports = {
         maintenanceMargin: req.body.maintenanceMargin,
         status: 1,
         createdAt: new Date(),
+        marginUsed: _.get(req, 'body.marginUsed', 0),
       });
 
       return res.status(200).send(userAccount);
@@ -115,6 +116,8 @@ module.exports = {
       maintenanceMargin: req.body.maintenanceMargin || userAccount.maintenanceMargin,
       status: req.body.status || userAccount.status,
       updatedAt: new Date(),
+      marginUsed: req.body.marginUsed || userAccount.marginUsed,
+
     });
 
     return res.status(200).send(updatedUserAccount);

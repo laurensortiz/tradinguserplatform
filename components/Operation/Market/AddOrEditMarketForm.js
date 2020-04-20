@@ -52,6 +52,7 @@ class AddOrEditMarketForm extends PureComponent {
     amount: 0,
     orderId: null,
     createdAt: null,
+    marginUsed: 0,
 
     confirmDirty: false,
     isInvalid: true,

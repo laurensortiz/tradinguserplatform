@@ -27,7 +27,6 @@ class Detail extends PureComponent {
     const commodityName = _.get(this.props, 'currentOperation.commodity.name', '');
     const assetClassName = _.get(this.props, 'currentOperation.assetClass.name', '');
 
-
     const status = _.get(this.props, 'currentOperation.status', 1);
     const {name : statusName, color : statusColor} = FormatStatus(status);
 

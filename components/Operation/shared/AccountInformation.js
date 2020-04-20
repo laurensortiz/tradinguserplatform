@@ -8,13 +8,16 @@ import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive } from '.
 class AccountInformation extends PureComponent {
 
   render() {
-
+console.log('[=====  test  =====>');
+console.log(this.props.currentOperation);
+console.log('<=====  /test  =====]');
     const accountValue = _.get(this.props, 'currentOperation.userAccount.accountValue', '0.00');
     const balanceInitial = _.get(this.props, 'currentOperation.userAccount.balanceInitial', '0.00');
     const maintenanceMargin = _.get(this.props, 'currentOperation.userAccount.maintenanceMargin', '0.00');
 
     const accountName = _.get(this.props, 'currentOperation.userAccount.account.name', '');
     const accountPercentage = _.get(this.props, 'currentOperation.userAccount.account.percentage', '0');
+    const marginUsed = _.get(this.props, 'currentOperation.userAccount.marginUsed', '0.00');
 
     const guaranteeOperation = _.get(this.props, 'currentOperation.userAccount.guaranteeOperation', '0.00');
     const guaranteeCredits = _.get(this.props, 'currentOperation.userAccount.guaranteeCredits', '0.00');
@@ -50,6 +53,9 @@ class AccountInformation extends PureComponent {
               ) : null}
               <Descriptions.Item label="Saldo Inicial">{FormatCurrency.format(balanceInitial)}</Descriptions.Item>
               <Descriptions.Item label="Garantías / Créditos">{FormatCurrency.format(guaranteeCredits)}</Descriptions.Item>
+              {_.isEqual(associatedOperation, 1) ? (
+                <Descriptions.Item label="Margen Utilizado">{marginUsed} %</Descriptions.Item>
+              ) : null}
             </Descriptions>
           </Col>
         </Row>

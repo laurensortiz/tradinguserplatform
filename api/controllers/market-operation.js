@@ -24,7 +24,7 @@ module.exports = {
         orderId: req.body.orderId || 0,
         status: _.get(req, 'body.status', 1),
         createdAt: moment(req.body.createdAt).tz('America/New_York').format() || moment(new Date()).tz('America/New_York').format(),
-        updatedAt: moment(new Date()).tz('America/New_York').format()
+        updatedAt: moment(new Date()).tz('America/New_York').format(),
       });
 
 
@@ -103,7 +103,6 @@ module.exports = {
       orderId: req.body.orderId || marketOperation.orderId,
       status: _.get(req, 'body.status', 1) || marketOperation.status,
       createdAt: req.body.createdAt || marketOperation.createdAt,
-
     });
 
     return res.status(200).send(updatedMarketOperation);
