@@ -273,7 +273,7 @@ class Investment extends Component {
               </Tabs>
             ) : (
               <>
-                { !_.isEmpty( activeInvestmentOperations ) ? <h2>Operciones Fondo de Interés</h2> : null }
+                { !_.isEmpty( activeInvestmentOperations ) ? <h2>Operaciones Fondo de Interés</h2> : null }
                 <InvestmentTable
                   investmentOperations={ _.filter(activeInvestmentOperations, {userAccountId: this.props.userAccountId})  }
                   isLoading={ this.props.isLoading }

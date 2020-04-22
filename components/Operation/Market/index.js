@@ -281,7 +281,7 @@ class Market extends Component {
               </Tabs>
             ) : (
               <>
-                {!_.isEmpty(activeMarketOperations) ? <h2>Operciones de Bolsa OTC</h2> : null}
+                {!_.isEmpty(activeMarketOperations) ? <h2>Operaciones de Bolsa OTC</h2> : null}
                 <MarketTable
                   marketOperations={ _.filter(activeMarketOperations, {userAccountId: this.props.userAccountId}) }
                   isLoading={ this.props.isLoading }

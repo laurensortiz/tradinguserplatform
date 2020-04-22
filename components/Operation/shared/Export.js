@@ -59,12 +59,13 @@ class Export extends PureComponent {
   };
 
   _getAccountTemplateMarket = (data) => {
+
     const {name: statusName} = FormatStatus(data.status);
     return [
       [ 'INFORMACIÓN DE LA CUENTA' ],
       [ '' ],
       [ `Valor de la cuenta: ${FormatCurrency.format( data.userAccount.accountValue )}`, `Tipo de Cuenta: ${data.userAccount.account.name}`, `Comisión sobre ganancias: ${ data.userAccount.account.percentage } %` ],
-      [ `Garantías disponibles: ${FormatCurrency.format( data.userAccount.guaranteeOperation )}`, `Saldo Inicial: ${FormatCurrency.format( data.userAccount.balanceInitial )}` ],
+      [ `Garantías disponibles: ${FormatCurrency.format( data.userAccount.guaranteeOperation )}`, `Saldo Inicial: ${FormatCurrency.format( data.userAccount.balanceInitial )}`, `Margen utilizado: ${ data.userAccount.marginUsed || 0 } %` ],
       [ '' ],
       [ 'INFORMACIÓN DE LA OPERACIÓN' ],
       [ '' ],
