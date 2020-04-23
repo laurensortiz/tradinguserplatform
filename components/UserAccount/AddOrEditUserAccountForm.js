@@ -229,16 +229,19 @@ class AddOrEditUserAccountForm extends PureComponent {
             <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
           ) }
         </Form.Item>
-        <Form.Item label="Margen Utilizado">
-          { getFieldDecorator( 'marginUsed', {
-            initialValue: marginUsedInitValue,
-            value: marginUsedInitValue,
-            rules: [ { required: false, message: 'Por favor indique el margen utilizado' } ],
-          } )(
-            <Input name="marginUsed" onChange={ this._handleChange }
-                   placeholder="Margen Utilizado"/>
-          ) }
-        </Form.Item>
+
+        {_.isEqual(associatedOperation, 1) ? (
+          <Form.Item label="Margen Utilizado 10%">
+            { getFieldDecorator( 'marginUsed', {
+              initialValue: marginUsedInitValue,
+              value: marginUsedInitValue,
+              rules: [ { required: false, message: 'Por favor indique el margen utilizado' } ],
+            } )(
+              <Input name="marginUsed" onChange={ this._handleChange }
+                     placeholder="Margen Utilizado"/>
+            ) }
+          </Form.Item>
+        ) : null}
         <Form.Item label="Saldo Inicial">
           { getFieldDecorator( 'balanceInitial', {
             initialValue: balanceInitialInitValue,

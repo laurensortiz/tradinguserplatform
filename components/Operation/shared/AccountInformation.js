@@ -54,7 +54,7 @@ console.log('<=====  /test  =====]');
               <Descriptions.Item label="Saldo Inicial">{FormatCurrency.format(balanceInitial)}</Descriptions.Item>
               <Descriptions.Item label="Garantías / Créditos">{FormatCurrency.format(guaranteeCredits)}</Descriptions.Item>
               {_.isEqual(associatedOperation, 1) ? (
-                <Descriptions.Item label="Margen Utilizado">{marginUsed} %</Descriptions.Item>
+                <Descriptions.Item label="Margen utilizado 10%">{FormatCurrency.format(marginUsed)}</Descriptions.Item>
               ) : null}
             </Descriptions>
           </Col>

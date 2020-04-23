@@ -58,7 +58,7 @@ class AccountInformation extends PureComponent {
               {
                 _.isEqual(accountType, 1) ? (
                   <Descriptions.Item
-                    label="Margen utilizado">{ marginUsed } %</Descriptions.Item>
+                    label="Margen utilizado 10%">{ FormatCurrency.format(marginUsed) }</Descriptions.Item>
 
                 ) : null
               }
