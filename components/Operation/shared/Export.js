@@ -87,7 +87,7 @@ class Export extends PureComponent {
       [ '' ],
       [ 'INFORMACIÓN DE LA OPERACIÓN' ],
       [ '' ],
-      [ `Fecha de apertura: ${FormatDate(data.createdAt)}`, `Fecha de apertura: ${data.endDate ? FormatDate(data.endDate) : '--'}`],
+      [ `Fecha de apertura: ${FormatDate(data.startDate)}`, `Fecha de cierre: ${data.endDate ? FormatDate(data.endDate) : '--'}`],
       [ `Tipoe de operación: ${data.operationType}`, `Estado: ${statusName}`],
       [`Saldo inicial: ${FormatCurrency.format(data.initialAmount)}`, `Saldo actual: ${FormatCurrency.format(data.amount)}`],
 
