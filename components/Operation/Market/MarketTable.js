@@ -51,8 +51,8 @@ class MarketTable extends Component {
     } else {
       return (
         <div className="cta-container">
-          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd" />Detalle</Button>
-          {this.props.isAdmin ? (
+          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd"/>Detalle</Button>
+          { this.props.isAdmin ? (
             <>
               <Popconfirm
                 okText="Si"
@@ -64,7 +64,7 @@ class MarketTable extends Component {
               </Popconfirm>
               <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
             </>
-          ) : null}
+          ) : null }
         </div>
       )
     }
@@ -103,7 +103,7 @@ class MarketTable extends Component {
     ),
     onFilter: (value, record) => {
 
-      return _.get(record, dataIndex)
+      return _.get( record, dataIndex )
         .toString()
         .toLowerCase()
         .includes( value.toLowerCase() )
@@ -151,15 +151,23 @@ class MarketTable extends Component {
         title: '',
         dataIndex: 'behavior',
         key: 'behavior',
-        render: status => MarketBehaviorStatus(status)
+        render: status => MarketBehaviorStatus( status )
       },
       {
         title: 'Estado',
         dataIndex: 'status',
         key: 'status',
+        filters: [
+          { text: 'Activo', value: 1 },
+          { text: 'Cerrado', value: 2 },
+          { text: 'Hold', value: 3 },
+          { text: 'Vendido', value: 4 },
+        ],
+        onFilter: (value, record) => record.status === value,
+        filterMultiple: false,
         render: status => {
-          const {name, color} = FormatStatus(status);
-          return <Tag color={color} >{ name }</Tag>
+          const { name, color } = FormatStatus( status );
+          return <Tag color={ color }>{ name }</Tag>
         },
         sorter: (a, b) => Sort( a.status, b.status ),
         sortDirections: [ 'descend', 'ascend' ],
@@ -168,7 +176,7 @@ class MarketTable extends Component {
         title: 'Producto',
         dataIndex: 'product.name',
         key: 'product.name',
-        render: text => <span key={`${text.code}-${text.name}`} >{ `${text.code}-${text.name}` }</span>,
+        render: text => <span key={ `${ text.code }-${ text.name }` }>{ `${ text.code }-${ text.name }` }</span>,
         sorter: (a, b) => Sort( a.product.name, b.product.name ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'product.name' ),
@@ -177,7 +185,7 @@ class MarketTable extends Component {
         title: 'Usuario',
         dataIndex: 'userAccount.user.username',
         key: 'userAccount.user.username',
-        className: `${showHandleClass} `,
+        className: `${ showHandleClass } `,
         sorter: (a, b) => Sort( a.userAccount.user.username, b.userAccount.user.username ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'userAccount.user.username' ),
@@ -203,7 +211,9 @@ class MarketTable extends Component {
       {
         title: 'Saldo Actual',
         key: 'amount',
-        render: data => <span className={IsOperationPositive(data.amount, data.initialAmount) ? 'positive' : 'negative'} key={ data.amount }>{ DisplayTableAmount( data.amount ) }</span>,
+        render: data => <span
+          className={ IsOperationPositive( data.amount, data.initialAmount ) ? 'positive' : 'negative' }
+          key={ data.amount }>{ DisplayTableAmount( data.amount ) }</span>,
         sorter: (a, b) => Sort( a.amount, b.amount ),
         sortDirections: [ 'descend', 'ascend' ],
       },
@@ -211,7 +221,7 @@ class MarketTable extends Component {
         title: 'Inversión',
         dataIndex: 'initialAmount',
         key: 'initialAmount',
-        render: initialAmount => <span key={initialAmount} >{ DisplayTableAmount( initialAmount ) }</span>,
+        render: initialAmount => <span key={ initialAmount }>{ DisplayTableAmount( initialAmount ) }</span>,
         sorter: (a, b) => Sort( a.initialAmount, b.initialAmount ),
         sortDirections: [ 'descend', 'ascend' ],
       },
@@ -219,7 +229,7 @@ class MarketTable extends Component {
         title: 'Margen de Mantenimiento',
         dataIndex: 'maintenanceMargin',
         key: 'maintenanceMargin',
-        render: maintenanceMargin => <span key={maintenanceMargin} >{ DisplayTableAmount( maintenanceMargin ) }</span>,
+        render: maintenanceMargin => <span key={ maintenanceMargin }>{ DisplayTableAmount( maintenanceMargin ) }</span>,
         sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
         sortDirections: [ 'descend', 'ascend' ],
       },
@@ -248,7 +258,7 @@ class MarketTable extends Component {
         dataSource={ this.state.marketOperations }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
-        className={classNames({'hidden-table': !this.props.isAdmin && _.isEmpty(this.state.marketOperations)})}
+        className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ) } ) }
       />
     );
   }
@@ -262,6 +272,5 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {}, dispatch );
-
 
 export default connect( mapStateToProps, mapDispatchToProps )( MarketTable );

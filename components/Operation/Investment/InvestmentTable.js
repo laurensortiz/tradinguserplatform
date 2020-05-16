@@ -141,6 +141,14 @@ class InvestmentTable extends Component {
         title: 'Estado',
         dataIndex: 'status',
         key: 'status',
+        filters: [
+          { text: 'Activo', value: 1 },
+          { text: 'Cerrado', value: 2 },
+          { text: 'Hold', value: 3 },
+          { text: 'Vendido', value: 4 },
+        ],
+        onFilter: (value, record) => record.status === value,
+        filterMultiple: false,
         render: status => {
           const {name, color} = FormatStatus(status);
           return <Tag color={color} >{ name }</Tag>
