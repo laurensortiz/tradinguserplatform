@@ -58,6 +58,8 @@ class Document extends Component {
           <link rel="shortcut icon" href="/static/favicon.png"/>
           <link href="https://fonts.googleapis.com/css?family=Roboto:300,700&display=swap" rel="stylesheet" />
           <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+          <script src="https://vjs.zencdn.net/7.2.3/video.js" defer></script>
+
         </Head>
         <Layout className={classNames(`dark-mode ${this.props.className || ''}`, {'login-page' : isLoginPage})} style={ { minHeight: '100vh' } } id={ this.props.id || 'main-page' } >
           {isLoginPage ? (
