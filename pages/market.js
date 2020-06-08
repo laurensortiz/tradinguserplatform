@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Skeleton } from 'antd';
 import _ from 'lodash';
+import videojs from 'video.js';
 
 import Document from '../components/Document';
 
@@ -35,14 +36,35 @@ class Pages extends Component {
 
   componentDidMount() {
     this.props.fetchGetPage(1);
+    this.player = videojs(this.videoNode, {
+      autoplay: true,
+      controls: true,
+    }, function onPlayerReady() {
+      console.log('onPlayerReady', this)
+    });
 
   };
+  componentWillUnmount() {
+    if (this.player) {
+      this.player.dispose()
+    }
+  }
 
   render() {
 
-    console.log(this.state.updated);
     return (
       <Document className="static-page">
+        <div className="news-container">
+          <h2>Noticias en vivo <span></span></h2>
+          <div data-vjs-player>
+            <video ref={ node => this.videoNode = node } className="video-js" width="100%" height="500">
+              <source type="application/x-mpegURL"
+                      src="https://liveproduseast.global.ssl.fastly.net/btv/desktop/us_live.m3u8" />
+            </video>
+          </div>
+        </div>
+
+
         <Skeleton active loading={this.props.isLoading}>
           {
             (!_.isEmpty(this.state.page.content)) ? (
