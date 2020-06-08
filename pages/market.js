@@ -53,7 +53,36 @@ class Pages extends Component {
   render() {
 
     return (
+
       <Document className="static-page">
+        <style jsx>{`
+        .video-js {
+        width: 100%;
+        }
+          .news-container {
+          margin-bottom: 40px;
+          }
+          
+          .news-container h2 {
+          color: #fff;
+    font-weight: bold;
+    background: #000;
+    margin: 0;
+    padding: 5px 10px;
+          }
+          
+          .news-container h2 span {
+          width: 10px;
+          height: 10px;
+          display: inline-block;
+          background: red;
+          border-radius: 50%;
+          }
+          
+          .news-container .video-js {
+          width: 100%;
+          }
+      `}</style>);
         <div className="news-container">
           <h2>Noticias en vivo <span></span></h2>
           <div data-vjs-player>
