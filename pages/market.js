@@ -23,27 +23,28 @@ class Pages extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
 
-    if (!_.isEqual(nextProps.page, prevState.page)) {
-     _.assignIn(updatedState, {
-       page: nextProps.page
-     })
+    if (!_.isEqual( nextProps.page, prevState.page )) {
+      _.assignIn( updatedState, {
+        page: nextProps.page
+      } )
 
 
     }
 
-    return !_.isEmpty(updatedState) ? updatedState : null;
+    return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
   componentDidMount() {
-    this.props.fetchGetPage(1);
-    this.player = videojs(this.videoNode, {
+    this.props.fetchGetPage( 1 );
+    this.player = videojs( this.videoNode, {
       autoplay: true,
       controls: true,
     }, function onPlayerReady() {
-      console.log('onPlayerReady', this)
-    });
+      console.log( 'onPlayerReady', this )
+    } );
 
   };
+
   componentWillUnmount() {
     if (this.player) {
       this.player.dispose()
@@ -55,50 +56,49 @@ class Pages extends Component {
     return (
 
       <Document className="static-page">
-        <style jsx>{`
-        .video-js {
-        width: 100%;
-        }
+        <style jsx>{ `
           .news-container {
-          margin-bottom: 40px;
+            margin-bottom: 40px;
           }
           
           .news-container h2 {
-          color: #fff;
-    font-weight: bold;
-    background: #000;
-    margin: 0;
-    padding: 5px 10px;
+            color: #fff;
+            font-weight: bold;
+            background: #000;
+            margin: 0;
+            padding: 5px 10px;
+            
           }
           
           .news-container h2 span {
-          width: 10px;
-          height: 10px;
-          display: inline-block;
-          background: red;
-          border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            background: red;
+            border-radius: 50%;
           }
           
-          .news-container .video-js {
-          width: 100%;
+          .news-container .video-js, .video-js {
+            width: 100%;
           }
-      `}</style>);
+      ` }</style>
+        );
         <div className="news-container">
           <h2>Noticias en vivo <span></span></h2>
           <div data-vjs-player>
             <video ref={ node => this.videoNode = node } className="video-js" width="100%" height="500">
               <source type="application/x-mpegURL"
-                      src="https://liveproduseast.global.ssl.fastly.net/btv/desktop/us_live.m3u8" />
+                      src="https://liveproduseast.global.ssl.fastly.net/btv/desktop/us_live.m3u8"/>
             </video>
           </div>
         </div>
 
 
-        <Skeleton active loading={this.props.isLoading}>
+        <Skeleton active loading={ this.props.isLoading }>
           {
-            (!_.isEmpty(this.state.page.content)) ? (
+            ( !_.isEmpty( this.state.page.content ) ) ? (
               <div className="widget-box-container">
-                <InnerHTML html={`${this.state.page.content}`} />
+                <InnerHTML html={ `${ this.state.page.content }` }/>
               </div>
 
             ) : null
