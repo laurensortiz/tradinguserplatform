@@ -31,6 +31,7 @@ class AddOrEditUserAccountForm extends PureComponent {
       name: '',
       associatedOperation: 1,
     },
+    commissionByReference: 0,
     confirmDirty: false,
     isInvalid: true,
     status: 1,
@@ -164,6 +165,7 @@ class AddOrEditUserAccountForm extends PureComponent {
     const balanceFinalInitValue = !_.isEmpty( this.state.balanceFinal ) ? this.state.balanceFinal : undefined;
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
     const marginUsedInitValue = !_.isEmpty( this.state.marginUsed ) ? this.state.marginUsed : undefined;
+    const commissionByReference = !_.isEmpty( this.state.commissionByReference ) ? this.state.commissionByReference : undefined;
 
 
     return (
@@ -242,6 +244,19 @@ class AddOrEditUserAccountForm extends PureComponent {
             ) }
           </Form.Item>
         ) : null}
+
+        {_.isEqual(associatedOperation, 1) ? (
+          <Form.Item label="Comisiones por referencia">
+            { getFieldDecorator( 'commissionByReference', {
+              initialValue: commissionByReference,
+              rules: [ { required: false, message: 'Por favor indique las garatías disponibles' } ],
+            } )(
+              <Input name="commissionByReference" onChange={ this._handleChange }
+                     placeholder="Comisiones por referencia"/>
+            ) }
+          </Form.Item>
+        ) : null}
+
         <Form.Item label="Saldo Inicial">
           { getFieldDecorator( 'balanceInitial', {
             initialValue: balanceInitialInitValue,

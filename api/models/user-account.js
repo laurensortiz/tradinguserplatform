@@ -31,6 +31,10 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: 0
     },
+    commissionByReference: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     createdAt: {
       allowNull: true,
       type: DataTypes.DATE,

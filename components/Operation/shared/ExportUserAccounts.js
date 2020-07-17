@@ -37,15 +37,26 @@ class Export extends PureComponent {
   _getAccountTemplate = (accounts) => {
     return  _.reduce(accounts, (result, account) => {
 
-      result.push(
-        [
-          [ `INFORMACIÓN DE LA CUENTA: ${account.account.name}`, `Fecha de apertura: ${FormatDate(account.createdAt)}` ],
-          [ '' ],
-          [ `Valor de la cuenta: ${FormatCurrency.format( account.accountValue )}`, `Tipo de Cuenta: ${account.account.name}`, `Comisión sobre ganancias: ${ account.account.percentage } %` ],
-          [ `Garantías disponibles: ${FormatCurrency.format( account.guaranteeOperation )}`, `Saldo Inicial: ${FormatCurrency.format( account.balanceInitial )}` ],
-          [ '' ]
-        ]
-      );
+      if (account.account.associatedOperation === 1) {
+        result.push(
+          [
+            [ `INFORMACIÓN DE LA CUENTA: ${account.account.name}`, `Fecha de apertura: ${FormatDate(account.createdAt)}` ],
+            [ '' ],
+            [ `Valor de la cuenta: ${FormatCurrency.format( account.accountValue )}`, `Tipo de Cuenta: ${account.account.name}`, `Comisión sobre ganancias: ${ account.account.percentage } %` ],
+            [ `Garantías disponibles: ${FormatCurrency.format( account.guaranteeOperation )}`, `Saldo Inicial: ${FormatCurrency.format( account.balanceInitial )}`, `Comisión por referencia: ${ account.commissionByReference } ` ],
+            [ '' ]
+          ])
+      } else {
+        result.push(
+          [
+            [ `INFORMACIÓN DE LA CUENTA: ${account.account.name}`, `Fecha de apertura: ${FormatDate(account.createdAt)}` ],
+            [ '' ],
+            [ `Valor de la cuenta: ${FormatCurrency.format( account.accountValue )}`, `Tipo de Cuenta: ${account.account.name}`, `Comisión sobre ganancias: ${ account.account.percentage } %` ],
+            [ `Garantías / Créditos: ${FormatCurrency.format( account.guaranteeCredits )}`, `Saldo Inicial: ${FormatCurrency.format( account.balanceInitial )}` ],
+            [ '' ]
+          ])
+      }
+
       return result
     }, []);
 

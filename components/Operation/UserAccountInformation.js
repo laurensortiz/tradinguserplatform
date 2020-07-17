@@ -1,17 +1,12 @@
 import React, { PureComponent } from 'react';
-import moment from 'moment';
-import { Row, Col, Button, Descriptions, Tag, Card, Statistic, Icon, Divider } from 'antd';
+import { Row, Col, Descriptions, Tag, Card, Statistic, Icon, Divider } from 'antd';
 import _ from 'lodash';
-import classNames from 'classnames';
 
-import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive } from '../../common/utils';
+import { FormatCurrency, IsOperationPositive } from '../../common/utils';
 import { Investment, Market } from "./index";
 
 class AccountInformation extends PureComponent {
 
-  countUp = () => {
-
-  }
 
   render() {
     const userId = _.get( this.props, 'userAccount.user.id', 0 );
@@ -27,6 +22,7 @@ class AccountInformation extends PureComponent {
     const guaranteeOperation = _.get( this.props, 'userAccount.guaranteeOperation', '0.00' );
     const guaranteeCredits = _.get( this.props, 'userAccount.guaranteeCredits', '0.00' );
     const marginUsed = _.get(this.props, 'userAccount.marginUsed', '0.00');
+    const commissionByReference = _.get(this.props, 'userAccount.commissionByReference', '0.00');
 
     const isOperationPositive = IsOperationPositive( accountValue, balanceInitial );
 
@@ -57,10 +53,14 @@ class AccountInformation extends PureComponent {
                 label="Garantías / Créditos">{ FormatCurrency.format( guaranteeCredits ) }</Descriptions.Item>
               {
                 _.isEqual(accountType, 1) ? (
-                  <Descriptions.Item
-                    label="Margen utilizado 10%">{ FormatCurrency.format(marginUsed) }</Descriptions.Item>
+                  <>
+                    <Descriptions.Item
+                      label="Margen utilizado 10%">{ FormatCurrency.format(marginUsed) }</Descriptions.Item>
 
-                ) : null
+                    <Descriptions.Item
+                    label="Comisiones por referencia">{ commissionByReference } </Descriptions.Item>
+                  </>
+                  ) : null
               }
 
             </Descriptions>

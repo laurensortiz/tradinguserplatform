@@ -1711,3 +1711,6 @@ update
 
 /*Add Column To Market Operations*/
 ALTER TABLE public."UserAccount" ADD "marginUsed" numeric(10,2) NULL;
+
+/*Add Column To User Account*/
+ALTER TABLE public."UserAccount" ADD "commissionByReference" numeric(10,2) NULL;
