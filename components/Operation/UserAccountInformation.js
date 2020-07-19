@@ -58,7 +58,7 @@ class AccountInformation extends PureComponent {
                       label="Margen utilizado 10%">{ FormatCurrency.format(marginUsed) }</Descriptions.Item>
 
                     <Descriptions.Item
-                    label="Comisiones por referencia">{ commissionByReference } </Descriptions.Item>
+                    label="Comisiones por referencia">{ FormatCurrency.format(commissionByReference) } </Descriptions.Item>
                   </>
                   ) : null
               }

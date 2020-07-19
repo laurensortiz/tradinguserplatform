@@ -43,7 +43,7 @@ class Export extends PureComponent {
             [ `INFORMACIÓN DE LA CUENTA: ${account.account.name}`, `Fecha de apertura: ${FormatDate(account.createdAt)}` ],
             [ '' ],
             [ `Valor de la cuenta: ${FormatCurrency.format( account.accountValue )}`, `Tipo de Cuenta: ${account.account.name}`, `Comisión sobre ganancias: ${ account.account.percentage } %` ],
-            [ `Garantías disponibles: ${FormatCurrency.format( account.guaranteeOperation )}`, `Saldo Inicial: ${FormatCurrency.format( account.balanceInitial )}`, `Comisión por referencia: ${ account.commissionByReference } ` ],
+            [ `Garantías disponibles: ${FormatCurrency.format( account.guaranteeOperation )}`, `Saldo Inicial: ${FormatCurrency.format( account.balanceInitial )}`, `Comisión por referencia: ${ FormatCurrency.format(account.commissionByReference) } ` ],
             [ '' ]
           ])
       } else {
