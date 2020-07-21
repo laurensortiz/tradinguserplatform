@@ -25,13 +25,13 @@ class MarketTable extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    let updatedState = {}
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
-
-      return {
+      _.assignIn(updatedState, {
         marketOperations: nextProps.marketOperations
-      }
+      })
     }
-    return null;
+    return !_.isEmpty(updatedState) ? updatedState : null;
   }
 
   _getCTA = (type, row) => {

@@ -5,7 +5,7 @@ const amountFormatValidation = (rule, amount) => {
 
   return new Promise( (resolve, reject) => {
 
-    if (!isEmpty( amount )) {
+    if (!isEmpty( amount ) && amount != 0) {
       if (regex.test(amount)) {
         resolve();
       } else {

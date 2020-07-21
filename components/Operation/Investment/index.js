@@ -275,7 +275,7 @@ class Investment extends Component {
               <>
                 { !_.isEmpty( activeInvestmentOperations ) ? <h2>Operaciones Fondo de Interés</h2> : null }
                 <InvestmentTable
-                  investmentOperations={ _.filter(activeInvestmentOperations, {userAccountId: this.props.userAccountId})  }
+                  investmentOperations={ _.filter(activeInvestmentOperations, ['userAccount.accountId', this.props.userAccountId])  }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserOperation }

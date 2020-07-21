@@ -38,6 +38,7 @@ class UserAccount extends Component {
 
       nextProps.fetchGetUserAccounts(nextProps.currentUser.id)
     }
+
     if (!_.isEqual( nextProps.accounts, prevState.accounts )) {
 
       _.assignIn( updatedState, {
@@ -73,9 +74,7 @@ class UserAccount extends Component {
 
   render() {
     const {firstName, lastName, userID, username} = this.state.currentUser;
-console.log('[=====  here  =====>');
-console.log(this.state.accounts);
-console.log('<=====  /here  =====]');
+
     return (
       <>
         <Row style={{marginBottom: 30}}>

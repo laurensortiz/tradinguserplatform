@@ -35,7 +35,6 @@ class Market extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
-
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
 
       let marketOperationUser ;
@@ -253,6 +252,8 @@ class Market extends Component {
     const activeMarketOperations = _.filter( this.state.marketOperations, ({ status }) => !_.isEqual( status, 0 ) );
     const deletedMarketOperations = _.filter( this.state.marketOperations, { status: 0 } );
 
+
+    //_.filter(activeMarketOperations, {userAccount['accountId']: this.props.userAccountId})
     return (
       <>
         <Row>
@@ -283,7 +284,7 @@ class Market extends Component {
               <>
                 {!_.isEmpty(activeMarketOperations) ? <h2>Operaciones de Bolsa OTC</h2> : null}
                 <MarketTable
-                  marketOperations={ _.filter(activeMarketOperations, {userAccountId: this.props.userAccountId}) }
+                  marketOperations={ _.filter(activeMarketOperations, ['userAccount.accountId', this.props.userAccountId])  }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserOperation }

@@ -7,7 +7,6 @@ import { Investment, Market } from "./index";
 
 class AccountInformation extends PureComponent {
 
-
   render() {
     const userId = _.get( this.props, 'userAccount.user.id', 0 );
     const userAccountId = _.get( this.props, 'userAccount.id');
@@ -18,6 +17,7 @@ class AccountInformation extends PureComponent {
 
     const accountName = _.get( this.props, 'userAccount.account.name', '' );
     const accountPercentage = _.get( this.props, 'userAccount.account.percentage', '0' );
+    const accountId = _.get( this.props, 'userAccount.account.id', 0 );
 
     const guaranteeOperation = _.get( this.props, 'userAccount.guaranteeOperation', '0.00' );
     const guaranteeCredits = _.get( this.props, 'userAccount.guaranteeCredits', '0.00' );
@@ -93,13 +93,13 @@ class AccountInformation extends PureComponent {
             <Market
               isAdmin={ false }
               currentUserId={userId}
-              userAccountId={userAccountId}
+              userAccountId={accountId}
             />
           ) : (
             <Investment
               isAdmin={ false }
               currentUserId={userId}
-              userAccountId={userAccountId}
+              userAccountId={accountId}
             />
           )}
         </Row>

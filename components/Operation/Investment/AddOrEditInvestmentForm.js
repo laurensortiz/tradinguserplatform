@@ -112,8 +112,9 @@ class AddOrEditInvestmentForm extends PureComponent {
   };
 
   _handleChange = e => {
+    const value = _.isEmpty(e.target.value) ? '0.00' : e.target.value;
     this.setState( {
-      [ e.target.name ]: _.replace( e.target.value, ',', '' )
+      [ e.target.name ]: _.replace( value, ',', '' )
     } );
   };
 
