@@ -21,6 +21,7 @@ console.log('<=====  /test  =====]');
 
     const guaranteeOperation = _.get(this.props, 'currentOperation.userAccount.guaranteeOperation', '0.00');
     const guaranteeCredits = _.get(this.props, 'currentOperation.userAccount.guaranteeCredits', '0.00');
+    const commissionByReference = _.get(this.props, 'currentOperation.userAccount.commissionByReference', '0.00');
 
 
     const productName = _.get(this.props, 'currentOperation.product.name', '');
@@ -54,7 +55,10 @@ console.log('<=====  /test  =====]');
               <Descriptions.Item label="Saldo Inicial">{FormatCurrency.format(balanceInitial)}</Descriptions.Item>
               <Descriptions.Item label="Garantías / Créditos">{FormatCurrency.format(guaranteeCredits)}</Descriptions.Item>
               {_.isEqual(associatedOperation, 1) ? (
+                <>
                 <Descriptions.Item label="Margen utilizado 10%">{FormatCurrency.format(marginUsed)}</Descriptions.Item>
+                <Descriptions.Item label="Comisiones por referencia">{FormatCurrency.format(commissionByReference)}</Descriptions.Item>
+                </>
               ) : null}
             </Descriptions>
           </Col>
