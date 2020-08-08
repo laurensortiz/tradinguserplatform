@@ -1,7 +1,21 @@
 
+function getWhereConditions(req, sequelize) {
+  const Op = sequelize.Op;
+  let whereConditions = {}
+  if (req.params.status === 'active') {
+    whereConditions.status = {
+      [Op.gt]: 0
+    }
+  } else {
+    whereConditions.status = 0
+  }
+
+  return whereConditions
+}
 const queries = {
-  list: ({ req, UserAccount, User, Product, Broker, Commodity, AssetClass, Account }) => {
+  list: ({ req,sequelize, UserAccount, User, Product, Broker, Commodity, AssetClass, Account }) => {
     return {
+      where: getWhereConditions(req, sequelize),
       attributes: {
         exclude: [],
       },

@@ -1,12 +1,18 @@
-import { getMarketOperations, addMarketOperation, editMarketOperation, deleteMarketOperation } from './api';
+import {
+  getMarketOperations,
+  addMarketOperation,
+  editMarketOperation,
+  deleteMarketOperation,
+  bulkUpdateMarketOperation,
+} from './api';
 import types from './types';
 import { formatAxiosError } from "../../../common/utils";
 
 // List MarketOperations
-export const fetchGetMarketOperations = () => async dispatch => {
+export const fetchGetMarketOperations = (status) => async dispatch => {
   dispatch( requestMarketOperations() );
   try {
-    const res = await getMarketOperations();
+    const res = await getMarketOperations(status);
     dispatch( requestMarketOperationsSuccess( res.data ) )
   } catch (e) {
     dispatch( requestMarketOperationsError( e.message ) )
@@ -130,6 +136,38 @@ const requestDeleteMarketOperationError = (error) => {
   }
 };
 
+// Bulk Update
+export const fetchBulkUpdateMarketOperation = (bulkUpdateBatch) => async dispatch => {
+  dispatch( requestBulkUpdateMarketOperation() );
+  try {
+    const res = await bulkUpdateMarketOperation(bulkUpdateBatch);
+    dispatch( requestBulkUpdateMarketOperationSuccess(res.data) )
+  } catch (e) {
+    dispatch( requestBulkUpdateMarketOperationError( e.message ) )
+  }
+
+};
+
+const requestBulkUpdateMarketOperation = () => {
+  return {
+    type: types.MARKET_OPERATION_BULK_UPDATE_REQUEST
+  }
+};
+
+const requestBulkUpdateMarketOperationSuccess = (update) => {
+  return {
+    type: types.MARKET_OPERATION_BULK_UPDATE_SUCCESS,
+    payload: update
+  }
+};
+
+const requestBulkUpdateMarketOperationError = (error) => {
+  return {
+    type: types.MARKET_OPERATION_BULK_UPDATE_ERROR,
+    payload: formatAxiosError(error.response)
+  }
+};
+
 // Reset After any request
 export const resetAfterRequest = () => {
   return {
@@ -142,5 +180,6 @@ export default {
   fetchAddMarketOperation,
   fetchEditMarketOperation,
   fetchDeleteMarketOperation,
+  fetchBulkUpdateMarketOperation,
   resetAfterRequest,
 };

@@ -1,17 +1,21 @@
 import { combineReducers } from "redux";
 import types from "./types";
 
-// Get All Users
+
 const initialStateMarketOperation = {
   list: [],
   item: {},
   isFailure: false,
   isLoading: false,
   isSuccess: false,
+  isBulkSuccess: false,
+  isBulkFailure: false,
+  isBulkLoading: false,
+  isBulkProcessCompleted: false,
   message: '',
 };
 
-export function investmentOperation(state = initialStateMarketOperation, action) {
+export function marketOperation(state = initialStateMarketOperation, action) {
   switch (action.type) {
     // List All Users
     case types.MARKET_OPERATIONS_REQUEST:
@@ -112,6 +116,33 @@ export function investmentOperation(state = initialStateMarketOperation, action)
         isLoading: false,
         message: action.payload,
       };
+    // Bulk Update
+    case types.MARKET_OPERATION_BULK_UPDATE_REQUEST:
+      return {
+        ...state,
+        isBulkSuccess: false,
+        isBulkFailure: false,
+        isBulkLoading: true,
+      };
+    case types.MARKET_OPERATION_BULK_UPDATE_SUCCESS:
+      return {
+        ...state,
+        isBulkSuccess: true,
+        isBulkFailure: false,
+        isBulkLoading: false,
+        item: action.payload,
+        isBulkProcessCompleted: true,
+        message: 'Actualización masiva exitosa',
+      };
+    case types.MARKET_OPERATION_BULK_UPDATE_ERROR:
+      return {
+        ...state,
+        isBulkSuccess: false,
+        isBulkFailure: true,
+        isBulkLoading: false,
+        isBulkProcessCompleted: true,
+        message: action.payload,
+      };
 
     case types.RESET_AFTER_REQUEST:
       return {
@@ -119,6 +150,10 @@ export function investmentOperation(state = initialStateMarketOperation, action)
         isSuccess: false,
         isFailure: false,
         isLoading: false,
+        isBulkSuccess: false,
+        isBulkFailure: false,
+        isBulkLoading: false,
+        isBulkProcessCompleted: false,
         message: '',
       };
     default:
@@ -126,4 +161,4 @@ export function investmentOperation(state = initialStateMarketOperation, action)
   }
 }
 
-export default investmentOperation;
+export default marketOperation;

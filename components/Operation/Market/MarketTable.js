@@ -1,37 +1,42 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import moment from 'moment';
 import _ from 'lodash';
 import classNames from 'classnames';
-
-import { Button, Icon, Input, Popconfirm, Table, Tag } from 'antd';
+import Highlighter from "react-highlight-words";
+import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select } from 'antd';
 import {
   Sort,
-  FormatCurrency,
   FormatStatus,
-  FormatDate,
-  SortDate,
   DisplayTableAmount,
   MarketBehaviorStatus, IsOperationPositive,
 } from '../../../common/utils';
-import Highlighter from "react-highlight-words";
+
+import BulkUpdateSteps from './BulkUpdateSteps';
+
+const { Option } = Select;
+
 
 class MarketTable extends Component {
   state = {
     marketOperations: [],
     searchText: '',
     searchedColumn: '',
+    selectedRowKeys: [],
+    currentDataSource: [],
+    selectedBulkUpdateType: 'status',
+    bulkUpdateValue: null,
+    isBulkUpdateActive: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
-      _.assignIn(updatedState, {
+      _.assignIn( updatedState, {
         marketOperations: nextProps.marketOperations
-      })
+      } )
     }
-    return !_.isEmpty(updatedState) ? updatedState : null;
+    return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
   _getCTA = (type, row) => {
@@ -133,18 +138,90 @@ class MarketTable extends Component {
     this.setState( {
       searchText: selectedKeys[ 0 ],
       searchedColumn: dataIndex,
+      selectedRowKeys: []
     } );
   };
 
   handleReset = clearFilters => {
     clearFilters();
-    this.setState( { searchText: '' } );
+    this.setState( {
+      searchText: '',
+      selectedRowKeys: []
+    } );
   };
 
+  onSelectOperation = (selectedRowKeys) => {
+    this.setState( { selectedRowKeys } )
+  }
+
+  onSelectAllOperation = (isSelected) => {
+    const { currentDataSource, marketOperations } = this.state;
+    const dataSource = !_.isEmpty( currentDataSource ) ? currentDataSource : marketOperations;
+    const allOperationsIds = isSelected ? dataSource.map( ope => ope.id ) : []
+    this.setState( { selectedRowKeys: allOperationsIds } )
+  }
+
+  onTableChange = (pagination, filters, sorter, extra) => {
+    const { currentDataSource } = extra;
+    this.setState( { currentDataSource } )
+  }
+
+  onCancelBulkProcess = () => {
+    this.setState( {
+      isBulkUpdateActive: false,
+      selectedRowKeys: [],
+      selectedBulkUpdateType: 'status',
+      bulkUpdateValue: null,
+    } )
+  }
+
+
+  _handleClickBulkUpdate = bulkOperation => {
+
+    this.props.onFetchBulkUpdate( {
+      ...bulkOperation,
+      operationsIds: this.state.selectedRowKeys
+    } )
+
+  }
+  tableHeader = () => (
+    <div>
+      {
+        this.state.isBulkUpdateActive ? (
+          <>
+            <div style={ { textAlign: 'right' } }>
+              <Button type="danger"
+                      onClick={ this.onCancelBulkProcess } size="large">
+                <Icon type="close-circle"/> Cancelar Proceso
+              </Button>
+            </div>
+            <div className="multiple-actualization-module">
+              <BulkUpdateSteps
+                selectedElements={ this.state.selectedRowKeys.length }
+                onClickUpdate={ this._handleClickBulkUpdate }
+                isProcessComplete={ this.props.isBulkCompleted }
+                isBulkLoading={ this.props.isBulkLoading }
+                isBulkSuccess={ this.props.isBulkSuccess }
+              />
+            </div>
+          </>
+        ) : (
+          <div style={ { textAlign: 'right' } }>
+            <Button type="secondary"
+                    onClick={ () => this.setState( { isBulkUpdateActive: true } ) } size="large">
+              <Icon type="retweet"/> Actualización Masiva
+            </Button>
+          </div>
+        )
+      }
+
+    </div>
+  )
 
   render() {
 
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
+    const { selectedRowKeys, isBulkUpdateActive, marketOperations } = this.state;
 
     const columns = [
       {
@@ -251,15 +328,27 @@ class MarketTable extends Component {
       },
     ];
 
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectOperation,
+      onSelectAll: this.onSelectAllOperation
+    };
+
     return (
-      <Table
-        rowKey={ record => record.id }
-        columns={ columns }
-        dataSource={ this.state.marketOperations }
-        loading={ this.props.isLoading }
-        scroll={ { x: true } }
-        className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ) } ) }
-      />
+      <>
+
+        <Table
+          rowSelection={ isBulkUpdateActive ? rowSelection : null }
+          rowKey={ record => record.id }
+          columns={ columns }
+          dataSource={ marketOperations }
+          loading={ this.props.isLoading }
+          scroll={ { x: true } }
+          className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ) } ) }
+          onChange={ this.onTableChange }
+          title={ this.tableHeader }
+        />
+      </>
     );
   }
 }

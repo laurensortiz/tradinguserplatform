@@ -1,9 +1,9 @@
 import fetch from '../../../common/fetch';
 
-export const getMarketOperations = async () => {
+export const getMarketOperations = async (status) => {
   return fetch({
     method: 'get',
-    url: 'market-operation',
+    url: `market-operation/${status}`,
   });
 };
 
@@ -28,5 +28,13 @@ export const deleteMarketOperation = async (marketOperationId) => {
   return fetch({
     method: 'delete',
     url: `market-operation/${marketOperationId}`,
+  });
+};
+
+export const bulkUpdateMarketOperation = async (bulkUpdateBatch) => {
+  return fetch({
+    method: 'post',
+    url: `market-operation/bulk-update`,
+    data: bulkUpdateBatch
   });
 };

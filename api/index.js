@@ -121,11 +121,12 @@ module.exports = app => {
   app.delete( '/api/investment-movement/:investmentMovementId', investmentMovement.delete );
 
   // Market Operation
-  app.get( '/api/market-operation', marketOperation.list );
+  app.get( '/api/market-operation/:status', marketOperation.list );
   app.get( '/api/market-operation/:marketOperationId', marketOperation.get );
   app.post( '/api/market-operation', marketOperation.create );
   app.put( '/api/market-operation/:marketOperationId', marketOperation.update );
   app.delete( '/api/market-operation/:marketOperationId', marketOperation.delete );
+  app.post( '/api/market-operation/bulk-update', marketOperation.bulkUpdate );
 
   // Market Movement
   app.get( '/api/market-movement/list/:marketOperationId', marketMovement.list );

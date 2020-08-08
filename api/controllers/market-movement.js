@@ -65,8 +65,6 @@ module.exports = {
       });
     }
 
-
-
     const updatedMarketMovement = await marketMovement.update({
       gpInversion: req.body.gpInversion || marketMovement.gpInversion,
       gpAmount: req.body.gpAmount || marketMovement.gpAmount,

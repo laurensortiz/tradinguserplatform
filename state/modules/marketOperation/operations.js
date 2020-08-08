@@ -3,6 +3,7 @@ import  {
   fetchAddMarketOperation,
   fetchEditMarketOperation,
   fetchDeleteMarketOperation,
+  fetchBulkUpdateMarketOperation,
   resetAfterRequest
 } from './actions';
 
@@ -11,5 +12,6 @@ export default {
   fetchAddMarketOperation,
   fetchEditMarketOperation,
   fetchDeleteMarketOperation,
+  fetchBulkUpdateMarketOperation,
   resetAfterRequest,
 }
