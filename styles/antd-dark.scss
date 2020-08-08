@@ -2472,8 +2472,10 @@ html {
 }
 .ant-btn-danger {
   color: #fff;
-  background-color: #fc7060;
-  border-color: #fc7060;
+  //background-color: #fc7060;
+  //border-color: #fc7060;
+  background-color: $red;
+  border-color: $red;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
   box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
 }
@@ -2492,8 +2494,10 @@ html {
 .ant-btn-danger:hover,
 .ant-btn-danger:focus {
   color: #fff;
-  background-color: #ff998a;
-  border-color: #ff998a;
+  //background-color: #ff998a;
+  //border-color: #ff998a;
+  background-color: #D63930;
+  border-color: #D63930;
 }
 .ant-btn-danger:hover > a:only-child,
 .ant-btn-danger:focus > a:only-child {
