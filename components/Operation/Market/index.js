@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Drawer, Tabs, notification, Radio } from 'antd';
+import { Row, Col, Drawer, Tabs, notification, Radio, Divider } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -291,10 +291,6 @@ class Market extends Component {
           <Col>
             { this.props.isAdmin ? (
               <>
-                <Radio.Group defaultValue="active" buttonStyle="solid" onChange={ this._onTabChange }>
-                  <Radio.Button value="active">Activos</Radio.Button>
-                  <Radio.Button value="deleted">Eliminados</Radio.Button>
-                </Radio.Group>
                 <div>
                   <MarketTable
                     marketOperations={ this.state.marketOperations }
@@ -308,6 +304,7 @@ class Market extends Component {
                     isBulkLoading={ this.props.isBulkLoading }
                     isBulkSuccess={ this.props.isBulkSuccess }
                     isBulkCompleted={ this.props.isBulkProcessCompleted }
+                    onTabChange={this._onTabChange}
                     onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( 'active' ) }
                   />
                 </div>

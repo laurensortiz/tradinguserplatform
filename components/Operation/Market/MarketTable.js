@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Highlighter from "react-highlight-words";
-import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select } from 'antd';
+import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio } from 'antd';
 import {
   Sort,
   FormatStatus,
@@ -188,37 +188,43 @@ class MarketTable extends Component {
 
   }
   tableHeader = () => (
-    <div>
+    <>
+      <Row>
+        <Col sm={12} style={ { textAlign: 'left' } }>
+          <Radio.Group defaultValue="active" buttonStyle="solid" onChange={ this.props.onTabChange }>
+            <Radio.Button value="active">Activos</Radio.Button>
+            <Radio.Button value="deleted">Eliminados</Radio.Button>
+          </Radio.Group>
+        </Col>
+        <Col sm={12} style={ { textAlign: 'right' } }>
+          <Button type="secondary" className={classNames({'hidden': this.state.isBulkUpdateActive})}
+                  onClick={ () => this.setState( { isBulkUpdateActive: true } ) } size="large">
+            <Icon type="retweet"/> Actualización Masiva
+          </Button>
+          <Button type="danger" className={classNames({'hidden': !this.state.isBulkUpdateActive})}
+                  onClick={ this.onCancelBulkProcess } size="large">
+            <Icon type="close-circle"/> Cerrar
+          </Button>
+        </Col>
+      </Row>
       {
         this.state.isBulkUpdateActive ? (
-          <>
-            <div style={ { textAlign: 'right' } }>
-              <Button type="danger"
-                      onClick={ this.onCancelBulkProcess } size="large">
-                <Icon type="close-circle"/> Cerrar
-              </Button>
-            </div>
-            <div className="multiple-actualization-module">
-              <BulkUpdateSteps
-                selectedElements={ this.state.selectedRowKeys.length }
-                onClickUpdate={ this._handleClickBulkUpdate }
-                isProcessComplete={ this.props.isBulkCompleted }
-                isBulkLoading={ this.props.isBulkLoading }
-                isBulkSuccess={ this.props.isBulkSuccess }
-              />
-            </div>
-          </>
-        ) : (
-          <div style={ { textAlign: 'right' } }>
-            <Button type="secondary"
-                    onClick={ () => this.setState( { isBulkUpdateActive: true } ) } size="large">
-              <Icon type="retweet"/> Actualización Masiva
-            </Button>
-          </div>
-        )
+          <Row>
+            <Col>
+              <div className="multiple-actualization-module">
+                <BulkUpdateSteps
+                  selectedElements={ this.state.selectedRowKeys.length }
+                  onClickUpdate={ this._handleClickBulkUpdate }
+                  isProcessComplete={ this.props.isBulkCompleted }
+                  isBulkLoading={ this.props.isBulkLoading }
+                  isBulkSuccess={ this.props.isBulkSuccess }
+                />
+              </div>
+            </Col>
+          </Row>
+        ) : null
       }
-
-    </div>
+    </>
   )
 
   render() {
