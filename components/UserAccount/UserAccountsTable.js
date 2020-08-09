@@ -136,6 +136,10 @@ class UserAccountsTable extends Component {
     this.setState( { searchText: '' } );
   };
 
+  onTableChange = (pagination, filters, sorter, extra) => {
+    this.props.onRequestUpdateTable()
+  }
+
 
   render() {
     const dynamicClass = this.props.isOperationStandard ? 'show' : 'hidden';
@@ -240,6 +244,7 @@ class UserAccountsTable extends Component {
         loading={ this.props.isLoading }
         scroll={ { x: true } }
         title={this._displayTableHeader}
+        onChange={ this.onTableChange }
       />
     );
   }

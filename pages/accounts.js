@@ -137,7 +137,9 @@ class Accounts extends Component {
       : 'Editar Cuenta de Usuario';
 
     const userAccount  = _.filter(this.props.userAccounts, ['account.associatedOperation', this.state.operationType]);
-
+console.log('[=====  ACC  =====>');
+console.log(userAccount);
+console.log('<=====  /ACC  =====]');
     return (
       <Document id="userAccounts-page">
         <Row style={{marginBottom:30}}>
@@ -166,6 +168,7 @@ class Accounts extends Component {
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserAccount }
                   isOperationStandard={_.isEqual(this.state.operationType, 1)}
+                  onRequestUpdateTable={ () => this.props.fetchGetAllUserAccounts(  ) }
                 />
               </TabPane>
               <TabPane tab="Eliminados" key="2">
@@ -175,6 +178,7 @@ class Accounts extends Component {
                   onActive={ this._onSelectActive }
                   status="inactive"
                   isOperationStandard={_.isEqual(this.state.operationType, 1)}
+                  onRequestUpdateTable={ () => this.props.fetchGetAllUserAccounts(  ) }
                 />
               </TabPane>
             </Tabs>
