@@ -26,7 +26,7 @@ class MarketTable extends Component {
     currentDataSource: [],
     selectedBulkUpdateType: 'status',
     bulkUpdateValue: null,
-    isBulkUpdateActive: true,
+    isBulkUpdateActive: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -148,6 +148,7 @@ class MarketTable extends Component {
       searchText: '',
       selectedRowKeys: []
     } );
+
   };
 
   onSelectOperation = (selectedRowKeys) => {
@@ -164,6 +165,7 @@ class MarketTable extends Component {
   onTableChange = (pagination, filters, sorter, extra) => {
     const { currentDataSource } = extra;
     this.setState( { currentDataSource } )
+    this.props.onRequestUpdateTable()
   }
 
   onCancelBulkProcess = () => {
@@ -173,6 +175,7 @@ class MarketTable extends Component {
       selectedBulkUpdateType: 'status',
       bulkUpdateValue: null,
     } )
+    this.props.onRequestUpdateTable()
   }
 
 

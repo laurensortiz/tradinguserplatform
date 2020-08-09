@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Steps, Button, Icon, Tag, Select, Input, Result } from 'antd';
-
+import { isEmpty } from 'lodash';
+import { Steps, Button, Icon, Tag, Select, Input, Result, Radio } from 'antd';
+import classNames from 'classnames';
 const { Step } = Steps;
 const { Option } = Select;
-const InputGroup = Input.Group;
+
 
 const BULK_UPDATE_TYPES = [
   {
@@ -12,27 +13,26 @@ const BULK_UPDATE_TYPES = [
   },
   {
     code: 'stockProduct',
-    name: 'Aplicar formula para Stocks'
+    name: 'Productos en Mercado Stocks'
   },
   {
     code: 'goldProduct',
-    name: 'Aplicar formula para Oro'
+    name: 'Productos en Mercado Oro'
   }
 ];
 
 function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, isBulkLoading, isBulkSuccess }) {
-  const [ currentStep, setCurrentStep ] = useState( 1 );
-  const [ updateType, setUpdateType ] = useState( 'stockProduct' );
-  const [ updateValue, setUpdateValue ] = useState( { } );
+  const [ currentStep, setCurrentStep ] = useState( 0 );
+  const [ updateType, setUpdateType ] = useState( '' );
+  const [ updateValue, setUpdateValue ] = useState( {} );
   const [ behaviorClass, setBehaviorClass ] = useState( '' );
   const [ isValidAmount, setIsValidAmount ] = useState( true );
 
   useEffect( () => {
-    setIsValidAmount(true)
-    setBehaviorClass('')
-    setUpdateValue(null)
-  }, [updateType] );
-
+    setIsValidAmount( true )
+    setBehaviorClass( '' )
+    setUpdateValue( null )
+  }, [ updateType ] );
 
 
   const _isValidAmount = amount => {
@@ -40,108 +40,115 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
     const isValid = regex.test( amount );
     setIsValidAmount( isValid )
     if (!isValid) {
-      setBehaviorClass('')
+      setBehaviorClass( '' )
     }
     return isValid
   }
 
   const _isPositiveAmount = amount => {
-    const isPositive = Math.sign(amount) >= 0;
-    setBehaviorClass(isPositive ? 'positive-amount' : 'negative-amount')
+    const isPositive = Math.sign( amount ) >= 0;
+    setBehaviorClass( isPositive ? 'positive-amount' : 'negative-amount' )
     return isPositive;
   }
-  const _handleStockInputChange = async ({ target }) => {
-    _isPositiveAmount( target.value )
+
+  const _handlePriceInputChange = ({ target }) => {
+    if (target.name !== 'marketPrice') {
+      _isPositiveAmount( target.value )
+    }
+
     _isValidAmount( target.value )
 
     setUpdateValue( {
       ...updateValue,
-      [target.name]: target.value
+      [ target.name ]: target.value
     } )
   }
 
+  const _handleRadioInputChange = ({ target }) => {
+    setUpdateValue(target.value)
+  }
 
   const _bulkUpdateValue = () => {
 
     switch (updateType) {
       case 'status':
         return (
-          <Select
-            name="status"
-            onChange={ value => setUpdateValue( value ) }
-            placeholder="Estado"
-            style={ { width: 150 } }
-            size="large"
-          >
-            <Option value={ 1 }><Tag style={{width: '100%'}} color="#039B01">Activo</Tag></Option>
-            <Option value={ 2 }><Tag color="#D63930">Cerrado</Tag></Option>
-            <Option value={ 3 }><Tag color="#E2A11A">On Hold</Tag></Option>
-            <Option value={ 4 }><Tag color="#414241">Vendido</Tag></Option>
-          </Select>
+          <Radio.Group name="status" onChange={ _handleRadioInputChange } >
+            <Radio value={ 1 }><Tag color="#039B01">Activo</Tag></Radio>
+            <Radio value={ 2 }><Tag color="#D63930">Cerrado</Tag></Radio>
+            <Radio value={ 3 }><Tag color="#E2A11A">On Hold</Tag></Radio>
+            <Radio value={ 4 }><Tag color="#414241">Vendido</Tag></Radio>
+          </Radio.Group>
+
         )
       case 'stockProduct':
         return (
           <>
-            <Input size="large" className={behaviorClass} addonBefore="Precio $" style={ { width: 150 } } name="gpAmount" onChange={ _handleStockInputChange }
+            <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Precio $"
+                   style={ { width: 200 } }
+                   name="gpAmount" onChange={ _handlePriceInputChange }
                    placeholder="Precio"/>
-            <Input size="large" addonBefore="MP $" style={ { width: 150 } } name="marketPrice" onChange={ _handleStockInputChange }
+            <Input size="large" addonBefore="MP $" style={ { width: 200 } } name="marketPrice"
+                   onChange={ _handlePriceInputChange }
                    placeholder="MP"/>
           </>
         )
       case 'goldProduct':
         return (
           <>
-            <Input size="large" className={behaviorClass} addonBefore="Precio $" style={ { width: 150 } } name="gpAmount" onChange={ _handleStockInputChange }
+            <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Precio $"
+                   style={ { width: 150 } }
+                   name="gpAmount" onChange={ _handlePriceInputChange }
                    placeholder="Precio"/>
-            <Input size="large" addonBefore="MP $" style={ { width: 150 } } name="marketPrice" onChange={ _handleStockInputChange }
+            <Input size="large" addonBefore="MP $" style={ { width: 150 } } name="marketPrice"
+                   onChange={ _handlePriceInputChange }
                    placeholder="MP"/>
           </>
         )
       default:
-        return <Input size="large" style={ { width: 150 } } disabled/>
+        return <div className="no-visible" style={ { width: 150, height: 40 } } />
     }
   };
 
   const _selectUpdateType = () => (
     <div style={ { textAlign: 'center' } }>
-      <InputGroup >
-        <Select size="large" defaultValue="" style={ { minWidth: '20%' } } onChange={ value => setUpdateType( value ) }>
-          <Option key="0" value="">Seleccione el Registro</Option>
-          {
-            BULK_UPDATE_TYPES.map( ({ code, name }, index) =>
-              <Option key={ index + 1 } value={ code }>{ name }</Option> )
-          }
-        </Select>
+
+      <Select size="large" defaultValue="" style={ { minWidth: '20%' } } onChange={ value => setUpdateType( value ) }>
+        <Option key="0" value="">Seleccione el Registro</Option>
+        {
+          BULK_UPDATE_TYPES.map( ({ code, name }, index) =>
+            <Option key={ index + 1 } value={ code }>{ name }</Option> )
+        }
+      </Select>
+      <div style={ { marginTop: 20, minHeight: 40 } }>
         { _bulkUpdateValue() }
         { !isValidAmount ? (
-          <p style={ { color: 'red' } }>Monto inválido</p>
+          <p className="m-t-20 negative">Monto inválido</p>
         ) : null }
-      </InputGroup>
+      </div>
+
     </div>
   );
 
   const _lastStepContent = () => {
-    const btnTxt = isProcessComplete ? 'Actualizar de nuevo' : 'Realizar actualización';
-    const title = isProcessComplete ? isBulkSuccess ? <span><Tag color="#046d11">{ selectedElements }</Tag> Productos actualizados correctamente</span> : 'Ocurrió un error' :
-      <span>Proceder con la actualización de <Tag color="#046d11">{ selectedElements }</Tag> productos</span>;
+    const title = isProcessComplete ? isBulkSuccess ? <span><Tag color="#046d11">{ selectedElements }</Tag>Productos actualizados correctamente</span> : 'Ocurrió un error' :
+      <span>Proceder con la actualización de <Tag color="#046d11">{ selectedElements }</Tag>productos</span>;
     const status = isProcessComplete ? isBulkSuccess ? 'success' : 'error' : 'info';
 
     return (
       <Result
         title={ title }
         status={ status }
-        extra={
-          <Button
-            size="large"
-            type="primary"
-            key="console"
-            onClick={ () => onClickUpdate( { updateType, updateValue } ) }
-            loading={ isBulkLoading }
-            className="export-excel-cta"
-          >
-            { btnTxt }
-          </Button>
-        }
+        extra={ <Button
+          size="large"
+          type="primary"
+          key="console"
+          onClick={ () => onClickUpdate( { updateType, updateValue } ) }
+          loading={ isBulkLoading }
+          className={classNames({'no-visible': isProcessComplete})}
+        >
+          Realizar actualización
+        </Button>}
       />
     )
   }
@@ -163,7 +170,6 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
     },
   ];
 
-
   return (
     <>
       <Steps current={ currentStep }>
@@ -180,7 +186,8 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
           </Button>
         ) }
         { currentStep < steps.length - 1 && selectedElements > 0 && (
-          <Button type="primary" onClick={ () => setCurrentStep( currentStep + 1 ) }>
+          <Button type="primary" onClick={ () => setCurrentStep( currentStep + 1 ) }
+                  disabled={ (updateType !== 'status' && !isValidAmount && isEmpty(updateValue)) || (updateType === 'status' && !Number.isInteger(updateValue))}>
             Siguiente <Icon type="right-square"/>
           </Button>
         ) }

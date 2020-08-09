@@ -88,7 +88,7 @@ class Market extends Component {
           nextProps.fetchGetMarketOperations( 'active' );
           nextProps.onClose( false )
         },
-        duration: 1
+        duration: 2
       } );
 
     } else {
@@ -126,7 +126,7 @@ class Market extends Component {
     }
 
 
-    if (nextProps.isBulkFailure && nextProps.isBulkProcessCompleted ) {
+    if (nextProps.isBulkFailure && nextProps.isBulkProcessCompleted) {
       notification.error( {
         message: 'Ha ocurrido un error en el proceso de actualización',
         description: nextProps.message,
@@ -228,7 +228,7 @@ class Market extends Component {
     this.props.fetchGetMarketOperations( 'active' );
   };
 
-  _onTabChange = ({target}) => {
+  _onTabChange = ({ target }) => {
     this.props.fetchGetMarketOperations( target.value || 'active' );
   }
 
@@ -293,7 +293,7 @@ class Market extends Component {
               <>
                 <Radio.Group defaultValue="active" buttonStyle="solid" onChange={ this._onTabChange }>
                   <Radio.Button value="active">Activos</Radio.Button>
-                  <Radio.Button value="deleted">Emilinados</Radio.Button>
+                  <Radio.Button value="deleted">Eliminados</Radio.Button>
                 </Radio.Group>
                 <div>
                   <MarketTable
@@ -303,11 +303,12 @@ class Market extends Component {
                     onActive={ this._onSelectActive }
                     onDelete={ this._handleDeleteUserOperation }
                     onDetail={ this._handleDetailUserOperation }
-                    isAdmin={true}
-                    onFetchBulkUpdate={this._handleBulkUpdate}
-                    isBulkLoading={this.props.isBulkLoading}
-                    isBulkSuccess={this.props.isBulkSuccess}
-                    isBulkCompleted={this.props.isBulkProcessCompleted}
+                    isAdmin={ true }
+                    onFetchBulkUpdate={ this._handleBulkUpdate }
+                    isBulkLoading={ this.props.isBulkLoading }
+                    isBulkSuccess={ this.props.isBulkSuccess }
+                    isBulkCompleted={ this.props.isBulkProcessCompleted }
+                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( 'active' ) }
                   />
                 </div>
               </>
@@ -377,9 +378,7 @@ class Market extends Component {
 }
 
 function mapStateToProps(state) {
-console.log('[=====  STATE  =====>');
-console.log(state.marketOperationsState);
-console.log('<=====  /STATE  =====]');
+
   return {
     marketOperations: state.marketOperationsState.list,
     isLoading: state.marketOperationsState.isLoading,
