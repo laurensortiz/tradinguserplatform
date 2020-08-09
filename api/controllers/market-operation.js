@@ -60,7 +60,17 @@ module.exports = {
   async list(req, res) {
 
     const marketOperation = await MarketOperation.findAll(
-      marketOperationQuery.list( { req, sequelize, UserAccount, User, Account, Product, Broker, Commodity, AssetClass } )
+      marketOperationQuery.list( {
+        req,
+        sequelize,
+        UserAccount,
+        User,
+        Account,
+        Product,
+        Broker,
+        Commodity,
+        AssetClass
+      } )
     );
 
     if (!marketOperation) {
@@ -126,15 +136,101 @@ module.exports = {
 
     try {
       const { operationsIds, updateType, updateValue } = req.body;
-
+      let result;
       await ORM.transaction( async (t) => {
-        const updated = await MarketOperation.update( { [updateType]: updateValue }, { where: { id: operationsIds } }, { transaction: t } );
-        return res.status( 200 ).send(updated);
+
+        if (updateType === 'status') {
+          result = await MarketOperation.update( { [ updateType ]: updateValue }, { where: { id: operationsIds } }, { transaction: t } );
+        }
+
+        if (updateType === 'stockProduct') {
+          result = await Promise.all( operationsIds.map( async (operationID) => {
+              // Find Operation
+              const marketOperation = await MarketOperation.findOne( {
+                where: {
+                  id: operationID,
+                },
+                silence: true
+              }, { transaction: t } );
+
+              if (!marketOperation) {
+                throw new Error( 'Operation not found ' )
+              }
+              if (marketOperation.commodityId !== 1) {
+                throw new Error( 'Una o más operaciones seleccionadas no corresponde al mercados de Stocks' )
+              }
+              if (marketOperation.status !== 1) {
+                throw new Error( 'Una o más operaciones seleccionadas no se encuentran Activas' )
+              }
+              const gpAmount = Number( _.get( updateValue, 'gpAmount', 0 ) );
+              const marketPrice = Number( _.get( updateValue, 'marketPrice', 0 ) );
+              const commoditiesTotal = Number( marketOperation.commoditiesTotal );
+              const amount = Number( marketOperation.amount );
+
+              const totalGP = gpAmount * commoditiesTotal
+
+              return await MarketMovement.create( {
+                gpInversion: totalGP + amount,
+                marketOperationId: operationID,
+                gpAmount: totalGP,
+                marketPrice,
+                status: 1,
+                createdAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+                updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
+              }, { transaction: t } );
+
+            } )
+          )
+
+        }
+
+        if (updateType === 'goldProduct') {
+          result = await Promise.all( operationsIds.map( async (operationID) => {
+              // Find Operation
+              const marketOperation = await MarketOperation.findOne( {
+                where: {
+                  id: operationID,
+                },
+                silence: true
+              }, { transaction: t } );
+
+              if (!marketOperation) {
+                throw new Error( 'Operation not found ' )
+              }
+              if (marketOperation.commodityId !== 2) {
+                throw new Error( 'Una o más operaciones seleccionadas no corresponde al mercados de Oro' )
+              }
+              if (marketOperation.status !== 1) {
+                throw new Error( 'Una o más operaciones seleccionadas no se encuentran Activas' )
+              }
+              const gpAmount = Number( _.get( updateValue, 'gpAmount', 0 ) );
+              const marketPrice = Number( _.get( updateValue, 'marketPrice', 0 ) );
+              const commoditiesTotal = Number( marketOperation.commoditiesTotal );
+              const amount = Number( marketOperation.amount );
+
+              const totalGP = gpAmount * 50 * commoditiesTotal;
+
+              return await MarketMovement.create( {
+                gpInversion: totalGP + amount,
+                marketOperationId: operationID,
+                gpAmount: totalGP,
+                marketPrice,
+                status: 1,
+                createdAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+                updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
+              }, { transaction: t } );
+
+            } )
+          )
+
+        }
       } );
+
+      return res.status( 200 ).send( result );
 
     } catch (error) {
       return res.status( 400 ).send( {
-        message: error,
+        message: error.message,
       } );
 
     }

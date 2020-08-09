@@ -120,9 +120,14 @@ export function marketOperation(state = initialStateMarketOperation, action) {
     case types.MARKET_OPERATION_BULK_UPDATE_REQUEST:
       return {
         ...state,
+        isSuccess: false,
+        isFailure: false,
+        isLoading: false,
+        message: '',
         isBulkSuccess: false,
         isBulkFailure: false,
         isBulkLoading: true,
+        isBulkProcessCompleted: false,
       };
     case types.MARKET_OPERATION_BULK_UPDATE_SUCCESS:
       return {

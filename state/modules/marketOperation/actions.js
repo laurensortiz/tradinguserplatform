@@ -14,8 +14,8 @@ export const fetchGetMarketOperations = (status) => async dispatch => {
   try {
     const res = await getMarketOperations(status);
     dispatch( requestMarketOperationsSuccess( res.data ) )
-  } catch (e) {
-    dispatch( requestMarketOperationsError( e.message ) )
+  } catch (error) {
+    dispatch( requestMarketOperationsError( error.response ) )
   }
 
 };
@@ -36,7 +36,7 @@ const requestMarketOperationsSuccess = (markets) => {
 const requestMarketOperationsError = (error) => {
   return {
     type: types.MARKET_OPERATIONS_ERROR,
-    payload: formatAxiosError(error.response)
+    payload: formatAxiosError(error)
   }
 };
 
@@ -46,8 +46,8 @@ export const fetchAddMarketOperation = (user) => async dispatch => {
   try {
     const res = await addMarketOperation(user);
     dispatch( requestAddMarketOperationSuccess( res.data ) )
-  } catch (e) {
-    dispatch( requestAddMarketOperationError( e.message ) )
+  } catch (error) {
+    dispatch( requestAddMarketOperationError( error.response ) )
   }
 
 };
@@ -68,7 +68,7 @@ const requestAddMarketOperationSuccess = (market) => {
 const requestAddMarketOperationError = (error) => {
   return {
     type: types.MARKET_OPERATION_ADD_ERROR,
-    payload: formatAxiosError(error.response)
+    payload: formatAxiosError(error)
   }
 };
 
@@ -78,8 +78,8 @@ export const fetchEditMarketOperation = (market) => async dispatch => {
   try {
     const res = await editMarketOperation(market);
     dispatch( requestEditMarketOperationSuccess( res.data ) )
-  } catch (e) {
-    dispatch( requestEditMarketOperationError( e.message ) )
+  } catch (error) {
+    dispatch( requestEditMarketOperationError( error.response ) )
   }
 
 };
@@ -100,7 +100,7 @@ const requestEditMarketOperationSuccess = (market) => {
 const requestEditMarketOperationError = (error) => {
   return {
     type: types.MARKET_OPERATION_EDIT_ERROR,
-    payload: formatAxiosError(error.response)
+    payload: formatAxiosError(error)
   }
 };
 
@@ -110,8 +110,8 @@ export const fetchDeleteMarketOperation = (marketId) => async dispatch => {
   try {
     const res = await deleteMarketOperation(marketId);
     dispatch( requestDeleteMarketOperationSuccess(res.data) )
-  } catch (e) {
-    dispatch( requestDeleteMarketOperationError( e.message ) )
+  } catch (error) {
+    dispatch( requestDeleteMarketOperationError( error.response ) )
   }
 
 };
@@ -132,7 +132,7 @@ const requestDeleteMarketOperationSuccess = (market) => {
 const requestDeleteMarketOperationError = (error) => {
   return {
     type: types.MARKET_OPERATION_DELETE_ERROR,
-    payload: formatAxiosError(error.response)
+    payload: formatAxiosError(error)
   }
 };
 
@@ -142,8 +142,8 @@ export const fetchBulkUpdateMarketOperation = (bulkUpdateBatch) => async dispatc
   try {
     const res = await bulkUpdateMarketOperation(bulkUpdateBatch);
     dispatch( requestBulkUpdateMarketOperationSuccess(res.data) )
-  } catch (e) {
-    dispatch( requestBulkUpdateMarketOperationError( e.message ) )
+  } catch (error) {
+    dispatch( requestBulkUpdateMarketOperationError( error.response ) )
   }
 
 };
@@ -155,6 +155,9 @@ const requestBulkUpdateMarketOperation = () => {
 };
 
 const requestBulkUpdateMarketOperationSuccess = (update) => {
+  console.log('[=====  FINAL  =====>');
+  console.log(update);
+  console.log('<=====  /FINAL  =====]');
   return {
     type: types.MARKET_OPERATION_BULK_UPDATE_SUCCESS,
     payload: update
@@ -164,7 +167,7 @@ const requestBulkUpdateMarketOperationSuccess = (update) => {
 const requestBulkUpdateMarketOperationError = (error) => {
   return {
     type: types.MARKET_OPERATION_BULK_UPDATE_ERROR,
-    payload: formatAxiosError(error.response)
+    payload: formatAxiosError(error)
   }
 };
 

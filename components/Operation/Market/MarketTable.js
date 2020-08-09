@@ -26,7 +26,7 @@ class MarketTable extends Component {
     currentDataSource: [],
     selectedBulkUpdateType: 'status',
     bulkUpdateValue: null,
-    isBulkUpdateActive: false,
+    isBulkUpdateActive: true,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -192,7 +192,7 @@ class MarketTable extends Component {
             <div style={ { textAlign: 'right' } }>
               <Button type="danger"
                       onClick={ this.onCancelBulkProcess } size="large">
-                <Icon type="close-circle"/> Cancelar Proceso
+                <Icon type="close-circle"/> Cerrar
               </Button>
             </div>
             <div className="multiple-actualization-module">

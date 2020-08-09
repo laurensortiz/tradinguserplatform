@@ -8,3 +8,11 @@
   padding: 15px;
   border-radius: 4px;
 }
+
+.positive-amount .ant-input-group-addon {
+  background-color: $positive;
+}
+
+.negative-amount .ant-input-group-addon {
+  background-color: $negative;
+}

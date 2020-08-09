@@ -79,14 +79,13 @@ class Market extends Component {
       _.assignIn( updatedState, {
         isVisibleAddOrEditOperation: false,
       } );
-      nextProps.resetAfterRequest();
+
       notification.success( {
         message,
         onClose: () => {
           prevState.actionType = 'add'; // default value
-
+          nextProps.resetAfterRequest();
           nextProps.fetchGetMarketOperations( 'active' );
-
           nextProps.onClose( false )
         },
         duration: 1
@@ -378,7 +377,9 @@ class Market extends Component {
 }
 
 function mapStateToProps(state) {
-
+console.log('[=====  STATE  =====>');
+console.log(state.marketOperationsState);
+console.log('<=====  /STATE  =====]');
   return {
     marketOperations: state.marketOperationsState.list,
     isLoading: state.marketOperationsState.isLoading,
