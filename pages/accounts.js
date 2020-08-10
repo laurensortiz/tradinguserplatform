@@ -21,11 +21,11 @@ class Accounts extends Component {
     actionType: 'add',
     selectedUserAccount: {},
     isCreatingOperation: false,
-    operationType: 1,
+    associatedOperation: 1,
+    status: 1
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
-
     if (nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
       if (_.isEmpty( nextProps.historyReportData )) {
         notification.info( {
@@ -36,7 +36,7 @@ class Accounts extends Component {
           duration: 3
         } )
       } else {
-        ExportHistoryReport(nextProps.historyReportData)
+        ExportHistoryReport( nextProps.historyReportData )
         notification.success( {
           message: 'Descargando Reporte Historico de la cuenta',
           onClose: () => {
@@ -81,13 +81,17 @@ class Accounts extends Component {
         onClose: () => {
           prevState.actionType = 'add'; // default value
 
-          nextProps.fetchGetAllUserAccounts();
+          nextProps.fetchGetAllUserAccounts( {
+            associatedOperation: prevState.associatedOperation,
+            status: prevState.status
+          } );
           nextProps.resetAfterRequest();
         },
         duration: 1
       } )
 
     }
+
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
       notification.error( {
         message: 'Ha ocurrido un error',
@@ -99,11 +103,25 @@ class Accounts extends Component {
       } )
 
     }
+
     return null;
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (!_.isEqual( prevState.status, this.state.status ) ||
+      !_.isEqual( prevState.associatedOperation, this.state.associatedOperation )) {
+      this.props.fetchGetAllUserAccounts( {
+        associatedOperation: this.state.associatedOperation,
+        status: this.state.status
+      } );
+    }
+  }
+
   componentDidMount() {
-    this.props.fetchGetAllUserAccounts();
+    this.props.fetchGetAllUserAccounts( {
+      associatedOperation: this.state.associatedOperation,
+      status: this.state.status
+    } );
   };
 
   _addUserAccount = () => {
@@ -163,11 +181,19 @@ class Accounts extends Component {
 
   _onSelectOperationType = ({ target }) => {
     this.setState( {
-      operationType: target.value,
+      associatedOperation: target.value,
     } );
+
   };
+
   _handleExportHistoryReport = (accountId) => {
     this.props.fetchGetUserAccountHistoryReport( accountId )
+  }
+
+  _handleTabChange = ({ target }) => {
+    this.setState( {
+      status: target.value
+    } )
   }
 
   render() {
@@ -175,13 +201,12 @@ class Accounts extends Component {
       ? 'Agregar Cuenta de Usuario'
       : 'Editar Cuenta de Usuario';
 
-    const userAccount = _.filter( this.props.userAccounts, [ 'account.associatedOperation', this.state.operationType ] );
 
     return (
       <Document id="userAccounts-page">
         <Row style={ { marginBottom: 30 } }>
           <Radio.Group
-            defaultValue={ this.state.operationType }
+            defaultValue={ this.state.associatedOperation }
             size="large"
             style={ { float: 'left' } }
             onChange={ this._onSelectOperationType }
@@ -197,29 +222,16 @@ class Accounts extends Component {
 
         <Row>
           <Col>
-            <Tabs animated={ false }>
-              <TabPane tab="Activos" key="1">
-                <UserAccountsTable
-                  userAccounts={ _.filter( userAccount, { status: 1 } ) }
-                  isLoading={ this.props.isLoading || this.props.isHistoryReportLoading }
-                  onEdit={ this._onSelectEdit }
-                  onDelete={ this._handleDeleteUserAccount }
-                  isOperationStandard={ _.isEqual( this.state.operationType, 1 ) }
-                  onRequestUpdateTable={ this.props.fetchGetAllUserAccounts }
-                  onReqeuestExportHistoryReport={ this._handleExportHistoryReport }
-                />
-              </TabPane>
-              <TabPane tab="Eliminados" key="2">
-                <UserAccountsTable
-                  userAccounts={ _.filter( userAccount, { status: 0 } ) }
-                  isLoading={ this.props.isLoading }
-                  onActive={ this._onSelectActive }
-                  status="inactive"
-                  isOperationStandard={ _.isEqual( this.state.operationType, 1 ) }
-                  onRequestUpdateTable={ this.props.fetchGetAllUserAccounts }
-                />
-              </TabPane>
-            </Tabs>
+            <UserAccountsTable
+              userAccounts={ this.props.userAccounts }
+              isLoading={ this.props.isLoading || this.props.isHistoryReportLoading }
+              onEdit={ this._onSelectEdit }
+              onDelete={ this._handleDeleteUserAccount }
+              isOperationStandard={ _.isEqual( this.state.associatedOperation, 1 ) }
+              onRequestUpdateTable={ this.props.fetchGetAllUserAccounts }
+              onReqeuestExportHistoryReport={ this._handleExportHistoryReport }
+              onTabChange={ this._handleTabChange }
+            />
           </Col>
         </Row>
         <Drawer

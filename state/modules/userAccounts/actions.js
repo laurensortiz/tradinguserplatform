@@ -10,10 +10,10 @@ import types from './types';
 import { formatAxiosError } from "../../../common/utils";
 
 // All User Accounts
-export const fetchGetAllUserAccounts = () => async dispatch => {
+export const fetchGetAllUserAccounts = (reqParams) => async dispatch => {
   dispatch( requestUserAccounts() );
   try {
-    const res = await getAllUserAccounts();
+    const res = await getAllUserAccounts(reqParams);
     dispatch( requestUserAccountsSuccess( res.data ) )
   } catch (e) {
     dispatch( requestUserAccountsError( e.message ) )

@@ -153,6 +153,13 @@ class UserAccountsTable extends Component {
    this.props.onRequestUpdateTable()
   }
 
+  _displayTableHeader = () => (
+    <Radio.Group defaultValue={1} buttonStyle="solid" onChange={ this.props.onTabChange }>
+      <Radio.Button value={1}>Activos</Radio.Button>
+      <Radio.Button value={0}>Eliminados</Radio.Button>
+    </Radio.Group>
+  )
+
 
   render() {
     const dynamicClass = this.props.isOperationStandard ? 'show' : 'hidden';
