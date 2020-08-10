@@ -15,6 +15,13 @@ export const getUserAccounts = async (userId) => {
   });
 };
 
+export const getUserAccountHistoryReport = async (userAccountId) => {
+  return fetch({
+    method: 'get',
+    url: `user-accounts/${userAccountId}/report`
+  });
+};
+
 export const addUserAccount = async (userAccount) => {
 
   return fetch({

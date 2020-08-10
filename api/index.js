@@ -100,6 +100,7 @@ module.exports = app => {
   // User Account
   app.get( '/api/user-accounts', userAccount.list );
   app.get( '/api/user-accounts/:userAccountId', userAccount.get );
+  app.get( '/api/user-accounts/:userAccountId/report', userAccount.getReport );
   app.get( '/api/user-accounts/user/:userId', userAccount.getByUser );
   app.post( '/api/user-accounts', userAccount.create );
   app.put( '/api/user-accounts/:userAccountId', userAccount.update );

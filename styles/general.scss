@@ -137,11 +137,11 @@ strong {
 }
 
 .export-excel-cta, .export-excel-cta.ant-btn-primary {
-  background-color: $green-excel;
   color: $white;
+  background-color: $green-excel-hover;
   border-color: $green-excel-hover;
   &:hover, &:focus, &:active {
-    background-color: $green-excel-hover;
+    background-color: $green-excel;
     border-color: $green-excel-hover;
   }
 }

@@ -4,6 +4,7 @@ import  {
   fetchAddUserAccount,
   fetchEditUserAccount,
   fetchDeleteUserAccount,
+  fetchGetUserAccountHistoryReport,
   resetAfterRequest
 } from './actions';
 
@@ -13,5 +14,6 @@ export default {
   fetchAddUserAccount,
   fetchEditUserAccount,
   fetchDeleteUserAccount,
+  fetchGetUserAccountHistoryReport,
   resetAfterRequest,
 }

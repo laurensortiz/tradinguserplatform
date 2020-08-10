@@ -127,6 +127,7 @@ module.exports = {
       orderId: req.body.orderId || marketOperation.orderId,
       status: _.get( req, 'body.status', 1 ) || marketOperation.status,
       createdAt: req.body.createdAt || marketOperation.createdAt,
+      endDate: req.body.endDate || marketOperation.endDate,
     } );
 
     return res.status( 200 ).send( updatedMarketOperation );
@@ -140,7 +141,10 @@ module.exports = {
       await ORM.transaction( async (t) => {
 
         if (updateType === 'status') {
-          result = await MarketOperation.update( { [ updateType ]: updateValue }, { where: { id: operationsIds } }, { transaction: t } );
+          result = await MarketOperation.update( {
+            [ updateType ]: updateValue,
+            endDate: updateValue === 4 ? moment( new Date() ).tz( 'America/New_York' ).format() : null // 4 = Close Operation
+          }, { where: { id: operationsIds } }, { transaction: t } );
         }
 
         if (updateType === 'stockProduct') {

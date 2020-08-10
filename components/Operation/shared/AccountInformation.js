@@ -8,9 +8,7 @@ import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive } from '.
 class AccountInformation extends PureComponent {
 
   render() {
-console.log('[=====  test  =====>');
-console.log(this.props.currentOperation);
-console.log('<=====  /test  =====]');
+
     const accountValue = _.get(this.props, 'currentOperation.userAccount.accountValue', '0.00');
     const balanceInitial = _.get(this.props, 'currentOperation.userAccount.balanceInitial', '0.00');
     const maintenanceMargin = _.get(this.props, 'currentOperation.userAccount.maintenanceMargin', '0.00');

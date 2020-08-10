@@ -88,7 +88,7 @@ class Market extends Component {
           nextProps.fetchGetMarketOperations( 'active' );
           nextProps.onClose( false )
         },
-        duration: 2
+        duration: 1
       } );
 
     } else {

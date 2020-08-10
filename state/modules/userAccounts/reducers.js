@@ -8,6 +8,10 @@ const initialStateUsers = {
   isFailure: false,
   isLoading: false,
   isSuccess: false,
+  isHistoryReportLoading: false,
+  isHistoryReportSuccess: false,
+  isHistoryReportComplete: false,
+  historyReportData: [],
   message: '',
 };
 
@@ -136,6 +140,42 @@ export function users(state = initialStateUsers, action) {
         isLoading: false,
         message: action.payload,
       };
+    // User Account History Report
+    case types.USER_ACCOUNT_HISTORY_REPORT_REQUEST:
+      return {
+        ...state,
+        isSuccess: false,
+        isFailure: false,
+        isLoading: false,
+        isHistoryReportLoading: true,
+        isHistoryReportSuccess: false,
+        isHistoryReportComplete: false,
+        historyReportData: []
+      };
+    case types.USER_ACCOUNT_HISTORY_REPORT_SUCCESS:
+      return {
+        ...state,
+        isSuccess: false,
+        isFailure: false,
+        isLoading: false,
+        isHistoryReportLoading: false,
+        isHistoryReportSuccess: true,
+        isHistoryReportComplete: true,
+        historyReportData: action.payload,
+        message: 'Historial de la Cuenta de Usuario Generado con éxito',
+      };
+    case types.USER_ACCOUNT_HISTORY_REPORT_ERROR:
+      return {
+        ...state,
+        isSuccess: false,
+        isFailure: false,
+        isLoading: false,
+        isHistoryReportLoading: false,
+        isHistoryReportSuccess: false,
+        isHistoryReportComplete: true,
+        historyReportData: [],
+        message: action.payload,
+      };
 
     case types.RESET_AFTER_REQUEST:
       return {
@@ -144,6 +184,10 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: false,
         message: '',
+        isHistoryReportLoading: false,
+        isHistoryReportSuccess: false,
+        isHistoryReportComplete: false,
+        historyReportData: [],
       };
     default:
       return state

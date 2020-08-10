@@ -155,9 +155,6 @@ const requestBulkUpdateMarketOperation = () => {
 };
 
 const requestBulkUpdateMarketOperationSuccess = (update) => {
-  console.log('[=====  FINAL  =====>');
-  console.log(update);
-  console.log('<=====  /FINAL  =====]');
   return {
     type: types.MARKET_OPERATION_BULK_UPDATE_SUCCESS,
     payload: update

@@ -11,6 +11,7 @@ import UserAccountsTable from '../components/UserAccount/UserAccountsTable';
 import AddOrEditUserAccountForm from '../components/UserAccount/AddOrEditUserAccountForm';
 
 import { userAccountOperations } from "../state/modules/userAccounts";
+import ExportHistoryReport from '../components/Operation/shared/ExportUserAccountHistory';
 
 const { TabPane } = Tabs;
 
@@ -24,6 +25,41 @@ class Accounts extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+
+    if (nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
+      if (_.isEmpty( nextProps.historyReportData )) {
+        notification.info( {
+          message: 'No se encontraron Operaciones Cerradas para esta cuenta',
+          onClose: () => {
+            nextProps.resetAfterRequest();
+          },
+          duration: 3
+        } )
+      } else {
+        ExportHistoryReport(nextProps.historyReportData)
+        notification.success( {
+          message: 'Descargando Reporte Historico de la cuenta',
+          onClose: () => {
+            nextProps.resetAfterRequest();
+          },
+          duration: 3
+        } )
+      }
+
+    }
+
+    if (!nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
+      notification.error( {
+        message: 'Ha ocurrido un error al generar el reporte',
+        description: nextProps.message,
+        onClose: () => {
+          nextProps.resetAfterRequest();
+        },
+        duration: 3
+      } )
+
+    }
+
     if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
       let message = 'Cuenta de Usuario Creada';
 
@@ -40,7 +76,7 @@ class Accounts extends Component {
       }
 
       prevState.isVisibleAddOrEditUserAccount = false;
-      notification.success({
+      notification.success( {
         message,
         onClose: () => {
           prevState.actionType = 'add'; // default value
@@ -49,18 +85,18 @@ class Accounts extends Component {
           nextProps.resetAfterRequest();
         },
         duration: 1
-      })
+      } )
 
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-      notification.error({
+      notification.error( {
         message: 'Ha ocurrido un error',
         description: nextProps.message,
         onClose: () => {
           nextProps.resetAfterRequest();
         },
         duration: 3
-      })
+      } )
 
     }
     return null;
@@ -130,19 +166,20 @@ class Accounts extends Component {
       operationType: target.value,
     } );
   };
+  _handleExportHistoryReport = (accountId) => {
+    this.props.fetchGetUserAccountHistoryReport( accountId )
+  }
 
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Cuenta de Usuario'
       : 'Editar Cuenta de Usuario';
 
-    const userAccount  = _.filter(this.props.userAccounts, ['account.associatedOperation', this.state.operationType]);
-console.log('[=====  ACC  =====>');
-console.log(userAccount);
-console.log('<=====  /ACC  =====]');
+    const userAccount = _.filter( this.props.userAccounts, [ 'account.associatedOperation', this.state.operationType ] );
+
     return (
       <Document id="userAccounts-page">
-        <Row style={{marginBottom:30}}>
+        <Row style={ { marginBottom: 30 } }>
           <Radio.Group
             defaultValue={ this.state.operationType }
             size="large"
@@ -150,25 +187,26 @@ console.log('<=====  /ACC  =====]');
             onChange={ this._onSelectOperationType }
             buttonStyle="solid"
           >
-            <Radio.Button value={1}><Icon type="sliders"/> Standard</Radio.Button>
-            <Radio.Button value={2}> <Icon type="fund"/> Profit Month</Radio.Button>
+            <Radio.Button value={ 1 }><Icon type="sliders"/> Standard</Radio.Button>
+            <Radio.Button value={ 2 }> <Icon type="fund"/> Profit Month</Radio.Button>
           </Radio.Group>
           <Button style={ { float: 'right' } } type="primary" onClick={ this._addUserAccount } size="large">
-            <Icon type="plus-circle" /> Agregar Cuenta
+            <Icon type="plus-circle"/> Agregar Cuenta
           </Button>
         </Row>
 
         <Row>
           <Col>
-            <Tabs animated={false}>
+            <Tabs animated={ false }>
               <TabPane tab="Activos" key="1">
                 <UserAccountsTable
                   userAccounts={ _.filter( userAccount, { status: 1 } ) }
-                  isLoading={ this.props.isLoading }
+                  isLoading={ this.props.isLoading || this.props.isHistoryReportLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserAccount }
-                  isOperationStandard={_.isEqual(this.state.operationType, 1)}
-                  onRequestUpdateTable={ () => this.props.fetchGetAllUserAccounts(  ) }
+                  isOperationStandard={ _.isEqual( this.state.operationType, 1 ) }
+                  onRequestUpdateTable={ this.props.fetchGetAllUserAccounts }
+                  onReqeuestExportHistoryReport={ this._handleExportHistoryReport }
                 />
               </TabPane>
               <TabPane tab="Eliminados" key="2">
@@ -177,8 +215,8 @@ console.log('<=====  /ACC  =====]');
                   isLoading={ this.props.isLoading }
                   onActive={ this._onSelectActive }
                   status="inactive"
-                  isOperationStandard={_.isEqual(this.state.operationType, 1)}
-                  onRequestUpdateTable={ () => this.props.fetchGetAllUserAccounts(  ) }
+                  isOperationStandard={ _.isEqual( this.state.operationType, 1 ) }
+                  onRequestUpdateTable={ this.props.fetchGetAllUserAccounts }
                 />
               </TabPane>
             </Tabs>
@@ -211,6 +249,10 @@ function mapStateToProps(state) {
     isSuccess: state.userAccountsState.isSuccess,
     isFailure: state.userAccountsState.isFailure,
     message: state.userAccountsState.message,
+    isHistoryReportLoading: state.userAccountsState.isHistoryReportLoading,
+    isHistoryReportSuccess: state.userAccountsState.isHistoryReportSuccess,
+    isHistoryReportComplete: state.userAccountsState.isHistoryReportComplete,
+    historyReportData: state.userAccountsState.historyReportData,
   }
 }
 
@@ -220,6 +262,7 @@ const mapDispatchToProps = dispatch =>
     fetchAddUserAccount: userAccountOperations.fetchAddUserAccount,
     fetchEditUserAccount: userAccountOperations.fetchEditUserAccount,
     fetchDeleteUserAccount: userAccountOperations.fetchDeleteUserAccount,
+    fetchGetUserAccountHistoryReport: userAccountOperations.fetchGetUserAccountHistoryReport,
     resetAfterRequest: userAccountOperations.resetAfterRequest,
   }, dispatch );
 
