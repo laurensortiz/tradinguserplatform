@@ -17,7 +17,7 @@ const BULK_UPDATE_TYPES = [
   },
   {
     code: 'goldProduct',
-    name: 'Productos en Mercado Oro'
+    name: 'Futuros ORO'
   }
 ];
 
