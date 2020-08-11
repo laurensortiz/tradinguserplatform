@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import moment from 'moment';
 import _ from 'lodash';
 
 import { Button, Icon, Popconfirm, Table, Tag, Input, Radio } from 'antd';
@@ -11,24 +10,14 @@ import { Sort, SortDate, FormatDate } from '../../common/utils';
 
 class UsersTable extends Component {
   state = {
-    users: [],
     searchText: '',
     searchedColumn: '',
     isAdminUsersSelected: false,
   };
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual( nextProps.users, prevState.users )) {
-      return {
-        users: nextProps.users
-      }
-    }
-    return null;
-  }
-
   _getCTA = (type, row) => {
 
-    if (_.isEqual( this.props.status, 'inactive' )) {
+    if (this.props.isDeleted) {
       return (
         <div className="cta-container">
           <Popconfirm
@@ -44,7 +33,7 @@ class UsersTable extends Component {
     } else {
       return (
         <div className="cta-container">
-          <Button type="secondary" onClick={ () => this.props.onDetail( row ) }><Icon type="hdd" />Detalle</Button>
+          <Button type="secondary" onClick={ () => this.props.onDetail( row ) }><Icon type="hdd"/>Detalle</Button>
           <Popconfirm
             okText="Si"
             title="Está seguro ?"
@@ -140,21 +129,15 @@ class UsersTable extends Component {
 
   };
 
-  _handleSelectUserType = ({target}) => {
-    this.setState({
-      isAdminUsersSelected: _.isEqual(target.value, 'admin')
-    })
-  };
 
   _displayTableHeader = () => {
     return (
-      <Radio.Group onChange={this._handleSelectUserType} defaultValue="regular" buttonStyle="solid" size="large">
-        <Radio.Button value="regular"><Icon type="user" /> Clientes</Radio.Button>
-        <Radio.Button value="admin"><Icon type="crown" /> Administradores</Radio.Button>
+      <Radio.Group defaultValue={ 1 } buttonStyle="solid" onChange={ this.props.onTabChange }>
+        <Radio.Button value={ 1 }>Activos</Radio.Button>
+        <Radio.Button value={ 0 }>Eliminados</Radio.Button>
       </Radio.Group>
     )
   };
-
 
   render() {
     const columns = [
@@ -195,17 +178,14 @@ class UsersTable extends Component {
       },
     ];
 
-    const userData = _.filter(this.state.users, user =>
-      this.state.isAdminUsersSelected ? _.isEqual(user.roleId, 1) : _.isEqual(user.roleId, 2));
-
     return (
       <Table
         rowKey={ record => record.id }
         columns={ columns }
-        dataSource={ userData }
+        dataSource={ this.props.users }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
-        title={this._displayTableHeader}
+        title={ this._displayTableHeader }
       />
     );
   }

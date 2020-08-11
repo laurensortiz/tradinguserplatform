@@ -4,10 +4,10 @@ import { formatAxiosError } from '../../../common/utils';
 import types from './types';
 
 // List Users
-export const fetchGetUsers = () => async dispatch => {
+export const fetchGetUsers = (requestParams) => async dispatch => {
   dispatch( requestUsers() );
   try {
-    const res = await getUsers();
+    const res = await getUsers(requestParams);
     dispatch( requestUsersSuccess( res.data ) )
   } catch (e) {
     dispatch( requestUsersError( e.message ) )

@@ -49,8 +49,8 @@ module.exports = app => {
   //app.post( '/api/logout', authMiddleware, user.logout );
   app.post( '/api/logout', user.logout );
 
-  app.post( '/api/users', user.create );
-  app.get( '/api/users', user.list );
+  app.post( '/api/users/new', user.create );
+  app.post( '/api/users', user.list );
   app.get( '/api/users/:userId', user.get );
   app.put( '/api/users/:userId', user.update );
   app.delete( '/api/users/:userId', user.delete );

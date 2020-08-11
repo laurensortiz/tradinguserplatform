@@ -1,16 +1,17 @@
 import fetch from '../../../common/fetch';
 
-export const getUsers = async () => {
+export const getUsers = async (requestParams) => {
   return fetch({
-    method: 'get',
+    method: 'post',
     url: 'users',
+    data: requestParams
   });
 };
 
 export const addUser = async (user) => {
   return fetch({
     method: 'post',
-    url: 'users',
+    url: 'users/new',
     data: user
   });
 };

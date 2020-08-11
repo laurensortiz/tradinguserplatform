@@ -160,17 +160,6 @@ class Accounts extends Component {
     this._handleSelectEditUserAccount( userId )
   };
 
-  _onSelectActive = (userId) => {
-    this.props.fetchEditUserAccount( {
-      id: userId,
-      status: 1,
-    } );
-    this.setState( {
-      actionType: 'active'
-    } );
-
-  };
-
   _handleSelectEditUserAccount = (userId) => {
     const selectedUserAccount = _.find( this.props.userAccounts, { id: userId } );
     this.setState( {

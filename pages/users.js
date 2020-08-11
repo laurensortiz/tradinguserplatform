@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Drawer, Tabs, notification, Icon } from 'antd';
+import { Row, Col, Button, Drawer, Tabs, notification, Icon, Radio } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -22,6 +22,8 @@ class Users extends Component {
     actionType: 'add',
     selectedUser: {},
     currentUser: {},
+    status: 1,
+    roleId: 2,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -42,7 +44,7 @@ class Users extends Component {
 
       prevState.isVisibleAddOrEditUser = false;
 
-      notification.success({
+      notification.success( {
         message,
         onClose: () => {
           prevState.actionType = 'add'; // default value
@@ -51,22 +53,32 @@ class Users extends Component {
           nextProps.resetAfterRequest();
         },
         duration: 1
-      })
+      } )
 
     }
     if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
 
-      notification.error({
+      notification.error( {
         message: 'Ha ocurrido un error',
         description: nextProps.message,
         onClose: () => {
           nextProps.resetAfterRequest();
         },
         duration: 3
-      })
+      } )
 
     }
     return null;
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (!_.isEqual( prevState.status, this.state.status ) ||
+      !_.isEqual( prevState.roleId, this.state.roleId )) {
+      this.props.fetchGetUsers( {
+        roleId: this.state.roleId,
+        status: this.state.status
+      } );
+    }
   }
 
   componentDidMount() {
@@ -109,17 +121,6 @@ class Users extends Component {
     this._handleSelectEditUser( userId )
   };
 
-  _onSelectActive = (userId) => {
-    this.props.fetchEditUser( {
-      id: userId,
-      status: 1,
-    } );
-    this.setState( {
-      actionType: 'active'
-    } );
-
-  };
-
   _handleSelectEditUser = (userId) => {
     const selectedUser = _.find( this.props.users, { id: userId } );
     this.setState( {
@@ -129,18 +130,30 @@ class Users extends Component {
   };
 
   _onCloseUserDetail = () => {
-    this.setState({
+    this.setState( {
       isVisibleUserDetail: false,
       currentUser: {}
-    })
+    } )
   };
 
   _setCurrentUser = (user) => {
-    this.setState({
+    this.setState( {
       isVisibleUserDetail: true,
       currentUser: user,
-    })
+    } )
   };
+
+  _handleSelectUserType = ({ target }) => {
+    this.setState( {
+      roleId: target.value
+    } )
+  };
+
+  _handleTabChange = ({ target }) => {
+    this.setState( {
+      status: target.value
+    } )
+  }
 
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
@@ -148,32 +161,26 @@ class Users extends Component {
       : 'Editar Usuario';
     return (
       <Document id="users-page">
-        <Row>
+        <Row style={ { marginBottom: 30 } }>
+          <Radio.Group onChange={ this._handleSelectUserType } defaultValue={ 2 } buttonStyle="solid" size="large">
+            <Radio.Button value={ 2 }><Icon type="user"/> Clientes</Radio.Button>
+            <Radio.Button value={ 1 }><Icon type="crown"/> Administradores</Radio.Button>
+          </Radio.Group>
           <Button style={ { float: 'right' } } type="primary" onClick={ this._addUser } size="large">
-            <Icon type="user-add" /> Agregar Usuario
+            <Icon type="user-add"/> Agregar Usuario
           </Button>
         </Row>
         <Row>
           <Col>
-            <Tabs animated={false}>
-              <TabPane tab="Activos" key="1">
-                <UsersTable
-                  users={ _.filter( this.props.users, { status: 1 } ) }
-                  isLoading={ this.props.isLoading }
-                  onEdit={ this._onSelectEdit }
-                  onDelete={ this._handleDeleteUser }
-                  onDetail={ this._setCurrentUser }
-                />
-              </TabPane>
-              <TabPane tab="Eliminados" key="2">
-                <UsersTable
-                  users={ _.filter( this.props.users, { status: 0 } ) }
-                  isLoading={ this.props.isLoading }
-                  onActive={ this._onSelectActive }
-                  status="inactive"
-                />
-              </TabPane>
-            </Tabs>
+            <UsersTable
+              users={ this.props.users }
+              isLoading={ this.props.isLoading }
+              onEdit={ this._onSelectEdit }
+              onDelete={ this._handleDeleteUser }
+              onDetail={ this._setCurrentUser }
+              onTabChange={ this._handleTabChange }
+              isDeleted={ this.state.status === 0 }
+            />
           </Col>
         </Row>
         <Drawer
@@ -193,13 +200,13 @@ class Users extends Component {
         </Drawer>
         <Drawer
           title="Detalle de Usuario"
-          width={320}
+          width={ 320 }
           onClose={ this._onCloseUserDetail }
           visible={ this.state.isVisibleUserDetail }
           destroyOnClose={ true }
         >
           <Detail
-            currentUser={this.state.currentUser}
+            currentUser={ this.state.currentUser }
           />
         </Drawer>
       </Document>
@@ -208,6 +215,7 @@ class Users extends Component {
 }
 
 function mapStateToProps(state) {
+
   return {
     users: state.usersState.list,
     isLoading: state.usersState.isLoading,
