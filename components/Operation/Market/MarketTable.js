@@ -165,7 +165,10 @@ class MarketTable extends Component {
   onTableChange = (pagination, filters, sorter, extra) => {
     const { currentDataSource } = extra;
     this.setState( { currentDataSource } )
-    this.props.onRequestUpdateTable()
+    if (this.props.isAdmin) {
+      this.props.onRequestUpdateTable()
+    }
+
   }
 
   onCancelBulkProcess = () => {
@@ -355,7 +358,7 @@ class MarketTable extends Component {
           scroll={ { x: true } }
           className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ) } ) }
           onChange={ this.onTableChange }
-          title={ this.tableHeader }
+          title={ this.props.isAdmin ? this.tableHeader : null }
         />
       </>
     );

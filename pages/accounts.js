@@ -219,7 +219,6 @@ class Accounts extends Component {
             <Icon type="plus-circle"/> Agregar Cuenta
           </Button>
         </Row>
-
         <Row>
           <Col>
             <UserAccountsTable
