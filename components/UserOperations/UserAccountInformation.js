@@ -3,7 +3,7 @@ import { Row, Col, Descriptions, Tag, Card, Statistic, Icon, Divider } from 'ant
 import _ from 'lodash';
 
 import { FormatCurrency, IsOperationPositive } from '../../common/utils';
-import { Investment, Market } from "./index";
+import { Investment, Market } from "../Operation";
 
 class AccountInformation extends PureComponent {
 

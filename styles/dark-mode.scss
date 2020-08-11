@@ -34,3 +34,31 @@
   font-size: 2.0rem;
   color: $gray-secondary;
 }
+
+.ant-table-tbody > tr.ant-table-row-selected td {
+  color: $gray-0e0;
+  background: $gray-primary;
+}
+
+.ant-result {
+  padding: 0 32px;
+}
+.ant-result-icon {
+  margin-bottom: 10px;
+}
+
+.ant-result-title {
+  font-size: 18px;
+}
+
+.ant-btn-cancel {
+  color: #fff;
+  background-color: $red;
+  border-color: $red;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.045);
+}
+
+.ant-steps-item-finish .ant-steps-item-icon {
+  border-color: $positive;
+}

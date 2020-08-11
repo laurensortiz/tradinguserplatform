@@ -13,9 +13,14 @@ class Index extends Component {
     if (video) video.playbackRate = .2;
   }
 
-  renderLoggedIn = () => {
+  renderLoggedIn = (isAdmin) => {
     if (process.browser) {
-      Router.push( '/operations' )
+      if (isAdmin) {
+        Router.push( '/operations' )
+      } else {
+        Router.push( '/user-operations' )
+      }
+
     }
 
   };
@@ -32,10 +37,10 @@ class Index extends Component {
   };
 
   render() {
-
+    const {isAdmin} = this.props.auth
     let subview = !this.props.isAuthenticated
       ? this.renderLoggedOut()
-      : this.renderLoggedIn();
+      : this.renderLoggedIn(isAdmin);
 
     return <Document>{ subview }</Document>;
   }

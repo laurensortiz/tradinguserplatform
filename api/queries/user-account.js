@@ -1,8 +1,11 @@
+import {get} from 'lodash';
 const queries = {
   list: ({ req, User, Account }) => {
+    const statusActive = get(req, 'body.status', 1);
+    const associatedOperation = get(req, 'body.associatedOperation', 1);
     return {
       where: {
-        status: 1,
+        status: statusActive,
       },
       attributes: {
         exclude: [ 'salt', 'password' ],
@@ -11,10 +14,16 @@ const queries = {
         {
           model: User,
           as: 'user',
+          attributes: {
+            exclude: [ 'salt', 'password' ],
+          },
         },
         {
           model: Account,
           as: 'account',
+          where: {
+            associatedOperation,
+          },
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],

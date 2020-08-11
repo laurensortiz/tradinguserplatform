@@ -1,9 +1,10 @@
 import fetch from '../../../common/fetch';
 
-export const getAllUserAccounts = async () => {
+export const getAllUserAccounts = async (reqParams) => {
   return fetch({
-    method: 'get',
+    method: 'post',
     url: `user-accounts`,
+    data: reqParams
   });
 };
 
@@ -15,11 +16,18 @@ export const getUserAccounts = async (userId) => {
   });
 };
 
+export const getUserAccountHistoryReport = async (userAccountId) => {
+  return fetch({
+    method: 'get',
+    url: `user-accounts/${userAccountId}/report`
+  });
+};
+
 export const addUserAccount = async (userAccount) => {
 
   return fetch({
     method: 'post',
-    url: 'user-accounts',
+    url: 'user-accounts/new',
     data: userAccount
   });
 };

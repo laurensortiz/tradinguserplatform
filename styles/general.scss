@@ -18,6 +18,18 @@ strong {
   font-weight:700;
 }
 
+.m-r-20 {
+  margin-right: 20px;
+}
+
+.m-t-20 {
+  margin-top: 20px;
+}
+
+.no-visible {
+  visibility: hidden;
+}
+
 .page-loader {
   width: 300px;
   height: 300px;
@@ -125,11 +137,11 @@ strong {
 }
 
 .export-excel-cta, .export-excel-cta.ant-btn-primary {
-  background-color: $green-excel;
   color: $white;
+  background-color: $green-excel-hover;
   border-color: $green-excel-hover;
   &:hover, &:focus, &:active {
-    background-color: $green-excel-hover;
+    background-color: $green-excel;
     border-color: $green-excel-hover;
   }
 }

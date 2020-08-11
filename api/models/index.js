@@ -10,8 +10,10 @@ const ORM = new Sequelize(
   sequelizeConfig.username,
   sequelizeConfig.password,
   sequelizeConfig,
+  {
+    dialect: 'postgres',
+  }
 );
-
 
 db.User = ORM.import(path.join(__dirname, 'user.js'));
 db.Role = ORM.import(path.join(__dirname, 'role.js'));
@@ -36,5 +38,6 @@ Object.keys(db).forEach(modelName => {
 
 db.ORM = ORM;
 db.sequelize = Sequelize;
+db.Transaction = ORM.transaction;
 
 module.exports = db;

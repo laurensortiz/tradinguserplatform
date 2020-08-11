@@ -20,7 +20,7 @@ class NavPublic extends PureComponent {
           <Link className="menu-item" href="/calendar"><Icon type="fund"/> <span>Calendario Económico</span></Link>
         </li>
         <li>
-          <Link className="menu-item" href="/operations"><Icon type="area-chart" /> <span>Operaciones</span></Link>
+          <Link className="menu-item" href="/user-operations"><Icon type="area-chart" /> <span>Operaciones</span></Link>
         </li>
         <li>
           <Link className="menu-item" onClick={ this.props.onLogout } href="/"><Icon type="logout"/> <span>Salir</span></Link>

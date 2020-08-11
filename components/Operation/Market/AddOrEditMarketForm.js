@@ -52,6 +52,7 @@ class AddOrEditMarketForm extends PureComponent {
     amount: 0,
     orderId: null,
     createdAt: null,
+    endDate: null,
     marginUsed: 0,
 
     confirmDirty: false,
@@ -307,6 +308,7 @@ class AddOrEditMarketForm extends PureComponent {
     const orderIdInitValue = _.isNumber( this.state.orderId ) ? this.state.orderId : undefined;
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
     const createdAtInitValue = !_.isNull( this.state.createdAt ) ? moment.tz(this.state.createdAt, 'America/New_York') : undefined;
+    const endDateInitValue = !_.isNull( this.state.endDate ) ? moment.tz(this.state.endDate, 'America/New_York') : undefined;
 
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
@@ -501,13 +503,24 @@ class AddOrEditMarketForm extends PureComponent {
             </Select>
           ) }
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Fecha de Apertura">
           { getFieldDecorator( 'createdAt', {
             initialValue: createdAtInitValue
           } )(
             <DatePicker onChange={ this._setStartDate } defaultPickerValue={moment().tz('America/New_York')} placeholder="Fecha de Inicio"/>
           ) }
         </Form.Item>
+        {
+          this.state.status === 4 ? (
+            <Form.Item label="Fecha de Cierre">
+              { getFieldDecorator( 'endDate', {
+                initialValue: endDateInitValue
+              } )(
+                <DatePicker onChange={ this._setEndDate } defaultPickerValue={moment().tz('America/New_York')} placeholder="Fecha de Cierre"/>
+              ) }
+            </Form.Item>
+          ) : null
+        }
         <Form.Item>
           <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
             { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }

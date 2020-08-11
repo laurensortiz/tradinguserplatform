@@ -7,7 +7,9 @@ import {
   InvestmentOperation,
   Product,
   Broker,
-  Commodity
+  Commodity,
+  MarketMovement,
+  AssetClass
 } from '../models';
 import { userAccountQuery, userQuery, marketOperationQuery, investmentOperationQuery } from '../queries';
 import _ from 'lodash';
@@ -62,6 +64,60 @@ module.exports = {
     }
 
     return res.status(200).send(userAccount);
+  },
+
+  async getReport(req, res) {
+
+    const userAccountSoldOperations = await MarketOperation.findAll({
+      where: {
+        userAccountId: req.params.userAccountId,
+        status: 4
+      },
+      include: [
+        {
+          model: UserAccount,
+          as: 'userAccount',
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['username', 'firstName', 'lastName']
+            },
+            {
+              model: Account,
+              as: 'account',
+              attributes: ['name', 'percentage', 'associatedOperation']
+            },
+
+          ],
+        },
+        {
+          model: Product,
+          as: 'product',
+        },
+        {
+          model: Broker,
+          as: 'broker',
+        },
+        {
+          model: Commodity,
+          as: 'commodity',
+        },
+        {
+          model: AssetClass,
+          as: 'assetClass',
+        },
+      ],
+      silence: true
+    });
+
+    if (!userAccountSoldOperations) {
+      return res.status(404).send({
+        message: 'No se encontraron Operaciones Vendidas para la cuenta indicada',
+      });
+    }
+
+    return res.status(200).send(userAccountSoldOperations);
   },
 
   async getByUser(req, res) {

@@ -3,10 +3,10 @@ import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
-
+import Highlighter from 'react-highlight-words';
 import { Button, Icon, Input, Popconfirm, Radio, Table, Tag } from 'antd';
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
-import Highlighter from "react-highlight-words";
+
 
 
 class UserAccountsTable extends Component {
@@ -23,6 +23,10 @@ class UserAccountsTable extends Component {
       }
     }
     return null;
+  }
+
+  _handleExportHistory = (accountId) => {
+    this.props.onReqeuestExportHistoryReport(accountId)
   }
 
   _getCTA = (type, row) => {
@@ -43,6 +47,16 @@ class UserAccountsTable extends Component {
     } else {
       return (
         <div className="cta-container">
+          <Button
+            type="primary"
+            data-testid="export-button"
+            className="export-excel-cta"
+            onClick={ () => this._handleExportHistory(row.id)}
+            style={ { float: 'right' } }
+          >
+            <Icon type="file-excel"/> Reporte Histórico
+          </Button>
+          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
           <Popconfirm
             okText="Si"
             title="Está seguro ?"
@@ -51,7 +65,6 @@ class UserAccountsTable extends Component {
           >
             <Button type="danger"><Icon type="delete"/></Button>
           </Popconfirm>
-          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
         </div>
       )
     }
@@ -120,7 +133,7 @@ class UserAccountsTable extends Component {
         text
       )
     }
-      
+
   } );
 
   handleSearch = (selectedKeys, confirm, dataIndex) => {
@@ -136,6 +149,17 @@ class UserAccountsTable extends Component {
     this.setState( { searchText: '' } );
   };
 
+  onTableChange = (pagination, filters, sorter, extra) => {
+   this.props.onRequestUpdateTable()
+  }
+
+  _displayTableHeader = () => (
+    <Radio.Group defaultValue={1} buttonStyle="solid" onChange={ this.props.onTabChange }>
+      <Radio.Button value={1}>Activos</Radio.Button>
+      <Radio.Button value={0}>Eliminados</Radio.Button>
+    </Radio.Group>
+  )
+
 
   render() {
     const dynamicClass = this.props.isOperationStandard ? 'show' : 'hidden';
@@ -145,7 +169,7 @@ class UserAccountsTable extends Component {
         title: 'Usuario',
         dataIndex: 'user.username',
         key: 'user.username',
-        sorter: (a, b) => Sort( a.username, b.username ),
+        sorter: (a, b) => Sort( a.user.username, b.user.username ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'user.username' ),
       },
@@ -154,7 +178,7 @@ class UserAccountsTable extends Component {
         dataIndex: 'user.firstName',
         key: 'user.firstName',
         render: text => <span key={ text }>{ text }</span>,
-        sorter: (a, b) => Sort( a.firstName, b.firstName ),
+        sorter: (a, b) => Sort( a.user.firstName, b.user.firstName ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'user.firstName' ),
       },
@@ -163,7 +187,7 @@ class UserAccountsTable extends Component {
         dataIndex: 'user.lastName',
         key: 'user.lastName',
         render: text => <span key={ text }>{ text }</span>,
-        sorter: (a, b) => Sort( a.lastName, b.lastName ),
+        sorter: (a, b) => Sort( a.user.lastName, b.user.lastName ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'user.lastName' ),
       },
@@ -171,7 +195,7 @@ class UserAccountsTable extends Component {
         title: 'Tipo de Cuenta',
         dataIndex: 'account.name',
         key: 'account.name',
-        sorter: (a, b) => Sort( a.accountName, b.accountName ),
+        sorter: (a, b) => Sort( a.account.name, b.account.name ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'account.name' ),
       },
@@ -231,6 +255,7 @@ class UserAccountsTable extends Component {
         width: 150
       },
     ];
+    
 
     return (
       <Table
@@ -240,6 +265,7 @@ class UserAccountsTable extends Component {
         loading={ this.props.isLoading }
         scroll={ { x: true } }
         title={this._displayTableHeader}
+        onChange={ this.onTableChange }
       />
     );
   }
