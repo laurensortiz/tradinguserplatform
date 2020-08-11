@@ -1,9 +1,8 @@
 import { UserAccount, User, Account } from "../models";
-
+import {get} from 'lodash';
 const queries = {
   list: ({ req, UserAccount }) => {
     return {
-
       attributes: {
         exclude: [],
       },

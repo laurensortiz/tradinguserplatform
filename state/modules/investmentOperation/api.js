@@ -1,9 +1,9 @@
 import fetch from '../../../common/fetch';
 
-export const getInvestmentOperations = async () => {
+export const getInvestmentOperations = async (status) => {
   return fetch({
     method: 'get',
-    url: 'investment-operation',
+    url: `investment-operation`,
   });
 };
 

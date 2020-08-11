@@ -8,6 +8,7 @@ import { Investment, Market } from "../Operation";
 class AccountInformation extends PureComponent {
 
   render() {
+
     const userId = _.get( this.props, 'userAccount.user.id', 0 );
     const userAccountId = _.get( this.props, 'userAccount.id');
     const accountValue = _.get( this.props, 'userAccount.accountValue', '0.00' );

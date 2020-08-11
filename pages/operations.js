@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 import Document from '../components/Document';
 
-import { Investment, Market, UserAccount } from '../components/Operation';
+import { Investment, Market } from '../components/Operation';
 import { userAccountOperations } from "../state/modules/userAccounts";
 
 class Operations extends Component {
@@ -102,11 +102,7 @@ class Operations extends Component {
 
             </Row>
           </>
-        ) : (
-          <div>
-            <UserAccount currentUser={this.state.currentUser} />
-          </div>
-        ) }
+        ) : null }
 
 
       </Document>

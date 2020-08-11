@@ -12,6 +12,7 @@ import UserAccount from '../components/UserOperations/UserAccount'
 
 class UserOperations extends Component {
   state = {
+    accounts: [],
     operationType: 'market',
     isFormVisible: false,
     currentUser: {
@@ -25,7 +26,7 @@ class UserOperations extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
 
-    if (!_.isEqual( nextProps.currentUser, prevState.currentUser )) {
+    if (!_.isEqual( nextProps.currentUser.id, prevState.currentUser.id )) {
       _.assignIn( updatedState, {
         currentUser: nextProps.currentUser
       } );
@@ -48,7 +49,7 @@ class UserOperations extends Component {
 
     return (
       <Document id="userOperations-page">
-        <UserAccount currentUser={this.state.currentUser} accounts={this.state.accounts} isLoading={this.props.isLoading} />
+        <UserAccount currentUser={this.state.currentUser} accounts={this.state.accounts} isLoading={false} />
       </Document>
     );
   }
