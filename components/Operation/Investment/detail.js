@@ -31,7 +31,7 @@ class Detail extends PureComponent {
               <Descriptions.Item label="Fecha de Cierre">{ FormatDate( endDate ) } </Descriptions.Item>
               <Descriptions.Item label="Saldo Inicial">{ FormatCurrency.format( initialAmount ) } </Descriptions.Item>
               <Descriptions.Item label="Saldo Actual"><span
-                className={ IsOperationPositive( amount, initialAmount ) ? 'positive' : 'negative' }>{ FormatCurrency.format( amount ) }</span>
+                className={ IsOperationPositive( amount, initialAmount ) ? 'positive txt-highlight' : 'negative txt-highlight' }>{ FormatCurrency.format( amount ) }</span>
               </Descriptions.Item>
               <Descriptions.Item label="Estado">
                 <Tag color={ statusColor }>{ statusName }</Tag>

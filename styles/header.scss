@@ -100,23 +100,27 @@
     display: inline-block;
 
     .menu-item, & > span:first-of-type {
-      padding: 20px;
+      padding: 10px;
+      margin: 0 10px;
       color: $gray-primary;
       font-size: 1.6rem;
       cursor: pointer;
       display: inline-block;
       line-height: 1rem;
       width: 100%;
-
+      border-radius: 5px;
       @media screen and (min-width: 800px) {
         width: auto;
       }
 
       &:hover {
         color:$white;
+        background-color: $gray-1b1;
       }
       &.active {
-        color: $blue-44a;
+        color: $white;
+        background-color: $primary-color;
+        box-shadow: inset 0px 0px 5px 2px rgba(0,0,0,0.6);
       }
 
       i {

@@ -31,6 +31,7 @@ class Market extends Component {
     marketMovements: [],
     isBulkSuccess: false,
     isBulkProcessCompleted: false,
+    dataStatus: 1
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -229,7 +230,10 @@ class Market extends Component {
   };
 
   _onTabChange = ({ target }) => {
-    this.props.fetchGetMarketOperations( target.value || 'active' );
+    this.setState({
+      dataStatus: target.value
+    })
+    this.props.fetchGetMarketOperations( target.value === 1 ? 'active' : 'deleted' );
   }
 
   /**
@@ -305,7 +309,8 @@ class Market extends Component {
                     isBulkSuccess={ this.props.isBulkSuccess }
                     isBulkCompleted={ this.props.isBulkProcessCompleted }
                     onTabChange={this._onTabChange}
-                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( 'active' ) }
+                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations('active') }
+                    dataStatus={this.state.dataStatus}
                   />
                 </div>
               </>

@@ -43,7 +43,7 @@ class AccountInformation extends PureComponent {
         <Row>
           <Col>
             <Descriptions title="Información de la Cuenta:">
-              <Descriptions.Item label="Valor de la cuenta"><span className={IsOperationPositive(accountValue, balanceInitial) ? 'positive' : 'negative'}>{FormatCurrency.format(accountValue)}</span> </Descriptions.Item>
+              <Descriptions.Item label="Valor de la cuenta"><span className={IsOperationPositive(accountValue, balanceInitial) ? 'positive txt-highlight' : 'negative txt-highlight'}>{FormatCurrency.format(accountValue)}</span> </Descriptions.Item>
 
               <Descriptions.Item label="Tipo de cuenta">{accountName}</Descriptions.Item>
               <Descriptions.Item label="Comisíon sobre ganancias">{accountPercentage} %</Descriptions.Item>

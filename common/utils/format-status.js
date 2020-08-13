@@ -1,11 +1,11 @@
-const formatStatus = status => {
+const formatStatus = (status, context) => {
   const detailStatus = {
     1: {
       name: 'Activo',
       color: '#039B01'
     },
     2: {
-      name: 'Cerrado',
+      name: context ? 'Cerrado' : 'Market Close',
       color: '#D63930'
     },
     3: {

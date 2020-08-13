@@ -26,7 +26,8 @@ class MarketTable extends Component {
     currentDataSource: [],
     selectedBulkUpdateType: 'status',
     bulkUpdateValue: null,
-    isBulkUpdateActive: false,
+    isBulkUpdateActive: true,
+    isMenuFold: true
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -40,7 +41,7 @@ class MarketTable extends Component {
   }
 
   _getCTA = (type, row) => {
-    if (_.isEqual( this.props.status, 'inactive' )) {
+    if (_.isEqual( this.props.dataStatus, 0 )) {
       return (
         <div className="cta-container">
           <Popconfirm
@@ -49,14 +50,14 @@ class MarketTable extends Component {
             cancelText="Cancelar"
             onConfirm={ () => this.props.onActive( row.id ) }
           >
-            <Button type="danger">Activar</Button>
+            <Button type="danger"><Icon type="undo" /><span>Activar</span></Button>
           </Popconfirm>
         </div>
       )
     } else {
       return (
         <div className="cta-container">
-          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd"/>Detalle</Button>
+          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd"/><span>Detalle</span></Button>
           { this.props.isAdmin ? (
             <>
               <Popconfirm
@@ -65,9 +66,9 @@ class MarketTable extends Component {
                 cancelText="Cancelar"
                 onConfirm={ () => this.props.onDelete( row.id ) }
               >
-                <Button type="danger"><Icon type="delete"/></Button>
+                <Button type="danger"><Icon type="delete"/><span>Eliminar</span></Button>
               </Popconfirm>
-              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
+              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
             </>
           ) : null }
         </div>
@@ -194,9 +195,9 @@ class MarketTable extends Component {
     <>
       <Row>
         <Col sm={12} style={ { textAlign: 'left' } }>
-          <Radio.Group defaultValue="active" buttonStyle="solid" onChange={ this.props.onTabChange }>
-            <Radio.Button value="active">Activos</Radio.Button>
-            <Radio.Button value="deleted">Eliminados</Radio.Button>
+          <Radio.Group defaultValue={this.props.dataStatus} buttonStyle="solid" onChange={ this.props.onTabChange }>
+            <Radio.Button value={1}>Activos</Radio.Button>
+            <Radio.Button value={0}>Eliminados</Radio.Button>
           </Radio.Group>
         </Col>
         <Col sm={12} style={ { textAlign: 'right' } }>
@@ -230,6 +231,20 @@ class MarketTable extends Component {
     </>
   )
 
+  _onSelectMenuFold = () => {
+    this.setState({
+      isMenuFold: !this.state.isMenuFold
+    })
+  }
+
+  _handleActionTitle = () => {
+    return (
+      <div style={{textAlign: 'right'}}>
+        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+      </div>
+    )
+  }
+
   render() {
 
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
@@ -248,7 +263,7 @@ class MarketTable extends Component {
         key: 'status',
         filters: [
           { text: 'Activo', value: 1 },
-          { text: 'Cerrado', value: 2 },
+          { text: 'Market Close', value: 2 },
           { text: 'Hold', value: 3 },
           { text: 'Vendido', value: 4 },
         ],
@@ -301,7 +316,7 @@ class MarketTable extends Component {
         title: 'Saldo Actual',
         key: 'amount',
         render: data => <span
-          className={ IsOperationPositive( data.amount, data.initialAmount ) ? 'positive' : 'negative' }
+          className={ IsOperationPositive( data.amount, data.initialAmount ) ? 'positive txt-highlight' : 'negative txt-highlight' }
           key={ data.amount }>{ DisplayTableAmount( data.amount ) }</span>,
         sorter: (a, b) => Sort( a.amount, b.amount ),
         sortDirections: [ 'descend', 'ascend' ],
@@ -332,11 +347,11 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps( 'broker.name' ),
       },
       {
-        title: 'Acciones',
+        title: this._handleActionTitle,
         key: 'actions',
         render: this._getCTA,
         fixed: 'right',
-        width: 150
+        className: 't-a-r'
       },
     ];
 
@@ -356,7 +371,7 @@ class MarketTable extends Component {
           dataSource={ marketOperations }
           loading={ this.props.isLoading }
           scroll={ { x: true } }
-          className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ) } ) }
+          className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ), 'is-menu-fold': this.state.isMenuFold } ) }
           onChange={ this.onTableChange }
           title={ this.props.isAdmin ? this.tableHeader : null }
         />

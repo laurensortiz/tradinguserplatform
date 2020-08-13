@@ -13,16 +13,40 @@ const BULK_UPDATE_TYPES = [
   },
   {
     code: 'stockProduct',
-    name: 'Productos en Mercado Stocks'
+    name: 'Stocks'
   },
   {
-    code: 'goldProduct',
-    name: 'Futuros ORO'
+    code: 'goldFutures',
+    name: 'GOLD Futures - Options'
+  },
+  {
+    code: 'goldCFD',
+    name: 'GOLD CFD Ounces'
+  },
+  {
+    code: 'goldSpot',
+    name: 'GOLD Spot XAU/USD'
+  },
+  {
+    code: 'silverFutures',
+    name: 'SILVER Futures - Options'
+  },
+  {
+    code: 'platinumFutures',
+    name: 'PLATINUM Futures - Options'
+  },
+  {
+    code: 'crudeOil',
+    name: 'CRUDE OIL WTI Futures - Options'
+  },
+  {
+    code: 'crudeCFDs',
+    name: 'CRUDE CFDs Barrels'
   }
 ];
 
 function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, isBulkLoading, isBulkSuccess }) {
-  const [ currentStep, setCurrentStep ] = useState( 0 );
+  const [ currentStep, setCurrentStep ] = useState( 1 );
   const [ updateType, setUpdateType ] = useState( '' );
   const [ updateValue, setUpdateValue ] = useState( {} );
   const [ behaviorClass, setBehaviorClass ] = useState( '' );
@@ -75,13 +99,20 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
         return (
           <Radio.Group name="status" onChange={ _handleRadioInputChange } >
             <Radio value={ 1 }><Tag color="#039B01">Activo</Tag></Radio>
-            <Radio value={ 2 }><Tag color="#D63930">Cerrado</Tag></Radio>
+            <Radio value={ 2 }><Tag color="#D63930">Market Close</Tag></Radio>
             <Radio value={ 3 }><Tag color="#E2A11A">On Hold</Tag></Radio>
             <Radio value={ 4 }><Tag color="#414241">Vendido</Tag></Radio>
           </Radio.Group>
 
         )
       case 'stockProduct':
+      case 'goldFutures':
+      case 'goldCFD':
+      case 'goldSpot':
+      case 'silverFutures':
+      case 'platinumFutures':
+      case 'crudeOil':
+      case 'crudeCFDs':
         return (
           <>
             <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Precio $"
@@ -89,18 +120,6 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
                    name="gpAmount" onChange={ _handlePriceInputChange }
                    placeholder="Precio"/>
             <Input size="large" addonBefore="MP $" style={ { width: 200 } } name="marketPrice"
-                   onChange={ _handlePriceInputChange }
-                   placeholder="MP"/>
-          </>
-        )
-      case 'goldProduct':
-        return (
-          <>
-            <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Precio $"
-                   style={ { width: 150 } }
-                   name="gpAmount" onChange={ _handlePriceInputChange }
-                   placeholder="Precio"/>
-            <Input size="large" addonBefore="MP $" style={ { width: 150 } } name="marketPrice"
                    onChange={ _handlePriceInputChange }
                    placeholder="MP"/>
           </>
@@ -113,7 +132,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
   const _selectUpdateType = () => (
     <div style={ { textAlign: 'center' } }>
 
-      <Select size="large" defaultValue="" style={ { minWidth: '20%' } } onChange={ value => setUpdateType( value ) }>
+      <Select showSearch={true} size="large" defaultValue="" style={ { minWidth: '20%' } } onChange={ value => setUpdateType( value ) }>
         <Option key="0" value="">Seleccione el Registro</Option>
         {
           BULK_UPDATE_TYPES.map( ({ code, name }, index) =>

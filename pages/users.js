@@ -179,7 +179,7 @@ class Users extends Component {
               onDelete={ this._handleDeleteUser }
               onDetail={ this._setCurrentUser }
               onTabChange={ this._handleTabChange }
-              isDeleted={ this.state.status === 0 }
+              dataStatus={ this.state.status  }
             />
           </Col>
         </Row>

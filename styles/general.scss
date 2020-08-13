@@ -26,8 +26,17 @@ strong {
   margin-top: 20px;
 }
 
+.t-a-r {
+  text-align: right!important;
+}
+
 .no-visible {
   visibility: hidden;
+}
+
+.txt-highlight {
+  font-weight: bold;
+  font-size: 1.6rem;
 }
 
 .page-loader {
@@ -42,6 +51,8 @@ strong {
   right: 0;
   display: none;
 }
+
+
 
 .nprogress-busy .login-page .page-loader {
   display: block;
@@ -326,4 +337,21 @@ body > div:first-of-type:not(#__next) {
   }
 
 
+}
+
+.ant-table-wrapper {
+
+  .cta-container .ant-btn {
+    span {
+      display: inline-block;
+    }
+  }
+
+  &.is-menu-fold {
+    .cta-container .ant-btn {
+      span {
+        display: none;
+      }
+    }
+  }
 }

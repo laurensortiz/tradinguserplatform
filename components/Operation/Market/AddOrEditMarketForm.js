@@ -497,7 +497,7 @@ class AddOrEditMarketForm extends PureComponent {
               showArrow={ isAddAction }
             >
               <Option value={1}>Activo</Option>
-              <Option value={2}>Cerrado</Option>
+              <Option value={2}>Market Close</Option>
               <Option value={3}>On Hold</Option>
               <Option value={4}>Vendido</Option>
             </Select>
