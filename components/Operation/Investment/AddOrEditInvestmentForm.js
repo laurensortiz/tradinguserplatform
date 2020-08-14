@@ -8,8 +8,6 @@ moment.locale( 'es' ); // Set Lang to Spanish
 
 import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon } from 'antd';
 
-import { accountOperations } from '../../../state/modules/accounts';
-import { investmentOperationOperations } from '../../../state/modules/investmentOperation';
 import { userAccountOperations } from "../../../state/modules/userAccounts";
 
 import { AmountFormatValidation, AmountOperationValidation } from '../../../common/utils';
@@ -53,7 +51,9 @@ class AddOrEditInvestmentForm extends PureComponent {
 
   componentDidMount() {
     if (_.isEmpty( this.state.userAccounts )) {
-      this.props.fetchGetAllUserAccounts();
+      this.props.fetchGetAllUserAccounts({
+        associatedOperation: 2
+      });
     }
 
 
@@ -186,7 +186,7 @@ class AddOrEditInvestmentForm extends PureComponent {
               disabled={ !isAddAction }
               showArrow={ isAddAction }
             >
-              { this._getAccountUserSelectOption( this.state.userAccounts ) }
+              { this._getAccountUserSelectOption( ) }
             </Select>
           ) }
         </Form.Item>
@@ -278,7 +278,6 @@ class AddOrEditInvestmentForm extends PureComponent {
 
 
 function mapStateToProps(state) {
-
   return {
     userAccounts: state.userAccountsState.list,
   }
