@@ -57,7 +57,7 @@ const BULK_UPDATE_TYPES = [
 function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, isBulkLoading, isBulkSuccess }) {
   const [ currentStep, setCurrentStep ] = useState( 1 );
   const [ updateType, setUpdateType ] = useState( '' );
-  const [ updateCategory, setUpdateCategory ] = useState( '' );
+  const [ updateScope, setUpdateScope ] = useState( '' );
   const [ updateValue, setUpdateValue ] = useState( {} );
   const [ behaviorClass, setBehaviorClass ] = useState( '' );
   const [ isValidAmount, setIsValidAmount ] = useState( true );
@@ -105,12 +105,12 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
   const _onSelectActionType = (value) => {
     const operationValue = split(value, '-');
     setUpdateType(operationValue[0]);
-    setUpdateCategory(operationValue[1]);
+    setUpdateScope(operationValue[1]);
   }
 
   const _bulkUpdateValue = () => {
 
-    switch (updateType) {
+    switch (updateScope) {
       case 'status':
         return (
           <Radio.Group name="status" onChange={ _handleRadioInputChange } >
@@ -121,14 +121,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
           </Radio.Group>
 
         )
-      case 'stockProduct':
-      case 'goldFutures':
-      case 'goldCFD':
-      case 'goldSpot':
-      case 'silverFutures':
-      case 'platinumFutures':
-      case 'crudeOil':
-      case 'crudeCFDsBarrels':
+      case 'price':
         return (
           <>
             <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Precio $"
@@ -178,7 +171,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
           size="large"
           type="primary"
           key="console"
-          onClick={ () => onClickUpdate( { updateType, updateValue, updateCategory } ) }
+          onClick={ () => onClickUpdate( { updateType, updateValue, updateScope } ) }
           loading={ isBulkLoading }
           className={classNames({'no-visible': isProcessComplete})}
         >

@@ -1716,3 +1716,57 @@ ALTER TABLE public."UserAccount" ADD "marginUsed" numeric(10,2) NULL;
 ALTER TABLE public."UserAccount" ADD "commissionByReference" numeric(10,2) NULL;
 
 ALTER TABLE public."UserAccount" ADD "commissionByReference" numeric(10,2) NULL;
+
+/*
+* Start Changes August 13, 2020
+*/
+
+
+/*Add Column To Market Operations*/
+ALTER TABLE public."MarketOperation" ADD "holdStatusCount" int4 DEFAULT 0;
+ALTER TABLE public."MarketOperation" ADD "holdStatusCommission" numeric(10,2) DEFAULT 0;
+
+CREATE OR REPLACE FUNCTION public."marketOperation_before_update"()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+
+declare
+currentHoldCount int4;
+newStatus int4;
+
+begin
+
+	IF (new.status = 3) then
+	 NEW."holdStatusCount" := old."holdStatusCount" + 1;
+
+  RETURN NEW;
+END;
+$function$
+;
+
+-- DROP TRIGGER marketoperation_before_update ON public."MarketOperation";
+
+create trigger marketoperation_before_update before
+update
+    on
+    public."MarketOperation" for each row execute procedure "marketOperation_before_update"();
+
+/*Commodity*/
+
+-- Drop table
+
+-- DROP TABLE public."Commodity";
+
+CREATE TABLE public."Commodity" (
+	id serial NOT NULL,
+	"name" varchar(255) NOT NULL,
+	status int4 NOT NULL,
+	"createdAt" timestamptz NOT NULL,
+	"updatedAt" timestamptz NOT NULL,
+	CONSTRAINT "Commodity_name_key" UNIQUE (name),
+	CONSTRAINT "Commodity_pkey" PRIMARY KEY (id)
+);
+/*
+* End Changes August 13, 2020
+*/
