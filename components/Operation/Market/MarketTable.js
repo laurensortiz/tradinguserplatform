@@ -26,7 +26,7 @@ class MarketTable extends Component {
     currentDataSource: [],
     selectedBulkUpdateType: 'status',
     bulkUpdateValue: null,
-    isBulkUpdateActive: true,
+    isBulkUpdateActive: false,
     isMenuFold: true
   };
 

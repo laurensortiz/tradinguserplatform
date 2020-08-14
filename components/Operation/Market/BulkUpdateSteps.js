@@ -55,7 +55,7 @@ const BULK_UPDATE_TYPES = [
 ];
 
 function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, isBulkLoading, isBulkSuccess }) {
-  const [ currentStep, setCurrentStep ] = useState( 1 );
+  const [ currentStep, setCurrentStep ] = useState( 0 );
   const [ updateType, setUpdateType ] = useState( '' );
   const [ updateScope, setUpdateScope ] = useState( '' );
   const [ updateValue, setUpdateValue ] = useState( {} );

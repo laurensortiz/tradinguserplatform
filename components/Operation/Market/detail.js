@@ -18,6 +18,7 @@ class Detail extends PureComponent {
     const longShort = _.get(this.props, 'currentOperation.longShort', '');
     const commoditiesTotal = _.get(this.props, 'currentOperation.commoditiesTotal', '0');
     const buyPrice = _.get(this.props, 'currentOperation.buyPrice', '0.00');
+    const holdStatusCommission = _.get(this.props, 'currentOperation.holdStatusCommission', '0.00');
     const takingProfit = _.get(this.props, 'currentOperation.takingProfit', '0.00');
     const maintenanceMargin = _.get(this.props, 'currentOperation.maintenanceMargin', '0.00');
     const stopLost = _.get(this.props, 'currentOperation.stopLost', '0');
@@ -49,10 +50,11 @@ class Detail extends PureComponent {
               <Descriptions.Item label="Broker">{brokerName}</Descriptions.Item>
 
 
-
               <Descriptions.Item label="Estado">
                 <Tag color={statusColor} >{ statusName }</Tag>
               </Descriptions.Item>
+              <Descriptions.Item label="Comisión por Estado HOLD">{FormatCurrency.format(holdStatusCommission)}</Descriptions.Item>
+
             </Descriptions>
           </Col>
         </Row>

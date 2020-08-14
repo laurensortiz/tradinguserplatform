@@ -12,3 +12,4 @@ export { default as marketMovementsState } from './marketMovement';
 export { default as commoditiesState } from './commodity';
 export { default as assetClassesState } from './assetClasses';
 export { default as pagesState } from './pages';
+export { default as settingsState } from './settings';

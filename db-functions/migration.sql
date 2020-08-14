@@ -1726,6 +1726,27 @@ ALTER TABLE public."UserAccount" ADD "commissionByReference" numeric(10,2) NULL;
 ALTER TABLE public."MarketOperation" ADD "holdStatusCount" int4 DEFAULT 0;
 ALTER TABLE public."MarketOperation" ADD "holdStatusCommission" numeric(10,2) DEFAULT 0;
 
+/*Setting*/
+
+-- Drop table
+
+-- DROP TABLE public."Commodity";
+
+CREATE TABLE public."Setting" (
+	id serial NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"value" varchar(255) NOT NULL,
+	"status" int4 NOT NULL,
+	"createdAt" timestamptz NOT NULL,
+	"updatedAt" timestamptz NOT NULL,
+	CONSTRAINT "Settings_name_key" UNIQUE (name),
+	CONSTRAINT "Settings_pkey" PRIMARY KEY (id)
+);
+
+INSERT INTO public."Setting" (id,"name","value", "status","createdAt","updatedAt") VALUES
+(1,'holdStatusPrice',"2",1,'2020-08-14 20:56:08.846','2020-08-14 20:56:08.846')
+;
+
 CREATE OR REPLACE FUNCTION public."marketOperation_before_update"()
  RETURNS trigger
  LANGUAGE plpgsql
@@ -1734,16 +1755,32 @@ AS $function$
 declare
 currentHoldCount int4;
 newStatus int4;
+holdStatusPrice numeric(10,2);
+updatedHoldCommission numeric(10,2);
 
 begin
 
-	IF (new.status = 3) then
-	 NEW."holdStatusCount" := old."holdStatusCount" + 1;
+	holdStatusPrice := (Select "value"
+						From public."Setting"
+                        Where id = 1);
 
-  RETURN NEW;
+
+
+	IF (new.status = 3) then
+	NEW."holdStatusCount" := old."holdStatusCount" + 1;
+	NEW."holdStatusCommission" := holdStatusPrice * NEW."holdStatusCount";
+
+
+/*UPDATE "MarketOperation"
+		SET "holdStatusCount" = currentHoldCount where id = new.id;
+		*/
+	end if;
+   /*RAISE EXCEPTION 'Nonexistent ID --> %', new."holdStatusCount";*/
+   RETURN NEW;
 END;
 $function$
 ;
+
 
 -- DROP TRIGGER marketoperation_before_update ON public."MarketOperation";
 
@@ -1752,21 +1789,7 @@ update
     on
     public."MarketOperation" for each row execute procedure "marketOperation_before_update"();
 
-/*Commodity*/
 
--- Drop table
-
--- DROP TABLE public."Commodity";
-
-CREATE TABLE public."Commodity" (
-	id serial NOT NULL,
-	"name" varchar(255) NOT NULL,
-	status int4 NOT NULL,
-	"createdAt" timestamptz NOT NULL,
-	"updatedAt" timestamptz NOT NULL,
-	CONSTRAINT "Commodity_name_key" UNIQUE (name),
-	CONSTRAINT "Commodity_pkey" PRIMARY KEY (id)
-);
 /*
 * End Changes August 13, 2020
 */
