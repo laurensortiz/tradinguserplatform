@@ -103,7 +103,8 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
   }
 
   const _onSelectActionType = (value) => {
-    const operationValue = split(value, '-');
+    const operationValue = split(value, '_');
+
     setUpdateType(operationValue[0]);
     setUpdateScope(operationValue[1]);
   }
@@ -145,7 +146,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
         <Option key="0" value="">Seleccione el Registro</Option>
         {
           BULK_UPDATE_TYPES.map( ({ code, name, scope }, index) =>
-            <Option key={ index + 1 } value={ `${code}-${scope}` }>{ name }</Option> )
+            <Option key={ index + 1 } value={ `${code}_${scope}` }>{ name }</Option> )
         }
       </Select>
       <div style={ { marginTop: 20, minHeight: 40 } }>
