@@ -275,6 +275,9 @@ class Market extends Component {
    * Bulk Update
    */
   _handleBulkUpdate = bulkData => {
+    console.log('[=====  data  =====>');
+    console.log(bulkData);
+    console.log('<=====  /data  =====]');
     this.props.fetchBulkUpdateMarketOperation( bulkData )
   }
 

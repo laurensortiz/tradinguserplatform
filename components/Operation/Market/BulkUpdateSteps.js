@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, split } from 'lodash';
 import { Steps, Button, Icon, Tag, Select, Input, Result, Radio } from 'antd';
 import classNames from 'classnames';
 const { Step } = Steps;
@@ -9,45 +9,55 @@ const { Option } = Select;
 const BULK_UPDATE_TYPES = [
   {
     code: 'status',
-    name: 'Estado'
+    name: 'Estado',
+    scope: 'status'
   },
   {
-    code: 'stockProduct',
-    name: 'Stocks'
+    code: 'stocks',
+    name: 'Stocks',
+    scope: 'price',
   },
   {
-    code: 'goldFutures',
-    name: 'GOLD Futures - Options'
+    code: 'gold-FU-OP',
+    name: 'GOLD Futures - Options',
+    scope: 'price'
   },
   {
-    code: 'goldCFD',
-    name: 'GOLD CFD Ounces'
+    code: 'gold-CFD-Ounces',
+    name: 'GOLD CFD Ounces',
+    scope: 'price'
   },
   {
-    code: 'goldSpot',
-    name: 'GOLD Spot XAU/USD'
+    code: 'gold-Spot-XAU',
+    name: 'GOLD Spot XAU/USD',
+    scope: 'price'
   },
   {
-    code: 'silverFutures',
-    name: 'SILVER Futures - Options'
+    code: 'silver-FT-OP',
+    name: 'SILVER Futures - Options',
+    scope: 'price'
   },
   {
-    code: 'platinumFutures',
-    name: 'PLATINUM Futures - Options'
+    code: 'platinum-FT-OP',
+    name: 'PLATINUM Futures - Options',
+    scope: 'price'
   },
   {
-    code: 'crudeOil',
-    name: 'CRUDE OIL WTI Futures - Options'
+    code: 'crudeOil-FT-OP',
+    name: 'CRUDE OIL WTI Futures - Options',
+    scope: 'price',
   },
   {
-    code: 'crudeCFDs',
-    name: 'CRUDE CFDs Barrels'
+    code: 'crude-CFDs-Barrels',
+    name: 'CRUDE CFDs Barrels',
+    scope: 'price',
   }
 ];
 
 function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, isBulkLoading, isBulkSuccess }) {
   const [ currentStep, setCurrentStep ] = useState( 1 );
   const [ updateType, setUpdateType ] = useState( '' );
+  const [ updateCategory, setUpdateCategory ] = useState( '' );
   const [ updateValue, setUpdateValue ] = useState( {} );
   const [ behaviorClass, setBehaviorClass ] = useState( '' );
   const [ isValidAmount, setIsValidAmount ] = useState( true );
@@ -92,6 +102,12 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
     setUpdateValue(target.value)
   }
 
+  const _onSelectActionType = (value) => {
+    const operationValue = split(value, '-');
+    setUpdateType(operationValue[0]);
+    setUpdateCategory(operationValue[1]);
+  }
+
   const _bulkUpdateValue = () => {
 
     switch (updateType) {
@@ -112,7 +128,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
       case 'silverFutures':
       case 'platinumFutures':
       case 'crudeOil':
-      case 'crudeCFDs':
+      case 'crudeCFDsBarrels':
         return (
           <>
             <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Precio $"
@@ -132,11 +148,11 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
   const _selectUpdateType = () => (
     <div style={ { textAlign: 'center' } }>
 
-      <Select showSearch={true} size="large" defaultValue="" style={ { minWidth: '20%' } } onChange={ value => setUpdateType( value ) }>
+      <Select showSearch={true} size="large" defaultValue="" style={ { minWidth: '20%' } } onChange={ _onSelectActionType }>
         <Option key="0" value="">Seleccione el Registro</Option>
         {
-          BULK_UPDATE_TYPES.map( ({ code, name }, index) =>
-            <Option key={ index + 1 } value={ code }>{ name }</Option> )
+          BULK_UPDATE_TYPES.map( ({ code, name, scope }, index) =>
+            <Option key={ index + 1 } value={ `${code}-${scope}` }>{ name }</Option> )
         }
       </Select>
       <div style={ { marginTop: 20, minHeight: 40 } }>
@@ -162,7 +178,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
           size="large"
           type="primary"
           key="console"
-          onClick={ () => onClickUpdate( { updateType, updateValue } ) }
+          onClick={ () => onClickUpdate( { updateType, updateValue, updateCategory } ) }
           loading={ isBulkLoading }
           className={classNames({'no-visible': isProcessComplete})}
         >

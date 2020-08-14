@@ -134,13 +134,13 @@ module.exports = {
   },
 
   async bulkUpdate(req, res) {
-
+    let valueFT = 0;
     try {
-      const { operationsIds, updateType, updateValue } = req.body;
+      const { operationsIds, updateType, updateValue, updateCategory } = req.body;
       let result;
       await ORM.transaction( async (t) => {
 
-        switch (updateType) {
+        switch (updateCategory) {
           case 'status':
             result = await MarketOperation.update( {
               [ updateType ]: updateValue,
@@ -148,49 +148,145 @@ module.exports = {
             }, { where: { id: operationsIds } }, { transaction: t } );
             return res.status( 200 ).send( result );
 
-          case 'stockProduct':
+          case 'price':
             result = await Promise.all( operationsIds.map( async (operationID) => {
-                // Find Operation
-                const marketOperation = await MarketOperation.findOne( {
-                  where: {
-                    id: operationID,
-                  },
-                  silence: true
-                }, { transaction: t } );
+              // Find Operation
+              const marketOperation = await MarketOperation.findOne( {
+                where: {
+                  id: operationID,
+                },
+                silence: true
+              }, { transaction: t } );
 
-                if (!marketOperation) {
-                  throw new Error( 'Operation not found ' )
-                }
-                if (marketOperation.commodityId !== 1) {
-                  throw new Error( 'Una o más operaciones seleccionadas no corresponde al mercados de Stocks' )
-                }
-                if (marketOperation.status !== 1) {
-                  throw new Error( 'Una o más operaciones seleccionadas no se encuentran Activas' )
-                }
-                const gpAmount = Number( _.get( updateValue, 'gpAmount', 0 ) );
-                const marketPrice = Number( _.get( updateValue, 'marketPrice', 0 ) );
-                const commoditiesTotal = Number( marketOperation.commoditiesTotal );
-                const amount = Number( marketOperation.amount );
+              /**
+               * Run some basic validations
+               */
+              if (!marketOperation) {
+                throw new Error( 'Ocurrió un error al momento de buscar la operación' )
+              }
 
-                const totalGP = gpAmount * commoditiesTotal
+              if (marketOperation.status !== 1) {
+                throw new Error( 'Una o más operaciones seleccionadas no se encuentran Activas' )
+              }
 
-                return await MarketMovement.create( {
-                  gpInversion: totalGP + amount,
-                  marketOperationId: operationID,
-                  gpAmount: totalGP,
-                  marketPrice,
-                  status: 1,
-                  createdAt: moment( new Date() ).tz( 'America/New_York' ).format(),
-                  updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
-                }, { transaction: t } );
+              /**
+               * Define base information
+               */
+              const gpAmount = Number( _.get( updateValue, 'gpAmount', 0 ) );
+              const marketPrice = Number( _.get( updateValue, 'marketPrice', 0 ) );
+              const commoditiesTotal = Number( marketOperation.commoditiesTotal );
+              const amount = Number( marketOperation.amount );
+              let calculatedValue = 0;
+              /**
+               * Start product price update based on market
+               */
 
-              } ))
+              switch (updateType) {
+                /**
+                 * STOCKS
+                 */
+                case 'stocks':
+                  if (marketOperation.commodityId !== 1) {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al mercados de Stocks' )
+                  }
+                  calculatedValue = gpAmount * commoditiesTotal;
+                  break;
+
+                /**
+                 * GOLD FU | OP
+                 */
+                case 'gold-FU-OP':
+                  if (marketOperation.assetClassId !== 2) {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  calculatedValue = (gpAmount * 50) * commoditiesTotal; // 1 FT = $50
+                  break;
+
+                /**
+                 * GOLD FU | OP
+                 */
+                case 'gold-CFD-Ounces':
+                  if (marketOperation.assetClassId !== 11) {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  calculatedValue = gpAmount * commoditiesTotal; // 1 FT = $1
+                  break;
+
+                /**
+                 * GOLD Spot XAU/USD
+                 */
+                case 'gold-Spot-XAU':
+                  if (marketOperation.assetClassId !== 14) {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  calculatedValue = gpAmount * commoditiesTotal; // 1 FT = $1
+                  break;
+
+                /**
+                 * SILVER FT | OP
+                 */
+                case 'silver-FT-OP':
+                  if (marketOperation.assetClassId !== 1) {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  calculatedValue = (50 * commoditiesTotal) * (gpAmount * 100); // 1 FT = $50
+                  break;
+
+                /**
+                 * PLATINUM FT | OP
+                 */
+                case 'platinum-FT-OP':
+                  if (marketOperation.assetClassId !== 2) {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  calculatedValue = (50 * commoditiesTotal) * (gpAmount * 100); // 1 FT = $50
+                  break;
+
+                /**
+                 * CRUDE OIL FT | OP
+                 */
+                case 'crudeOil-FT-OP':
+                  if (marketOperation.assetClassId !== 2) {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  calculatedValue = (500 * gpAmount) * commoditiesTotal; // 1 FT = $500
+                  break;
+
+                /**
+                 * CRUDE CFDs Barrels
+                 */
+                case 'crude-CFDs-Barrels':
+                  if (marketOperation.assetClassId !== 12) {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  calculatedValue = (commoditiesTotal * gpAmount) ; // 1 Barrel = $1
+                  break;
+              }
+              /**
+               * End product price update based on market
+               */
+
+
+              return await MarketMovement.create( {
+                gpInversion: calculatedValue + amount,
+                marketOperationId: operationID,
+                gpAmount: calculatedValue,
+                marketPrice,
+                status: 1,
+                createdAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+                updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
+              }, { transaction: t } );
+
+            } ) )
+
+
             return res.status( 200 ).send( result );
-
+          // FT y CO / PO
           case 'goldFutures':
           case 'silverFutures':
           case 'platinumFutures':
           case 'crudeOil':
+            valueFT = 500;
             result = await Promise.all( operationsIds.map( async (operationID) => {
               // Find Operation
               const marketOperation = await MarketOperation.findOne( {
@@ -214,7 +310,7 @@ module.exports = {
               const commoditiesTotal = Number( marketOperation.commoditiesTotal );
               const amount = Number( marketOperation.amount );
 
-              const totalGP = gpAmount * 50 * commoditiesTotal;
+              const totalGP = ((gpAmount * 100) * valueFT) * commoditiesTotal;
 
               return await MarketMovement.create( {
                 gpInversion: totalGP + amount,
@@ -229,7 +325,10 @@ module.exports = {
             } ) )
 
             return res.status( 200 ).send( result );
+
+          //
           case 'goldCFD':
+          case 'goldSpot':
             result = await Promise.all( operationsIds.map( async (operationID) => {
               // Find Operation
               const marketOperation = await MarketOperation.findOne( {
@@ -268,46 +367,9 @@ module.exports = {
             } ) )
 
             return res.status( 200 ).send( result );
-          case 'goldSpot':
-            result = await Promise.all( operationsIds.map( async (operationID) => {
-              // Find Operation
-              const marketOperation = await MarketOperation.findOne( {
-                where: {
-                  id: operationID,
-                },
-                silence: true
-              }, { transaction: t } );
 
-              if (!marketOperation) {
-                throw new Error( 'Operation not found ' )
-              }
-              if (marketOperation.assetClassId !== 14) {
-                throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
-              }
-              if (marketOperation.status !== 1) {
-                throw new Error( 'Una o más operaciones seleccionadas no se encuentran Activas' )
-              }
-              const gpAmount = Number( _.get( updateValue, 'gpAmount', 0 ) );
-              const marketPrice = Number( _.get( updateValue, 'marketPrice', 0 ) );
-              const commoditiesTotal = Number( marketOperation.commoditiesTotal );
-              const amount = Number( marketOperation.amount );
-
-              const totalGP = gpAmount * 50 * commoditiesTotal;
-
-              return await MarketMovement.create( {
-                gpInversion: totalGP + amount,
-                marketOperationId: operationID,
-                gpAmount: totalGP,
-                marketPrice,
-                status: 1,
-                createdAt: moment( new Date() ).tz( 'America/New_York' ).format(),
-                updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
-              }, { transaction: t } );
-
-            } ) )
-
-            return res.status( 200 ).send( result );
-          case 'crudeCFDs':
+          //
+          case 'crudeCFDsBarrels':
             result = await Promise.all( operationsIds.map( async (operationID) => {
               // Find Operation
               const marketOperation = await MarketOperation.findOne( {
@@ -331,7 +393,7 @@ module.exports = {
               const commoditiesTotal = Number( marketOperation.commoditiesTotal );
               const amount = Number( marketOperation.amount );
 
-              const totalGP = gpAmount * 50 * commoditiesTotal;
+              const totalGP = gpAmount * commoditiesTotal;
 
               return await MarketMovement.create( {
                 gpInversion: totalGP + amount,
