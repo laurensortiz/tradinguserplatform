@@ -46,10 +46,13 @@ const getExportFileName = (orgId) => {
 
 const _formatData = (data) => {
   return _.map( data, operation => {
+    console.log('[=====  OOO  =====>');
+    console.log(operation);
+    console.log('<=====  /OOO  =====]');
     const diffAmount = Number(operation.amount) - Number(operation.initialAmount);
     const isDiffAmountPositive = Math.sign(diffAmount) >= 0;
     const commission = isDiffAmountPositive ? (diffAmount * (1*Number(operation.userAccount.account.percentage) / 100)).toFixed(2) : 0
-    const hold = 0;
+    const hold =  Number(operation.holdStatusCommission);
     const profit = diffAmount - commission - hold
     return {
       'Fecha de apertura': FormatDate(operation.createdAt),

@@ -51,6 +51,19 @@ module.exports = {
     return res.status(200).send(marketMovement);
   },
 
+  async getLastMovement(operationId) {
+    const lastMovement = await MarketMovement.findAll({
+      where: {
+        marketOperationId: operationId,
+      },
+      limit: 1,
+      order: [ [ 'createdAt', 'DESC' ]],
+      silence: true
+    });
+
+    return lastMovement;
+  },
+
   async update(req, res) {
     const marketMovement = await MarketMovement.findOne({
       where: {

@@ -101,7 +101,7 @@ module.exports = (Sequelize, DataTypes) => {
 
     MarketOperation.hasMany(models.MarketMovement, {
       foreignKey: 'marketOperationId',
-      as: 'marketOperation',
+      as: 'marketMovement',
     });
 
   };
