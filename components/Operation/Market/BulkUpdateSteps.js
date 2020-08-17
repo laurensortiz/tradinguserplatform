@@ -43,6 +43,11 @@ const BULK_UPDATE_TYPES = [
     scope: 'price'
   },
   {
+    code: 'platinum-CFD-Ounces',
+    name: 'PLATINUM CFD Ounces',
+    scope: 'price'
+  },
+  {
     code: 'crudeOil-FT-OP',
     name: 'CRUDE OIL WTI Futures - Options',
     scope: 'price',
@@ -70,7 +75,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
 
 
   const _isValidAmount = amount => {
-    const regex = /^-?[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
+    const regex = /^-?[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
     const isValid = regex.test( amount );
     setIsValidAmount( isValid )
     if (!isValid) {

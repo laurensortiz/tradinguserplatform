@@ -69,8 +69,7 @@ module.exports = {
         Product,
         Broker,
         Commodity,
-        AssetClass
-      } )
+        AssetClass} )
     );
 
     if (!marketOperation) {
@@ -186,10 +185,13 @@ module.exports = {
                  * STOCKS
                  */
                 case 'stocks':
-                  if (marketOperation.commodityId !== 1) {
+                  if (marketOperation.commodityId === 1) {
+                    calculatedValue = gpAmount * commoditiesTotal;
+
+                  } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al mercados de Stocks' )
+
                   }
-                  calculatedValue = gpAmount * commoditiesTotal;
                   break;
 
                 /**
@@ -207,20 +209,25 @@ module.exports = {
                  * GOLD FU | OP
                  */
                 case 'gold-CFD-Ounces':
-                  if (marketOperation.assetClassId !== 11) {
+                case 'platinum-CFD-Ounces':
+                  if (marketOperation.assetClassId === 11) {
+                    calculatedValue = gpAmount * commoditiesTotal; // 1 FT = $1
+                  } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+
                   }
-                  calculatedValue = gpAmount * commoditiesTotal; // 1 FT = $1
                   break;
 
                 /**
                  * GOLD Spot XAU/USD
                  */
                 case 'gold-Spot-XAU':
-                  if (marketOperation.assetClassId !== 14) {
+                  if (marketOperation.assetClassId === 14) {
+                    calculatedValue = gpAmount * commoditiesTotal; // 1 FT = $1
+                  } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+
                   }
-                  calculatedValue = gpAmount * commoditiesTotal; // 1 FT = $1
                   break;
 
                 /**
@@ -228,9 +235,11 @@ module.exports = {
                  */
                 case 'silver-FT-OP':
                   if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 5000 * gpAmount ) * commoditiesTotal; // 1 FT = $5000
+                  } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
                   }
-                  calculatedValue = ( 5000 * gpAmount ) * commoditiesTotal; // 1 FT = $5000
+
                   break;
 
                 /**
@@ -259,10 +268,12 @@ module.exports = {
                  * CRUDE CFDs Barrels
                  */
                 case 'crude-CFDs-Barrels':
-                  if (marketOperation.assetClassId !== 12) {
+                  if (marketOperation.assetClassId === 12) {
+                    calculatedValue = ( commoditiesTotal * gpAmount ); // 1 Barrel = $1
+                  } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+
                   }
-                  calculatedValue = ( commoditiesTotal * gpAmount ); // 1 Barrel = $1
                   break;
 
                 default:

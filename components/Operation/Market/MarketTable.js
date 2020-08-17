@@ -4,18 +4,28 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Highlighter from "react-highlight-words";
-import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio } from 'antd';
+import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio, DatePicker } from 'antd';
 import {
   Sort,
   FormatStatus,
+  FormatDate,
   DisplayTableAmount,
-  MarketBehaviorStatus, IsOperationPositive,
+  MarketBehaviorStatus,
+  IsOperationPositive,
 } from '../../../common/utils';
 
 import BulkUpdateSteps from './BulkUpdateSteps';
+import momentDurationFormat from 'moment-duration-format';
+
+import moment from "moment-timezone";
+import { extendMoment } from 'moment-range';
+momentDurationFormat( moment );
+extendMoment( moment );
+moment.locale( 'es' ); // Set Lang to Spanish
 
 const { Option } = Select;
-
+const { RangePicker } = DatePicker;
+const FORMAT_DATE = 'DD-MM-YYYY';
 
 class MarketTable extends Component {
   state = {
@@ -27,12 +37,19 @@ class MarketTable extends Component {
     selectedBulkUpdateType: 'status',
     bulkUpdateValue: null,
     isBulkUpdateActive: false,
-    isMenuFold: true
+    isMenuFold: true,
+    filteredInfo: {},
+    sortedInfo: {},
   };
+
+  dateMode = 0;
+  timeDateRange = [];
+  defaultDate = null;
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
+
       _.assignIn( updatedState, {
         marketOperations: nextProps.marketOperations
       } )
@@ -244,9 +261,138 @@ class MarketTable extends Component {
       </div>
     )
   }
+  /*
+  * RANGE
+  *
+  * */
+
+  _handleSearch = (selectedKeys, confirm) => {
+    confirm();
+    this.setState( {
+      searchText: selectedKeys[ 0 ],
+    } );
+  };
+
+  _handleReset = (selectedKeys, clearFilters) => {
+    if (!_.isEmpty( selectedKeys )) {
+      clearFilters();
+      this.setState( {
+        searchText: '',
+      } );
+    }
+
+  };
+
+  _sortDates = (start, end) => {
+    if (_.isNil( start )) start = '00-00-0000';
+    if (_.isNil( end )) end = '00-00-0000';
+
+    return moment( start ).unix() - moment( end ).unix()
+  };
+
+  _handleDateFilterChange = (dateModeValue) => {
+    this.dateMode = dateModeValue;
+    this.forceUpdate();
+    this.defaultDate = null;
+  };
+
+  _datesInRange = (record, dataIndex) => {
+
+    const dateRange = this.timeDateRange;
+    if (!_.isEmpty( dateRange )) {
+      return _.includes( dateRange, moment.parseZone( _.get( record, dataIndex ) ).format( FORMAT_DATE ) )
+    }
+
+  };
+
+  _createDateRange = (date, setSelectedKeys, minDate, maxDate, dataIndex) => {
+    this.defaultDate = moment.parseZone( date );
+
+    let dateRange = [],
+      range = '';
+
+    const dateMode = this.dateMode;
+
+    switch (dateMode) {
+      case 'single':
+        range = moment.range( date, date );
+        break;
+      case 'range':
+        range = moment.range( date[ 0 ], date[ 1 ] );
+        break;
+      default:
+    }
+
+    let arrayOfDates = _.toArray( range.by( 'days' ) );
+
+    _.map( arrayOfDates, date => {
+      dateRange.push( moment( date ).format( FORMAT_DATE ) )
+    } );
+
+    this.timeDateRange = dateRange;
+
+    return setSelectedKeys( date ? [ date ] : [] );
+  };
+
+  _getColumnDateProps = (dataIndex, minDate, maxDate) => ( {
+    filterDropdown: ({
+                       setSelectedKeys,
+                       selectedKeys,
+                       confirm,
+                       clearFilters,
+                     }) => (
+      <div className="custom-filter-dropdown">
+        <Select
+          placeholder="Seleccione el tipo de filtro"
+          onChange={ e => this._handleDateFilterChange( e ) }
+        >
+          <Option value="single">Por día</Option>
+          <Option value="range">Rango de fechas</Option>
+        </Select>
+
+        { this.dateMode === 'range' ?
+          <RangePicker
+            onChange={ e => this._createDateRange( e, setSelectedKeys, minDate, maxDate, dataIndex ) }
+            format={ FORMAT_DATE }
+            allowClear={ false }
+          />
+          : null
+        }
+
+        { this.dateMode === 'single' ?
+          <DatePicker
+            value={ this.defaultDate }
+            onChange={ e => this._createDateRange( e, setSelectedKeys, minDate, maxDate, dataIndex ) }
+            format={ FORMAT_DATE }
+            allowClear={ false }
+          />
+          : null
+        }
+        <Button
+          onClick={ () => this._handleSearch( selectedKeys, confirm ) }
+          icon="search"
+          size="small"
+        >
+          Filtrar
+        </Button>
+        <Button
+          ref={ e => this.clearFilterDatesBtn = e }
+          onClick={ () => this._handleReset( selectedKeys, clearFilters ) }
+          size="small"
+        >
+          Limpiar
+        </Button>
+      </div>
+    ),
+    onFilter: (value, record) => {
+      return this._datesInRange( record, dataIndex )
+    }
+  } );
 
   render() {
-
+    const datesInTimes = _.map( this.state.marketOperations, record => moment( record.createdAt ) ),
+      maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
+      minDatesInTimes = moment.min( datesInTimes ).subtract( 1, 'days' );
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
     const { selectedRowKeys, isBulkUpdateActive, marketOperations } = this.state;
 
@@ -337,7 +483,54 @@ class MarketTable extends Component {
         sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
         sortDirections: [ 'descend', 'ascend' ],
       },
-
+      {
+        title: 'Taking Profit',
+        dataIndex: 'takingProfit',
+        key: 'takingProfit',
+        render: takingProfit => <span key={ takingProfit }>{ DisplayTableAmount( takingProfit ) }</span>,
+        sorter: (a, b) => Sort( a.takingProfit, b.takingProfit ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Fecha de Apertura',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
+        editable: true,
+        inputType: 'date',
+        required: false,
+        rowKey: d => {
+          return FormatDate( d.createdAt )
+        },
+        sorter: (a, b) => {
+          return this._sortDates( a.createdAt, b.createdAt );
+        },
+        ...this._getColumnDateProps(
+          'createdAt',
+          minDatesInTimes,
+          maxDatesInTimes,
+        )
+      },
+      {
+        title: 'Fecha de Actualización',
+        dataIndex: 'updatedAt',
+        key: 'updatedAt',
+        render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
+        editable: true,
+        inputType: 'date',
+        required: false,
+        rowKey: d => {
+          return FormatDate( d.updatedAt )
+        },
+        sorter: (a, b) => {
+          return this._sortDates( a.updatedAt, b.updatedAt );
+        },
+        ...this._getColumnDateProps(
+          'updatedAt',
+          minDatesInTimes,
+          maxDatesInTimes,
+        )
+      },
       {
         title: 'Corredor',
         dataIndex: 'broker.name',
@@ -361,9 +554,9 @@ class MarketTable extends Component {
       onSelectAll: this.onSelectAllOperation
     };
 
+
     return (
       <>
-
         <Table
           rowSelection={ isBulkUpdateActive ? rowSelection : null }
           rowKey={ record => record.id }
