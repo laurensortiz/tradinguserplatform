@@ -210,6 +210,7 @@ module.exports = {
                  */
                 case 'gold-CFD-Ounces':
                 case 'platinum-CFD-Ounces':
+                case 'silver-CFD-Ounces':
                   if (marketOperation.assetClassId === 11) {
                     calculatedValue = gpAmount * commoditiesTotal; // 1 FT = $1
                   } else {

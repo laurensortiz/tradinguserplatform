@@ -38,6 +38,11 @@ const BULK_UPDATE_TYPES = [
     scope: 'price'
   },
   {
+    code: 'silver-CFD-Ounces',
+    name: 'SILVER CFD Ounces',
+    scope: 'price'
+  },
+  {
     code: 'platinum-FT-OP',
     name: 'PLATINUM Futures - Options',
     scope: 'price'
