@@ -46,9 +46,6 @@ const getExportFileName = (orgId) => {
 
 const _formatData = (data) => {
   return _.map( data, operation => {
-    console.log('[=====  OOO  =====>');
-    console.log(operation);
-    console.log('<=====  /OOO  =====]');
     const diffAmount = Number(operation.amount) - Number(operation.initialAmount);
     const isDiffAmountPositive = Math.sign(diffAmount) >= 0;
     const commission = isDiffAmountPositive ? (diffAmount * (1*Number(operation.userAccount.account.percentage) / 100)).toFixed(2) : 0
@@ -64,8 +61,8 @@ const _formatData = (data) => {
       'Taking Profit': FormatCurrency.format( operation.takingProfit ),
       'Stop/Lost': `${operation.stopLost}%`,
       'Inversión': FormatCurrency.format( operation.initialAmount ),
-      'Balance (G/P)': FormatCurrency.format( operation.marketMovement[0].gpInversion ),
-      'Movimiento (G/P)': FormatCurrency.format( operation.marketMovement[0].gpAmount ),
+      'Balance (G/P)': FormatCurrency.format( _.get(operation, 'marketMovement[0].gpInversion', 0 )),
+      'Movimiento (G/P)': FormatCurrency.format( _.get(operation, 'marketMovement[0].gpAmount', 0 ) ),
       'Orden': operation.orderId,
       'Broker': operation.broker.name,
       'Saldo inicial': FormatCurrency.format( operation.initialAmount ),
