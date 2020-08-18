@@ -5,6 +5,9 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import Highlighter from "react-highlight-words";
 import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio, DatePicker } from 'antd';
+import momentDurationFormat from 'moment-duration-format';
+import moment from "moment-timezone";
+import { extendMoment } from 'moment-range';
 import {
   Sort,
   FormatStatus,
@@ -15,10 +18,10 @@ import {
 } from '../../../common/utils';
 
 import BulkUpdateSteps from './BulkUpdateSteps';
-import momentDurationFormat from 'moment-duration-format';
 
-import moment from "moment-timezone";
-import { extendMoment } from 'moment-range';
+import { assetClassOperations } from "../../../state/modules/assetClasses";
+import { fetchGetAssetClasses } from "../../../state/modules/assetClasses/actions";
+
 momentDurationFormat( moment );
 extendMoment( moment );
 moment.locale( 'es' ); // Set Lang to Spanish
@@ -30,6 +33,7 @@ const FORMAT_DATE = 'DD-MM-YYYY';
 class MarketTable extends Component {
   state = {
     marketOperations: [],
+    assetClasses: [],
     searchText: '',
     searchedColumn: '',
     selectedRowKeys: [],
@@ -54,7 +58,16 @@ class MarketTable extends Component {
         marketOperations: nextProps.marketOperations
       } )
     }
+    if (!_.isEqual( nextProps.assetClasses, prevState.assetClasses )) {
+      _.assignIn( updatedState, {
+        assetClasses: nextProps.assetClasses
+      } )
+    }
     return !_.isEmpty( updatedState ) ? updatedState : null;
+  }
+
+  componentDidMount() {
+    this.props.fetchGetAssetClasses()
   }
 
   _getCTA = (type, row) => {
@@ -182,7 +195,11 @@ class MarketTable extends Component {
 
   onTableChange = (pagination, filters, sorter, extra) => {
     const { currentDataSource } = extra;
-    this.setState( { currentDataSource } )
+    this.setState( {
+      currentDataSource,
+      filteredInfo: filters,
+      sortedInfo: sorter,
+    } )
     if (this.props.isAdmin) {
       this.props.onRequestUpdateTable()
     }
@@ -394,7 +411,14 @@ class MarketTable extends Component {
       maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
       minDatesInTimes = moment.min( datesInTimes ).subtract( 1, 'days' );
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
-    const { selectedRowKeys, isBulkUpdateActive, marketOperations } = this.state;
+    const {
+      selectedRowKeys,
+      isBulkUpdateActive,
+      marketOperations,
+      sortedInfo,
+      filteredInfo,
+      assetClasses,
+    } = this.state;
 
     const columns = [
       {
@@ -430,6 +454,23 @@ class MarketTable extends Component {
         sorter: (a, b) => Sort( a.product.name, b.product.name ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'product.name' ),
+      },
+      {
+        title: 'Derivado',
+        dataIndex: 'assetClass',
+        key: 'assetClass',
+        render: assetClass => assetClass.name,
+        filters: assetClasses.map(({name}) => {
+          return {
+            text: name,
+            value: name
+          }
+        }),
+        filteredValue: filteredInfo.assetClass || null,
+        onFilter: (value, record) => record.assetClass.name.includes(value),
+        sorter: (a, b) => a.assetClass.name.length - b.assetClass.name.length,
+        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        ellipsis: true,
       },
       {
         title: 'Usuario',
@@ -554,7 +595,6 @@ class MarketTable extends Component {
       onSelectAll: this.onSelectAllOperation
     };
 
-
     return (
       <>
         <Table
@@ -575,11 +615,14 @@ class MarketTable extends Component {
 
 
 function mapStateToProps(state) {
-
-  return {}
+  return {
+    assetClasses: state.assetClassesState.list,
+  }
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators( {}, dispatch );
+  bindActionCreators( {
+    fetchGetAssetClasses: assetClassOperations.fetchGetAssetClasses
+  }, dispatch );
 
 export default connect( mapStateToProps, mapDispatchToProps )( MarketTable );
