@@ -14,40 +14,7 @@ class Operations extends Component {
   state = {
     operationType: 'market',
     isFormVisible: false,
-    isAdmin: false,
-    currentUser: {
-      id: null
-    },
-    operations: {},
-    hasMarketOperations: false,
-    hasInvestmentOperations: false,
   };
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let updatedState = {};
-
-    if (!_.isEqual( nextProps.isAdmin, prevState.isAdmin )) {
-      _.assignIn( updatedState, {
-        isAdmin: nextProps.isAdmin
-      } )
-    }
-
-    if (!_.isEqual( nextProps.currentUser, prevState.currentUser )) {
-      _.assignIn( updatedState, {
-        currentUser: nextProps.currentUser
-      } );
-      
-      nextProps.fetchGetUserAccounts(nextProps.currentUser.id)
-    }
-    if (!_.isEqual( nextProps.accounts, prevState.accounts )) {
-
-      _.assignIn( updatedState, {
-        accounts: nextProps.accounts
-      } );
-    }
-
-    return !_.isEmpty( updatedState ) ? updatedState : null;
-  }
 
   _onSelectOperationType = ({ target }) => {
     this.setState( {
@@ -65,7 +32,7 @@ class Operations extends Component {
 
     return (
       <Document id="userOperations-page">
-        { this.state.isAdmin ? (
+        { this.props.isAdmin ? (
           <>
             <Row style={{marginBottom:30}}>
               <Radio.Group
@@ -83,23 +50,25 @@ class Operations extends Component {
               </Button>
             </Row>
             <Row>
-              <Col className={_.isEqual( this.state.operationType, 'market' ) ? 'show' : 'hidden'}>
-                <Market
-                  isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
-                  onClose={ this._handleFormDisplay }
-                  handleFormVisible={ this._handleFormDisplay }
-                  isAdmin={ true }
-                />
+              <Col>
+              {
+                _.isEqual( this.state.operationType, 'market' ) ? (
+                  <Market
+                    isFormVisible={ _.isEqual( this.state.operationType, 'market' ) && this.state.isFormVisible }
+                    onClose={ this._handleFormDisplay }
+                    handleFormVisible={ this._handleFormDisplay }
+                    isAdmin={ true }
+                  />
+                ) : (
+                  <Investment
+                    isFormVisible={ _.isEqual( this.state.operationType, 'investment' ) && this.state.isFormVisible }
+                    onClose={ this._handleFormDisplay }
+                    handleFormVisible={ this._handleFormDisplay }
+                    isAdmin={ true }
+                  />
+                )
+              }
               </Col>
-              <Col className={_.isEqual( this.state.operationType, 'investment' ) ? 'show' : 'hidden'}>
-                <Investment
-                  isFormVisible={ _.isEqual( this.state.operationType, 'investment' ) && this.state.isFormVisible }
-                  onClose={ this._handleFormDisplay }
-                  handleFormVisible={ this._handleFormDisplay }
-                  isAdmin={ true }
-                />
-              </Col>
-
             </Row>
           </>
         ) : null }
@@ -114,20 +83,12 @@ function mapStateToProps(state) {
 
   return {
     isAdmin: state.authState.isAdmin,
-    currentUser: state.authState.currentUser,
-    accounts: state.userAccountsState.list,
-    isLoading: state.investmentOperationsState.isLoading,
-    isSuccess: state.investmentOperationsState.isSuccess,
-    isFailure: state.investmentOperationsState.isFailure,
-    message: state.investmentOperationsState.message,
+
   }
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators( {
-    fetchGeAllUserAccounts: userAccountOperations.fetchGetUserAccounts,
-    fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts
-  }, dispatch );
+  bindActionCreators( {}, dispatch );
 
 
 export default connect( mapStateToProps, mapDispatchToProps )( Operations );

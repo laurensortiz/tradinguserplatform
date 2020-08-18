@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Highlighter from 'react-highlight-words';
 import { Button, Icon, Input, Popconfirm, Radio, Table, Tag } from 'antd';
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
+import classNames from "classnames";
 
 
 
@@ -14,6 +15,7 @@ class UserAccountsTable extends Component {
     userAccounts: [],
     searchText: '',
     searchedColumn: '',
+    isMenuFold: true
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -31,7 +33,7 @@ class UserAccountsTable extends Component {
 
   _getCTA = (type, row) => {
 
-    if (_.isEqual( this.props.status, 'inactive' )) {
+    if (_.isEqual( this.props.dataStatus, 0 )) {
       return (
         <div className="cta-container">
           <Popconfirm
@@ -40,7 +42,7 @@ class UserAccountsTable extends Component {
             cancelText="Cancelar"
             onConfirm={ () => this.props.onActive( row.id ) }
           >
-            <Button type="danger">Activar</Button>
+            <Button type="danger"><Icon type="undo" /><span>Activar</span></Button>
           </Popconfirm>
         </div>
       )
@@ -54,16 +56,16 @@ class UserAccountsTable extends Component {
             onClick={ () => this._handleExportHistory(row.id)}
             style={ { float: 'right' } }
           >
-            <Icon type="file-excel"/> Reporte Histórico
+            <Icon type="file-excel"/> <span>Reporte Histórico</span>
           </Button>
-          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
+          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
           <Popconfirm
             okText="Si"
             title="Está seguro ?"
             cancelText="Cancelar"
             onConfirm={ () => this.props.onDelete( row.id ) }
           >
-            <Button type="danger"><Icon type="delete"/></Button>
+            <Button type="danger"><Icon type="delete"/><span>Eliminar</span></Button>
           </Popconfirm>
         </div>
       )
@@ -158,7 +160,21 @@ class UserAccountsTable extends Component {
       <Radio.Button value={1}>Activos</Radio.Button>
       <Radio.Button value={0}>Eliminados</Radio.Button>
     </Radio.Group>
-  )
+  );
+
+  _onSelectMenuFold = () => {
+    this.setState({
+      isMenuFold: !this.state.isMenuFold
+    })
+  }
+
+  _handleActionTitle = () => {
+    return (
+      <div style={{textAlign: 'right'}}>
+        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+      </div>
+    )
+  }
 
 
   render() {
@@ -210,7 +226,7 @@ class UserAccountsTable extends Component {
       {
         title: 'Valor de la Cuenta',
         key: 'accountValue',
-        render: data => <span className={IsOperationPositive(data.accountValue, data.balanceInitial) ? 'positive' : 'negative'} key={ data.accountValue }>{ DisplayTableAmount( data.accountValue ) }</span>,
+        render: data => <span className={IsOperationPositive(data.accountValue, data.balanceInitial) ? 'positive txt-highlight' : 'negative txt-highlight'} key={ data.accountValue }>{ DisplayTableAmount( data.accountValue ) }</span>,
         sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
         sortDirections: [ 'descend', 'ascend' ],
       },
@@ -248,11 +264,11 @@ class UserAccountsTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Acciones',
+        title: this._handleActionTitle,
         key: 'actions',
         render: this._getCTA,
         fixed: 'right',
-        width: 150
+        className: 't-a-r'
       },
     ];
     
@@ -266,6 +282,8 @@ class UserAccountsTable extends Component {
         scroll={ { x: true } }
         title={this._displayTableHeader}
         onChange={ this.onTableChange }
+        className={ classNames( { 'is-menu-fold': this.state.isMenuFold } ) }
+
       />
     );
   }

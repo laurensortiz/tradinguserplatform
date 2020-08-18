@@ -18,6 +18,7 @@ class Detail extends PureComponent {
     const longShort = _.get(this.props, 'currentOperation.longShort', '');
     const commoditiesTotal = _.get(this.props, 'currentOperation.commoditiesTotal', '0');
     const buyPrice = _.get(this.props, 'currentOperation.buyPrice', '0.00');
+    const holdStatusCommission = _.get(this.props, 'currentOperation.holdStatusCommission', '0.00');
     const takingProfit = _.get(this.props, 'currentOperation.takingProfit', '0.00');
     const maintenanceMargin = _.get(this.props, 'currentOperation.maintenanceMargin', '0.00');
     const stopLost = _.get(this.props, 'currentOperation.stopLost', '0');
@@ -38,7 +39,7 @@ class Detail extends PureComponent {
               <Descriptions.Item label="Producto"><Tag className="product-tag">{productName}</Tag></Descriptions.Item>
               <Descriptions.Item label="Fecha de Apertura">{FormatDate(startDate)} </Descriptions.Item>
               <Descriptions.Item label="Inversión">{FormatCurrency.format(initialAmount)} </Descriptions.Item>
-              <Descriptions.Item label="Saldo Actual"><span className={IsOperationPositive(amount, initialAmount) ? 'positive' : 'negative'}>{FormatCurrency.format(amount)}</span> </Descriptions.Item>
+              <Descriptions.Item label="Saldo Actual"><span className={IsOperationPositive(amount, initialAmount) ? 'positive txt-highlight' : 'negative txt-highlight'}>{FormatCurrency.format(amount)}</span> </Descriptions.Item>
               <Descriptions.Item label="L/S">{longShort}</Descriptions.Item>
               <Descriptions.Item label="Margen de Mantenimiento">{FormatCurrency.format(maintenanceMargin)}</Descriptions.Item>
               <Descriptions.Item label="Lotage">{commoditiesTotal} <Tag>{commodityName}</Tag> <Tag className={`asset-class ${AssetClassColor(assetClassName).name}`}>{assetClassName}</Tag></Descriptions.Item>
@@ -49,10 +50,11 @@ class Detail extends PureComponent {
               <Descriptions.Item label="Broker">{brokerName}</Descriptions.Item>
 
 
-
               <Descriptions.Item label="Estado">
                 <Tag color={statusColor} >{ statusName }</Tag>
               </Descriptions.Item>
+              <Descriptions.Item label="Comisión por Estado HOLD">{FormatCurrency.format(holdStatusCommission)}</Descriptions.Item>
+
             </Descriptions>
           </Col>
         </Row>

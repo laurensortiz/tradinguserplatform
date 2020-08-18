@@ -12,3 +12,4 @@ export { default as marketMovementQuery } from './market-movement';
 export { default as commodityQuery } from './commodity';
 export { default as assetClassQuery } from './asset-class';
 export { default as pageQuery } from './page';
+export { default as settingQuery } from './setting';

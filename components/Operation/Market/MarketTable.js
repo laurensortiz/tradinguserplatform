@@ -4,22 +4,36 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Highlighter from "react-highlight-words";
-import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio } from 'antd';
+import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio, DatePicker } from 'antd';
+import momentDurationFormat from 'moment-duration-format';
+import moment from "moment-timezone";
+import { extendMoment } from 'moment-range';
 import {
   Sort,
   FormatStatus,
+  FormatDate,
   DisplayTableAmount,
-  MarketBehaviorStatus, IsOperationPositive,
+  MarketBehaviorStatus,
+  IsOperationPositive,
 } from '../../../common/utils';
 
 import BulkUpdateSteps from './BulkUpdateSteps';
 
-const { Option } = Select;
+import { assetClassOperations } from "../../../state/modules/assetClasses";
+import { fetchGetAssetClasses } from "../../../state/modules/assetClasses/actions";
 
+momentDurationFormat( moment );
+extendMoment( moment );
+moment.locale( 'es' ); // Set Lang to Spanish
+
+const { Option } = Select;
+const { RangePicker } = DatePicker;
+const FORMAT_DATE = 'DD-MM-YYYY';
 
 class MarketTable extends Component {
   state = {
     marketOperations: [],
+    assetClasses: [],
     searchText: '',
     searchedColumn: '',
     selectedRowKeys: [],
@@ -27,20 +41,37 @@ class MarketTable extends Component {
     selectedBulkUpdateType: 'status',
     bulkUpdateValue: null,
     isBulkUpdateActive: false,
+    isMenuFold: true,
+    filteredInfo: {},
+    sortedInfo: {},
   };
+
+  dateMode = 0;
+  timeDateRange = [];
+  defaultDate = null;
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
+
       _.assignIn( updatedState, {
         marketOperations: nextProps.marketOperations
+      } )
+    }
+    if (!_.isEqual( nextProps.assetClasses, prevState.assetClasses )) {
+      _.assignIn( updatedState, {
+        assetClasses: nextProps.assetClasses
       } )
     }
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
+  componentDidMount() {
+    this.props.fetchGetAssetClasses()
+  }
+
   _getCTA = (type, row) => {
-    if (_.isEqual( this.props.status, 'inactive' )) {
+    if (_.isEqual( this.props.dataStatus, 0 )) {
       return (
         <div className="cta-container">
           <Popconfirm
@@ -49,14 +80,14 @@ class MarketTable extends Component {
             cancelText="Cancelar"
             onConfirm={ () => this.props.onActive( row.id ) }
           >
-            <Button type="danger">Activar</Button>
+            <Button type="danger"><Icon type="undo" /><span>Activar</span></Button>
           </Popconfirm>
         </div>
       )
     } else {
       return (
         <div className="cta-container">
-          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd"/>Detalle</Button>
+          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd"/><span>Detalle</span></Button>
           { this.props.isAdmin ? (
             <>
               <Popconfirm
@@ -65,9 +96,9 @@ class MarketTable extends Component {
                 cancelText="Cancelar"
                 onConfirm={ () => this.props.onDelete( row.id ) }
               >
-                <Button type="danger"><Icon type="delete"/></Button>
+                <Button type="danger"><Icon type="delete"/><span>Eliminar</span></Button>
               </Popconfirm>
-              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
+              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
             </>
           ) : null }
         </div>
@@ -164,7 +195,11 @@ class MarketTable extends Component {
 
   onTableChange = (pagination, filters, sorter, extra) => {
     const { currentDataSource } = extra;
-    this.setState( { currentDataSource } )
+    this.setState( {
+      currentDataSource,
+      filteredInfo: filters,
+      sortedInfo: sorter,
+    } )
     if (this.props.isAdmin) {
       this.props.onRequestUpdateTable()
     }
@@ -194,9 +229,9 @@ class MarketTable extends Component {
     <>
       <Row>
         <Col sm={12} style={ { textAlign: 'left' } }>
-          <Radio.Group defaultValue="active" buttonStyle="solid" onChange={ this.props.onTabChange }>
-            <Radio.Button value="active">Activos</Radio.Button>
-            <Radio.Button value="deleted">Eliminados</Radio.Button>
+          <Radio.Group defaultValue={this.props.dataStatus} buttonStyle="solid" onChange={ this.props.onTabChange }>
+            <Radio.Button value={1}>Activos</Radio.Button>
+            <Radio.Button value={0}>Eliminados</Radio.Button>
           </Radio.Group>
         </Col>
         <Col sm={12} style={ { textAlign: 'right' } }>
@@ -230,10 +265,160 @@ class MarketTable extends Component {
     </>
   )
 
-  render() {
+  _onSelectMenuFold = () => {
+    this.setState({
+      isMenuFold: !this.state.isMenuFold
+    })
+  }
 
+  _handleActionTitle = () => {
+    return (
+      <div style={{textAlign: 'right'}}>
+        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+      </div>
+    )
+  }
+  /*
+  * RANGE
+  *
+  * */
+
+  _handleSearch = (selectedKeys, confirm) => {
+    confirm();
+    this.setState( {
+      searchText: selectedKeys[ 0 ],
+    } );
+  };
+
+  _handleReset = (selectedKeys, clearFilters) => {
+    if (!_.isEmpty( selectedKeys )) {
+      clearFilters();
+      this.setState( {
+        searchText: '',
+      } );
+    }
+
+  };
+
+  _sortDates = (start, end) => {
+    if (_.isNil( start )) start = '00-00-0000';
+    if (_.isNil( end )) end = '00-00-0000';
+
+    return moment( start ).unix() - moment( end ).unix()
+  };
+
+  _handleDateFilterChange = (dateModeValue) => {
+    this.dateMode = dateModeValue;
+    this.forceUpdate();
+    this.defaultDate = null;
+  };
+
+  _datesInRange = (record, dataIndex) => {
+
+    const dateRange = this.timeDateRange;
+    if (!_.isEmpty( dateRange )) {
+      return _.includes( dateRange, moment.parseZone( _.get( record, dataIndex ) ).format( FORMAT_DATE ) )
+    }
+
+  };
+
+  _createDateRange = (date, setSelectedKeys, minDate, maxDate, dataIndex) => {
+    this.defaultDate = moment.parseZone( date );
+
+    let dateRange = [],
+      range = '';
+
+    const dateMode = this.dateMode;
+
+    switch (dateMode) {
+      case 'single':
+        range = moment.range( date, date );
+        break;
+      case 'range':
+        range = moment.range( date[ 0 ], date[ 1 ] );
+        break;
+      default:
+    }
+
+    let arrayOfDates = _.toArray( range.by( 'days' ) );
+
+    _.map( arrayOfDates, date => {
+      dateRange.push( moment( date ).format( FORMAT_DATE ) )
+    } );
+
+    this.timeDateRange = dateRange;
+
+    return setSelectedKeys( date ? [ date ] : [] );
+  };
+
+  _getColumnDateProps = (dataIndex, minDate, maxDate) => ( {
+    filterDropdown: ({
+                       setSelectedKeys,
+                       selectedKeys,
+                       confirm,
+                       clearFilters,
+                     }) => (
+      <div className="custom-filter-dropdown">
+        <Select
+          placeholder="Seleccione el tipo de filtro"
+          onChange={ e => this._handleDateFilterChange( e ) }
+        >
+          <Option value="single">Por día</Option>
+          <Option value="range">Rango de fechas</Option>
+        </Select>
+
+        { this.dateMode === 'range' ?
+          <RangePicker
+            onChange={ e => this._createDateRange( e, setSelectedKeys, minDate, maxDate, dataIndex ) }
+            format={ FORMAT_DATE }
+            allowClear={ false }
+          />
+          : null
+        }
+
+        { this.dateMode === 'single' ?
+          <DatePicker
+            value={ this.defaultDate }
+            onChange={ e => this._createDateRange( e, setSelectedKeys, minDate, maxDate, dataIndex ) }
+            format={ FORMAT_DATE }
+            allowClear={ false }
+          />
+          : null
+        }
+        <Button
+          onClick={ () => this._handleSearch( selectedKeys, confirm ) }
+          icon="search"
+          size="small"
+        >
+          Filtrar
+        </Button>
+        <Button
+          ref={ e => this.clearFilterDatesBtn = e }
+          onClick={ () => this._handleReset( selectedKeys, clearFilters ) }
+          size="small"
+        >
+          Limpiar
+        </Button>
+      </div>
+    ),
+    onFilter: (value, record) => {
+      return this._datesInRange( record, dataIndex )
+    }
+  } );
+
+  render() {
+    const datesInTimes = _.map( this.state.marketOperations, record => moment( record.createdAt ) ),
+      maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
+      minDatesInTimes = moment.min( datesInTimes ).subtract( 1, 'days' );
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
-    const { selectedRowKeys, isBulkUpdateActive, marketOperations } = this.state;
+    const {
+      selectedRowKeys,
+      isBulkUpdateActive,
+      marketOperations,
+      sortedInfo,
+      filteredInfo,
+      assetClasses,
+    } = this.state;
 
     const columns = [
       {
@@ -248,12 +433,11 @@ class MarketTable extends Component {
         key: 'status',
         filters: [
           { text: 'Activo', value: 1 },
-          { text: 'Cerrado', value: 2 },
+          { text: 'Market Close', value: 2 },
           { text: 'Hold', value: 3 },
           { text: 'Vendido', value: 4 },
         ],
         onFilter: (value, record) => record.status === value,
-        filterMultiple: false,
         render: status => {
           const { name, color } = FormatStatus( status );
           return <Tag color={ color }>{ name }</Tag>
@@ -269,6 +453,23 @@ class MarketTable extends Component {
         sorter: (a, b) => Sort( a.product.name, b.product.name ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'product.name' ),
+      },
+      {
+        title: 'Derivado',
+        dataIndex: 'assetClass',
+        key: 'assetClass',
+        render: assetClass => assetClass.name,
+        filters: assetClasses.map(({name}) => {
+          return {
+            text: name,
+            value: name
+          }
+        }),
+        filteredValue: filteredInfo.assetClass || null,
+        onFilter: (value, record) => record.assetClass.name.includes(value),
+        sorter: (a, b) => a.assetClass.name.length - b.assetClass.name.length,
+        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        ellipsis: true,
       },
       {
         title: 'Usuario',
@@ -301,7 +502,7 @@ class MarketTable extends Component {
         title: 'Saldo Actual',
         key: 'amount',
         render: data => <span
-          className={ IsOperationPositive( data.amount, data.initialAmount ) ? 'positive' : 'negative' }
+          className={ IsOperationPositive( data.amount, data.initialAmount ) ? 'positive txt-highlight' : 'negative txt-highlight' }
           key={ data.amount }>{ DisplayTableAmount( data.amount ) }</span>,
         sorter: (a, b) => Sort( a.amount, b.amount ),
         sortDirections: [ 'descend', 'ascend' ],
@@ -322,7 +523,54 @@ class MarketTable extends Component {
         sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
         sortDirections: [ 'descend', 'ascend' ],
       },
-
+      {
+        title: 'Taking Profit',
+        dataIndex: 'takingProfit',
+        key: 'takingProfit',
+        render: takingProfit => <span key={ takingProfit }>{ DisplayTableAmount( takingProfit ) }</span>,
+        sorter: (a, b) => Sort( a.takingProfit, b.takingProfit ),
+        sortDirections: [ 'descend', 'ascend' ],
+      },
+      {
+        title: 'Fecha de Apertura',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
+        editable: true,
+        inputType: 'date',
+        required: false,
+        rowKey: d => {
+          return FormatDate( d.createdAt )
+        },
+        sorter: (a, b) => {
+          return this._sortDates( a.createdAt, b.createdAt );
+        },
+        ...this._getColumnDateProps(
+          'createdAt',
+          minDatesInTimes,
+          maxDatesInTimes,
+        )
+      },
+      {
+        title: 'Fecha de Actualización',
+        dataIndex: 'updatedAt',
+        key: 'updatedAt',
+        render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
+        editable: true,
+        inputType: 'date',
+        required: false,
+        rowKey: d => {
+          return FormatDate( d.updatedAt )
+        },
+        sorter: (a, b) => {
+          return this._sortDates( a.updatedAt, b.updatedAt );
+        },
+        ...this._getColumnDateProps(
+          'updatedAt',
+          minDatesInTimes,
+          maxDatesInTimes,
+        )
+      },
       {
         title: 'Corredor',
         dataIndex: 'broker.name',
@@ -332,11 +580,11 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps( 'broker.name' ),
       },
       {
-        title: 'Acciones',
+        title: this._handleActionTitle,
         key: 'actions',
         render: this._getCTA,
         fixed: 'right',
-        width: 150
+        className: 't-a-r'
       },
     ];
 
@@ -348,7 +596,6 @@ class MarketTable extends Component {
 
     return (
       <>
-
         <Table
           rowSelection={ isBulkUpdateActive ? rowSelection : null }
           rowKey={ record => record.id }
@@ -356,7 +603,7 @@ class MarketTable extends Component {
           dataSource={ marketOperations }
           loading={ this.props.isLoading }
           scroll={ { x: true } }
-          className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ) } ) }
+          className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ), 'is-menu-fold': this.state.isMenuFold } ) }
           onChange={ this.onTableChange }
           title={ this.props.isAdmin ? this.tableHeader : null }
         />
@@ -367,11 +614,14 @@ class MarketTable extends Component {
 
 
 function mapStateToProps(state) {
-
-  return {}
+  return {
+    assetClasses: state.assetClassesState.list,
+  }
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators( {}, dispatch );
+  bindActionCreators( {
+    fetchGetAssetClasses: assetClassOperations.fetchGetAssetClasses
+  }, dispatch );
 
 export default connect( mapStateToProps, mapDispatchToProps )( MarketTable );

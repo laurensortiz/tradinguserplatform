@@ -1,3 +1,4 @@
+import { MarketMovement } from "../models";
 
 function getWhereConditions(req, sequelize) {
   const Op = sequelize.Op;
@@ -37,6 +38,7 @@ const queries = {
 
           ],
         },
+
         {
           model: Product,
           as: 'product',

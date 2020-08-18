@@ -35,6 +35,10 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,
     },
+    holdStatusCommission: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
     orderId: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -97,7 +101,7 @@ module.exports = (Sequelize, DataTypes) => {
 
     MarketOperation.hasMany(models.MarketMovement, {
       foreignKey: 'marketOperationId',
-      as: 'marketOperation',
+      as: 'marketMovement',
     });
 
   };

@@ -49,7 +49,7 @@ const _formatData = (data) => {
     const diffAmount = Number(operation.amount) - Number(operation.initialAmount);
     const isDiffAmountPositive = Math.sign(diffAmount) >= 0;
     const commission = isDiffAmountPositive ? (diffAmount * (1*Number(operation.userAccount.account.percentage) / 100)).toFixed(2) : 0
-    const hold = 0;
+    const hold =  Number(operation.holdStatusCommission);
     const profit = diffAmount - commission - hold
     return {
       'Fecha de apertura': FormatDate(operation.createdAt),
@@ -61,15 +61,15 @@ const _formatData = (data) => {
       'Taking Profit': FormatCurrency.format( operation.takingProfit ),
       'Stop/Lost': `${operation.stopLost}%`,
       'Inversión': FormatCurrency.format( operation.initialAmount ),
-      'Balance (G/P)': FormatCurrency.format( 0 ),
-      'Movimiento (G/P)': FormatCurrency.format( 0 ),
+      'Balance (G/P)': FormatCurrency.format( _.get(operation, 'marketMovement[0].gpInversion', 0 )),
+      'Movimiento (G/P)': FormatCurrency.format( _.get(operation, 'marketMovement[0].gpAmount', 0 ) ),
       'Orden': operation.orderId,
       'Broker': operation.broker.name,
       'Saldo inicial': FormatCurrency.format( operation.initialAmount ),
       'Saldo de cierre': FormatCurrency.format( operation.amount ),
       'Ganancias': isDiffAmountPositive ? FormatCurrency.format( diffAmount ) : FormatCurrency.format( 0 ),
       'Perdidas': !isDiffAmountPositive ? FormatCurrency.format( diffAmount ) : FormatCurrency.format( 0 ),
-      'Comisión': `${operation.userAccount.account.percentage}% (${operation.userAccount.account.name}) - FormatCurrency.format(${commission})`,
+      'Comisión': `${operation.userAccount.account.percentage}% (${operation.userAccount.account.name}) - ${FormatCurrency.format(commission)}`,
       'Hold': FormatCurrency.format( hold ),
       'Ganancia Neta': FormatCurrency.format( profit ),
       'Saldo Final': FormatCurrency.format( Number(operation.initialAmount) +  Number(profit)),

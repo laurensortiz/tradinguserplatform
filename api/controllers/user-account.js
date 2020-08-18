@@ -4,14 +4,15 @@ import {
   UserAccount,
   Role,
   MarketOperation,
-  InvestmentOperation,
+  MarketMovement,
   Product,
   Broker,
   Commodity,
-  MarketMovement,
   AssetClass
 } from '../models';
-import { userAccountQuery, userQuery, marketOperationQuery, investmentOperationQuery } from '../queries';
+import { userAccountQuery } from '../queries';
+import { getLastMovement } from './market-movement';
+
 import _ from 'lodash';
 
 module.exports = {
@@ -88,8 +89,13 @@ module.exports = {
               as: 'account',
               attributes: ['name', 'percentage', 'associatedOperation']
             },
-
           ],
+        },
+        {
+          model: MarketMovement,
+          as: 'marketMovement',
+          limit: 1,
+          order: [ [ 'createdAt', 'DESC' ]],
         },
         {
           model: Product,

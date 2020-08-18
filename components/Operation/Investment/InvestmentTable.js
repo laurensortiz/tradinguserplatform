@@ -12,6 +12,7 @@ import Highlighter from "react-highlight-words";
 class InvestmentTable extends Component {
   state = {
     operations: [],
+    isMenuFold: true
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -34,14 +35,14 @@ class InvestmentTable extends Component {
             cancelText="Cancelar"
             onConfirm={ () => this.props.onActive( row.id ) }
           >
-            <Button type="danger">Activar</Button>
+            <Button type="danger"><Icon type="undo" /><span>Activar</span></Button>
           </Popconfirm>
         </div>
       )
     } else {
       return (
         <div className="cta-container">
-          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd" />Detalle</Button>
+          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd" /><span>Detalle</span></Button>
           {this.props.isAdmin ? (
             <>
               <Popconfirm
@@ -50,9 +51,9 @@ class InvestmentTable extends Component {
                 cancelText="Cancelar"
                 onConfirm={ () => this.props.onDelete( row.id ) }
               >
-                <Button type="danger"><Icon type="delete"/></Button>
+                <Button type="danger"><Icon type="delete"/><span>Eliminar</span></Button>
               </Popconfirm>
-              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
+              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
             </>
           ): null}
 
@@ -132,6 +133,19 @@ class InvestmentTable extends Component {
     this.setState( { searchText: '' } );
   };
 
+  _onSelectMenuFold = () => {
+    this.setState({
+      isMenuFold: !this.state.isMenuFold
+    })
+  }
+
+  _handleActionTitle = () => {
+    return (
+      <div style={{textAlign: 'right'}}>
+        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+      </div>
+    )
+  }
 
   render() {
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
@@ -150,7 +164,7 @@ class InvestmentTable extends Component {
         onFilter: (value, record) => record.status === value,
         filterMultiple: false,
         render: status => {
-          const {name, color} = FormatStatus(status);
+          const {name, color} = FormatStatus(status, true);
           return <Tag color={color} >{ name }</Tag>
         },
         sorter: (a, b) => Sort( a.status, b.status ),
@@ -225,11 +239,11 @@ class InvestmentTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Acciones',
+        title: this._handleActionTitle,
         key: 'actions',
         render: this._getCTA,
         fixed: 'right',
-        width: 150
+        className: 't-a-r'
       },
     ];
 
@@ -240,7 +254,7 @@ class InvestmentTable extends Component {
         dataSource={ this.props.investmentOperations }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
-        className={classNames({'hidden-table': !this.props.isAdmin && _.isEmpty(this.props.investmentOperations)})}
+        className={classNames({'hidden-table': !this.props.isAdmin && _.isEmpty(this.props.investmentOperations), 'is-menu-fold': this.state.isMenuFold})}
 
       />
     );

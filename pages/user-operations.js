@@ -44,7 +44,6 @@ class UserOperations extends Component {
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
-
   render() {
 
     return (

@@ -219,6 +219,7 @@ class Accounts extends Component {
               onRequestUpdateTable={ this.props.fetchGetAllUserAccounts }
               onReqeuestExportHistoryReport={ this._handleExportHistoryReport }
               onTabChange={ this._handleTabChange }
+              dataStatus={ this.state.status }
             />
           </Col>
         </Row>

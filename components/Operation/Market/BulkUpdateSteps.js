@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, split } from 'lodash';
 import { Steps, Button, Icon, Tag, Select, Input, Result, Radio } from 'antd';
 import classNames from 'classnames';
 const { Step } = Steps;
@@ -9,21 +9,65 @@ const { Option } = Select;
 const BULK_UPDATE_TYPES = [
   {
     code: 'status',
-    name: 'Estado'
+    name: 'Estado',
+    scope: 'status'
   },
   {
-    code: 'stockProduct',
-    name: 'Productos en Mercado Stocks'
+    code: 'stocks',
+    name: 'Stocks',
+    scope: 'price',
   },
   {
-    code: 'goldProduct',
-    name: 'Futuros ORO'
+    code: 'gold-FU-OP',
+    name: 'GOLD Futures - Options',
+    scope: 'price'
+  },
+  {
+    code: 'gold-CFD-Ounces',
+    name: 'GOLD CFD Ounces',
+    scope: 'price'
+  },
+  {
+    code: 'gold-Spot-XAU',
+    name: 'GOLD Spot XAU/USD',
+    scope: 'price'
+  },
+  {
+    code: 'silver-FT-OP',
+    name: 'SILVER Futures - Options',
+    scope: 'price'
+  },
+  {
+    code: 'silver-CFD-Ounces',
+    name: 'SILVER CFD Ounces',
+    scope: 'price'
+  },
+  {
+    code: 'platinum-FT-OP',
+    name: 'PLATINUM Futures - Options',
+    scope: 'price'
+  },
+  {
+    code: 'platinum-CFD-Ounces',
+    name: 'PLATINUM CFD Ounces',
+    scope: 'price'
+  },
+  {
+    code: 'crudeOil-FT-OP',
+    name: 'CRUDE OIL WTI Futures - Options',
+    scope: 'price',
+  },
+  {
+    code: 'crude-CFDs-Barrels',
+    name: 'CRUDE CFDs Barrels',
+    scope: 'price',
   }
 ];
 
 function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, isBulkLoading, isBulkSuccess }) {
   const [ currentStep, setCurrentStep ] = useState( 0 );
   const [ updateType, setUpdateType ] = useState( '' );
+  const [ updateScope, setUpdateScope ] = useState( '' );
   const [ updateValue, setUpdateValue ] = useState( {} );
   const [ behaviorClass, setBehaviorClass ] = useState( '' );
   const [ isValidAmount, setIsValidAmount ] = useState( true );
@@ -36,7 +80,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
 
 
   const _isValidAmount = amount => {
-    const regex = /^-?[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
+    const regex = /^-?[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
     const isValid = regex.test( amount );
     setIsValidAmount( isValid )
     if (!isValid) {
@@ -68,20 +112,27 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
     setUpdateValue(target.value)
   }
 
+  const _onSelectActionType = (value) => {
+    const operationValue = split(value, '_');
+
+    setUpdateType(operationValue[0]);
+    setUpdateScope(operationValue[1]);
+  }
+
   const _bulkUpdateValue = () => {
 
-    switch (updateType) {
+    switch (updateScope) {
       case 'status':
         return (
           <Radio.Group name="status" onChange={ _handleRadioInputChange } >
             <Radio value={ 1 }><Tag color="#039B01">Activo</Tag></Radio>
-            <Radio value={ 2 }><Tag color="#D63930">Cerrado</Tag></Radio>
+            <Radio value={ 2 }><Tag color="#D63930">Market Close</Tag></Radio>
             <Radio value={ 3 }><Tag color="#E2A11A">On Hold</Tag></Radio>
             <Radio value={ 4 }><Tag color="#414241">Vendido</Tag></Radio>
           </Radio.Group>
 
         )
-      case 'stockProduct':
+      case 'price':
         return (
           <>
             <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Precio $"
@@ -89,18 +140,6 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
                    name="gpAmount" onChange={ _handlePriceInputChange }
                    placeholder="Precio"/>
             <Input size="large" addonBefore="MP $" style={ { width: 200 } } name="marketPrice"
-                   onChange={ _handlePriceInputChange }
-                   placeholder="MP"/>
-          </>
-        )
-      case 'goldProduct':
-        return (
-          <>
-            <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Precio $"
-                   style={ { width: 150 } }
-                   name="gpAmount" onChange={ _handlePriceInputChange }
-                   placeholder="Precio"/>
-            <Input size="large" addonBefore="MP $" style={ { width: 150 } } name="marketPrice"
                    onChange={ _handlePriceInputChange }
                    placeholder="MP"/>
           </>
@@ -113,11 +152,11 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
   const _selectUpdateType = () => (
     <div style={ { textAlign: 'center' } }>
 
-      <Select size="large" defaultValue="" style={ { minWidth: '20%' } } onChange={ value => setUpdateType( value ) }>
+      <Select showSearch={true} size="large" defaultValue="" style={ { minWidth: '20%' } } onChange={ _onSelectActionType }>
         <Option key="0" value="">Seleccione el Registro</Option>
         {
-          BULK_UPDATE_TYPES.map( ({ code, name }, index) =>
-            <Option key={ index + 1 } value={ code }>{ name }</Option> )
+          BULK_UPDATE_TYPES.map( ({ code, name, scope }, index) =>
+            <Option key={ index + 1 } value={ `${code}_${scope}` }>{ name }</Option> )
         }
       </Select>
       <div style={ { marginTop: 20, minHeight: 40 } }>
@@ -143,7 +182,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
           size="large"
           type="primary"
           key="console"
-          onClick={ () => onClickUpdate( { updateType, updateValue } ) }
+          onClick={ () => onClickUpdate( { updateType, updateValue, updateScope } ) }
           loading={ isBulkLoading }
           className={classNames({'no-visible': isProcessComplete})}
         >

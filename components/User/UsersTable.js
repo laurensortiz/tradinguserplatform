@@ -7,45 +7,44 @@ import { Button, Icon, Popconfirm, Table, Tag, Input, Radio } from 'antd';
 import Highlighter from 'react-highlight-words';
 
 import { Sort, SortDate, FormatDate } from '../../common/utils';
+import classNames from "classnames";
 
 class UsersTable extends Component {
   state = {
     searchText: '',
     searchedColumn: '',
     isAdminUsersSelected: false,
+    isMenuFold: true
   };
 
   _getCTA = (type, row) => {
-
-    if (this.props.isDeleted) {
-      return (
-        <div className="cta-container">
+    return (
+      <div className="cta-container" style={{float: 'right'}}>
+        {_.isEqual(this.props.dataStatus, 0) ? (
           <Popconfirm
             okText="Si"
             title="Está seguro que desea activarlo ?"
             cancelText="Cancelar"
             onConfirm={ () => this.props.onActive( row.id ) }
           >
-            <Button type="danger">Activar</Button>
+            <Button type="danger"><Icon type="undo" /><span>Activar</span></Button>
           </Popconfirm>
-        </div>
-      )
-    } else {
-      return (
-        <div className="cta-container">
-          <Button type="secondary" onClick={ () => this.props.onDetail( row ) }><Icon type="hdd"/>Detalle</Button>
-          <Popconfirm
-            okText="Si"
-            title="Está seguro ?"
-            cancelText="Cancelar"
-            onConfirm={ () => this.props.onDelete( row.id ) }
-          >
-            <Button type="danger"><Icon type="delete"/></Button>
-          </Popconfirm>
-          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/></Button>
-        </div>
-      )
-    }
+        ) : (
+          <>
+            <Button type="secondary" onClick={ () => this.props.onDetail( row ) }><Icon type="hdd"/>Detalle</Button>
+            <Popconfirm
+              okText="Si"
+              title="Está seguro ?"
+              cancelText="Cancelar"
+              onConfirm={ () => this.props.onDelete( row.id ) }
+            >
+              <Button type="danger"><Icon type="delete"/><span>Eliminar</span></Button>
+            </Popconfirm>
+            <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
+          </>
+        )}
+      </div>
+    )
 
   };
 
@@ -114,30 +113,29 @@ class UsersTable extends Component {
     clearFilters();
     this.setState( { searchText: '' } );
   };
-  _getFilterValues = (context) => {
-    const uniqValues = _
-      .chain( this.state.users )
-      .map( item => _.get( item, context ) )
-      .uniq()
-      .value();
-    return _.map( uniqValues, name => {
-      return {
-        text: name,
-        value: name,
-      }
-    } )
-
-  };
-
 
   _displayTableHeader = () => {
     return (
-      <Radio.Group defaultValue={ 1 } buttonStyle="solid" onChange={ this.props.onTabChange }>
+      <Radio.Group defaultValue={ this.props.dataStatus } buttonStyle="solid" onChange={ this.props.onTabChange }>
         <Radio.Button value={ 1 }>Activos</Radio.Button>
         <Radio.Button value={ 0 }>Eliminados</Radio.Button>
       </Radio.Group>
     )
   };
+
+  _onSelectMenuFold = () => {
+    this.setState({
+      isMenuFold: !this.state.isMenuFold
+    })
+  }
+
+  _handleActionTitle = () => {
+    return (
+      <div style={{textAlign: 'right'}}>
+        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+      </div>
+    )
+  }
 
   render() {
     const columns = [
@@ -170,11 +168,10 @@ class UsersTable extends Component {
         ...this.getColumnSearchProps( 'lastName' ),
       },
       {
-        title: 'Acciones',
+        title: this._handleActionTitle,
         key: 'actions',
         render: this._getCTA,
-        fixed: 'right',
-        width: 150
+        className: 't-a-r'
       },
     ];
 
@@ -184,8 +181,9 @@ class UsersTable extends Component {
         columns={ columns }
         dataSource={ this.props.users }
         loading={ this.props.isLoading }
-        scroll={ { x: true } }
         title={ this._displayTableHeader }
+        className={ classNames( { 'is-menu-fold': this.state.isMenuFold } ) }
+        tableLayout="auto"
       />
     );
   }

@@ -5132,7 +5132,7 @@ a.ant-btn-sm {
   background: #40a9ff;
 }
 .ant-calendar-today .ant-calendar-date {
-  color: #1890ff;
+  color: $white;
   font-weight: bold;
   border-color: #1890ff;
 }
@@ -5141,19 +5141,19 @@ a.ant-btn-sm {
   color: rgba(255, 255, 255, 0.25);
 }
 .ant-calendar-selected-day .ant-calendar-date {
-  background: #d1e9ff;
+  background: $blue;
 }
 .ant-calendar-selected-date .ant-calendar-date,
 .ant-calendar-selected-start-date .ant-calendar-date,
 .ant-calendar-selected-end-date .ant-calendar-date {
   color: #fff;
-  background: #1890ff;
+  background: $primary-color;
   border: 1px solid transparent;
 }
 .ant-calendar-selected-date .ant-calendar-date:hover,
 .ant-calendar-selected-start-date .ant-calendar-date:hover,
 .ant-calendar-selected-end-date .ant-calendar-date:hover {
-  background: #1890ff;
+  background: $primary-color;
 }
 .ant-calendar-disabled-cell .ant-calendar-date {
   position: relative;

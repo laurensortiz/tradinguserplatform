@@ -13,6 +13,7 @@ import {
   commodity,
   assetClass,
   page,
+  setting,
 } from './controllers';
 
 const authMiddleware = (req, res, next) => {
@@ -150,5 +151,12 @@ module.exports = app => {
   app.post( '/api/asset-classes', assetClass.create );
   app.put( '/api/asset-classes/:assetClassId', assetClass.update );
   app.delete( '/api/asset-classes/:assetClassId', assetClass.delete );
+
+  // Setting
+  app.get( '/api/setting', setting.list );
+  app.get( '/api/setting/:settingId', setting.get );
+  app.post( '/api/setting', setting.create );
+  app.put( '/api/setting/:settingId', setting.update );
+  app.delete( '/api/setting/:settingId', setting.delete );
 
 };
