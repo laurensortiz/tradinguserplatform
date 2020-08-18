@@ -438,7 +438,6 @@ class MarketTable extends Component {
           { text: 'Vendido', value: 4 },
         ],
         onFilter: (value, record) => record.status === value,
-        filterMultiple: false,
         render: status => {
           const { name, color } = FormatStatus( status );
           return <Tag color={ color }>{ name }</Tag>
