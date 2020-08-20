@@ -126,6 +126,7 @@ module.exports = {
       orderId: req.body.orderId || marketOperation.orderId,
       status: _.get( req, 'body.status', 1 ) || marketOperation.status,
       createdAt: req.body.createdAt || marketOperation.createdAt,
+      updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
       endDate: req.body.endDate || marketOperation.endDate,
     } );
 

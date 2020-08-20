@@ -458,7 +458,7 @@ class MarketTable extends Component {
         title: 'Derivado',
         dataIndex: 'assetClass',
         key: 'assetClass',
-        render: assetClass => assetClass.name,
+        render: assetClass => <Tag color="#1b1f21">{assetClass.name}</Tag>,
         filters: assetClasses.map(({name}) => {
           return {
             text: name,

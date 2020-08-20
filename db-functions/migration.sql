@@ -1769,7 +1769,7 @@ begin
 	IF (new.status = 3) then
 	NEW."holdStatusCount" := old."holdStatusCount" + 1;
 	NEW."holdStatusCommission" := holdStatusPrice * NEW."holdStatusCount";
-
+  NEW."updatedAt" := NOW();
 
 /*UPDATE "MarketOperation"
 		SET "holdStatusCount" = currentHoldCount where id = new.id;
