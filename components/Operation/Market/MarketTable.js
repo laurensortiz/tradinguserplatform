@@ -530,6 +530,7 @@ class MarketTable extends Component {
         render: takingProfit => <span key={ takingProfit }>{ DisplayTableAmount( takingProfit ) }</span>,
         sorter: (a, b) => Sort( a.takingProfit, b.takingProfit ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'takingProfit' ),
       },
       {
         title: 'Fecha de Apertura',
