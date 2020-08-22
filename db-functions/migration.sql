@@ -1793,3 +1793,26 @@ update
 /*
 * End Changes August 13, 2020
 */
+
+/*===================================*/
+/*
+* Start Changes August 21, 2020
+*/
+ALTER TABLE public."MarketOperation" ADD "accountValueEndOperation" numeric(10,2) DEFAULT 0;
+ALTER TABLE public."MarketOperation" ADD "guaranteeValueEndOperation" numeric(10,2) DEFAULT 0;
+ALTER TABLE public."MarketOperation" ADD "commissionValueEndOperation" numeric(10,2) DEFAULT 0;
+ALTER TABLE public."MarketOperation" ADD "guaranteeOperationValueEndOperation" numeric(10,2) DEFAULT 0;
+ALTER TABLE public."MarketOperation" ADD "holdStatusCommissionEndOperation" numeric(10,2) DEFAULT 0;
+
+ALTER TABLE public."MarketOperation" ADD "profitBrut" numeric(10,2) DEFAULT 0;
+ALTER TABLE public."MarketOperation" ADD "profitNet" numeric(10,2) DEFAULT 0;
+
+
+
+
+ALTER TABLE public."UserAccount" ADD "snapShotAccount" varchar(255) DEFAULT '';
+
+
+/*
+* End Changes August 21, 2020
+*/

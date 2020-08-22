@@ -46,13 +46,6 @@ const getExportFileName = (orgId) => {
 
 const _formatData = (data) => {
   return _.map( data, operation => {
-    const diffAmount = Number(operation.amount) - Number(operation.initialAmount);
-    const isDiffAmountPositive = Math.sign(diffAmount) >= 0;
-
-    const commission = isDiffAmountPositive ? (diffAmount * (1 * Number(operation.userAccount.account.percentage) / 100)).toFixed(2) : 0
-    const hold =  isDiffAmountPositive ? Number(operation.holdStatusCommission) : 0;
-    const profit = diffAmount - commission - hold;
-
 
     return {
       'Fecha de apertura': FormatDate(operation.createdAt),
@@ -71,20 +64,18 @@ const _formatData = (data) => {
       'Saldo inicial': FormatCurrency.format( operation.initialAmount ),
       'Saldo de cierre': FormatCurrency.format( operation.amount ),
 
-      'Ganancias': isDiffAmountPositive ? FormatCurrency.format( diffAmount ) : FormatCurrency.format( 0 ),
-      'Perdidas': !isDiffAmountPositive ? FormatCurrency.format( diffAmount ) : FormatCurrency.format( 0 ),
-      'Comisión': `${operation.userAccount.account.percentage}% (${operation.userAccount.account.name}) - ${FormatCurrency.format(commission)}`,
-      'Hold': FormatCurrency.format( hold ),
-      'Ganancia Neta': FormatCurrency.format( profit ),
-      'Saldo Final': FormatCurrency.format( Number(operation.initialAmount) +  Number(profit)),
-
-      'Garantías disponibles': FormatCurrency.format(0),
-
+      'Ganancias': FormatCurrency.format( operation.profitBrut ),
+      'Comisión': `${operation.userAccount.account.percentage}% (${operation.userAccount.account.name}) - ${FormatCurrency.format(operation.commissionValueEndOperation)}`,
+      'Hold': FormatCurrency.format( operation.holdStatusCommissionEndOperation ),
+      'Ganancia Neta': FormatCurrency.format( operation.profitNet ),
+      'Saldo Final': FormatCurrency.format( Number(operation.initialAmount) +  Number(operation.profitNet)),
+      'Garantías disponibles': FormatCurrency.format(operation.guaranteeOperationValueEndOperation),
 
       'Transferencias Bancarias': '',
     }
 
   } )
+
 
 };
 

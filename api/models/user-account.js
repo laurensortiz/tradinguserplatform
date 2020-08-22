@@ -52,8 +52,11 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,
     },
+    snapShotAccount: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
   });
-
   UserAccount.associate = models => {
 
     UserAccount.belongsTo(models.User, {
