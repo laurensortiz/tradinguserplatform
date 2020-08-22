@@ -51,7 +51,7 @@ class Document extends Component {
           <meta name="viewport" content="width=device-width, initial-scale=1"/>
           <meta charSet="UTF-8"/>
           <meta name="sourceApp" content="mobileWeb"/>
-          <meta name="robots" content="noindex">
+          <meta name="robots" content="noindex" />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge"/>
           <meta property="og:locale" content="en_US"/>
           <meta property="og:type" content="website"/>
