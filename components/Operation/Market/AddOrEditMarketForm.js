@@ -69,6 +69,7 @@ class AddOrEditMarketForm extends PureComponent {
     assetClassName: '',
     accountPercentage: 0,
     accountGuarantee: 0,
+    isOperationClosed: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -139,6 +140,7 @@ class AddOrEditMarketForm extends PureComponent {
       const brokerName = _.get(selectedOperation, 'broker.name', '');
       const commodityName = _.get(selectedOperation, 'commodity.name', '');
       const assetClassName = _.get(selectedOperation, 'assetClass.name', '');
+      const status = _.get(selectedOperation, 'status', 1);
       this.setState( {
         ...this.state,
         ...selectedOperation,
@@ -148,6 +150,7 @@ class AddOrEditMarketForm extends PureComponent {
         brokerName,
         commodityName,
         assetClassName,
+        isOperationClosed: status === 4
       } )
     }
   }
@@ -310,6 +313,7 @@ class AddOrEditMarketForm extends PureComponent {
     const createdAtInitValue = !_.isNull( this.state.createdAt ) ? moment.tz(this.state.createdAt, 'America/New_York') : undefined;
     const endDateInitValue = !_.isNull( this.state.endDate ) ? moment.tz(this.state.endDate, 'America/New_York') : undefined;
 
+    const isDisableSubmitBtn = this.props.isLoading || (this.state.status === 4 && _.isNil(this.state.endDate)) || this.state.isOperationClosed
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
         <Form.Item label="Cuenta de Usuario">
@@ -522,7 +526,7 @@ class AddOrEditMarketForm extends PureComponent {
           ) : null
         }
         <Form.Item>
-          <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
+          <Button type="primary" htmlType="submit" className="login-form-button" disabled={ isDisableSubmitBtn }>
             { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }
           </Button>
         </Form.Item>

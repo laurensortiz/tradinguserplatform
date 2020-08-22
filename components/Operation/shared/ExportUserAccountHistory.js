@@ -7,6 +7,7 @@ import { FormatCurrency, FormatDate, FormatStatus } from '../../../common/utils'
 moment.locale( 'es' ); // Set Lang to Spanish
 
 const EXCEL_HEADER_MARKET = [
+  'Estado',
   'Fecha de apertura',
   'Fecha de cierre',
   'Activo',
@@ -23,7 +24,6 @@ const EXCEL_HEADER_MARKET = [
   'Saldo inicial',
   'Saldo de cierre',
   'Ganancias',
-  'Perdidas',
   'Comisión',
   'Hold',
   'Ganancia Neta',
@@ -48,6 +48,7 @@ const _formatData = (data) => {
   return _.map( data, operation => {
 
     return {
+      'Estado': FormatStatus(operation.status, true).name,
       'Fecha de apertura': FormatDate(operation.createdAt),
       'Fecha de cierre': FormatDate(operation.endDate),
       'Activo': `${operation.product.name} (${operation.product.code})`,
@@ -63,14 +64,12 @@ const _formatData = (data) => {
       'Broker': operation.broker.name,
       'Saldo inicial': FormatCurrency.format( operation.initialAmount ),
       'Saldo de cierre': FormatCurrency.format( operation.amount ),
-
       'Ganancias': FormatCurrency.format( operation.profitBrut ),
       'Comisión': `${operation.userAccount.account.percentage}% (${operation.userAccount.account.name}) - ${FormatCurrency.format(operation.commissionValueEndOperation)}`,
       'Hold': FormatCurrency.format( operation.holdStatusCommissionEndOperation ),
       'Ganancia Neta': FormatCurrency.format( operation.profitNet ),
       'Saldo Final': FormatCurrency.format( Number(operation.initialAmount) +  Number(operation.profitNet)),
       'Garantías disponibles': FormatCurrency.format(operation.guaranteeOperationValueEndOperation),
-
       'Transferencias Bancarias': '',
     }
 

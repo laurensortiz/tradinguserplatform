@@ -18,7 +18,6 @@ class AccountInformation extends PureComponent {
 
     const accountName = _.get( this.props, 'userAccount.account.name', '' );
     const accountPercentage = _.get( this.props, 'userAccount.account.percentage', '0' );
-    const accountId = _.get( this.props, 'userAccount.account.id', 0 );
 
     const guaranteeOperation = _.get( this.props, 'userAccount.guaranteeOperation', '0.00' );
     const guaranteeCredits = _.get( this.props, 'userAccount.guaranteeCredits', '0.00' );
@@ -94,13 +93,14 @@ class AccountInformation extends PureComponent {
             <Market
               isAdmin={ false }
               currentUserId={userId}
-              userAccountId={accountId}
+              userAccountId={userAccountId}
+              onRequestStandardOperationsReport={this.props.onRequestStandardOperationsReport}
             />
           ) : (
             <Investment
               isAdmin={ false }
               currentUserId={userId}
-              userAccountId={accountId}
+              userAccountId={userAccountId}
             />
           )}
         </Row>

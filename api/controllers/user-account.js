@@ -8,7 +8,8 @@ import {
   Product,
   Broker,
   Commodity,
-  AssetClass
+  AssetClass,
+  sequelize
 } from '../models';
 import { userAccountQuery } from '../queries';
 import { getLastMovement } from './market-movement';
@@ -69,53 +70,9 @@ module.exports = {
 
   async getReport(req, res) {
 
-    const userAccountSoldOperations = await MarketOperation.findAll({
-      where: {
-        userAccountId: req.params.userAccountId,
-        status: 4
-      },
-      include: [
-        {
-          model: UserAccount,
-          as: 'userAccount',
-          include: [
-            {
-              model: User,
-              as: 'user',
-              attributes: ['username', 'firstName', 'lastName']
-            },
-            {
-              model: Account,
-              as: 'account',
-              attributes: ['name', 'percentage', 'associatedOperation']
-            },
-          ],
-        },
-        {
-          model: MarketMovement,
-          as: 'marketMovement',
-          limit: 1,
-          order: [ [ 'createdAt', 'DESC' ]],
-        },
-        {
-          model: Product,
-          as: 'product',
-        },
-        {
-          model: Broker,
-          as: 'broker',
-        },
-        {
-          model: Commodity,
-          as: 'commodity',
-        },
-        {
-          model: AssetClass,
-          as: 'assetClass',
-        },
-      ],
-      silence: true
-    });
+    const userAccountSoldOperations = await MarketOperation.findAll(
+      userAccountQuery.accountReport( { req, User, Account, UserAccount, MarketMovement, Product, Broker, Commodity, AssetClass, sequelize } )
+    )
 
     if (!userAccountSoldOperations) {
       return res.status(404).send({

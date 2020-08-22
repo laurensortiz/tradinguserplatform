@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Drawer, Tabs, notification, Radio, Divider } from 'antd';
+import { Row, Col, Drawer, Tabs, notification, Button, Dropdown, Menu, Icon } from 'antd';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -230,9 +230,9 @@ class Market extends Component {
   };
 
   _onTabChange = ({ target }) => {
-    this.setState({
+    this.setState( {
       dataStatus: target.value
-    })
+    } )
     this.props.fetchGetMarketOperations( target.value === 1 ? 'active' : 'deleted' );
   }
 
@@ -288,7 +288,6 @@ class Market extends Component {
     const currentUserLastName = _.get( this.state.currentOperationDetail, 'userAccount.user.lastName', '' );
     const modalDetailTitle = `${ currentUsername } - ${ currentUserFirstName } ${ currentUserLastName }`;
 
-    //_.filter(activeMarketOperations, {userAccount['accountId']: this.props.userAccountId})
     return (
       <>
         <Row>
@@ -308,17 +307,43 @@ class Market extends Component {
                     isBulkLoading={ this.props.isBulkLoading }
                     isBulkSuccess={ this.props.isBulkSuccess }
                     isBulkCompleted={ this.props.isBulkProcessCompleted }
-                    onTabChange={this._onTabChange}
-                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations('active') }
-                    dataStatus={this.state.dataStatus}
+                    onTabChange={ this._onTabChange }
+                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( 'active' ) }
+                    dataStatus={ this.state.dataStatus }
                   />
                 </div>
               </>
             ) : (
               <>
-                { !_.isEmpty( this.state.marketOperations ) ? <h2>Operaciones de Bolsa OTC</h2> : null }
+                { !_.isEmpty( this.state.marketOperations ) ? (
+                  <Row>
+                    <Col sm={ 12 }>
+                      <h2>Operaciones de Bolsa OTC</h2>
+                    </Col>
+                    <Col sm={ 12 }>
+                      <Dropdown overlay={ (
+                        <Menu onClick={ ({ key }) => this.props.onRequestStandardOperationsReport( {
+                          id: this.props.userAccountId,
+                          status: key
+                        } ) }>
+                          <Menu.Item key={ null }>Todas las Operaciones</Menu.Item>
+                          <Menu.Item key={ 4 }>Operaciones Vendidas</Menu.Item>
+                        </Menu>
+                      ) }>
+                        <Button
+                          type="primary"
+                          data-testid="export-button"
+                          className="export-excel-cta"
+                          style={ { float: 'right' } }
+                        >
+                          <Icon type="file-excel"/> <span>Reporte Histórico</span>
+                        </Button>
+                      </Dropdown>
+                    </Col>
+                  </Row>
+                ) : null }
                 <MarketTable
-                  marketOperations={ _.filter( this.state.marketOperations, [ 'userAccount.accountId', this.props.userAccountId ] ) }
+                  marketOperations={ this.state.marketOperations }
                   isLoading={ this.props.isLoading }
                   onEdit={ this._onSelectEdit }
                   onDelete={ this._handleDeleteUserOperation }

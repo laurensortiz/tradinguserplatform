@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 import Highlighter from 'react-highlight-words';
-import { Button, Icon, Input, Popconfirm, Radio, Table, Tag } from 'antd';
+import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu } from 'antd';
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
 import classNames from "classnames";
 
@@ -27,8 +27,8 @@ class UserAccountsTable extends Component {
     return null;
   }
 
-  _handleExportHistory = (accountId) => {
-    this.props.onReqeuestExportHistoryReport(accountId)
+  _handleExportHistory = (accountSelected) => {
+    this.props.onReqeuestExportHistoryReport(accountSelected)
   }
 
   _getCTA = (type, row) => {
@@ -49,15 +49,27 @@ class UserAccountsTable extends Component {
     } else {
       return (
         <div className="cta-container">
-          <Button
-            type="primary"
-            data-testid="export-button"
-            className="export-excel-cta"
-            onClick={ () => this._handleExportHistory(row.id)}
-            style={ { float: 'right' } }
-          >
-            <Icon type="file-excel"/> <span>Reporte Histórico</span>
-          </Button>
+          {this.props.isOperationStandard ? (
+            <Dropdown overlay={(
+              <Menu onClick={({ key }) => this._handleExportHistory({
+                id: row.id,
+                status: key
+              })}>
+                <Menu.Item key={null}>Todas las Operaciones</Menu.Item>
+                <Menu.Item key={4}>Operaciones Vendidas</Menu.Item>
+              </Menu>
+            )}>
+              <Button
+                type="primary"
+                data-testid="export-button"
+                className="export-excel-cta"
+                style={ { float: 'right' } }
+              >
+                <Icon type="file-excel"/> <span>Reporte Histórico</span>
+              </Button>
+            </Dropdown>
+          ) : null}
+
           <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
           <Popconfirm
             okText="Si"

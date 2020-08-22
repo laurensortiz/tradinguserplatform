@@ -29,7 +29,7 @@ class Accounts extends Component {
     if (nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
       if (_.isEmpty( nextProps.historyReportData )) {
         notification.info( {
-          message: 'No se encontraron Operaciones Cerradas para esta cuenta',
+          message: 'No se encontraron Operaciones para esta cuenta',
           onClose: () => {
             nextProps.resetAfterRequest();
           },

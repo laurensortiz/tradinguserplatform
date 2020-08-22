@@ -1810,7 +1810,7 @@ ALTER TABLE public."MarketOperation" ADD "profitNet" numeric(10,2) DEFAULT 0;
 
 
 
-ALTER TABLE public."UserAccount" ADD "snapShotAccount" varchar(255) DEFAULT '';
+ALTER TABLE public."UserAccount" ADD "snapShotAccount" varchar() DEFAULT '';
 
 
 /*

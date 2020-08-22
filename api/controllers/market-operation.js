@@ -97,7 +97,7 @@ module.exports = {
   },
 
   async update(req, res) {
-   await ORM.transaction( async (t) => {
+    await ORM.transaction( async (t) => {
 
       const marketOperation = await MarketOperation.findOne( {
         where: {
@@ -154,7 +154,7 @@ module.exports = {
           endDate: req.body.endDate || marketOperation.endDate,
         }, { transaction: t } );
 
-        if (marketOperation.status === 4 ) {
+        if (marketOperation.status === 4) {
           const userAccount = await UserAccount.findOne( {
             where: {
               id: marketOperation.userAccountId,
@@ -175,30 +175,30 @@ module.exports = {
             assetClassId === 4 ||
             assetClassId === 3 ||
             assetClassId === 1
-          ) ? 0 : Number(maintenanceMargin);
-          const profit = Number(amount) - Number(initialAmount);
-          const isProfitPositive = Math.sign(profit) >= 0;
-          const commission = isProfitPositive ? Number(((profit * Number(percentage) ) / 100).toFixed(2)) : 0
-          const hold =  isProfitPositive ? Number(holdStatusCommission) : 0;
+          ) ? 0 : Number( maintenanceMargin );
+          const profit = Number( amount ) - Number( initialAmount );
+          const isProfitPositive = Math.sign( profit ) >= 0;
+          const commission = isProfitPositive ? Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) : 0
+          const hold = isProfitPositive ? Number( holdStatusCommission ) : 0;
           const endProfit = profit - commission - hold;
 
           // Close Calculations
-          const marginUsed = ((Number(initialAmount) + Number(maintenanceMarginAmount)) * 10) / 100;
-          const guaranteeOperationProduct = Number(userAccount.guaranteeOperation) + Number(initialAmount) + Number(maintenanceMarginAmount) + Number(marginUsed);
-          const accountValueEndOperation = Number(userAccount.accountValue) + Number(endProfit);
-          const accountGuaranteeEndOperation = Number(userAccount.guaranteeOperation) + Number(guaranteeOperationProduct);
-          const accountMarginUsedEndOperation =  Number(userAccount.marginUsed) + Number(marginUsed);
+          const marginUsed = ( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100;
+          const guaranteeOperationProduct = Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit;
+          const accountValueEndOperation = Number( userAccount.accountValue ) + Number( endProfit );
+          const accountGuaranteeEndOperation = Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct );
+          const accountMarginUsedEndOperation = Number( userAccount.marginUsed ) - Number( marginUsed );
 
-          await userAccount.update({
+          await userAccount.update( {
             accountValue: accountValueEndOperation, // Valor de la Cuenta
             guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
             marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
-            snapShotAccount: JSON.stringify(userAccount),
+            snapShotAccount: JSON.stringify( userAccount ),
             updatedAt: new Date(),
 
-          }, { transaction: t });
+          }, { transaction: t } );
 
-          await marketOperation.update({
+          await marketOperation.update( {
             profitBrut: profit,
             profitNet: endProfit,
             accountValueEndOperation: accountValueEndOperation,
@@ -206,7 +206,7 @@ module.exports = {
             commissionValueEndOperation: commission,
             guaranteeOperationValueEndOperation: guaranteeOperationProduct,
             holdStatusCommissionEndOperation: hold
-          }, { transaction: t })
+          }, { transaction: t } )
 
 
         }
@@ -218,7 +218,7 @@ module.exports = {
         } );
       }
 
-    })
+    } )
 
 
   },
@@ -232,17 +232,11 @@ module.exports = {
 
         switch (updateScope) {
           case 'status':
-            result = await MarketOperation.update( {
-                [ updateType ]: updateValue,
-                endDate: updateValue === 4 ? moment( new Date() ).tz( 'America/New_York' ).format() : null // 4 = Close Operation
-              }, { where: { id: operationsIds } },
-              { transaction: t }
-            );
 
-            /**
-             * Close Operation
-             */
             if (updateValue === 4) {
+              /**
+               * Close Operation
+               */
               result = await Promise.all( operationsIds.map( async (operationID) => {
                   const marketOperation = await MarketOperation.findOne( {
                     where: {
@@ -286,56 +280,67 @@ module.exports = {
                   const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
                   const { percentage } = marketOperation.userAccount.account;
 
-                const maintenanceMarginAmount = (
-                  assetClassId === 8 ||
-                  assetClassId === 7 ||
-                  assetClassId === 5 ||
-                  assetClassId === 4 ||
-                  assetClassId === 3 ||
-                  assetClassId === 1
-                ) ? 0 : Number(maintenanceMargin);
-                const profit = Number(amount) - Number(initialAmount);
-                const isProfitPositive = Math.sign(profit) >= 0;
-                const commission = isProfitPositive ? Number(((profit * Number(percentage) ) / 100).toFixed(2)) : 0
-                const hold =  isProfitPositive ? Number(holdStatusCommission) : 0;
-                const endProfit = profit - commission - hold;
+                  const maintenanceMarginAmount = (
+                    assetClassId === 8 ||
+                    assetClassId === 7 ||
+                    assetClassId === 5 ||
+                    assetClassId === 4 ||
+                    assetClassId === 3 ||
+                    assetClassId === 1
+                  ) ? 0 : Number( maintenanceMargin );
+                  const profit = Number( amount ) - Number( initialAmount );
+                  const isProfitPositive = Math.sign( profit ) >= 0;
+                  const commission = isProfitPositive ? Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) : 0
+                  const hold = isProfitPositive ? Number( holdStatusCommission ) : 0;
+                  const endProfit = profit - commission - hold;
 
-                // Close Calculations
-                const marginUsed = ((Number(initialAmount) + Number(maintenanceMarginAmount)) * 10) / 100;
-                const guaranteeOperationProduct = Number(userAccount.guaranteeOperation) + Number(initialAmount) + Number(maintenanceMarginAmount) + Number(marginUsed);
-                const accountValueEndOperation = Number(userAccount.accountValue) + Number(endProfit);
-                const accountGuaranteeEndOperation = Number(userAccount.guaranteeOperation) + Number(guaranteeOperationProduct);
-                const accountMarginUsedEndOperation =  Number(userAccount.marginUsed) + Number(marginUsed);
+                  // Close Calculations
+                  const marginUsed = ( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100;
+                  const guaranteeOperationProduct = Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit;
+                  const accountValueEndOperation = Number( userAccount.accountValue ) + Number( endProfit );
+                  const accountGuaranteeEndOperation = Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct );
+                  const accountMarginUsedEndOperation = Number( userAccount.marginUsed ) - Number( marginUsed );
 
-                try {
-                  await userAccount.update({
-                    accountValue: accountValueEndOperation, // Valor de la Cuenta
-                    guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
-                    marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
-                    snapShotAccount: JSON.stringify(userAccount),
-                    updatedAt: new Date(),
+                  try {
+                    await userAccount.update( {
+                      accountValue: accountValueEndOperation, // Valor de la Cuenta
+                      guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
+                      marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
+                      snapShotAccount: JSON.stringify( userAccount ),
+                      updatedAt: new Date(),
 
-                  }, { transaction: t });
+                    }, { transaction: t } );
 
-                  await marketOperation.update({
-                    profitBrut: profit,
-                    profitNet: endProfit,
-                    accountValueEndOperation: accountValueEndOperation,
-                    guaranteeValueEndOperation: accountGuaranteeEndOperation,
-                    commissionValueEndOperation: commission,
-                    guaranteeOperationValueEndOperation: guaranteeOperationProduct,
-                    holdStatusCommissionEndOperation: hold
-                  }, { transaction: t })
+                    await marketOperation.update( {
+                      profitBrut: profit,
+                      profitNet: endProfit,
+                      accountValueEndOperation: accountValueEndOperation,
+                      guaranteeValueEndOperation: accountGuaranteeEndOperation,
+                      commissionValueEndOperation: commission,
+                      guaranteeOperationValueEndOperation: guaranteeOperationProduct,
+                      holdStatusCommissionEndOperation: hold,
+                      endDate: moment( new Date() ).tz( 'America/New_York' ).format(),
+                      status: 4
 
-                } catch (e) {
-                  throw new Error( `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${e}` )
-                }
+                    }, { transaction: t } )
+
+                  } catch (e) {
+                    throw new Error( `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${ e }` )
+                  }
                 } )
               )
 
 
+            } else {
+              /**
+               *
+               */
+              result = await MarketOperation.update( {
+                  [ updateType ]: updateValue,
+                }, { where: { id: operationsIds } },
+                { transaction: t }
+              );
             }
-
 
             return res.status( 200 ).send( result );
 
@@ -498,20 +503,6 @@ module.exports = {
 
     }
 
-  },
-
-  async closeOperation(operation) {
-    await ORM.transaction( async (t) => {
-
-      const marketOperation = await MarketOperation.findOne( {
-        where: {
-          id: operationID,
-        },
-        silence: true
-      }, { transaction: t } );
-
-
-    } )
   },
 
   async delete(req, res) {
