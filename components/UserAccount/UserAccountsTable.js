@@ -311,8 +311,7 @@ class UserAccountsTable extends Component {
           className={ IsOperationPositive( data.accountValue, data.balanceInitial ) ? 'positive txt-highlight' : 'negative txt-highlight' }
           key={ data.accountValue }>{ DisplayTableAmount( data.accountValue ) }</span>,
         sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
-        sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'accountValue' ),
+        sortDirections: [ 'descend', 'ascend' ]
       },
       {
         title: 'Garantías disponibles',
