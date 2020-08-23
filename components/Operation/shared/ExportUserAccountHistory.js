@@ -89,8 +89,8 @@ const _getAccountTemplateMarket = (data) => {
 };
 
 function exportUserAccountHistory(exportData) {
-
-  const workbook = _formatData( exportData );
+  const oderded = _.orderBy(exportData, ['guaranteeOperationValueEndOperation', 'asc'])
+  const workbook = _formatData( oderded );
 
   //Define template structure
   const ws = XLSX.utils.json_to_sheet(

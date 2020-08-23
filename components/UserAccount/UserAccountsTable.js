@@ -312,6 +312,7 @@ class UserAccountsTable extends Component {
           key={ data.accountValue }>{ DisplayTableAmount( data.accountValue ) }</span>,
         sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'accountValue' ),
       },
       {
         title: 'Garantías disponibles',
@@ -321,6 +322,7 @@ class UserAccountsTable extends Component {
         render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
         sorter: (a, b) => Sort( a.guaranteeOperation, b.guaranteeOperation ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'guaranteeOperation' ),
       },
       {
         title: 'Saldo Inicial',
@@ -345,6 +347,7 @@ class UserAccountsTable extends Component {
         render: amount => <span key={ amount }>{ this._displayTableAmount( amount ) }</span>,
         sorter: (a, b) => Sort( a.guaranteeCredits, b.guaranteeCredits ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'guaranteeCredits' ),
       },
       {
         title: this._handleActionTitle,
