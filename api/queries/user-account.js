@@ -112,6 +112,7 @@ const queries = {
               attributes: ['name', 'percentage', 'associatedOperation']
             },
           ],
+          order: [ [ 'guaranteeOperation', 'ASC' ] ],
         },
         {
           model: MarketMovement,
@@ -137,7 +138,6 @@ const queries = {
         },
       ],
       silence: true,
-      order: [ [ 'endDate', 'DESC' ] ],
     };
   },
 
