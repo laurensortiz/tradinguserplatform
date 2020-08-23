@@ -93,7 +93,7 @@ const queries = {
 
     return {
       where: {
-        userAccountId: req.params.userAccountId,
+        userAccountId: req.body.id,
         status: conditionalStatus(req, sequelize),
       },
       include: [
@@ -136,7 +136,8 @@ const queries = {
           as: 'assetClass',
         },
       ],
-      silence: true
+      silence: true,
+      order: [ [ 'endDate', 'DESC' ] ],
     };
   },
 

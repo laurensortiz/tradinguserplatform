@@ -313,7 +313,7 @@ class AddOrEditMarketForm extends PureComponent {
     const createdAtInitValue = !_.isNull( this.state.createdAt ) ? moment.tz(this.state.createdAt, 'America/New_York') : undefined;
     const endDateInitValue = !_.isNull( this.state.endDate ) ? moment.tz(this.state.endDate, 'America/New_York') : undefined;
 
-    const isDisableSubmitBtn = this.props.isLoading || (this.state.status === 4 && _.isNil(this.state.endDate)) || this.state.isOperationClosed
+    const isDisableSubmitBtn = this.props.isLoading || (this.state.status === 4 && _.isNil(this.state.endDate))
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
         <Form.Item label="Cuenta de Usuario">

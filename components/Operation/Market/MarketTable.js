@@ -20,7 +20,6 @@ import {
 import BulkUpdateSteps from './BulkUpdateSteps';
 
 import { assetClassOperations } from "../../../state/modules/assetClasses";
-import { fetchGetAssetClasses } from "../../../state/modules/assetClasses/actions";
 
 momentDurationFormat( moment );
 extendMoment( moment );
@@ -216,7 +215,6 @@ class MarketTable extends Component {
     this.props.onRequestUpdateTable()
   }
 
-
   _handleClickBulkUpdate = bulkOperation => {
 
     this.props.onFetchBulkUpdate( {
@@ -225,6 +223,7 @@ class MarketTable extends Component {
     } )
 
   }
+
   tableHeader = () => (
     <>
       <Row>

@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 import Highlighter from 'react-highlight-words';
-import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu } from 'antd';
+import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu, Row, Col } from 'antd';
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
 import classNames from "classnames";
-
 
 
 class UserAccountsTable extends Component {
@@ -15,7 +14,10 @@ class UserAccountsTable extends Component {
     userAccounts: [],
     searchText: '',
     searchedColumn: '',
-    isMenuFold: true
+    isMenuFold: true,
+    currentDataSource: [],
+    selectedRowKeys: [],
+    isBulkActive: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -28,7 +30,18 @@ class UserAccountsTable extends Component {
   }
 
   _handleExportHistory = (accountSelected) => {
-    this.props.onReqeuestExportHistoryReport(accountSelected)
+    this.props.onReqeuestExportHistoryReport( accountSelected )
+  }
+
+  onSelectOperation = (selectedRowKeys) => {
+    this.setState( { selectedRowKeys } )
+  }
+
+  onSelectAllOperation = (isSelected) => {
+    const { currentDataSource, userAccounts } = this.state;
+    const dataSource = !_.isEmpty( currentDataSource ) ? currentDataSource : userAccounts;
+    const allOperationsIds = isSelected ? dataSource.map( ope => ope.id ) : []
+    this.setState( { selectedRowKeys: allOperationsIds } )
   }
 
   _getCTA = (type, row) => {
@@ -42,23 +55,23 @@ class UserAccountsTable extends Component {
             cancelText="Cancelar"
             onConfirm={ () => this.props.onActive( row.id ) }
           >
-            <Button type="danger"><Icon type="undo" /><span>Activar</span></Button>
+            <Button type="danger"><Icon type="undo"/><span>Activar</span></Button>
           </Popconfirm>
         </div>
       )
     } else {
       return (
         <div className="cta-container">
-          {this.props.isOperationStandard ? (
-            <Dropdown overlay={(
-              <Menu onClick={({ key }) => this._handleExportHistory({
+          { this.props.isOperationStandard ? (
+            <Dropdown overlay={ (
+              <Menu onClick={ ({ key }) => this._handleExportHistory( {
                 id: row.id,
                 status: key
-              })}>
-                <Menu.Item key={null}>Todas las Operaciones</Menu.Item>
-                <Menu.Item key={4}>Operaciones Vendidas</Menu.Item>
+              } ) }>
+                <Menu.Item key={ null }>Todas las Operaciones</Menu.Item>
+                <Menu.Item key={ 4 }>Operaciones Vendidas</Menu.Item>
               </Menu>
-            )}>
+            ) }>
               <Button
                 type="primary"
                 data-testid="export-button"
@@ -68,7 +81,7 @@ class UserAccountsTable extends Component {
                 <Icon type="file-excel"/> <span>Reporte Histórico</span>
               </Button>
             </Dropdown>
-          ) : null}
+          ) : null }
 
           <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
           <Popconfirm
@@ -87,7 +100,7 @@ class UserAccountsTable extends Component {
 
   _displayTableAmount = amount => {
     if (amount) {
-      return `${ FormatCurrency.format(amount) }`
+      return `${ FormatCurrency.format( amount ) }`
     } else {
       return '-'
     }
@@ -125,7 +138,7 @@ class UserAccountsTable extends Component {
     ),
     onFilter: (value, record) => {
 
-      return _.get(record, dataIndex)
+      return _.get( record, dataIndex )
         .toString()
         .toLowerCase()
         .includes( value.toLowerCase() )
@@ -155,35 +168,86 @@ class UserAccountsTable extends Component {
     this.setState( {
       searchText: selectedKeys[ 0 ],
       searchedColumn: dataIndex,
+      selectedRowKeys: []
     } );
   };
 
   handleReset = clearFilters => {
     clearFilters();
-    this.setState( { searchText: '' } );
+    this.setState( {
+      searchText: '',
+      selectedRowKeys: []
+    } );
   };
 
   onTableChange = (pagination, filters, sorter, extra) => {
-   this.props.onRequestUpdateTable()
+    const { currentDataSource } = extra;
+    this.setState( {
+      currentDataSource,
+      filteredInfo: filters,
+      sortedInfo: sorter,
+    } )
+    if (this.props.isAdmin) {
+      this.props.onRequestUpdateTable();
+    }
+  }
+
+  _onSelectBulkReport = () => {
+    const selectedAccounts = _.filter( this.state.userAccounts, account => _.includes( this.state.selectedRowKeys, account.id ) )
+    this.props.onReqeuestExportAccountReport( selectedAccounts );
+  }
+  onCancelBulkProcess = () => {
+    this.setState( {
+      isBulkActive: false,
+      selectedRowKeys: [],
+      bulkUpdateValue: null,
+    } )
+    this.props.onRequestUpdateTable()
   }
 
   _displayTableHeader = () => (
-    <Radio.Group defaultValue={1} buttonStyle="solid" onChange={ this.props.onTabChange }>
-      <Radio.Button value={1}>Activos</Radio.Button>
-      <Radio.Button value={0}>Eliminados</Radio.Button>
-    </Radio.Group>
+    <Row>
+      <Col sm={ 12 }>
+        <Radio.Group defaultValue={ 1 } buttonStyle="solid" onChange={ this.props.onTabChange }>
+          <Radio.Button value={ 1 }>Activos</Radio.Button>
+          <Radio.Button value={ 0 }>Eliminados</Radio.Button>
+        </Radio.Group>
+      </Col>
+      <Col sm={ 12 }>
+        { this.state.isBulkActive ? (
+          <>
+            <Button onClick={ this.onCancelBulkProcess } type="danger" style={ { float: 'right' } }><Icon
+              type="close-circle"/><span>Cancelar</span></Button>
+            <Button
+              type="primary"
+              data-testid="export-button"
+              className="export-excel-cta"
+              style={ { float: 'right', marginRight: 20 } }
+              onClick={ this._onSelectBulkReport }
+            >
+              <Icon type="file-excel"/> <span>Descargar Reporte</span>
+            </Button>
+          </>
+        ) : (
+          <Button size="large" type="secondary" style={ { float: 'right' } } onClick={ () => this.setState( { isBulkActive: true } ) }>
+            <Icon type="interaction"/> <span>Generar Reporte de Cuentas</span></Button>
+
+        ) }
+
+      </Col>
+    </Row>
   );
 
   _onSelectMenuFold = () => {
-    this.setState({
+    this.setState( {
       isMenuFold: !this.state.isMenuFold
-    })
+    } )
   }
 
   _handleActionTitle = () => {
     return (
-      <div style={{textAlign: 'right'}}>
-        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+      <div style={ { textAlign: 'right' } }>
+        <Button onClick={ this._onSelectMenuFold }><Icon type="swap"/></Button>
       </div>
     )
   }
@@ -191,6 +255,11 @@ class UserAccountsTable extends Component {
 
   render() {
     const dynamicClass = this.props.isOperationStandard ? 'show' : 'hidden';
+
+    const {
+      selectedRowKeys,
+      isBulkActive,
+    } = this.state;
 
     const columns = [
       {
@@ -238,7 +307,9 @@ class UserAccountsTable extends Component {
       {
         title: 'Valor de la Cuenta',
         key: 'accountValue',
-        render: data => <span className={IsOperationPositive(data.accountValue, data.balanceInitial) ? 'positive txt-highlight' : 'negative txt-highlight'} key={ data.accountValue }>{ DisplayTableAmount( data.accountValue ) }</span>,
+        render: data => <span
+          className={ IsOperationPositive( data.accountValue, data.balanceInitial ) ? 'positive txt-highlight' : 'negative txt-highlight' }
+          key={ data.accountValue }>{ DisplayTableAmount( data.accountValue ) }</span>,
         sorter: (a, b) => Sort( a.accountValue, b.accountValue ),
         sortDirections: [ 'descend', 'ascend' ],
       },
@@ -283,16 +354,22 @@ class UserAccountsTable extends Component {
         className: 't-a-r'
       },
     ];
-    
+
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectOperation,
+      onSelectAll: this.onSelectAllOperation
+    };
 
     return (
       <Table
+        rowSelection={ isBulkActive ? rowSelection : null }
         rowKey={ record => record.id }
         columns={ columns }
         dataSource={ this.state.userAccounts }
         loading={ this.props.isLoading }
         scroll={ { x: true } }
-        title={this._displayTableHeader}
+        title={ this._displayTableHeader }
         onChange={ this.onTableChange }
         className={ classNames( { 'is-menu-fold': this.state.isMenuFold } ) }
 

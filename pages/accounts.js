@@ -12,6 +12,7 @@ import AddOrEditUserAccountForm from '../components/UserAccount/AddOrEditUserAcc
 
 import { userAccountOperations } from "../state/modules/userAccounts";
 import ExportHistoryReport from '../components/Operation/shared/ExportUserAccountHistory';
+import ExportUserAccountDetail from '../components/Operation/shared/ExportUserAccountDetail';
 
 const { TabPane } = Tabs;
 
@@ -179,6 +180,10 @@ class Accounts extends Component {
     this.props.fetchGetUserAccountHistoryReport( accountId )
   }
 
+  _handleExportAccountReport = (accountsSelected) => {
+    ExportUserAccountDetail(accountsSelected)
+  }
+
   _handleTabChange = ({ target }) => {
     this.setState( {
       status: target.value
@@ -218,6 +223,7 @@ class Accounts extends Component {
               isOperationStandard={ _.isEqual( this.state.associatedOperation, 1 ) }
               onRequestUpdateTable={ this.props.fetchGetAllUserAccounts }
               onReqeuestExportHistoryReport={ this._handleExportHistoryReport }
+              onReqeuestExportAccountReport={ this._handleExportAccountReport}
               onTabChange={ this._handleTabChange }
               dataStatus={ this.state.status }
             />

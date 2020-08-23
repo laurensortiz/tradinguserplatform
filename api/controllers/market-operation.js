@@ -126,10 +126,18 @@ module.exports = {
         } );
       }
 
-      if (marketOperation.status === 4) {
+      if (marketOperation.status === 4 && _.isNil(req.body.endDate)) {
         return res.status( 401 ).send( {
-          message: 'Esta operación ya se encuentra cerrada',
+          message: 'Esta operación ya se encuentra cerrada. Sólo es permitido cambiar la fecha de cierre',
         } );
+      }
+
+      if (marketOperation.status === 4 && !_.isNil(req.body.endDate)) {
+        await marketOperation.update( {
+          updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+          endDate: moment( req.body.endDate ).tz( 'America/New_York' ).format() || marketOperation.endDate,
+        }, { transaction: t } );
+        return res.status( 200 ).send( marketOperation );
       }
 
       try {
