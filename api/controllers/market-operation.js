@@ -157,9 +157,9 @@ module.exports = {
           initialAmount: req.body.initialAmount || marketOperation.initialAmount,
           orderId: req.body.orderId || marketOperation.orderId,
           status: _.get( req, 'body.status', 1 ) || marketOperation.status,
-          createdAt: req.body.createdAt || marketOperation.createdAt,
+          createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || marketOperation.createdAt,
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
-          endDate: req.body.endDate || marketOperation.endDate,
+          endDate: moment( req.body.endDate ).tz( 'America/New_York' ).format() || marketOperation.endDate,
         }, { transaction: t } );
 
         if (marketOperation.status === 4) {
