@@ -511,7 +511,7 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'createdAt', {
             initialValue: createdAtInitValue
           } )(
-            <DatePicker onChange={ this._setStartDate } defaultPickerValue={moment().tz('America/New_York')} placeholder="Fecha de Inicio"/>
+            <DatePicker onChange={ this._setStartDate } defaultPickerValue={moment.parseZone()} placeholder="Fecha de Inicio"/>
           ) }
         </Form.Item>
         {
@@ -520,7 +520,7 @@ class AddOrEditMarketForm extends PureComponent {
               { getFieldDecorator( 'endDate', {
                 initialValue: endDateInitValue
               } )(
-                <DatePicker onChange={ this._setEndDate } defaultPickerValue={moment().tz('America/New_York')} placeholder="Fecha de Cierre"/>
+                <DatePicker onChange={ this._setEndDate } defaultPickerValue={moment.parseZone()} placeholder="Fecha de Cierre"/>
               ) }
             </Form.Item>
           ) : null
