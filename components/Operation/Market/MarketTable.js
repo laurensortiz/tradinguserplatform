@@ -20,7 +20,6 @@ import {
 import BulkUpdateSteps from './BulkUpdateSteps';
 
 import { assetClassOperations } from "../../../state/modules/assetClasses";
-import { fetchGetAssetClasses } from "../../../state/modules/assetClasses/actions";
 
 momentDurationFormat( moment );
 extendMoment( moment );
@@ -135,7 +134,7 @@ class MarketTable extends Component {
       </div>
     ),
     filterIcon: filtered => (
-      <Icon type="search" style={ { color: filtered ? '#1890ff' : undefined } }/>
+      <Icon type="filter" theme="filled" style={ { color: filtered ? '#1890ff' : undefined } }/>
     ),
     onFilter: (value, record) => {
 
@@ -216,7 +215,6 @@ class MarketTable extends Component {
     this.props.onRequestUpdateTable()
   }
 
-
   _handleClickBulkUpdate = bulkOperation => {
 
     this.props.onFetchBulkUpdate( {
@@ -225,6 +223,7 @@ class MarketTable extends Component {
     } )
 
   }
+
   tableHeader = () => (
     <>
       <Row>
@@ -240,7 +239,7 @@ class MarketTable extends Component {
             <Icon type="retweet"/> Actualización Masiva
           </Button>
           <Button type="danger" className={classNames({'hidden': !this.state.isBulkUpdateActive})}
-                  onClick={ this.onCancelBulkProcess } size="large">
+                  onClick={ this.onCancelBulkProcess } >
             <Icon type="close-circle"/> Cerrar
           </Button>
         </Col>
@@ -458,7 +457,7 @@ class MarketTable extends Component {
         title: 'Derivado',
         dataIndex: 'assetClass',
         key: 'assetClass',
-        render: assetClass => assetClass.name,
+        render: assetClass => <Tag color="#1b1f21">{assetClass.name}</Tag>,
         filters: assetClasses.map(({name}) => {
           return {
             text: name,

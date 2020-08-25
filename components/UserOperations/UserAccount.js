@@ -13,7 +13,11 @@ class UserAccount extends PureComponent  {
     if (_.isEmpty( this.props.accounts )) {
       return <Empty description="No se encontraron cuentas asociadas a su nombre."/>
     } else {
-      return _.map( this.props.accounts, account => <UserAccountInformation userAccount={ account }/> )
+      return _.map( this.props.accounts, account =>
+        <UserAccountInformation
+          userAccount={ account }
+          onRequestStandardOperationsReport={this.props.onRequestStandardOperationsReport}
+      /> )
     }
   };
 
@@ -30,11 +34,12 @@ class UserAccount extends PureComponent  {
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col sm={12}>
             <ExportUserAccounts
               userAccounts={ this.props.accounts }
             />
           </Col>
+
         </Row>
         <Row>
           <Col>

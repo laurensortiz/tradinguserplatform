@@ -1,5 +1,3 @@
-import { MarketMovement } from "../models";
-
 function getWhereConditions(req, sequelize) {
   const Op = sequelize.Op;
   let whereConditions = {}

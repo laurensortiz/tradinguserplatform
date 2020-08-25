@@ -1,4 +1,20 @@
 import {get} from 'lodash';
+
+function conditionalStatus(req, sequelize) {
+  const Op = sequelize.Op;
+  let requestedStatus = Number(get(req, 'body.status', 4));
+
+
+  if (requestedStatus !== 4) {
+    requestedStatus = {
+      [Op.lte]: 4,
+      [Op.gt]: 0
+    }
+  }
+
+  return requestedStatus
+}
+
 const queries = {
   list: ({ req, User, Account }) => {
     const statusActive = get(req, 'body.status', 1);
@@ -73,6 +89,58 @@ const queries = {
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
+  accountReport: ({req, User, Account, UserAccount, MarketMovement, Product, Broker, Commodity, AssetClass, sequelize }) => {
+
+    return {
+      where: {
+        userAccountId: req.body.id,
+        status: conditionalStatus(req, sequelize),
+      },
+      include: [
+        {
+          model: UserAccount,
+          as: 'userAccount',
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['username', 'firstName', 'lastName']
+            },
+            {
+              model: Account,
+              as: 'account',
+              attributes: ['name', 'percentage', 'associatedOperation']
+            },
+          ],
+          order: [ [ 'guaranteeOperation', 'ASC' ] ],
+        },
+        {
+          model: MarketMovement,
+          as: 'marketMovement',
+          limit: 1,
+          order: [ [ 'createdAt', 'DESC' ]],
+        },
+        {
+          model: Product,
+          as: 'product',
+        },
+        {
+          model: Broker,
+          as: 'broker',
+        },
+        {
+          model: Commodity,
+          as: 'commodity',
+        },
+        {
+          model: AssetClass,
+          as: 'assetClass',
+        },
+      ],
+      silence: true,
+    };
+  },
+
 };
 
 export default queries;

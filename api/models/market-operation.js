@@ -39,6 +39,34 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,
     },
+    accountValueEndOperation: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
+    guaranteeValueEndOperation: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
+    commissionValueEndOperation: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
+    guaranteeOperationValueEndOperation: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
+    holdStatusCommissionEndOperation: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
+    profitBrut: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
+    profitNet: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
     orderId: {
       type: DataTypes.INTEGER,
       allowNull: true,
