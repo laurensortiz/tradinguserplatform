@@ -135,7 +135,7 @@ module.exports = {
       if (marketOperation.status === 4 && !_.isNil(req.body.endDate)) {
         await marketOperation.update( {
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
-          endDate: moment( req.body.endDate ).tz( 'America/New_York' ).format() || marketOperation.endDate,
+          endDate: !_.isNil(req.body.endDate) ? moment( req.body.endDate ).tz( 'America/New_York' ).format() : marketOperation.endDate,
         }, { transaction: t } );
         return res.status( 200 ).send( marketOperation );
       }
@@ -157,7 +157,7 @@ module.exports = {
           initialAmount: req.body.initialAmount || marketOperation.initialAmount,
           orderId: req.body.orderId || marketOperation.orderId,
           status: _.get( req, 'body.status', 1 ) || marketOperation.status,
-          createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || marketOperation.createdAt,
+          createdAt: !_.isNil(req.body.createdAt) ? moment( req.body.createdAt ).tz( 'America/New_York' ).format() : marketOperation.createdAt,
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
         }, { transaction: t } );
 
@@ -213,7 +213,7 @@ module.exports = {
             commissionValueEndOperation: commission,
             guaranteeOperationValueEndOperation: guaranteeOperationProduct,
             holdStatusCommissionEndOperation: hold,
-            endDate: moment( req.body.endDate ).tz( 'America/New_York' ).format() || marketOperation.endDate,
+            endDate: !_.isNil(req.body.endDate) ? moment( req.body.endDate ).tz( 'America/New_York' ).format() : marketOperation.endDate,
 
           }, { transaction: t } )
 
