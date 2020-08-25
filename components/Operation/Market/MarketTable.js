@@ -239,7 +239,7 @@ class MarketTable extends Component {
             <Icon type="retweet"/> Actualización Masiva
           </Button>
           <Button type="danger" className={classNames({'hidden': !this.state.isBulkUpdateActive})}
-                  onClick={ this.onCancelBulkProcess } size="large">
+                  onClick={ this.onCancelBulkProcess } >
             <Icon type="close-circle"/> Cerrar
           </Button>
         </Col>
