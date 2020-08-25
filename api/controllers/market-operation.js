@@ -159,7 +159,6 @@ module.exports = {
           status: _.get( req, 'body.status', 1 ) || marketOperation.status,
           createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || marketOperation.createdAt,
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
-          endDate: moment( req.body.endDate ).tz( 'America/New_York' ).format() || marketOperation.endDate,
         }, { transaction: t } );
 
         if (marketOperation.status === 4) {
@@ -213,7 +212,9 @@ module.exports = {
             guaranteeValueEndOperation: accountGuaranteeEndOperation,
             commissionValueEndOperation: commission,
             guaranteeOperationValueEndOperation: guaranteeOperationProduct,
-            holdStatusCommissionEndOperation: hold
+            holdStatusCommissionEndOperation: hold,
+            endDate: moment( req.body.endDate ).tz( 'America/New_York' ).format() || marketOperation.endDate,
+
           }, { transaction: t } )
 
 

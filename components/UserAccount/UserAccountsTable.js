@@ -149,15 +149,16 @@ class UserAccountsTable extends Component {
       }
     },
     render: text => {
+      const displayText = dataIndex === 'guaranteeOperation' ? this._displayTableAmount(text) : text;
       return this.state.searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={ { backgroundColor: '#ffc069', padding: 0 } }
           searchWords={ [ this.state.searchText ] }
           autoEscape
-          textToHighlight={ text.toString() }
+          textToHighlight={ displayText.toString() }
         />
       ) : (
-        text
+        displayText
       )
     }
 
