@@ -1816,3 +1816,57 @@ ALTER TABLE public."UserAccount" ADD "snapShotAccount" varchar() DEFAULT '';
 /*
 * End Changes August 21, 2020
 */
+
+
+/*
+* Star Changes August 25, 2020
+*/
+ALTER TABLE public."Account" ADD "holdStatusCommissionAmount" numeric(10,2) DEFAULT 0;
+
+CREATE OR REPLACE FUNCTION public."marketOperation_before_update"()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+
+declare
+currentHoldCount int4;
+newStatus int4;
+holdStatusPrice numeric(10,2);
+updatedHoldCommission numeric(10,2);
+
+begin
+
+	holdStatusPrice := (select
+							"userAccount->account"."holdStatusCommissionAmount" as "userAccount.account.holdStatusCommissionAmount"
+						from
+							"MarketOperation" as "MarketOperation"
+						left outer join "UserAccount" as "userAccount" on
+							"MarketOperation"."userAccountId" = "userAccount"."id"
+						left outer join "User" as "userAccount->user" on
+							"userAccount"."userId" = "userAccount->user"."id"
+						left outer join "Account" as "userAccount->account" on
+							"userAccount"."accountId" = "userAccount->account"."id"
+						where
+							"MarketOperation"."id" = new.id);
+
+
+
+	IF (new.status = 3) then
+	NEW."holdStatusCount" := old."holdStatusCount" + 1;
+	NEW."holdStatusCommission" := holdStatusPrice * NEW."holdStatusCount";
+	NEW."updatedAt" := NOW();
+
+/*UPDATE "MarketOperation"
+		SET "holdStatusCount" = currentHoldCount where id = new.id;
+		*/
+	end if;
+   /*RAISE EXCEPTION 'Nonexistent ID --> %', new."holdStatusCount";*/
+   RETURN NEW;
+END;
+$function$
+;
+
+
+/*
+* End Changes August 25, 2020
+*/

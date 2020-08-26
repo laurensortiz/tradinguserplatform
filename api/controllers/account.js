@@ -9,6 +9,7 @@ module.exports = {
         percentage: Number(req.body.percentage),
         status: 1,
         associatedOperation: req.body.associatedOperation,
+        holdStatusCommissionAmount: req.body.holdStatusCommissionAmount || 0,
         createdAt: new Date(),
       });
 
@@ -62,6 +63,7 @@ module.exports = {
       name: req.body.name || account.name,
       percentage: Number(req.body.percentage) || account.percentage,
       associatedOperation: req.body.associatedOperation || account.associatedOperation,
+      holdStatusCommissionAmount: req.body.holdStatusCommissionAmount || account.holdStatusCommissionAmount,
       updatedAt: new Date(),
     });
 
