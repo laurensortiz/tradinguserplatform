@@ -56,6 +56,10 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    brokerId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
   });
   UserAccount.associate = models => {
 
@@ -72,6 +76,11 @@ module.exports = (Sequelize, DataTypes) => {
     UserAccount.hasMany(models.MarketOperation, {
       foreignKey: 'userAccountId',
       as: 'marketOperation',
+    });
+
+    UserAccount.belongsTo(models.Broker, {
+      foreignKey: 'brokerId',
+      as: 'broker',
     });
 
   };

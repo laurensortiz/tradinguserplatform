@@ -17,9 +17,10 @@ function conditionalStatus(req, sequelize) {
 }
 
 const queries = {
-  list: ({ req, User, Account, MarketOperation, Product, Broker }) => {
+  list: ({ req, sequelize, User, Account, MarketOperation, Product, Broker }) => {
     const statusActive = get( req, 'body.status', 1 );
     const associatedOperation = get( req, 'body.associatedOperation', 1 );
+    const Op = sequelize.Op;
     return {
       where: {
         status: statusActive,
@@ -41,19 +42,19 @@ const queries = {
           },
         },
         {
+          model: Broker,
+          as: 'broker',
+          attributes: [ 'name', 'id' ],
+        },
+        {
           model: MarketOperation,
           as: 'marketOperation',
-          attributes: [ 'id' ],
+          attributes: [ 'id', 'status' ],
           include: [
             {
               model: Product,
               as: 'product',
-              attributes: [ 'name' ],
-            },
-            {
-              model: Broker,
-              as: 'broker',
-              attributes: [ 'name' ],
+              attributes: [ 'name', 'id' ],
             },
           ]
         },
@@ -62,7 +63,7 @@ const queries = {
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  get: ({ req, User, Account }) => {
+  get: ({ req, User, Account, Broker }) => {
     return {
       where: {
         status: 1,
@@ -78,6 +79,11 @@ const queries = {
         {
           model: Account,
           as: 'account',
+        },
+        {
+          model: Broker,
+          as: 'broker',
+          attributes: [ 'name', 'id' ],
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],

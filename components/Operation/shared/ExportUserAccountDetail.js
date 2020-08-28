@@ -37,15 +37,17 @@ const getExportFileName = (orgId) => {
 
 const _formatData = (data) => {
   return _.map( data, account => {
-    let brokerName = ' - ';
     let products = [];
-
+    const brokerName = _.get(account, 'broker.name ', '-')
     if (!_.isEmpty(account.marketOperation)) {
       account.marketOperation.map(operation => {
-        brokerName = operation.broker.name;
-        products.push(operation.product.name);
+        if (operation.status > 0) {
+          products.push(operation.product.name);
+        }
+
       })
     }
+
 
     return {
       'Usuario': account.user.username,

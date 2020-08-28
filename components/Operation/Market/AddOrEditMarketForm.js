@@ -8,15 +8,13 @@ moment.locale( 'es' ); // Set Lang to Spanish
 
 import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon } from 'antd';
 
-import { accountOperations } from '../../../state/modules/accounts';
-import { marketOperationOperations } from '../../../state/modules/marketOperation';
 import { userAccountOperations } from "../../../state/modules/userAccounts";
 import { brokerOperations } from "../../../state/modules/brokers";
 import { productOperations } from "../../../state/modules/products";
 import { commodityOperations } from "../../../state/modules/commodity";
 import { assetClassOperations } from "../../../state/modules/assetClasses";
 
-import { AmountFormatValidation, AmountOperationValidation } from '../../../common/utils';
+import { AmountFormatValidation } from '../../../common/utils';
 
 const { Option, OptGroup } = Select;
 
@@ -133,20 +131,20 @@ class AddOrEditMarketForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedOperation )) {
       const { selectedOperation } = this.props;
-      const accountName = _.get(selectedOperation, 'userAccount.account.name', '');
-      const accountGuarantee = _.get(selectedOperation, 'userAccount.guaranteeOperation', 0);
-      const productName = _.get(selectedOperation, 'product.name', '');
-      const productCode = _.get(selectedOperation, 'product.code', '');
-      const brokerName = _.get(selectedOperation, 'broker.name', '');
-      const commodityName = _.get(selectedOperation, 'commodity.name', '');
-      const assetClassName = _.get(selectedOperation, 'assetClass.name', '');
-      const status = _.get(selectedOperation, 'status', 1);
+      const accountName = _.get( selectedOperation, 'userAccount.account.name', '' );
+      const accountGuarantee = _.get( selectedOperation, 'userAccount.guaranteeOperation', 0 );
+      const productName = _.get( selectedOperation, 'product.name', '' );
+      const productCode = _.get( selectedOperation, 'product.code', '' );
+      const brokerName = _.get( selectedOperation, 'broker.name', '' );
+      const commodityName = _.get( selectedOperation, 'commodity.name', '' );
+      const assetClassName = _.get( selectedOperation, 'assetClass.name', '' );
+      const status = _.get( selectedOperation, 'status', 1 );
       this.setState( {
         ...this.state,
         ...selectedOperation,
         accountName,
         accountGuarantee,
-        productName: `${productName}-${productCode}`,
+        productName: `${ productName }-${ productCode }`,
         brokerName,
         commodityName,
         assetClassName,
@@ -165,15 +163,19 @@ class AddOrEditMarketForm extends PureComponent {
 
     if (_.isEqual( fieldName, 'userAccount' )) {
       const selectedUserAccount = _.find( this.state.userAccounts, { id } );
+      const { broker } = selectedUserAccount;
+      const brokerName = _.get(broker, 'name', '');
 
       this.setState( {
         userAccount: {
           id,
           name,
         },
+        broker,
+        brokerName,
         amount: selectedUserAccount.accountValue,
-        accountPercentage: _.get(selectedUserAccount, 'account.percentage', 0),
-        accountGuarantee: _.get(selectedUserAccount, 'guaranteeOperation', 0)
+        accountPercentage: _.get( selectedUserAccount, 'account.percentage', 0 ),
+        accountGuarantee: _.get( selectedUserAccount, 'guaranteeOperation', 0 )
       } )
     } else {
       this.setState( {
@@ -188,19 +190,19 @@ class AddOrEditMarketForm extends PureComponent {
   _setStartDate = (date) => {
 
     this.setState( {
-      createdAt:  moment.tz(date, 'America/New_York').format()
+      createdAt: moment.tz( date, 'America/New_York' ).format()
     } );
   };
 
   _setEndDate = (date) => {
     this.setState( {
-      endDate:  moment.tz(date, 'America/New_York').format()
+      endDate: moment.tz( date, 'America/New_York' ).format()
     } );
 
   };
 
   _handleChange = e => {
-    const value = _.isEmpty(e.target.value) ? '0.00' : e.target.value;
+    const value = _.isEmpty( e.target.value ) ? '0.00' : e.target.value;
 
     this.setState( {
       [ e.target.name ]: _.replace( value, ',', '' )
@@ -211,7 +213,7 @@ class AddOrEditMarketForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
       if (!err) {
-        const saveState = _.omit(this.state, ['userAccounts', 'brokers', 'products', 'commodities', 'assetClasses']);
+        const saveState = _.omit( this.state, [ 'userAccounts', 'brokers', 'products', 'commodities', 'assetClasses' ] );
 
         if (_.isEqual( this.props.actionType, 'add' )) {
           this.props.onAddNew( saveState )
@@ -228,30 +230,32 @@ class AddOrEditMarketForm extends PureComponent {
   };
 
   _getAccountUserSelectOption = options => {
-    const accountsGrouped = _.chain(this.state.userAccounts).filter(['account.associatedOperation', 1]).groupBy('user.username').value();
-    return _.map(accountsGrouped, (accounts, user) => {
+    const accountsGrouped = _.chain( this.state.userAccounts ).filter( [ 'account.associatedOperation', 1 ] ).groupBy( 'user.username' ).value();
+    return _.map( accountsGrouped, (accounts, user) => {
       return (
-        <OptGroup label={user}>
-          {_.map(accounts, account => <Option key={`${ account.id }_${ _.get(account, 'account.name', ' - ') }`}>{_.get(account, 'account.name', ' - ')}</Option>)}
+        <OptGroup label={ user }>
+          { _.map( accounts, account => <Option
+            key={ `${ account.id }_${ _.get( account, 'account.name', ' - ' ) }` }>{ _.get( account, 'account.name', ' - ' ) }</Option> ) }
         </OptGroup>
       )
-    })
+    } )
   };
 
   _getSelectOptions = options => {
-    return _.map(options, (option) => {
+    return _.map( options, (option) => {
       return (
-        <Option key={`${ option.id }_${option.name}`}>{option.name}</Option>
+        <Option key={ `${ option.id }_${ option.name }` }>{ option.name }</Option>
       )
-    })
+    } )
   };
 
   _getProductSelectOption = options => {
-    return _.map(this.state.products, (product) => {
+    return _.map( this.state.products, (product) => {
       return (
-        <Option key={`${ product.id }_${product.code}-${product.name}`}>{`${product.code}-${product.name}`}</Option>
+        <Option
+          key={ `${ product.id }_${ product.code }-${ product.name }` }>{ `${ product.code }-${ product.name }` }</Option>
       )
-    })
+    } )
   };
 
 
@@ -259,42 +263,45 @@ class AddOrEditMarketForm extends PureComponent {
     const value = e.target.value;
     this.setState( { confirmDirty: this.state.confirmDirty || !!value } );
   };
-  
+
   handleInversion = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
     const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
 
-    return new Promise((resolve, reject) => {
-      
-      if (_.isEqual( this.props.actionType, 'edit') && _.isEqual(parseFloat(this.state.amount ), parseFloat(value))) {
+    return new Promise( (resolve, reject) => {
+
+      if (_.isEqual( this.props.actionType, 'edit' ) && _.isEqual( parseFloat( this.state.amount ), parseFloat( value ) )) {
         resolve();
       }
 
-      if (!_.isEmpty(value) && !regex.test(value)) {
+      if (!_.isEmpty( value ) && !regex.test( value )) {
         reject( "Formato inválido del monto" );  // reject with error message
       }
 
-      if (parseFloat(value) == 0) {
-        reject("La opereración debe ser mayor a 0");
+      if (parseFloat( value ) == 0) {
+        reject( "La opereración debe ser mayor a 0" );
       }
 
-      if ((parseFloat(this.state.accountGuarantee ) - parseFloat(value)) < 0) {
-        reject("El usuario no cuenta con Garantías disponibles");  // reject with error message
+      if (( parseFloat( this.state.accountGuarantee ) - parseFloat( value ) ) < 0) {
+        reject( "El usuario no cuenta con Garantías disponibles" );  // reject with error message
       } else {
         resolve();
       }
-    });
+    } );
   };
 
   render() {
+    console.log('[=====  NA  =====>');
+    console.log(this.state.brokerName);
+    console.log('<=====  /NA  =====]');
     const { getFieldDecorator } = this.props.form;
     const isAddAction = _.isEqual( this.props.actionType, 'add' );
 
     // Default values for edit action
 
-    const longShortInitValue = !_.isNil( this.state.longShort) ? this.state.longShort : undefined;
+    const longShortInitValue = !_.isNil( this.state.longShort ) ? this.state.longShort : undefined;
 
-    const statusInitValue = !_.isNil( this.state.status) ? this.state.status : undefined;
+    const statusInitValue = !_.isNil( this.state.status ) ? this.state.status : undefined;
     const userAccountInitValue = !_.isEmpty( this.state.accountName ) ? this.state.accountName : undefined;
     const brokerInitValue = !_.isEmpty( this.state.brokerName ) ? this.state.brokerName : undefined;
     const productInitValue = !_.isEmpty( this.state.productName ) ? this.state.productName : undefined;
@@ -310,10 +317,10 @@ class AddOrEditMarketForm extends PureComponent {
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
     const orderIdInitValue = _.isNumber( this.state.orderId ) ? this.state.orderId : undefined;
     const amountInitValue = !_.isEmpty( this.state.amount ) ? this.state.amount : undefined;
-    const createdAtInitValue = !_.isNull( this.state.createdAt ) ? moment.tz(this.state.createdAt, 'America/New_York') : undefined;
-    const endDateInitValue = !_.isNull( this.state.endDate ) ? moment.tz(this.state.endDate, 'America/New_York') : undefined;
+    const createdAtInitValue = !_.isNull( this.state.createdAt ) ? moment.tz( this.state.createdAt, 'America/New_York' ) : undefined;
+    const endDateInitValue = !_.isNull( this.state.endDate ) ? moment.tz( this.state.endDate, 'America/New_York' ) : undefined;
 
-    const isDisableSubmitBtn = this.props.isLoading || (this.state.status === 4 && _.isNil(this.state.endDate))
+    const isDisableSubmitBtn = this.props.isLoading || ( this.state.status === 4 && _.isNil( this.state.endDate ) )
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
         <Form.Item label="Cuenta de Usuario">
@@ -422,7 +429,7 @@ class AddOrEditMarketForm extends PureComponent {
             value: buyPriceInitValue,
             rules: [ { required: false, message: 'Por favor indique el monto de la compra' },
               {
-                validator: (rule, amount) => AmountFormatValidation(rule, amount)
+                validator: (rule, amount) => AmountFormatValidation( rule, amount )
               }
             ],
           } )(
@@ -457,7 +464,7 @@ class AddOrEditMarketForm extends PureComponent {
             rules: [ { required: true, message: 'Por favor indique el monto' },
               {
                 validator: this.handleInversion
-              }],
+              } ],
           } )(
             <Input name="amount" onChange={ this._handleChange }
                    placeholder="Monto"/>
@@ -469,7 +476,7 @@ class AddOrEditMarketForm extends PureComponent {
             value: maintenanceMarginInitValue,
             rules: [ { required: false, message: 'Por favor indique el Margen de mantenimiento' },
               {
-                validator: (rule, amount) => AmountFormatValidation(rule, amount)
+                validator: (rule, amount) => AmountFormatValidation( rule, amount )
               }
             ],
           } )(
@@ -494,16 +501,16 @@ class AddOrEditMarketForm extends PureComponent {
           } )(
             <Select
               name="status"
-              onChange={ value => this.setState({
+              onChange={ value => this.setState( {
                 status: value
-              }) }
+              } ) }
               placeholder="Estado"
               showArrow={ isAddAction }
             >
-              <Option value={1}>Activo</Option>
-              <Option value={2}>Market Close</Option>
-              <Option value={3}>On Hold</Option>
-              <Option value={4}>Vendido</Option>
+              <Option value={ 1 }>Activo</Option>
+              <Option value={ 2 }>Market Close</Option>
+              <Option value={ 3 }>On Hold</Option>
+              <Option value={ 4 }>Vendido</Option>
             </Select>
           ) }
         </Form.Item>
@@ -511,7 +518,8 @@ class AddOrEditMarketForm extends PureComponent {
           { getFieldDecorator( 'createdAt', {
             initialValue: createdAtInitValue
           } )(
-            <DatePicker onChange={ this._setStartDate } defaultPickerValue={moment.parseZone()} placeholder="Fecha de Inicio"/>
+            <DatePicker onChange={ this._setStartDate } defaultPickerValue={ moment.parseZone() }
+                        placeholder="Fecha de Inicio"/>
           ) }
         </Form.Item>
         {
@@ -520,7 +528,8 @@ class AddOrEditMarketForm extends PureComponent {
               { getFieldDecorator( 'endDate', {
                 initialValue: endDateInitValue
               } )(
-                <DatePicker onChange={ this._setEndDate } defaultPickerValue={moment.parseZone()} placeholder="Fecha de Cierre"/>
+                <DatePicker onChange={ this._setEndDate } defaultPickerValue={ moment.parseZone() }
+                            placeholder="Fecha de Cierre"/>
               ) }
             </Form.Item>
           ) : null
@@ -537,7 +546,7 @@ class AddOrEditMarketForm extends PureComponent {
 }
 
 function mapStateToProps(state) {
-  
+
   return {
     userAccounts: state.userAccountsState.list,
     brokers: state.brokersState.list,
