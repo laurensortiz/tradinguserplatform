@@ -291,9 +291,7 @@ class AddOrEditMarketForm extends PureComponent {
   };
 
   render() {
-    console.log('[=====  NA  =====>');
-    console.log(this.state.brokerName);
-    console.log('<=====  /NA  =====]');
+
     const { getFieldDecorator } = this.props.form;
     const isAddAction = _.isEqual( this.props.actionType, 'add' );
 
