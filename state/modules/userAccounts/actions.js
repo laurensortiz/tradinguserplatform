@@ -4,7 +4,7 @@ import {
   addUserAccount,
   editUserAccount,
   deleteUserAccount,
-  getUserAccountHistoryReport,
+  getUserAccountHistoryReport, getUserAccountMarketOperationReport,
 } from './api';
 import types from './types';
 import { formatAxiosError } from "../../../common/utils";

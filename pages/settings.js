@@ -24,10 +24,8 @@ class Settings extends Component {
       <Document>
         <Row>
           <Col>
-            <Tabs tabPosition="left" defaultActiveKey="4">
-              <TabPane tab="Ajustes" key="1">
-                <SettingsGeneral />
-              </TabPane>
+            <Tabs tabPosition="left" defaultActiveKey="2">
+
               <TabPane tab="Productos" key="2">
                 <SettingsProducts />
               </TabPane>

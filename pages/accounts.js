@@ -190,6 +190,13 @@ class Accounts extends Component {
     } )
   }
 
+  _handleTableOnChange = () => {
+    // this.props.fetchGetAllUserAccounts( {
+    //   associatedOperation: this.state.associatedOperation,
+    //   status: this.state.status
+    // } );
+  }
+
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Cuenta de Usuario'
@@ -221,7 +228,7 @@ class Accounts extends Component {
               onEdit={ this._onSelectEdit }
               onDelete={ this._handleDeleteUserAccount }
               isOperationStandard={ _.isEqual( this.state.associatedOperation, 1 ) }
-              onRequestUpdateTable={ this.props.fetchGetAllUserAccounts }
+              onRequestUpdateTable={ this._handleTableOnChange }
               onReqeuestExportHistoryReport={ this._handleExportHistoryReport }
               onReqeuestExportAccountReport={ this._handleExportAccountReport}
               onTabChange={ this._handleTabChange }

@@ -46,6 +46,9 @@ const getExportFileName = (orgId) => {
 
 const _formatData = (data) => {
   return _.map( data, operation => {
+    console.log('[=====  ope  =====>');
+    console.log(operation);
+    console.log('<=====  /ope  =====]');
 
     return {
       'Estado': FormatStatus(operation.status, true).name,
@@ -93,7 +96,7 @@ function exportUserAccountHistory(exportData) {
   const workbook = _formatData( oderded );
 
   //Define template structure
-  const ws = XLSX.utils.json_to_sheet(
+  let ws = XLSX.utils.json_to_sheet(
     workbook,
     {
       header: EXCEL_HEADER_MARKET,
@@ -110,6 +113,16 @@ function exportUserAccountHistory(exportData) {
     return result
   }, []);
   ws[ '!cols' ] = wscols;
+
+  ws = _.transform(ws, function(result, value, key) {
+    if (_.startsWith(value.v, '$')) {
+      const number = parseFloat(value.v.replace(/\$|,/g, ''))
+      result[key] = {v: number, t:'n', z: "$#,###.00"}
+    } else {
+      result[key] = value
+    }
+
+  }, {});
 
   const displayTemplate = _getAccountTemplateMarket( _.first(exportData) );
 

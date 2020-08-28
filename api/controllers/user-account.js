@@ -43,7 +43,8 @@ module.exports = {
 
   async list(req, res) {
     const userAccounts = await UserAccount.findAll(
-      userAccountQuery.list({ req, User, Account })
+      userAccountQuery.list({ req, User, Account, MarketOperation, Product,
+        Broker, })
     );
 
     if (!userAccounts) {

@@ -14,6 +14,8 @@ const EXCEL_HEADER_MARKET = [
   'Comisión',
   'Valor de la Cuenta',
   'Garantías disponibles',
+  'Colocación',
+  'Broker',
   'Saldo Inicial',
   'Saldo Final',
   'Garantías / Créditos',
@@ -35,6 +37,15 @@ const getExportFileName = (orgId) => {
 
 const _formatData = (data) => {
   return _.map( data, account => {
+    let brokerName = ' - ';
+    let products = [];
+
+    if (!_.isEmpty(account.marketOperation)) {
+      account.marketOperation.map(operation => {
+        brokerName = operation.broker.name;
+        products.push(operation.product.name);
+      })
+    }
 
     return {
       'Usuario': account.user.username,
@@ -42,8 +53,10 @@ const _formatData = (data) => {
       'Apellido': account.user.lastName,
       'Tipo de Cuenta': account.account.name,
       'Comisión': `${account.account.percentage}%`,
-      'Valor de la Cuenta': FormatCurrency.format( account.accountValue ),
+      'Valor de la Cuenta':FormatCurrency.format( account.accountValue),
       'Garantías disponibles': FormatCurrency.format( account.guaranteeOperation ),
+      'Colocación': _.isEmpty(products) ? 'Nuevo' : products.toString(),
+      'Broker': brokerName,
       'Saldo Inicial': FormatCurrency.format( account.balanceInitial ),
       'Saldo Final': FormatCurrency.format( account.balanceInitial ),
       'Garantías / Créditos': FormatCurrency.format( account.guaranteeCredits ),
@@ -70,11 +83,11 @@ function exportUserAccountHistory(exportData) {
   const workbook = _formatData( exportData );
 
   //Define template structure
-  const ws = XLSX.utils.json_to_sheet(
+  let ws = XLSX.utils.json_to_sheet(
     workbook,
     {
       header: EXCEL_HEADER_MARKET,
-      origin: 'A5'
+      origin: 'A3'
     } );
   const wb = XLSX.utils.book_new();
   if (!wb.Props) wb.Props = {};
@@ -87,6 +100,16 @@ function exportUserAccountHistory(exportData) {
     return result
   }, []);
   ws[ '!cols' ] = wscols;
+
+  ws = _.transform(ws, function(result, value, key) {
+    if (_.startsWith(value.v, '$')) {
+      const number = parseFloat(value.v.replace(/\$|,/g, ''))
+      result[key] = {v: number, t:'n', z: "$#,###.00"}
+    } else {
+      result[key] = value
+    }
+
+  }, {});
 
   const displayTemplate = _getAccountTemplateMarket( _.first(exportData) );
 

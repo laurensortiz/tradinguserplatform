@@ -13,6 +13,30 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    firstName2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    lastName2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    firstName3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    lastName3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    firstName4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    lastName4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     userID: {
       type: DataTypes.STRING,
       allowNull: true,

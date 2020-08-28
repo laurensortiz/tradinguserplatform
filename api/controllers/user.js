@@ -22,6 +22,12 @@ module.exports = {
   async create(req, res) {
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
+    const firstName2 = _.get(req, 'body.firstName2', '');
+    const lastName2 = _.get(req, 'body.lastName2', '');
+    const firstName3 = _.get(req, 'body.firstName3', '');
+    const lastName3 = _.get(req, 'body.lastName3', '');
+    const firstName4 = _.get(req, 'body.firstName4', '');
+    const lastName4 = _.get(req, 'body.lastName4', '');
     const username = _.toLower(req.body.username);
     const email = req.body.email;
     const userID = req.body.userID;
@@ -55,6 +61,12 @@ module.exports = {
         userID,
         firstName,
         lastName,
+        firstName2,
+        lastName2,
+        firstName3,
+        lastName3,
+        firstName4,
+        lastName4,
         salt,
         password: hashPassword(password),
         startDate,
@@ -150,6 +162,12 @@ module.exports = {
       username: _.toLower(req.body.username) || user.username,
       firstName: req.body.firstName || user.firstName,
       lastName: req.body.lastName || user.lastName,
+      firstName2: req.body.firstName2,
+      lastName2: req.body.lastName2,
+      firstName3: req.body.firstName3,
+      lastName3: req.body.lastName3,
+      firstName4: req.body.firstName4,
+      lastName4: req.body.lastName4,
       userID: req.body.userID || user.userID,
       startDate: req.body.startDate || user.startDate,
       endDate: req.body.endDate || user.endDate,

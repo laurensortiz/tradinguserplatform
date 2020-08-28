@@ -185,7 +185,7 @@ class Users extends Component {
         </Row>
         <Drawer
           title={ modalTitle }
-          width={ 320 }
+          width="40%"
           onClose={ this._onClose }
           visible={ this.state.isVisibleAddOrEditUser }
           destroyOnClose={ true }
@@ -200,7 +200,7 @@ class Users extends Component {
         </Drawer>
         <Drawer
           title="Detalle de Usuario"
-          width={ 320 }
+          width="40%"
           onClose={ this._onCloseUserDetail }
           visible={ this.state.isVisibleUserDetail }
           destroyOnClose={ true }

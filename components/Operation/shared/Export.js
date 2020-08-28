@@ -99,7 +99,7 @@ class Export extends PureComponent {
     const workbook = this._formatData( exportData );
 
     //Define template structure
-    const ws = XLSX.utils.json_to_sheet(
+    let ws = XLSX.utils.json_to_sheet(
       workbook,
       {
         header: this.props.isMarketMovement ? EXCEL_HEADER_MARKET : EXCEL_HEADER,
@@ -126,7 +126,15 @@ class Export extends PureComponent {
       { wch: 40 }
     ];
     ws[ '!cols' ] = wscols;
+    ws = _.transform(ws, function(result, value, key) {
+      if (_.startsWith(value.v, '$')) {
+        const number = parseFloat(value.v.replace(/\$|,/g, ''))
+        result[key] = {v: number, t:'n', z: "$#,###.00"}
+      } else {
+        result[key] = value
+      }
 
+    }, {});
     const displayTemplate = _.isNil(currentOperation.commodity) ? this._getAccountTemplateInvestment( currentOperation ) : this._getAccountTemplateMarket( currentOperation );
 
     XLSX.utils.sheet_add_aoa( ws, displayTemplate, { origin: 'A1' } );
