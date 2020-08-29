@@ -297,6 +297,7 @@ class UserAccountsTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'account.name' ),
       },
+
       {
         title: 'Comisión',
         dataIndex: 'account',

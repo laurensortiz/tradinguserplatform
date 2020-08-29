@@ -1807,7 +1807,7 @@ ALTER TABLE public."MarketOperation" ADD "holdStatusCommissionEndOperation" nume
 ALTER TABLE public."MarketOperation" ADD "profitBrut" numeric(10,2) DEFAULT 0;
 ALTER TABLE public."MarketOperation" ADD "profitNet" numeric(10,2) DEFAULT 0;
 
-ALTER TABLE public."UserAccount" ADD "brokerId" int4;
+
 ALTER TABLE public."UserAccount" ADD "snapShotAccount" varchar() DEFAULT '';
 
 
@@ -1827,6 +1827,8 @@ ALTER TABLE public."User" ADD "firstName3" varchar(255) DEFAULT '';
 ALTER TABLE public."User" ADD "lastName3" varchar(255) DEFAULT '';
 ALTER TABLE public."User" ADD "firstName4" varchar(255) DEFAULT '';
 ALTER TABLE public."User" ADD "lastName4" varchar(255) DEFAULT '';
+
+ALTER TABLE public."UserAccount" ADD "brokerId" int4;
 
 CREATE OR REPLACE FUNCTION public."marketOperation_before_update"()
  RETURNS trigger
