@@ -10,6 +10,7 @@ import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon } from 'an
 
 import { accountOperations } from '../../state/modules/accounts';
 import { userOperations } from '../../state/modules/users';
+import { brokerOperations } from "../../state/modules/brokers";
 
 const { Option } = Select;
 
@@ -26,6 +27,10 @@ class AddOrEditUserAccountForm extends PureComponent {
       id: null,
       username: ''
     },
+    broker: {
+      id: null,
+      name: ''
+    },
     account: {
       id: null,
       name: '',
@@ -35,8 +40,10 @@ class AddOrEditUserAccountForm extends PureComponent {
     confirmDirty: false,
     isInvalid: true,
     status: 1,
+    brokerName: '',
     accounts: [],
     users: [],
+    brokers: [],
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -53,6 +60,12 @@ class AddOrEditUserAccountForm extends PureComponent {
       } )
     }
 
+    if (!_.isEqual( nextProps.brokers, prevState.brokers )) {
+      _.assign( stateUpdated, {
+        brokers: nextProps.brokers
+      } )
+    }
+
     return !_.isEmpty( stateUpdated ) ? stateUpdated : null;
   }
 
@@ -64,12 +77,18 @@ class AddOrEditUserAccountForm extends PureComponent {
     if (_.isEmpty( this.state.users )) {
       this.props.fetchGetUsers();
     }
+    if (_.isEmpty( this.state.brokers )) {
+      this.props.fetchGetBrokers();
+    }
 
     if (!_.isEmpty( this.props.selectedAccount )) {
       const { selectedAccount } = this.props;
+      const brokerName = _.get(selectedAccount, 'broker.name', '');
+
       this.setState( {
         ...this.state,
         ...selectedAccount,
+        brokerName
       } )
     }
   }
@@ -119,7 +138,7 @@ class AddOrEditUserAccountForm extends PureComponent {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
       if (!err) {
-        const saveState = _.omit(this.state, ['accounts', 'users']);
+        const saveState = _.omit(this.state, ['accounts', 'users', 'brokers']);
 
         if (_.isEqual( this.props.actionType, 'add' )) {
           this.props.onAddNew( saveState )
@@ -138,6 +157,14 @@ class AddOrEditUserAccountForm extends PureComponent {
   _getAccountSelectOption = options => {
     return _.map( options, ({ id, name, associatedOperation }) => <Option
       key={ `${ id }_${ name }_${ associatedOperation }` }>{ name }</Option> )
+  };
+
+  _getSelectOptions = options => {
+    return _.map(options, (option) => {
+      return (
+        <Option key={`${ option.id }_${option.name}`}>{option.name}</Option>
+      )
+    })
   };
 
   _getUserSelectOption = options => {
@@ -167,6 +194,7 @@ class AddOrEditUserAccountForm extends PureComponent {
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
     const marginUsedInitValue = !_.isEmpty( this.state.marginUsed ) ? this.state.marginUsed : undefined;
     const commissionByReference = !_.isEmpty( this.state.commissionByReference ) ? this.state.commissionByReference : undefined;
+    const brokerInitValue = !_.isEmpty( this.state.brokerName ) ? this.state.brokerName : undefined;
 
 
     return (
@@ -201,6 +229,22 @@ class AddOrEditUserAccountForm extends PureComponent {
               showArrow={ isAddAction }
             >
               { this._getAccountSelectOption( this.state.accounts ) }
+            </Select>
+          ) }
+        </Form.Item>
+        <Form.Item label="Corredor">
+          { getFieldDecorator( 'broker', {
+            initialValue: brokerInitValue,
+            rules: [ { required: true, message: 'Por favor seleccione el corredor ' } ],
+          } )(
+            <Select
+              showSearch={ true }
+              name="broker"
+              onChange={ value => this._handleChangeSelect( { name: 'broker', value } ) }
+              placeholder="Corredor"
+              showArrow={ isAddAction }
+            >
+              { this._getSelectOptions( this.state.brokers ) }
             </Select>
           ) }
         </Form.Item>
@@ -291,11 +335,13 @@ function mapStateToProps(state) {
   return {
     accounts: accountsState.list,
     users: usersState.list,
+    brokers: state.brokersState.list,
   }
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
+    fetchGetBrokers: brokerOperations.fetchGetBrokers,
     fetchGetAccounts: accountOperations.fetchGetAccounts,
     fetchGetUsers: userOperations.fetchGetUsers,
   }, dispatch );

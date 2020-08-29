@@ -188,13 +188,13 @@ class UserAccountsTable extends Component {
       filteredInfo: filters,
       sortedInfo: sorter,
     } )
-    if (this.props.isAdmin) {
-      this.props.onRequestUpdateTable();
-    }
+    this.props.onRequestUpdateTable();
   }
 
   _onSelectBulkReport = () => {
-    const selectedAccounts = _.filter( this.state.userAccounts, account => _.includes( this.state.selectedRowKeys, account.id ) )
+    const exportData = _.isEmpty(this.state.currentDataSource) ? this.state.userAccounts : this.state.currentDataSource;
+    const selectedAccounts = _.filter(exportData, account => _.includes(this.state.selectedRowKeys, account.id))
+
     this.props.onReqeuestExportAccountReport( selectedAccounts );
   }
   onCancelBulkProcess = () => {
@@ -214,7 +214,7 @@ class UserAccountsTable extends Component {
           <Radio.Button value={ 0 }>Eliminados</Radio.Button>
         </Radio.Group>
       </Col>
-      <Col sm={ 12 }>
+      <Col sm={ 12 } className={this.props.isOperationStandard ? '' : 'hidden'}>
         { this.state.isBulkActive ? (
           <>
             <Button onClick={ this.onCancelBulkProcess } type="danger" style={ { float: 'right' } }><Icon
@@ -297,6 +297,7 @@ class UserAccountsTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'account.name' ),
       },
+
       {
         title: 'Comisión',
         dataIndex: 'account',

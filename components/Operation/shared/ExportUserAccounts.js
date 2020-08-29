@@ -68,7 +68,7 @@ class Export extends PureComponent {
     const workbook = this._formatData( exportData );
 
     //Define template structure
-    const ws = XLSX.utils.json_to_sheet(
+    let ws = XLSX.utils.json_to_sheet(
       workbook, );
     const wb = XLSX.utils.book_new();
     if (!wb.Props) wb.Props = {};
@@ -84,6 +84,15 @@ class Export extends PureComponent {
       { wch: 40 }
     ];
     ws[ '!cols' ] = wscols;
+    ws = _.transform(ws, function(result, value, key) {
+      if (_.startsWith(value.v, '$')) {
+        const number = parseFloat(value.v.replace(/\$|,/g, ''))
+        result[key] = {v: number, t:'n', z: "$#,###.00"}
+      } else {
+        result[key] = value
+      }
+
+    }, {});
 
     const displayTemplate = this._getAccountTemplate( this.props.userAccounts );
 

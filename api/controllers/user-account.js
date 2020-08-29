@@ -24,6 +24,7 @@ module.exports = {
         userId: req.body.user.id,
         accountId: req.body.account.id,
         accountValue: req.body.accountValue,
+        brokerId: req.body.broker.id,
         guaranteeOperation: req.body.guaranteeOperation,
         guaranteeCredits: req.body.guaranteeCredits,
         balanceInitial: req.body.balanceInitial,
@@ -43,7 +44,7 @@ module.exports = {
 
   async list(req, res) {
     const userAccounts = await UserAccount.findAll(
-      userAccountQuery.list({ req, User, Account })
+      userAccountQuery.list({ req, sequelize, User, Account, MarketOperation, Product, Broker, })
     );
 
     if (!userAccounts) {
@@ -56,7 +57,7 @@ module.exports = {
 
   async get(req, res) {
     const userAccount = await UserAccount.findAll(
-      userAccountQuery.get( { req, User, Role, Account } )
+      userAccountQuery.get( { req, User, Role, Account, Broker } )
     );
 
     if (!userAccount) {
@@ -86,7 +87,7 @@ module.exports = {
   async getByUser(req, res) {
 
     const userAccount = await UserAccount.findAll(
-      userAccountQuery.getByUser( { req, User, Role, Account } )
+      userAccountQuery.getByUser( { req, User, Role, Account, Broker } )
     );
 
     if (!userAccount) {
@@ -128,6 +129,7 @@ module.exports = {
     const updatedUserAccount = await userAccount.update({
       userId: req.body.user.id || userAccount.userId,
       accountId: req.body.account.id || userAccount.accountId,
+      brokerId: req.body.broker.id || userAccount.brokerId,
       accountValue: req.body.accountValue || userAccount.accountValue,
       guaranteeOperation: req.body.guaranteeOperation || userAccount.guaranteeOperation,
       guaranteeCredits: req.body.guaranteeCredits || userAccount.guaranteeCredits,

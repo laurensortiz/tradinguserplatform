@@ -9,6 +9,9 @@ import { EditableProvider, EditableConsumer } from '../shared/MultipleEditable/e
 import EditableCell from '../shared/MultipleEditable/editableCell';
 
 import { accountOperations } from '../../../state/modules/accounts';
+import {
+  DisplayTableAmount,
+} from '../../../common/utils';
 
 const DEFAULT_INPUT_TEXT = '';
 
@@ -32,6 +35,13 @@ class Accounts extends Component {
       key: 'associatedOperation',
       editable: true,
       render: type => _.isEqual(type, 1) ? 'Bolsa OTC' : 'Fondo de Interés'
+    },
+    {
+      title: 'Comisión por estado HOLD',
+      dataIndex: 'holdStatusCommissionAmount',
+      key: 'holdStatusCommissionAmount',
+      render: amount => DisplayTableAmount(amount),
+      editable: true,
     },
     {
       title: 'Acciones',

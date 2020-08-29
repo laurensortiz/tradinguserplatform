@@ -155,9 +155,6 @@ export function users(state = initialStateUsers, action) {
     case types.USER_ACCOUNT_HISTORY_REPORT_SUCCESS:
       return {
         ...state,
-        isSuccess: false,
-        isFailure: false,
-        isLoading: false,
         isHistoryReportLoading: false,
         isHistoryReportSuccess: true,
         isHistoryReportComplete: true,
@@ -167,9 +164,6 @@ export function users(state = initialStateUsers, action) {
     case types.USER_ACCOUNT_HISTORY_REPORT_ERROR:
       return {
         ...state,
-        isSuccess: false,
-        isFailure: false,
-        isLoading: false,
         isHistoryReportLoading: false,
         isHistoryReportSuccess: false,
         isHistoryReportComplete: true,

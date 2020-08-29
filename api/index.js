@@ -124,6 +124,7 @@ module.exports = app => {
 
   // Market Operation
   app.get( '/api/market-operation/:status', marketOperation.list );
+  app.post( '/api/market-operation/accountReport', marketOperation.accountReport );
   app.get( '/api/market-operation/:marketOperationId', marketOperation.get );
   app.post( '/api/market-operation', marketOperation.create );
   app.put( '/api/market-operation/:marketOperationId', marketOperation.update );

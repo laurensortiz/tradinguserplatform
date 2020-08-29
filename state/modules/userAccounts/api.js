@@ -17,13 +17,14 @@ export const getUserAccounts = async (userId) => {
 };
 
 export const getUserAccountHistoryReport = async (userAccount) => {
-  const { id } = userAccount;
+
   return fetch( {
     method: 'post',
     url: `user-accounts/report`,
     data: userAccount
   } );
 };
+
 
 export const addUserAccount = async (userAccount) => {
 

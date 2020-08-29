@@ -10,6 +10,11 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: false,
       unique: false,
     },
+    holdStatusCommissionAmount: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+      unique: false,
+    },
     associatedOperation: {
       type: DataTypes.INTEGER,
       allowNull: true,

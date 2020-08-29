@@ -81,6 +81,30 @@ module.exports = {
     return res.status( 200 ).send( marketOperation );
   },
 
+  async accountReport(req, res) {
+
+    const marketOperation = await MarketOperation.findAll(
+      marketOperationQuery.accountReport( {
+        req,
+        sequelize,
+        UserAccount,
+        User,
+        Account,
+        Product,
+        Broker,
+        Commodity,
+        AssetClass
+      } )
+    );
+
+    if (!marketOperation) {
+      return res.status( 404 ).send( {
+        message: '404 on MarketOperation get List',
+      } );
+    }
+    return res.status( 200 ).send( marketOperation );
+  },
+
   async get(req, res) {
     const marketOperation = await MarketOperation.findByPk(
       req.params.marketOperationId,

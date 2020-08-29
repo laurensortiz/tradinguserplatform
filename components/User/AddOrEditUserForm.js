@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon, Radio } from 'antd';
+import { Input, Button, Form, Tag, Select, DatePicker, Icon, Radio, Row, Col } from 'antd';
 
 moment.locale( 'es' ); // Set Lang to Spanish
 
@@ -12,11 +12,19 @@ import { accountOperations } from '../../state/modules/accounts';
 
 const { Option } = Select;
 
+const MAX_NUMBER_USERS = 3;
+
 class AddOrEditUserForm extends PureComponent {
   state = {
     username: '',
     firstName: '',
     lastName: '',
+    firstName2: '',
+    lastName2: '',
+    firstName3: '',
+    lastName3: '',
+    firstName4: '',
+    lastName4: '',
     userID: '',
     email: '',
     role: {
@@ -37,6 +45,7 @@ class AddOrEditUserForm extends PureComponent {
     status: 1,
     accounts: [],
     isAdminUser: false,
+    extraUsers: 0,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -57,10 +66,23 @@ class AddOrEditUserForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedProject )) {
       const { selectedProject } = this.props;
-
+      console.log('[=====  sam  =====>');
+      console.log(selectedProject);
+      console.log('<=====  /sam  =====]');
+      let extraUsers = 0;
+      if (!_.isEmpty(selectedProject.firstName2)) {
+        extraUsers = extraUsers + 1
+      }
+      if (!_.isEmpty(selectedProject.firstName3)) {
+        extraUsers = extraUsers + 1
+      }
+      if (!_.isEmpty(selectedProject.firstName4)) {
+        extraUsers = extraUsers + 1
+      }
       this.setState( {
         ...this.state,
         ...selectedProject,
+        extraUsers,
         isAdminUser: _.isEqual( selectedProject.roleId, 1 )
       } )
     }
@@ -106,7 +128,10 @@ class AddOrEditUserForm extends PureComponent {
     this.props.form.validateFields( (err, values) => {
       if (!err) {
 
-        const saveState = _.omit(this.state, ['accounts']);
+        const saveState = _.omit( this.state, [ 'accounts' ] );
+        console.log('[=====  state  =====>');
+        console.log(this.state);
+        console.log('<=====  /state  =====]');
 
         if (_.isEqual( this.props.actionType, 'add' )) {
           this.props.onAddNew( saveState )
@@ -170,8 +195,66 @@ class AddOrEditUserForm extends PureComponent {
     } )
   };
 
-  render() {
+  _onAddExtraUser = () => {
+    if (this.state.extraUsers < MAX_NUMBER_USERS) { //Max 4 extra users
+      this.setState({
+        extraUsers: this.state.extraUsers + 1
+      })
+    }
+  }
 
+  _onRemoveExtraUser = () => {
+    if (this.state.extraUsers > 0) { //Max 4 extra users
+      this.setState({
+        extraUsers: this.state.extraUsers - 1,
+        [`firstName${this.state.extraUsers + 1}`]: '',
+        [`lastName${this.state.extraUsers + 1}`]: '',
+      })
+    }
+  }
+
+
+  _handleAddNewUser = (getFieldDecorator) => {
+    return [...Array(this.state.extraUsers)].map( (newUser, index) => {
+      const currentFieldIndex = index + 2;
+      return (
+        <Row>
+          <Col xs={ 23 } sm={ 12 }>
+            <Form.Item label={ `Nombre ${ currentFieldIndex }` }>
+              { getFieldDecorator( `firstName${ currentFieldIndex }`, {
+                initialValue: this.state[ `firstName${ currentFieldIndex }` ],
+                rules: [ { message: 'Por favor ingrese su Nombre' } ],
+              } )(
+                <div style={ { display: 'flex' } }>
+                  <Input name={ `firstName${ currentFieldIndex }` } onChange={ this._handleChange } value={this.state[ `firstName${ currentFieldIndex }` ]}
+                         placeholder={ `Nombre ${ currentFieldIndex }` }/>
+                </div>
+              ) }
+            </Form.Item>
+          </Col>
+          <Col xs={ 23 } sm={ 12 }>
+            <Form.Item label={ `Apellido ${ currentFieldIndex }` }>
+              { getFieldDecorator( `lastName${ currentFieldIndex }`, {
+                initialValue: this.state[ `lastName${ currentFieldIndex }` ],
+                rules: [ { message: 'Por favor ingrese su Apellido' } ],
+              } )(
+                <div style={ { display: 'flex' } }>
+                  <Input name={ `lastName${ currentFieldIndex }` } onChange={ this._handleChange } value={this.state[ `lastName${ currentFieldIndex }` ]}
+                         placeholder={ `Apellido ${ currentFieldIndex }` }/>
+                  <Button type="danger" onClick={this._onRemoveExtraUser}><Icon type="user-delete"/></Button>
+                </div>
+              ) }
+            </Form.Item>
+          </Col>
+
+        </Row> )
+    } )
+  }
+
+  render() {
+console.log('[=====  state  =====>');
+console.log(this.state);
+console.log('<=====  /state  =====]');
     const { getFieldDecorator } = this.props.form;
     const { isAdminUser } = this.state;
     // Default values for edit action
@@ -192,22 +275,38 @@ class AddOrEditUserForm extends PureComponent {
         ) : null }
 
         <Form onSubmit={ this._handleSubmit } className="auth-form">
-          <Form.Item label="Nombre">
-            { getFieldDecorator( 'firstName', {
-              initialValue: this.state.firstName,
-              rules: [ { message: 'Por favor ingrese su Nombre' } ],
-            } )(
-              <Input name="firstName" onChange={ this._handleChange } placeholder="Nombre"/>
-            ) }
-          </Form.Item>
-          <Form.Item label="Apellido">
-            { getFieldDecorator( 'lastName', {
-              initialValue: this.state.lastName,
-              rules: [ { message: 'Por favor ingrese su Apellido' } ],
-            } )(
-              <Input name="lastName" onChange={ this._handleChange } placeholder="Apellido"/>
-            ) }
-          </Form.Item>
+          <Row>
+            <Col xs={ 24 } sm={ 12 }>
+              <Form.Item label="Nombre">
+                { getFieldDecorator( 'firstName', {
+                  initialValue: this.state.firstName,
+                  rules: [ { message: 'Por favor ingrese su Nombre' } ],
+                } )(
+                  <Input name="firstName" onChange={ this._handleChange } placeholder="Nombre"/>
+                ) }
+              </Form.Item>
+            </Col>
+            <Col xs={ 24 } sm={ 12 }>
+              <Form.Item label="Apellido">
+                { getFieldDecorator( 'lastName', {
+                  initialValue: this.state.lastName,
+                  rules: [ { message: 'Por favor ingrese su Apellido' } ],
+                } )(
+                  <Input name="lastName" onChange={ this._handleChange } placeholder="Apellido"/>
+                ) }
+              </Form.Item>
+            </Col>
+          </Row>
+          { !this.state.isAdminUser ? this._handleAddNewUser( getFieldDecorator ) : null }
+          { !this.state.isAdminUser && this.state.extraUsers < MAX_NUMBER_USERS ? (
+            <Row>
+              <Col style={ { textAlign: 'center' } }>
+                <Button size="large" onClick={this._onAddExtraUser}><Icon type="usergroup-add"/> Agregar otro usuario</Button>
+              </Col>
+            </Row>
+
+          ) : null }
+
           <Form.Item label="Usuario">
             { getFieldDecorator( 'username', {
               initialValue: this.state.username,
@@ -245,68 +344,70 @@ class AddOrEditUserForm extends PureComponent {
               <Input name="phoneNumber" onChange={ this._handleChange } placeholder="Teléfono"/>
             ) }
           </Form.Item>
-          <Form.Item label="Contraseña">
-            { getFieldDecorator( 'password', {
-              rules: [ {
-                required: _.isEqual( this.props.actionType, 'add' ),
-                message: 'Por favor ingrese la Contraseña'
-              },
-                {
-                  validator: this._validateToNextPassword,
-                } ],
-            } )(
-              <Input.Password name="password" onChange={ this._handleChange }
-                              prefix={ <Icon type="lock" style={ { color: 'rgba(0,0,0,.25)' } }/> } type="password"
-                              placeholder="Contraseña"/>
-            ) }
-          </Form.Item>
-          <Form.Item label="Confirmar Contraseña">
-            { getFieldDecorator( 'verifyPassword', {
-              rules: [ {
-                required: _.isEqual( this.props.actionType, 'add' ),
-                message: 'Por favor ingrese la Contraseña'
-              },
-                {
-                  validator: this._compareToFirstPassword,
-                } ],
-            } )(
-              <Input.Password name="verifyPassword" onChange={ this._handleChange }
-                              prefix={ <Icon type="lock" style={ { color: 'rgba(0,0,0,.25)' } }/> } type="password"
-                              placeholder="Confirmar Contraseña" onBlur={ this._handleConfirmBlur }/>
-            ) }
-          </Form.Item>
-          <Form.Item label="Fecha de Inicio">
-            { getFieldDecorator( 'startDate', {
-              initialValue: startDateInitValue
-            } )(
-              <DatePicker onChange={ this._setStartDate } placeholder="Fecha de Inicio"/>
-            ) }
-          </Form.Item>
-          <Form.Item label="Fecha de Salida">
-            { getFieldDecorator( 'endDate', {
-              initialValue: endDateInitValue
-            } )(
-              <DatePicker onChange={ this._setEndDate } placeholder="Fecha de Salida"/>
-            ) }
-          </Form.Item>
-          {/*<Form.Item label="Tipo de Cuenta" className={classNames({'hidden': isAdminUser})}>*/ }
-          {/*  { getFieldDecorator( 'account', {*/ }
-          {/*    initialValue: accountInitValue,*/ }
-          {/*    rules: [ {*/ }
-          {/*      message: 'Por favor ingrese el tipo de cuenta',*/ }
-          {/*      required: _.isEqual( this.props.actionType, 'add' ) || !this.state.isAdminUser,*/ }
-          {/*    } ],*/ }
-          {/*  } )(*/ }
-          {/*    <Select name="account" onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }*/ }
-          {/*            placeholder="Tipo de Cuenta">*/ }
-          {/*      { this._getSelectOption( this.state.accounts ) }*/ }
-          {/*    </Select>*/ }
-          {/*  ) }*/ }
-          {/*</Form.Item>*/ }
+          <Row>
+            <Col xs={24} sm={12}>
+              <Form.Item label="Contraseña">
+                { getFieldDecorator( 'password', {
+                  rules: [ {
+                    required: _.isEqual( this.props.actionType, 'add' ),
+                    message: 'Por favor ingrese la Contraseña'
+                  },
+                    {
+                      validator: this._validateToNextPassword,
+                    } ],
+                } )(
+                  <Input.Password name="password" onChange={ this._handleChange }
+                                  prefix={ <Icon type="lock" style={ { color: 'rgba(0,0,0,.25)' } }/> } type="password"
+                                  placeholder="Contraseña"/>
+                ) }
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Form.Item label="Confirmar Contraseña">
+                { getFieldDecorator( 'verifyPassword', {
+                  rules: [ {
+                    required: _.isEqual( this.props.actionType, 'add' ),
+                    message: 'Por favor ingrese la Contraseña'
+                  },
+                    {
+                      validator: this._compareToFirstPassword,
+                    } ],
+                } )(
+                  <Input.Password name="verifyPassword" onChange={ this._handleChange }
+                                  prefix={ <Icon type="lock" style={ { color: 'rgba(0,0,0,.25)' } }/> } type="password"
+                                  placeholder="Confirmar Contraseña" onBlur={ this._handleConfirmBlur }/>
+                ) }
+              </Form.Item>
+            </Col>
+          </Row>
+
+
+          <Row>
+            <Col xs={24} sm={12}>
+              <Form.Item label="Fecha de Inicio">
+                { getFieldDecorator( 'startDate', {
+                  initialValue: startDateInitValue
+                } )(
+                  <DatePicker onChange={ this._setStartDate } placeholder="Fecha de Inicio"/>
+                ) }
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Form.Item label="Fecha de Salida">
+                { getFieldDecorator( 'endDate', {
+                  initialValue: endDateInitValue
+                } )(
+                  <DatePicker onChange={ this._setEndDate } placeholder="Fecha de Salida"/>
+                ) }
+              </Form.Item>
+            </Col>
+          </Row>
+
+
 
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
+            <Button type="primary" htmlType="submit" size="large" className="login-form-button" disabled={ this.props.isLoading }>
               { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }
             </Button>
           </Form.Item>

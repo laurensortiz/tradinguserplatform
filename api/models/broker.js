@@ -27,6 +27,11 @@ module.exports = (Sequelize, DataTypes) => {
       as: 'broker',
     });
 
+    // Broker.belongsTo(models.UserAccount, {
+    //   foreignKey: 'brokerId',
+    //   as: 'userAccount',
+    // });
+
   };
 
   return Broker;

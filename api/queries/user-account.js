@@ -1,14 +1,15 @@
-import {get} from 'lodash';
+import { get } from 'lodash';
+import { Broker, Product } from "../models";
 
 function conditionalStatus(req, sequelize) {
   const Op = sequelize.Op;
-  let requestedStatus = Number(get(req, 'body.status', 4));
+  let requestedStatus = Number( get( req, 'body.status', 4 ) );
 
 
   if (requestedStatus !== 4) {
     requestedStatus = {
-      [Op.lte]: 4,
-      [Op.gt]: 0
+      [ Op.lte ]: 4,
+      [ Op.gt ]: 0
     }
   }
 
@@ -16,9 +17,10 @@ function conditionalStatus(req, sequelize) {
 }
 
 const queries = {
-  list: ({ req, User, Account }) => {
-    const statusActive = get(req, 'body.status', 1);
-    const associatedOperation = get(req, 'body.associatedOperation', 1);
+  list: ({ req, sequelize, User, Account, MarketOperation, Product, Broker }) => {
+    const statusActive = get( req, 'body.status', 1 );
+    const associatedOperation = get( req, 'body.associatedOperation', 1 );
+    const Op = sequelize.Op;
     return {
       where: {
         status: statusActive,
@@ -30,9 +32,7 @@ const queries = {
         {
           model: User,
           as: 'user',
-          attributes: {
-            exclude: [ 'salt', 'password' ],
-          },
+          attributes: [ 'firstName', 'lastName', 'username' ],
         },
         {
           model: Account,
@@ -41,11 +41,29 @@ const queries = {
             associatedOperation,
           },
         },
+        {
+          model: Broker,
+          as: 'broker',
+          attributes: [ 'name', 'id' ],
+        },
+        {
+          model: MarketOperation,
+          as: 'marketOperation',
+          attributes: [ 'id', 'status' ],
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: [ 'name', 'id' ],
+            },
+          ]
+        },
       ],
+
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  get: ({ req, User, Account }) => {
+  get: ({ req, User, Account, Broker }) => {
     return {
       where: {
         status: 1,
@@ -61,6 +79,11 @@ const queries = {
         {
           model: Account,
           as: 'account',
+        },
+        {
+          model: Broker,
+          as: 'broker',
+          attributes: [ 'name', 'id' ],
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
@@ -89,12 +112,12 @@ const queries = {
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  accountReport: ({req, User, Account, UserAccount, MarketMovement, Product, Broker, Commodity, AssetClass, sequelize }) => {
+  accountReport: ({ req, User, Account, UserAccount, MarketMovement, Product, Broker, Commodity, AssetClass, sequelize }) => {
 
     return {
       where: {
         userAccountId: req.body.id,
-        status: conditionalStatus(req, sequelize),
+        status: conditionalStatus( req, sequelize ),
       },
       include: [
         {
@@ -104,12 +127,12 @@ const queries = {
             {
               model: User,
               as: 'user',
-              attributes: ['username', 'firstName', 'lastName']
+              attributes: [ 'username', 'firstName', 'lastName' ]
             },
             {
               model: Account,
               as: 'account',
-              attributes: ['name', 'percentage', 'associatedOperation']
+              attributes: [ 'name', 'percentage', 'associatedOperation' ]
             },
           ],
           order: [ [ 'guaranteeOperation', 'ASC' ] ],
@@ -118,7 +141,7 @@ const queries = {
           model: MarketMovement,
           as: 'marketMovement',
           limit: 1,
-          order: [ [ 'createdAt', 'DESC' ]],
+          order: [ [ 'createdAt', 'DESC' ] ],
         },
         {
           model: Product,
