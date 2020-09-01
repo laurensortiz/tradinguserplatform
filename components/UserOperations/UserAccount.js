@@ -51,7 +51,6 @@ class UserAccount extends PureComponent  {
           </Col>
           <Col sm={ 24 } md={ 4 }>
             <Title level={ 4 }><Icon type="user"/> <Tag style={ { fontSize: 14 } }>  { username }</Tag></Title>
-
           </Col>
 
         </Row>

@@ -30,7 +30,7 @@ db.Commodity = ORM.import(path.join(__dirname, 'commodity.js'));
 db.AssetClass = ORM.import(path.join(__dirname, 'asset-class.js'));
 db.Page = ORM.import(path.join(__dirname, 'page.js'));
 db.Setting = ORM.import(path.join(__dirname, 'setting.js'));
-
+db.Referral = ORM.import(path.join(__dirname, 'referral.js'));
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);

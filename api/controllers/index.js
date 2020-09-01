@@ -13,3 +13,4 @@ export { default as commodity } from './commodity';
 export { default as assetClass } from './asset-class';
 export { default as page } from './page';
 export { default as setting } from './setting';
+export { default as referral } from './referral';

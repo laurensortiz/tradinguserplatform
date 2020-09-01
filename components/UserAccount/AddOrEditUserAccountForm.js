@@ -12,6 +12,9 @@ import { accountOperations } from '../../state/modules/accounts';
 import { userOperations } from '../../state/modules/users';
 import { brokerOperations } from "../../state/modules/brokers";
 
+import { AmountFormatValidation } from '../../common/utils';
+
+
 const { Option } = Select;
 
 class AddOrEditUserAccountForm extends PureComponent {
@@ -251,7 +254,11 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Valor de la Cuenta">
           { getFieldDecorator( 'accountValue', {
             initialValue: accountValueInitValue,
-            rules: [ { required: false, message: 'Por favor indique el valor de la cuenta' } ],
+            rules: [ { required: false, message: 'Por favor indique el valor de la cuenta' },
+              {
+                validator: (rule, amount) => AmountFormatValidation( rule, amount )
+              }
+            ],
           } )(
             <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
           ) }
@@ -260,7 +267,11 @@ class AddOrEditUserAccountForm extends PureComponent {
           <Form.Item label="Garantías disponibles">
             { getFieldDecorator( 'guaranteeOperation', {
               initialValue: guaranteeOperationInitValue,
-              rules: [ { required: false, message: 'Por favor indique las garatías disponibles' } ],
+              rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
+                {
+                  validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                }
+              ],
             } )(
               <Input name="guaranteeOperation" onChange={ this._handleChange }
                      placeholder="Garantías disponibles para operar"/>
@@ -271,7 +282,11 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Garantía/Créditos">
           { getFieldDecorator( 'guaranteeCredits', {
             initialValue: guaranteeCreditsInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese Garantía / Créditos' } ],
+            rules: [ { required: false, message: 'Por favor ingrese Garantía / Créditos' },
+              {
+                validator: (rule, amount) => AmountFormatValidation( rule, amount )
+              }
+            ],
           } )(
             <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
           ) }
@@ -294,7 +309,11 @@ class AddOrEditUserAccountForm extends PureComponent {
           <Form.Item label="Comisiones por referencia">
             { getFieldDecorator( 'commissionByReference', {
               initialValue: commissionByReference,
-              rules: [ { required: false, message: 'Por favor indique las garatías disponibles' } ],
+              rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
+                {
+                  validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                }
+              ],
             } )(
               <Input name="commissionByReference" onChange={ this._handleChange }
                      placeholder="Comisiones por referencia"/>
@@ -305,7 +324,11 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Saldo Inicial">
           { getFieldDecorator( 'balanceInitial', {
             initialValue: balanceInitialInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese el saldo inicial' } ],
+            rules: [ { required: false, message: 'Por favor ingrese el saldo inicial' },
+              {
+                validator: (rule, amount) => AmountFormatValidation( rule, amount )
+              }
+            ],
           } )(
             <Input name="balanceInitial" onChange={ this._handleChange } placeholder="Saldo Inicial"/>
           ) }
@@ -313,7 +336,11 @@ class AddOrEditUserAccountForm extends PureComponent {
         <Form.Item label="Saldo Final">
           { getFieldDecorator( 'balanceFinal', {
             initialValue: balanceFinalInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese el saldo final' } ],
+            rules: [ { required: false, message: 'Por favor ingrese el saldo final' },
+              {
+                validator: (rule, amount) => AmountFormatValidation( rule, amount )
+              }
+            ],
           } )(
             <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
           ) }

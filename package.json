@@ -53,6 +53,7 @@
     "morgan": "^1.9.1",
     "next": "8.0.3",
     "node-sass": "^4.12.0",
+    "nodemailer": "^6.4.11",
     "now-env": "^3.1.0",
     "nprogress": "^0.2.0",
     "obj-flatten": "^2.0.4",
