@@ -37,8 +37,9 @@ const getExportFileName = (orgId) => {
 
 const _formatData = (data) => {
   return _.map( data, account => {
+
     let products = [];
-    const brokerName = _.get(account, 'broker.name ', '-')
+    const brokerName = _.get(account, 'broker.name', '-')
     if (!_.isEmpty(account.marketOperation)) {
       account.marketOperation.map(operation => {
         if (operation.status > 0) {
@@ -47,7 +48,6 @@ const _formatData = (data) => {
 
       })
     }
-
 
     return {
       'Usuario': account.user.username,
