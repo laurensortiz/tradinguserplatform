@@ -20,6 +20,7 @@ module.exports = {
         collaboratorIB: req.body.collaboratorIB,
         description: req.body.description,
         status: 1,
+        userAccountId: req.body.userAccountId,
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -85,6 +86,8 @@ module.exports = {
       personalIdDocument: req.body.personalIdDocument || referral.personalIdDocument,
       collaboratorIB: req.body.collaboratorIB || referral.collaboratorIB,
       description: req.body.description || referral.description,
+      userAccountId: req.body.userAccountId || referral.userAccountId,
+      notes: req.body.notes || referral.notes,
       updatedAt: new Date(),
     });
 

@@ -1877,3 +1877,32 @@ $function$
 /*
 * End Changes August 25, 2020
 */
+
+/*
+* Star Changes September 1, 2020
+*/
+-- Drop table
+
+-- DROP TABLE public."Account";
+
+CREATE TABLE public."Referral" (
+	id serial NOT NULL,
+ 	"firstName" varchar(255) NULL,
+ 	"lastName" varchar(255) NULL,
+ 	"userID" varchar(255) NULL,
+ 	email varchar(255) NULL,
+ 	"password" varchar(255) NOT NULL,
+ 	salt varchar(255) NOT NULL,
+ 	"phoneNumber" varchar(255) NULL,
+ 	"endDate" timestamptz NULL,
+ 	"startDate" timestamptz NULL,
+ 	"roleId" int4 NOT NULL,
+ 	status int4 NOT NULL,
+ 	"createdAt" timestamptz NOT NULL,
+ 	"updatedAt" timestamptz NOT NULL,
+	CONSTRAINT "Account_pkey" PRIMARY KEY (id)
+);
+
+/*
+* End Changes September 1, 2020
+*/
