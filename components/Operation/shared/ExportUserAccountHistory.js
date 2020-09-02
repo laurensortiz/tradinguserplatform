@@ -46,7 +46,6 @@ const getExportFileName = (orgId) => {
 
 const _formatData = (data) => {
   return _.map( data, operation => {
-
     return {
       'Estado': FormatStatus(operation.status, true).name,
       'Fecha de apertura': FormatDate(operation.createdAt),
