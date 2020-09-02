@@ -3,6 +3,7 @@ import { Row, Col, Descriptions, Tag, Card, Statistic, Icon, Divider } from 'ant
 import _ from 'lodash';
 
 import { FormatCurrency, IsOperationPositive } from '../../common/utils';
+import ReferralForm from "./ReferralForm";
 import { Investment, Market } from "../Operation";
 
 class AccountInformation extends PureComponent {
@@ -64,6 +65,11 @@ class AccountInformation extends PureComponent {
               }
 
             </Descriptions>
+            <ReferralForm
+                onAddReferral={this.props.onAddReferral}
+                userAccount={this.props.userAccount}
+                isReferralLoading={this.props.isReferralLoading}
+            />
           </Col>
         </Row>
         <Row gutter={12} style={{marginBottom: 50}}>

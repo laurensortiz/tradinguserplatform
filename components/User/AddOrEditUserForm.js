@@ -66,9 +66,6 @@ class AddOrEditUserForm extends PureComponent {
 
     if (!_.isEmpty( this.props.selectedProject )) {
       const { selectedProject } = this.props;
-      console.log('[=====  sam  =====>');
-      console.log(selectedProject);
-      console.log('<=====  /sam  =====]');
       let extraUsers = 0;
       if (!_.isEmpty(selectedProject.firstName2)) {
         extraUsers = extraUsers + 1
@@ -129,9 +126,7 @@ class AddOrEditUserForm extends PureComponent {
       if (!err) {
 
         const saveState = _.omit( this.state, [ 'accounts' ] );
-        console.log('[=====  state  =====>');
-        console.log(this.state);
-        console.log('<=====  /state  =====]');
+
 
         if (_.isEqual( this.props.actionType, 'add' )) {
           this.props.onAddNew( saveState )

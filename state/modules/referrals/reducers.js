@@ -37,6 +37,30 @@ export function settings(state = initialState, action) {
         isLoading: false,
         message: action.payload,
       };
+      // By User Account
+    case types.REFERRALS_USER_ACCOUNT_REQUEST:
+      return {
+        ...state,
+        isCompleted: false,
+        isLoading: true,
+        isSuccess: false,
+      };
+    case types.REFERRALS_USER_ACCOUNT_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        isCompleted: true,
+        isLoading: false,
+        list: action.payload,
+      };
+    case types.REFERRALS_USER_ACCOUNT_ERROR:
+      return {
+        ...state,
+        isSuccess: false,
+        isCompleted: true,
+        isLoading: false,
+        message: action.payload,
+      };
     // Add Project
     case types.REFERRAL_ADD_REQUEST:
       return {

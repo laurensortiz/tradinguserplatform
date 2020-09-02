@@ -8,6 +8,7 @@ import _ from 'lodash';
 import Document from '../components/Document';
 
 import { userAccountOperations } from "../state/modules/userAccounts";
+import { referralOperations } from "../state/modules/referrals";
 import UserAccount from '../components/UserOperations/UserAccount'
 import ExportHistoryReport from "../components/Operation/shared/ExportUserAccountHistory";
 
@@ -83,14 +84,19 @@ class UserOperations extends Component {
     this.props.fetchGetUserAccountHistoryReport(userOperation)
   }
 
-  render() {
+  _onRequestAddReferral = (referral) => {
+    this.props.fetchAddReferral(referral)
+  }
 
+  render() {
     return (
       <Document id="userOperations-page">
         <UserAccount
           currentUser={this.state.currentUser}
           accounts={this.state.accounts}
           onRequestStandardOperationsReport={this._requestRequestStandardOperationsReport}
+          onAddReferral={this._onRequestAddReferral}
+          isReferralLoading={this.props.isReferralLoading}
           isLoading={false} />
       </Document>
     );
@@ -102,15 +108,21 @@ function mapStateToProps(state) {
   return {
     currentUser: state.authState.currentUser,
     accounts: state.userAccountsState.list,
-    isLoading: state.investmentOperationsState.isLoading,
-    isSuccess: state.investmentOperationsState.isSuccess,
-    isFailure: state.investmentOperationsState.isFailure,
-    message: state.investmentOperationsState.message,
+    isLoading: state.userAccountsState.isLoading,
+    isSuccess: state.userAccountsState.isSuccess,
+    isFailure: state.userAccountsState.isFailure,
+    message: state.userAccountsState.message,
+
+    isReferralLoading: state.referralsState.isLoading,
+    isReferralSuccess: state.referralsState.isSuccess,
+    referralMessage: state.referralsState.message,
 
     isHistoryReportLoading: state.userAccountsState.isHistoryReportLoading,
     isHistoryReportSuccess: state.userAccountsState.isHistoryReportSuccess,
     isHistoryReportComplete: state.userAccountsState.isHistoryReportComplete,
     historyReportData: state.userAccountsState.historyReportData,
+
+
   }
 }
 
@@ -118,6 +130,12 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators( {
     fetchGetUserAccounts: userAccountOperations.fetchGetUserAccounts,
     fetchGetUserAccountHistoryReport: userAccountOperations.fetchGetUserAccountHistoryReport,
+
+    fetchAddReferral: referralOperations.fetchAddReferral,
+    fetchGetReferrals: referralOperations.fetchGetReferrals,
+    fetchGetUserAccountReferrals: referralOperations.fetchGetUserAccountReferrals,
+    resetReferralAfterRequest: referralOperations.resetAfterRequest,
+
     resetAfterRequest: userAccountOperations.resetAfterRequest,
   }, dispatch );
 

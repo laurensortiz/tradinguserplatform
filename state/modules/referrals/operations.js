@@ -3,7 +3,8 @@ import  {
   fetchAddReferral,
   fetchEditReferral,
   fetchDeleteReferral,
-  resetAfterRequest
+  resetAfterRequest,
+  fetchGetUserAccountReferrals,
 } from './actions';
 
 export default {
@@ -12,4 +13,5 @@ export default {
   fetchEditReferral,
   fetchDeleteReferral,
   resetAfterRequest,
+  fetchGetUserAccountReferrals,
 }

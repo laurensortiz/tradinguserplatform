@@ -46,7 +46,7 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
     },
     personalIdDocument: {
-      type: DataTypes.STRING,
+      type: DataTypes.BLOB,
       allowNull: true,
     },
     collaboratorIB: {

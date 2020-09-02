@@ -15,6 +15,13 @@ export const addReferral = async (referral) => {
   } );
 };
 
+export const getUserAccountReferrals = async (userAccount) => {
+  return fetch( {
+    method: 'get',
+    url: `referral/user-account/${ userAccount.id }`,
+  } );
+};
+
 export const editReferral = async (referral) => {
   return fetch( {
     method: 'put',

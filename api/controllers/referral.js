@@ -1,9 +1,12 @@
 import { Referral } from '../models';
 import { referralQuery } from '../queries';
+import SendEmail from '../../common/email';
 
 module.exports = {
   async create(req, res) {
     try {
+      await SendEmail(req.body)
+
       const referral = await Referral.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -47,6 +50,20 @@ module.exports = {
   async get(req, res) {
     const referral = await Referral.findByPk(
       req.params.referralId
+    );
+
+    if (!referral) {
+      return res.status(404).send({
+        message: '404 on Referral get',
+      });
+    }
+
+    return res.status(200).send(referral);
+  },
+
+  async getByUserAccountId(req, res) {
+    const referral = await Referral.findAll(
+      req.params.userAccountId
     );
 
     if (!referral) {

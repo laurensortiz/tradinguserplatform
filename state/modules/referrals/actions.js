@@ -1,4 +1,4 @@
-import { getReferrals, addReferral, editReferral, deleteReferral } from './api';
+import { getReferrals, addReferral, editReferral, deleteReferral, getUserAccountReferrals } from './api';
 import types from './types';
 import { formatAxiosError } from "../../../common/utils";
 
@@ -30,6 +30,37 @@ const requestReferralsSuccess = (referral) => {
 const requestReferralsError = (error) => {
   return {
     type: types.REFERRALS_ERROR,
+    payload: formatAxiosError(error.response)
+  }
+};
+
+export const fetchGetUserAccountReferrals = () => async dispatch => {
+  dispatch( requestUserAccountReferrals() );
+  try {
+    const res = await getUserAccountReferrals();
+    dispatch( requestUserAccountReferralsSuccess( res.data ) )
+  } catch (e) {
+    dispatch( requestUserAccountReferralsError( e.message ) )
+  }
+
+};
+
+const requestUserAccountReferrals = () => {
+  return {
+    type: types.REFERRALS_USER_ACCOUNT_REQUEST
+  }
+};
+
+const requestUserAccountReferralsSuccess = (referral) => {
+  return {
+    type: types.REFERRALS_USER_ACCOUNT_SUCCESS,
+    payload: referral
+  }
+};
+
+const requestUserAccountReferralsError = (error) => {
+  return {
+    type: types.REFERRALS_USER_ACCOUNT_ERROR,
     payload: formatAxiosError(error.response)
   }
 };
@@ -143,4 +174,5 @@ export default {
   fetchEditReferral,
   fetchDeleteReferral,
   resetAfterRequest,
+  fetchGetUserAccountReferrals,
 };
