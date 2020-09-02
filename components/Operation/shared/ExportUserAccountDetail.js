@@ -42,7 +42,7 @@ const _formatData = (data) => {
     const brokerName = _.get(account, 'broker.name', '-')
     if (!_.isEmpty(account.marketOperation)) {
       account.marketOperation.map(operation => {
-        if (operation.status > 0) {
+        if (operation.status > 0 && operation.status < 4) {
           products.push(operation.product.name);
         }
 
