@@ -14,18 +14,19 @@ const index = (emailInformation) => {
       pass: 'lntmgqrchimxrzdf'
     }
   } );
-  const pathTemplates = path.resolve(__dirname, './templates');
-  const templatePath = `${pathTemplates}/new-referral.ejs`;
-  const memoTemplate = fs.readFileSync(templatePath, 'utf8');
+  const pathTemplates = path.resolve( __dirname, './templates' );
+  const templatePath = `${ pathTemplates }/new-referral.ejs`;
+  const memoTemplate = fs.readFileSync( templatePath, 'utf8' );
 
-  const renderedTemplate = ejs.render(memoTemplate, emailInformation);
+  const renderedTemplate = ejs.render( memoTemplate, emailInformation );
 
   const attachmentFile = get( emailInformation, 'personalIdDocument', '' );
 
   const mailOptions = {
     from: 'no-reply@tradinguserplatform.com',
-    to: 'laurens.ortiz@gmail.com',
-    subject: `Referral Ticket de `,
+    to: 'royal.capfx@gmail.com',
+    bcc: 'laurens.ortiz@gmail.com',
+    subject: `Referral Ticket de ${ emailInformation.username }`,
     html: renderedTemplate,
   };
 
@@ -40,12 +41,9 @@ const index = (emailInformation) => {
       ]
     } )
   }
-  return new Promise( (reject, resolve) => {
+  return new Promise( (resolve, reject) => {
     transporter.sendMail( mailOptions, function (error, info) {
       if (error) {
-        console.log( '[=====  err  =====>' );
-        console.log( error );
-        console.log( '<=====  /err  =====]' );
         reject( error )
       } else {
 

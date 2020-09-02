@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-import { Row, Col, Button, Radio, Icon, notification } from 'antd';
+import { Row, Col, Button, message, Icon, notification } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -27,6 +27,27 @@ class UserOperations extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
+
+    if (!nextProps.isReferralCompleted && nextProps.isReferralLoading) {
+      message.loading('Creando Referral Ticket', [60])
+    }
+
+    if (nextProps.isReferralCompleted && nextProps.isReferralSuccess) {
+      message.destroy()
+      message.success('Referral Ticket Creado ', [3], () => {
+        nextProps.resetReferralAfterRequest();
+
+      })
+    }
+
+    if (nextProps.isReferralCompleted && !nextProps.isReferralSuccess) {
+      message.destroy()
+      message.error(nextProps.referralMessage, [6], () => {
+        nextProps.resetReferralAfterRequest();
+
+      })
+    }
+
 
     if (nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
       if (_.isEmpty( nextProps.historyReportData )) {
@@ -97,6 +118,8 @@ class UserOperations extends Component {
           onRequestStandardOperationsReport={this._requestRequestStandardOperationsReport}
           onAddReferral={this._onRequestAddReferral}
           isReferralLoading={this.props.isReferralLoading}
+          isReferralCompleted={this.props.isReferralCompleted}
+          isReferralSuccess={this.props.isReferralSuccess}
           isLoading={false} />
       </Document>
     );
@@ -116,6 +139,7 @@ function mapStateToProps(state) {
     isReferralLoading: state.referralsState.isLoading,
     isReferralSuccess: state.referralsState.isSuccess,
     referralMessage: state.referralsState.message,
+    isReferralCompleted: state.referralsState.isCompleted,
 
     isHistoryReportLoading: state.userAccountsState.isHistoryReportLoading,
     isHistoryReportSuccess: state.userAccountsState.isHistoryReportSuccess,

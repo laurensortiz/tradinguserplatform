@@ -43,9 +43,6 @@ class ReferralForm extends PureComponent {
   };
 
   _handleChange = e => {
-    console.log( '[=====  hhh  =====>' );
-    console.log( e );
-    console.log( '<=====  /hhh  =====]' );
     let value = '';
     if (e.target.type === 'checkbox') {
       value = e.target.checked ? 1 : 0;
@@ -63,7 +60,7 @@ class ReferralForm extends PureComponent {
         const { accountId, user } = this.props.userAccount;
         this.props.onAddReferral( {
           ...saveState,
-          accountId,
+          userAccountId: accountId,
           username: user.username
         } )
       }
@@ -92,8 +89,13 @@ class ReferralForm extends PureComponent {
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    const { user } = this.props.userAccount;
     return (
       <>
+        <div style={{textAlign: 'center'}}>
+          <h3>Referral Ticket</h3>
+          <h2>{user.username || ''} <span className="status-online"></span></h2>
+        </div>
         <Form onSubmit={ this._handleSubmit } className="auth-form">
           <Form.Item label="Nombre">
             { getFieldDecorator( 'firstName', {
@@ -260,8 +262,8 @@ class ReferralForm extends PureComponent {
                            onChange={ this._handleChange }/> ) }
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" size="large" className="login-form-button"
-                    disabled={ this.props.isReferralLoading }>
+            <Button style={{width: '100%'}} type="primary" htmlType="submit" size="large" className="login-form-button"
+                    disabled={ this.props.isReferralLoading } loading={this.props.isReferralLoading}>
               Enviar Referencia
             </Button>
           </Form.Item>

@@ -19,6 +19,8 @@ class UserAccount extends PureComponent  {
           onRequestStandardOperationsReport={this.props.onRequestStandardOperationsReport}
           onAddReferral={this.props.onAddReferral}
           isReferralLoading={this.props.isReferralLoading}
+          isReferralCompleted={this.props.isReferralCompleted}
+          isReferralSuccess={this.props.isReferralSuccess}
       /> )
     }
   };

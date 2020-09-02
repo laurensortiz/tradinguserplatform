@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Descriptions, Tag, Card, Statistic, Icon, Divider } from 'antd';
+import { Row, Col, Descriptions, Tag, Card, Statistic, Icon, Button, Modal } from 'antd';
 import _ from 'lodash';
 
 import { FormatCurrency, IsOperationPositive } from '../../common/utils';
@@ -7,6 +7,26 @@ import ReferralForm from "./ReferralForm";
 import { Investment, Market } from "../Operation";
 
 class AccountInformation extends PureComponent {
+
+  state = {
+    isReferralFormVisible: false
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.isReferralCompleted && nextProps.isReferralSuccess) {
+      return {
+        isReferralFormVisible: false
+      }
+    }
+
+    return null
+  }
+
+  _onHandleShowForm = () => {
+    this.setState({
+      isReferralFormVisible: !this.state.isReferralFormVisible
+    })
+  }
 
   render() {
 
@@ -59,17 +79,29 @@ class AccountInformation extends PureComponent {
                       label="Margen utilizado 10%">{ FormatCurrency.format(marginUsed) }</Descriptions.Item>
 
                     <Descriptions.Item
-                    label="Comisiones por referencia">{ FormatCurrency.format(commissionByReference) } </Descriptions.Item>
+                    label="Comisiones por referencia">{ FormatCurrency.format(commissionByReference) }
+                    <Button type="secondary" style={{marginLeft: 10}} onClick={this._onHandleShowForm}><Icon type="solution" /> Referir</Button></Descriptions.Item>
                   </>
                   ) : null
               }
 
             </Descriptions>
-            <ReferralForm
+            <Modal
+              destroyOnClose={true}
+              footer={null}
+              onCancel={this._onHandleShowForm}
+              visible={this.state.isReferralFormVisible}
+            >
+              <ReferralForm
                 onAddReferral={this.props.onAddReferral}
                 userAccount={this.props.userAccount}
                 isReferralLoading={this.props.isReferralLoading}
-            />
+                isReferralCompleted={this.props.isReferralCompleted}
+                isReferralSuccess={this.props.isReferralSuccess}
+              />
+            </Modal>
+
+
           </Col>
         </Row>
         <Row gutter={12} style={{marginBottom: 50}}>

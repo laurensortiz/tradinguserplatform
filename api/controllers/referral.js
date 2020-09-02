@@ -5,7 +5,7 @@ import SendEmail from '../../common/email';
 module.exports = {
   async create(req, res) {
     try {
-      await SendEmail(req.body)
+      const sendEmail = await SendEmail(req.body);
 
       const referral = await Referral.create({
         firstName: req.body.firstName,
@@ -18,7 +18,7 @@ module.exports = {
         initialAmount: req.body.initialAmount,
         hasBrokerGuarantee: req.body.hasBrokerGuarantee,
         brokerGuaranteeCode: req.body.brokerGuaranteeCode,
-        quantity: req.body.quantity,
+        quantity: Number(req.body.quantity),
         personalIdDocument: req.body.personalIdDocument,
         collaboratorIB: req.body.collaboratorIB,
         description: req.body.description,
@@ -99,7 +99,7 @@ module.exports = {
       initialAmount: req.body.initialAmount || referral.initialAmount,
       hasBrokerGuarantee: req.body.hasBrokerGuarantee || referral.hasBrokerGuarantee,
       brokerGuaranteeCode: req.body.brokerGuaranteeCode || referral.brokerGuaranteeCode,
-      quantity: req.body.quantity || referral.quantity,
+      quantity: Number(req.body.quantity) || referral.quantity,
       personalIdDocument: req.body.personalIdDocument || referral.personalIdDocument,
       collaboratorIB: req.body.collaboratorIB || referral.collaboratorIB,
       description: req.body.description || referral.description,
