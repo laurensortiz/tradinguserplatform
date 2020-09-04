@@ -264,7 +264,7 @@ class ReferralsTable extends Component {
   _displayTableFooter = () => (
     <Row>
       <Col>
-        <h3>Total de Referrals: <Tag color="#165cea" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.state.referrals)}</Tag></h3>
+        <h3>Total de Referrals: <Tag color="#1b1f21" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.state.referrals)}</Tag></h3>
       </Col>
     </Row>
   )
