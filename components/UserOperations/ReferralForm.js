@@ -6,7 +6,7 @@ import PhoneAreaCode from '../../common/utils/phone-area-codes.json';
 import Draggable from 'react-draggable';
 
 const { TextArea } = Input;
-const {Option} = Select;
+const { Option } = Select;
 
 class ReferralForm extends PureComponent {
 
@@ -32,11 +32,6 @@ class ReferralForm extends PureComponent {
     phoneAreaCode: '+506',
     fileList: []
   }
-
-  _handleConfirmBlur = (e) => {
-    const value = e.target.value;
-    this.setState( { confirmDirty: this.state.confirmDirty || !!value } );
-  };
 
   normFile = e => {
     console.log( 'Upload event:', e );
@@ -66,7 +61,7 @@ class ReferralForm extends PureComponent {
           ...saveState,
           userAccountId: accountId,
           username: user.username,
-          phoneNumber: `${this.state.phoneAreaCode} ${this.state.phoneNumber}`
+          phoneNumber: `${ this.state.phoneAreaCode } ${ this.state.phoneNumber }`
         } )
       }
     } );
@@ -93,26 +88,35 @@ class ReferralForm extends PureComponent {
   }
 
   _handlePhoneAreaCode = (value) => {
-    this.setState({
-      phoneAreaCode: value.split(',')[1]
-    })
+    this.setState( {
+      phoneAreaCode: value.split( ',' )[ 1 ]
+    } )
+  }
+
+  _handleRemoveUploadedFiles = () => {
+    this.setState( {
+      fileList: [],
+      personalIdDocument: ''
+    } )
   }
 
   render() {
     const { getFieldDecorator } = this.props.form;
+    const { fileList } = this.state;
     const { user } = this.props.userAccount;
 
-    const prefixSelector = getFieldDecorator('prefix', {
+    const prefixSelector = getFieldDecorator( 'prefix', {
       initialValue: 'Costa Rica (+506)',
-    })(
-      <Select style={{ width: 200 }} showSearch={true} onChange={this._handlePhoneAreaCode}>
-        {_.map(PhoneAreaCode.countries, ({code, name}) => <Option key={code} value={`${name}, ${code}`}>{`${name} (${code})`}</Option>)}
+    } )(
+      <Select style={ { width: 200 } } showSearch={ true } onChange={ this._handlePhoneAreaCode }>
+        { _.map( PhoneAreaCode.countries, ({ code, name }) => <Option key={ code }
+                                                                      value={ `${ name }, ${ code }` }>{ `${ name } (${ code })` }</Option> ) }
       </Select>,
     );
     return (
       <Draggable>
         <div className="modal-main-wrapper ant-modal-content ant-modal-body">
-          <Button className="ant-modal-close" style={ { height: 'auto' } } onClick={this.props.onCloseModal}>
+          <Button className="ant-modal-close" style={ { height: 'auto' } } onClick={ this.props.onCloseModal }>
             <span className="ant-modal-close-x">
               <Icon type="close"/>
             </span>
@@ -164,7 +168,8 @@ class ReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Teléfono',
                   },
                 ],
-              } )( <Input style={{width: '100%'}} addonBefore={prefixSelector} placeholder="Teléfono" name="phoneNumber" onChange={ this._handleChange }/> ) }
+              } )( <Input style={ { width: '100%' } } addonBefore={ prefixSelector } placeholder="Teléfono"
+                          name="phoneNumber" onChange={ this._handleChange }/> ) }
             </Form.Item>
             <Form.Item label="País">
               { getFieldDecorator( 'country', {
@@ -256,6 +261,8 @@ class ReferralForm extends PureComponent {
                     } )
 
                   } }
+                  fileList={ fileList }
+                  onRemove={ this._handleRemoveUploadedFiles }
                 >
                   <p className="ant-upload-drag-icon">
                     <Icon type="inbox"/>
@@ -299,8 +306,6 @@ class ReferralForm extends PureComponent {
       </Draggable>
     )
   }
-
-
 }
 
 export default ( Form.create( { name: 'register' } )( ReferralForm ) );
