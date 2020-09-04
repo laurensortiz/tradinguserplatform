@@ -247,9 +247,7 @@ class AddOrEditUserForm extends PureComponent {
   }
 
   render() {
-console.log('[=====  state  =====>');
-console.log(this.state);
-console.log('<=====  /state  =====]');
+
     const { getFieldDecorator } = this.props.form;
     const { isAdminUser } = this.state;
     // Default values for edit action

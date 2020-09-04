@@ -10,8 +10,8 @@ const index = (emailInformation) => {
   const transporter = nodemailer.createTransport( {
     service: 'gmail',
     auth: {
-      user: 'laurens.ortiz@gmail.com',
-      pass: 'lntmgqrchimxrzdf'
+      user: 'royal.webtrader.platform@gmail.com',
+      pass: 'qtdpmbqvnvkrqqum'
     }
   } );
   const pathTemplates = path.resolve( __dirname, './templates' );
@@ -24,9 +24,9 @@ const index = (emailInformation) => {
 
   const mailOptions = {
     from: 'no-reply@tradinguserplatform.com',
-    to: 'royal.capfx@gmail.com',
-    bcc: 'laurens.ortiz@gmail.com',
-    subject: `Referral Ticket de ${ emailInformation.username }`,
+    //to: 'royal.capfx@gmail.com',
+    to: 'laurens.ortiz@gmail.com',
+    subject: `Referral Ticket No.${emailInformation.ticketId} de ${ emailInformation.username }`,
     html: renderedTemplate,
   };
 

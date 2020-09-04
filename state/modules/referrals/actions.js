@@ -3,10 +3,10 @@ import types from './types';
 import { formatAxiosError } from "../../../common/utils";
 
 // List Referrals
-export const fetchGetReferrals = () => async dispatch => {
+export const fetchGetReferrals = (requestData) => async dispatch => {
   dispatch( requestReferrals() );
   try {
-    const res = await getReferrals();
+    const res = await getReferrals(requestData);
     dispatch( requestReferralsSuccess( res.data ) )
   } catch (e) {
     dispatch( requestReferralsError( e.message ) )

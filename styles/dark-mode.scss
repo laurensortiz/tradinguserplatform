@@ -62,3 +62,9 @@
 .ant-steps-item-finish .ant-steps-item-icon {
   border-color: $positive;
 }
+
+.ant-table-title {
+  @media screen and (min-width: $md) {
+    min-height: 72px;
+  }
+}

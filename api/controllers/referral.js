@@ -1,11 +1,10 @@
-import { Referral } from '../models';
+import { Referral, UserAccount, User } from '../models';
 import { referralQuery } from '../queries';
 import SendEmail from '../../common/email';
 
 module.exports = {
   async create(req, res) {
     try {
-      const sendEmail = await SendEmail(req.body);
 
       const referral = await Referral.create({
         firstName: req.body.firstName,
@@ -28,6 +27,12 @@ module.exports = {
         updatedAt: new Date(),
       });
 
+      const sendEmail = await SendEmail({
+        ...req.body,
+        ticketId: referral.id
+      });
+
+
       return res.status(200).send(referral);
     } catch (err) {
       return res.status(500).send(err);
@@ -36,7 +41,7 @@ module.exports = {
 
   async list(req, res) {
     const referrals = await Referral.findAll(
-      referralQuery.list({ req })
+      referralQuery.list({ req, UserAccount, User })
     );
 
     if (!referrals) {
@@ -97,7 +102,7 @@ module.exports = {
       city: req.body.city || referral.city,
       jobTitle: req.body.jobTitle || referral.jobTitle,
       initialAmount: req.body.initialAmount || referral.initialAmount,
-      hasBrokerGuarantee: req.body.hasBrokerGuarantee || referral.hasBrokerGuarantee,
+      hasBrokerGuarantee: req.body.hasBrokerGuarantee,
       brokerGuaranteeCode: req.body.brokerGuaranteeCode || referral.brokerGuaranteeCode,
       quantity: Number(req.body.quantity) || referral.quantity,
       personalIdDocument: req.body.personalIdDocument || referral.personalIdDocument,

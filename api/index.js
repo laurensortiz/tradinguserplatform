@@ -162,10 +162,10 @@ module.exports = app => {
   app.delete( '/api/setting/:settingId', setting.delete );
 
   // Referral
-  app.get( '/api/referral', referral.list );
+  app.post( '/api/referral', referral.list );
   app.get( '/api/referral/:referralId', referral.get );
   app.get( '/api/referral/user-account/:userAccountId', referral.getByUserAccountId );
-  app.post( '/api/referral', referral.create );
+  app.post( '/api/referral/create', referral.create );
   app.put( '/api/referral/:referralId', referral.update );
   app.delete( '/api/referral/:referralId', referral.delete );
 

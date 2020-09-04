@@ -397,3 +397,28 @@ body > div:first-of-type:not(#__next) {
   top:0;
   cursor:move;
 }
+
+.referral-modal {
+  .ant-modal > .ant-modal-content {
+    background: none;
+    padding:0;
+    cursor: move;
+
+    & > .ant-modal-close {
+      display: none;
+
+      & + .ant-modal-body {
+        padding: 0;
+      }
+    }
+  }
+}
+
+.download-file {
+  display: inline-block;
+  height: 40px;
+  padding: 10px;
+  color: #fff;
+  margin: 20px 0;
+  font-size: 19px;
+}

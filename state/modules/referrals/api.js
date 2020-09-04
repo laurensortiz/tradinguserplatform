@@ -1,16 +1,17 @@
 import fetch from '../../../common/fetch';
 
-export const getReferrals = async () => {
+export const getReferrals = async (requestData) => {
   return fetch( {
-    method: 'get',
+    method: 'post',
     url: 'referral',
+    data: requestData,
   } );
 };
 
 export const addReferral = async (referral) => {
   return fetch( {
     method: 'post',
-    url: 'referral',
+    url: 'referral/create',
     data: referral
   } );
 };

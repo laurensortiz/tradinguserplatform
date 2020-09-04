@@ -1,16 +1,44 @@
+import {get} from 'lodash';
 const queries = {
-  list: ({ req }) => {
+  list: ({ req, UserAccount, User }) => {
+    const status = get(req, 'body.status', 1);
     return {
       where: {
-        status: 1,
+        status,
       },
-      attributes: [ 'id', 'name', 'value' ],
+      include: [
+        {
+          model: UserAccount,
+          as: 'userAccount',
+          attributes: ['id'],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['username', 'firstName', 'lastName']
+            },
+          ],
+        },
+      ],
       order: [ [ 'id', 'DESC' ] ],
     };
   },
-  get: ({ req }) => {
+  get: ({ req, UserAccount, User }) => {
     return {
-      attributes: [ 'id', 'name', 'value' ],
+      include: [
+        {
+          model: UserAccount,
+          as: 'userAccount',
+          attributes: ['id'],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['username', 'firstName', 'lastName']
+            },
+          ],
+        },
+      ],
       order: [ [ 'id', 'DESC' ] ],
     };
   },
