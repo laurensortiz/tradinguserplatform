@@ -83,7 +83,7 @@ class AccountInformation extends PureComponent {
 
                     <Descriptions.Item
                       label="Comisiones por referencia">{ FormatCurrency.format( commissionByReference ) }
-                      <Button type="secondary" style={ { marginLeft: 10, fontSize: 15 } } onClick={ this._onHandleShowForm }><Icon
+                      <Button type="tertiary" style={ { marginLeft: 10, fontSize: 15 } } onClick={ this._onHandleShowForm }><Icon
                         type="solution"/> Referir</Button></Descriptions.Item>
                   </>
                 ) : null

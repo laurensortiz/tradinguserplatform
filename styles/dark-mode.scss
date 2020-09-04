@@ -68,3 +68,13 @@
     min-height: 72px;
   }
 }
+
+.ant-btn-tertiary {
+  background: $primary-color;
+  border-color: $primary-color;
+
+  &:hover, &:active {
+    color: $white;
+    border-color: $primary-color;
+  }
+}
