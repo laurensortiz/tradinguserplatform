@@ -306,8 +306,9 @@ class AddOrEditReferralForm extends PureComponent {
         <Row gutter={16}>
           <Col xs={24} sm={24}>
             {!_.isEmpty(this.state.personalIdDocument) ? (
-              <a className="download-file" type="primary" href={this.state.personalIdDocument} download={this.state.downloadDocumentName}><Icon type="contacts" /> Descargar Documento Identificación</a>
-            ) : null}
+              <a className="download-file" type="primary" href={this.state.personalIdDocument} download={this.state.downloadDocumentName}>
+                <Icon type="contacts" /> Descargar Documento Identificación</a>
+            ) : <h3><Icon type="contacts" /> Documento no suministrado</h3>}
           </Col>
         </Row>
         <Row>

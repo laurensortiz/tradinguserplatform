@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 import Highlighter from 'react-highlight-words';
-import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu, Row, Col } from 'antd';
+import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu, Row, Col, Tag } from 'antd';
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
 import classNames from "classnames";
 
@@ -253,6 +253,14 @@ class UserAccountsTable extends Component {
     )
   }
 
+  _displayTableFooter = () => (
+    <Row>
+      <Col>
+        <h3>Total de Cuentas: <Tag color="#165cea" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.state.userAccounts)}</Tag></h3>
+      </Col>
+    </Row>
+  )
+
 
   render() {
     const dynamicClass = this.props.isOperationStandard ? 'show' : 'hidden';
@@ -376,7 +384,7 @@ class UserAccountsTable extends Component {
         title={ this._displayTableHeader }
         onChange={ this.onTableChange }
         className={ classNames( { 'is-menu-fold': this.state.isMenuFold } ) }
-
+        footer={this._displayTableFooter}
       />
     );
   }

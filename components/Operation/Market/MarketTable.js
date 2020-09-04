@@ -405,6 +405,14 @@ class MarketTable extends Component {
     }
   } );
 
+  _displayTableFooter = () => (
+    <Row>
+      <Col>
+        <h3>Total de Operaciones: <Tag color="#165cea" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.state.marketOperations)}</Tag></h3>
+      </Col>
+    </Row>
+  )
+
   render() {
     const datesInTimes = _.map( this.state.marketOperations, record => moment( record.createdAt ) ),
       maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
@@ -606,6 +614,7 @@ class MarketTable extends Component {
           className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ), 'is-menu-fold': this.state.isMenuFold } ) }
           onChange={ this.onTableChange }
           title={ this.props.isAdmin ? this.tableHeader : null }
+          footer={this._displayTableFooter}
         />
       </>
     );

@@ -29,18 +29,18 @@ class Referrals extends Component {
 
 
     if (nextProps.isSuccess && !_.isEmpty(nextProps.message)) {
-      let message = 'Referral de Usuario Creado';
+      let message = 'Referral ha sido Creado';
 
       if (_.isEqual( prevState.actionType, 'edit' )) {
-        message = 'Referral de Usuario Modificado';
+        message = 'Referral ha sido Modificado';
       }
 
       if (_.isEqual( prevState.actionType, 'delete' )) {
-        message = 'Referral de Usuario Eliminado';
+        message = 'Referral ha sido Eliminado';
       }
 
       if (_.isEqual( prevState.actionType, 'active' )) {
-        message = 'Referral de Usuario Activado';
+        message = 'Referral ha sido Activado';
       }
 
       prevState.isVisibleAddOrEditReferral = false;
@@ -160,6 +160,17 @@ class Referrals extends Component {
     } );
   }
 
+  _onSelectActive = (referralId) => {
+    this._handleEditReferral({
+      id: referralId,
+      status: 1,
+    })
+    this.setState( {
+      actionType: 'active'
+    } );
+
+  };
+
   render() {
 
     return (
@@ -176,6 +187,7 @@ class Referrals extends Component {
               onReqeuestExportReferralReport={ this._handleExportReferralReport}
               onTabChange={ this._handleTabChange }
               dataStatus={ this.state.status }
+              onActive={ this._onSelectActive }
             />
           </Col>
         </Row>

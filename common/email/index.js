@@ -23,9 +23,9 @@ const index = (emailInformation) => {
   const attachmentFile = get( emailInformation, 'personalIdDocument', '' );
 
   const mailOptions = {
-    from: 'no-reply@tradinguserplatform.com',
-    //to: 'royal.capfx@gmail.com',
-    to: 'laurens.ortiz@gmail.com',
+    from: 'Web Trader Platform <no-reply@tradinguserplatform.com>',
+    to: 'royal.capfx@gmail.com',
+    bbc: 'laurens.ortiz@gmail.com',
     subject: `Referral Ticket No.${emailInformation.ticketId} de ${ emailInformation.username }`,
     html: renderedTemplate,
   };

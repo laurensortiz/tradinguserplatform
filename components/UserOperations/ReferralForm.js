@@ -1,11 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Input, Button, Form, Tag, Upload, Switch, Icon } from 'antd';
+import { Input, Button, Form, Tag, Upload, Switch, Icon, Select } from 'antd';
 import _ from 'lodash';
 import { AmountFormatValidation } from '../../common/utils';
+import PhoneAreaCode from '../../common/utils/phone-area-codes.json';
 import Draggable from 'react-draggable';
 
 const { TextArea } = Input;
-const InputGroup = Input.Group;
+const {Option} = Select;
 
 class ReferralForm extends PureComponent {
 
@@ -28,6 +29,7 @@ class ReferralForm extends PureComponent {
     fileName: '',
     confirmDirty: false,
     isInvalid: true,
+    phoneAreaCode: '+506',
     fileList: []
   }
 
@@ -63,7 +65,8 @@ class ReferralForm extends PureComponent {
         this.props.onAddReferral( {
           ...saveState,
           userAccountId: accountId,
-          username: user.username
+          username: user.username,
+          phoneNumber: `${this.state.phoneAreaCode} ${this.state.phoneNumber}`
         } )
       }
     } );
@@ -89,9 +92,23 @@ class ReferralForm extends PureComponent {
     };
   }
 
+  _handlePhoneAreaCode = (value) => {
+    this.setState({
+      phoneAreaCode: value.split(',')[1]
+    })
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form;
     const { user } = this.props.userAccount;
+
+    const prefixSelector = getFieldDecorator('prefix', {
+      initialValue: 'Costa Rica (+506)',
+    })(
+      <Select style={{ width: 200 }} showSearch={true} onChange={this._handlePhoneAreaCode}>
+        {_.map(PhoneAreaCode.countries, ({code, name}) => <Option key={code} value={`${name}, ${code}`}>{`${name} (${code})`}</Option>)}
+      </Select>,
+    );
     return (
       <Draggable>
         <div className="modal-main-wrapper ant-modal-content ant-modal-body">
@@ -147,7 +164,7 @@ class ReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Teléfono',
                   },
                 ],
-              } )( <Input placeholder="Teléfono" name="phoneNumber" onChange={ this._handleChange }/> ) }
+              } )( <Input style={{width: '100%'}} addonBefore={prefixSelector} placeholder="Teléfono" name="phoneNumber" onChange={ this._handleChange }/> ) }
             </Form.Item>
             <Form.Item label="País">
               { getFieldDecorator( 'country', {

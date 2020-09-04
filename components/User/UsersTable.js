@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { Button, Icon, Popconfirm, Table, Tag, Input, Radio } from 'antd';
+import { Button, Icon, Popconfirm, Table, Tag, Input, Radio, Row, Col } from 'antd';
 import Highlighter from 'react-highlight-words';
 
 import { Sort, SortDate, FormatDate } from '../../common/utils';
@@ -137,6 +137,14 @@ class UsersTable extends Component {
     )
   }
 
+  _displayTableFooter = () => (
+    <Row>
+      <Col>
+        <h3>Total de Usuarios: <Tag color="#165cea" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.props.users)}</Tag></h3>
+      </Col>
+    </Row>
+  )
+
   render() {
     const columns = [
 
@@ -184,6 +192,7 @@ class UsersTable extends Component {
         title={ this._displayTableHeader }
         className={ classNames( { 'is-menu-fold': this.state.isMenuFold } ) }
         tableLayout="auto"
+        footer={this._displayTableFooter}
       />
     );
   }

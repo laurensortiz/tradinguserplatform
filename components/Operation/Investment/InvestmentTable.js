@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { Button, Icon, Input, Popconfirm, Table, Tag } from 'antd';
+import { Button, Col, Icon, Input, Popconfirm, Row, Table, Tag } from 'antd';
 import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate, DisplayTableAmount } from '../../../common/utils';
 import classNames from "classnames";
 import Highlighter from "react-highlight-words";
@@ -139,13 +139,19 @@ class InvestmentTable extends Component {
     })
   }
 
-  _handleActionTitle = () => {
-    return (
-      <div style={{textAlign: 'right'}}>
-        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
-      </div>
-    )
-  }
+  _handleActionTitle = () =>(
+    <div style={{textAlign: 'right'}}>
+      <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+    </div>
+  )
+
+  _displayTableFooter = () => (
+    <Row>
+      <Col>
+        <h3>Total de Operaciones: <Tag color="#165cea" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.props.investmentOperations)}</Tag></h3>
+      </Col>
+    </Row>
+  )
 
   render() {
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
@@ -255,7 +261,7 @@ class InvestmentTable extends Component {
         loading={ this.props.isLoading }
         scroll={ { x: true } }
         className={classNames({'hidden-table': !this.props.isAdmin && _.isEmpty(this.props.investmentOperations), 'is-menu-fold': this.state.isMenuFold})}
-
+        footer={this._displayTableFooter}
       />
     );
   }

@@ -3,7 +3,7 @@ import { Row, Col, Descriptions, Tag, Card, Statistic, Icon, Button, Modal } fro
 import _ from 'lodash';
 
 
-import { FormatCurrency, IsOperationPositive } from '../../common/utils';
+import { FormatCurrency, IsOperationPositive, StaticAmountBox } from '../../common/utils';
 import ReferralForm from "./ReferralForm";
 import { Investment, Market } from "../Operation";
 
@@ -123,21 +123,19 @@ class AccountInformation extends PureComponent {
         <Row gutter={ 12 } style={ { marginBottom: 50 } }>
           <Col sm={ 24 } md={ 12 }>
             <Card className={ isOperationPositive ? 'positive-bg' : 'negative-bg' }>
-              <Statistic
+              <StaticAmountBox
                 title="Valor de la Cuenta"
                 value={ accountValue }
-                prefix={ isOperationPositive ? <Icon type="arrow-up"/> : <Icon type="arrow-down"/> }
-                suffix="$"
+                icon={ isOperationPositive ? <Icon type="arrow-up"/> : <Icon type="arrow-down"/> }
               />
             </Card>
           </Col>
           <Col sm={ 24 } md={ 12 }>
             <Card className="neutral-bg">
-              <Statistic
+              <StaticAmountBox
                 title="Saldo Inicial"
                 value={ balanceInitial }
-                prefix={ <Icon type="dollar"/> }
-                suffix="$"
+                icon={ <Icon type="dollar"/> }
               />
             </Card>
           </Col>

@@ -110,6 +110,7 @@ module.exports = {
       description: req.body.description || referral.description,
       userAccountId: req.body.userAccountId || referral.userAccountId,
       notes: req.body.notes || referral.notes,
+      status: req.body.status,
       updatedAt: new Date(),
     });
 
