@@ -253,7 +253,7 @@ class ReferralsTable extends Component {
           </>
         ) : (
           <Button size="large" type="secondary" style={ { float: 'right' } } onClick={ () => this.setState( { isBulkActive: true } ) }>
-            <Icon type="interaction"/> <span>Generar Reporte de Cuentas</span></Button>
+            <Icon type="interaction"/> <span>Generar Reporte de Referrals</span></Button>
 
         ) }
 
