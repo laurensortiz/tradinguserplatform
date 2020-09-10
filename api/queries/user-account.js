@@ -160,6 +160,7 @@ const queries = {
           as: 'assetClass',
         },
       ],
+      order: [ [ 'guaranteeOperationValueEndOperation', 'ASC' ] ],
       silence: true,
     };
   },
