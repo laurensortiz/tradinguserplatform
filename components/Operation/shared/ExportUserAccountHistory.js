@@ -45,7 +45,8 @@ const getExportFileName = (orgId) => {
 };
 
 const _formatData = (data) => {
-  return _.map( data, operation => {
+  const sortedData = _.orderBy(data, ['guaranteeOperationValueEndOperation', 'asc'])
+  return _.map( sortedData, operation => {
     return {
       'Estado': FormatStatus(operation.status, true).name,
       'Fecha de apertura': FormatDate(operation.createdAt),
