@@ -1,4 +1,4 @@
-# Zurcher Interiors Hours WebApp
+# Tranding User Platform
 
 #### Preview:
 
@@ -41,41 +41,6 @@ postgres -D /usr/local/var/postgres -p 5432
 - Postgres config is stored in `./config.js`.
 - Local database: `zurcherhours`.
 
-
-### First time Postgres instructions.
-
-```sh
-# Enter Postgres console
-psql postgres
-
-# Create a new user for yourself
-CREATE ROLE zurcherinteriors WITH LOGIN PASSWORD 'zurch3r';
-
-# Allow yourself to create databases
-ALTER ROLE zurcherinteriors CREATEDB;
-
-# Exit Postgres console
-\q
-
-# Log in as your new user.
-psql postgres -U zurcherinteriors
-
-# Create a database named: zurcherhours.
-# If you change this, update config.js
-CREATE DATABASE zurcherhours;
-
-# Give your self privileges
-GRANT ALL PRIVILEGES ON DATABASE zurcherhours TO zurcherinteriors;
-
-# List all of your databases
-\list
-
-# Connect to your newly created DB as a zurcherinteriors
-\connect zurcherhours
-
-# Exit Postgres console
-\q
-```
 
 I also use a GUI called [TablePlus](https://tableplus.io/) if you don't like command line.
 

@@ -102,7 +102,7 @@ const queries = {
           as: 'assetClass',
         },
       ],
-      order: [ [ 'status', 'ASC' ], [ 'createdAt', 'DESC' ] ],
+      order: [ [ 'status', 'ASC' ], [ 'guaranteeOperationValueEndOperation', 'ASC' ] ],
     };
   },
 
