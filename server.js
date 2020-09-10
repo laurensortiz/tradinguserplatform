@@ -28,10 +28,11 @@ app.prepare().then(() => {
   server.use(cookieParser());
   server.use(morgan('dev'));
   server.use(cors({ credentials: true, origin: true }));
-  server.use(bodyParser.json());
+  server.use(bodyParser.json({limit: '50mb', extended: true}));
   server.use(
     bodyParser.urlencoded({
-      extended: false,
+      extended: true,
+      limit: '50mb'
     })
   );
 

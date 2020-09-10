@@ -62,3 +62,19 @@
 .ant-steps-item-finish .ant-steps-item-icon {
   border-color: $positive;
 }
+
+.ant-table-title {
+  @media screen and (min-width: $md) {
+    min-height: 72px;
+  }
+}
+
+.ant-btn-tertiary {
+  background: $primary-color;
+  border-color: $primary-color;
+
+  &:hover, &:active {
+    color: $white;
+    border-color: $primary-color;
+  }
+}

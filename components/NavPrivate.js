@@ -20,6 +20,9 @@ class NavPrivate extends PureComponent {
           <Link className="menu-item" href="/operations"><Icon type="area-chart" /> <span>Operaciones</span></Link>
         </li>
         <li>
+          <Link className="menu-item" href="/referrals"><Icon type="solution" /> <span>Referrals</span></Link>
+        </li>
+        <li>
           <Link className="menu-item" href="/settings"><Icon type="setting" /> <span>Ajustes</span></Link>
         </li>
         <li>

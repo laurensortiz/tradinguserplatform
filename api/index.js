@@ -14,6 +14,7 @@ import {
   assetClass,
   page,
   setting,
+  referral,
 } from './controllers';
 
 const authMiddleware = (req, res, next) => {
@@ -159,5 +160,13 @@ module.exports = app => {
   app.post( '/api/setting', setting.create );
   app.put( '/api/setting/:settingId', setting.update );
   app.delete( '/api/setting/:settingId', setting.delete );
+
+  // Referral
+  app.post( '/api/referral', referral.list );
+  app.get( '/api/referral/:referralId', referral.get );
+  app.get( '/api/referral/user-account/:userAccountId', referral.getByUserAccountId );
+  app.post( '/api/referral/create', referral.create );
+  app.put( '/api/referral/:referralId', referral.update );
+  app.delete( '/api/referral/:referralId', referral.delete );
 
 };

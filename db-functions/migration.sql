@@ -830,24 +830,28 @@ INSERT INTO public."Role" (id,"name",status,"createdAt","updatedAt") VALUES
 
 -- DROP TABLE public."User";
 
-CREATE TABLE public."User" (
+CREATE TABLE public."Referral" (
 	id serial NOT NULL,
-	username varchar(255) NOT NULL,
-	"firstName" varchar(255) NULL,
-	"lastName" varchar(255) NULL,
-	"userID" varchar(255) NULL,
-	email varchar(255) NULL,
-	"password" varchar(255) NOT NULL,
-	salt varchar(255) NOT NULL,
-	"phoneNumber" varchar(255) NULL,
-	"endDate" timestamptz NULL,
-	"startDate" timestamptz NULL,
-	"roleId" int4 NOT NULL,
-	status int4 NOT NULL,
-	"createdAt" timestamptz NOT NULL,
-	"updatedAt" timestamptz NOT NULL,
-	CONSTRAINT "User_pkey" PRIMARY KEY (id),
-	CONSTRAINT "User_username_key" UNIQUE (username)
+ 	"firstName" varchar(255) NULL,
+ 	"lastName" varchar(255) NULL,
+ 	email varchar(255) NULL,
+ 	"phoneNumber" varchar(255) NULL,
+ 	"country" varchar(255) NULL,
+ 	"city" varchar(255) NULL,
+ 	"jobTitle" varchar(255) NULL,
+ 	"initialAmount" numeric(10,2) NULL,
+ 	"hasBrokerGuarantee" int4 NULL,
+ 	"brokerGuaranteeCode" varchar(255) NULL,
+ 	"quantity" int4 NULL,
+ 	"personalIdDocument" bytea NULL,
+ 	"collaboratorIB" varchar(255) NULL,
+ 	"description" varchar(500) NULL,
+ 	"notes" varchar(500) NULL,
+ 	"userAccountId" int4 NULL,
+ 	status int4 NOT NULL,
+ 	"createdAt" timestamptz NOT NULL,
+ 	"updatedAt" timestamptz NOT null,
+	CONSTRAINT "Referral_pkey" PRIMARY KEY (id)
 );
 
 ALTER TABLE public."User" ADD CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"(id);
@@ -1876,4 +1880,39 @@ $function$
 
 /*
 * End Changes August 25, 2020
+*/
+
+/*
+* Star Changes September 1, 2020
+*/
+-- Drop table
+
+-- DROP TABLE public."Referral";
+
+CREATE TABLE public."Referral" (
+	id serial NOT NULL,
+	"firstName" varchar(255) NULL,
+	"lastName" varchar(255) NULL,
+	email varchar(255) NULL,
+	"phoneNumber" varchar(255) NULL,
+	country varchar(255) NULL,
+	city varchar(255) NULL,
+	"jobTitle" varchar(255) NULL,
+	"initialAmount" numeric(10,2) NULL,
+	"hasBrokerGuarantee" int4 NULL,
+	"brokerGuaranteeCode" varchar(255) NULL,
+	quantity int4 NULL,
+	"personalIdDocument" bytea NULL,
+	"collaboratorIB" varchar(255) NULL,
+	description varchar(500) NULL,
+	notes varchar(500) NULL,
+	"userAccountId" int4 NULL,
+	status int4 NOT NULL,
+	"createdAt" timestamptz NOT NULL,
+	"updatedAt" timestamptz NOT NULL,
+	CONSTRAINT "Referral_pkey" PRIMARY KEY (id)
+);
+
+/*
+* End Changes September 1, 2020
 */

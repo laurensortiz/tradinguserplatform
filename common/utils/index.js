@@ -1,4 +1,3 @@
-export { default as getWeekDays } from './get-week-days';
 export { default as Sort } from './sort-text';
 export { default as SortDate } from './sort-date';
 export { default as FormatCurrency } from './format-currency';
@@ -13,3 +12,4 @@ export { default as AssetClassColor } from './asset-class-color';
 export { default as formatAxiosError } from './format-axios-error';
 export { default as AmountFormatValidation } from './amount-format-validation';
 export { default as AmountOperationValidation } from './amount-operation-validation';
+export { default as StaticAmountBox } from './static-amount-box';
