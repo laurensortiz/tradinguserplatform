@@ -133,10 +133,12 @@ class Accounts extends Component {
   };
 
   _onClose = () => {
+    this._handleTableOnChange()
     this.setState( {
       isVisibleAddOrEditUserAccount: false,
       selectedUserAccount: {}
     } )
+
   };
 
   _handleAddNewUserAccount = (userAccount) => {
@@ -191,10 +193,10 @@ class Accounts extends Component {
   }
 
   _handleTableOnChange = () => {
-    // this.props.fetchGetAllUserAccounts( {
-    //   associatedOperation: this.state.associatedOperation,
-    //   status: this.state.status
-    // } );
+    this.props.fetchGetAllUserAccounts( {
+      associatedOperation: this.state.associatedOperation,
+      status: this.state.status
+    } );
   }
 
   render() {

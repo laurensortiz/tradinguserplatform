@@ -97,6 +97,7 @@ class Referrals extends Component {
   };
 
   _onClose = () => {
+    this._handleTableOnChange();
     this.setState( {
       isVisibleAddOrEditReferral: false,
       selectedReferral: {}

@@ -93,6 +93,7 @@ class Users extends Component {
   };
 
   _onClose = () => {
+    this._handleTableOnChange();
     this.setState( {
       isVisibleAddOrEditUser: false,
       selectedUser: {}
@@ -130,6 +131,7 @@ class Users extends Component {
   };
 
   _onCloseUserDetail = () => {
+    this._handleTableOnChange();
     this.setState( {
       isVisibleUserDetail: false,
       currentUser: {}
@@ -153,6 +155,10 @@ class Users extends Component {
     this.setState( {
       status: target.value
     } )
+  }
+
+  _handleTableOnChange = () => {
+    this.props.fetchGetUsers();
   }
 
   render() {
@@ -180,6 +186,7 @@ class Users extends Component {
               onDetail={ this._setCurrentUser }
               onTabChange={ this._handleTabChange }
               dataStatus={ this.state.status  }
+              onRequestUpdateTable={ this._handleTableOnChange }
             />
           </Col>
         </Row>
