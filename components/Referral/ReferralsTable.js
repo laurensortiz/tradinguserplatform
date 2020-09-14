@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Highlighter from 'react-highlight-words';
-import { Button, Icon, Input, Popconfirm, Radio, Table, Tag, Row, Col, Select, DatePicker } from 'antd';
+import { Button, Icon, Input, Popconfirm, Radio, Table, Tag, Row, Col, Select, DatePicker, Tooltip } from 'antd';
 import { Sort, FormatCurrency, DisplayTableAmount, FormatDate } from '../../common/utils';
 import classNames from "classnames";
 import momentDurationFormat from 'moment-duration-format';
@@ -277,8 +277,17 @@ class ReferralsTable extends Component {
 
   _handleActionTitle = () => {
     return (
-      <div style={ { textAlign: 'right' } }>
-        <Button onClick={ this._onSelectMenuFold }><Icon type="swap"/></Button>
+      <div style={{textAlign: 'right'}}>
+        <Row>
+          <Col xs={12} style={ { textAlign: 'left' } }>
+            <Tooltip placement="top" title="Sincronizar Datos">
+              <Button type="primary" onClick={ () => this.props.onRequestUpdateTable() }><Icon type="history" /></Button>
+            </Tooltip>
+          </Col>
+          <Col xs={12} style={ { textAlign: 'right' } }>
+            <Button onClick={ this._onSelectMenuFold }><Icon type="swap"/></Button>
+          </Col>
+        </Row>
       </div>
     )
   }
@@ -527,7 +536,7 @@ class ReferralsTable extends Component {
         key: 'actions',
         render: this._getCTA,
         fixed: 'right',
-        className: 't-a-r'
+        className: 't-a-r fixed-table-actions-panel'
       },
     ];
 

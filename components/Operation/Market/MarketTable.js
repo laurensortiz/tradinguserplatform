@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Highlighter from "react-highlight-words";
-import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio, DatePicker } from 'antd';
+import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio, DatePicker, Tooltip } from 'antd';
 import momentDurationFormat from 'moment-duration-format';
 import moment from "moment-timezone";
 import { extendMoment } from 'moment-range';
@@ -273,7 +273,16 @@ class MarketTable extends Component {
   _handleActionTitle = () => {
     return (
       <div style={{textAlign: 'right'}}>
-        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+        <Row>
+          <Col xs={12} style={ { textAlign: 'left' } }>
+            <Tooltip placement="top" title="Sincronizar Datos">
+              <Button type="primary" onClick={ () => this.props.onRequestUpdateTable() }><Icon type="history" /></Button>
+            </Tooltip>
+          </Col>
+          <Col xs={12} style={ { textAlign: 'right' } }>
+            <Button onClick={ this._onSelectMenuFold }><Icon type="swap"/></Button>
+          </Col>
+        </Row>
       </div>
     )
   }
@@ -592,7 +601,7 @@ class MarketTable extends Component {
         key: 'actions',
         render: this._getCTA,
         fixed: 'right',
-        className: 't-a-r'
+        className: 't-a-r fixed-table-actions-panel'
       },
     ];
 

@@ -422,3 +422,9 @@ body > div:first-of-type:not(#__next) {
   margin: 20px 0;
   font-size: 19px;
 }
+
+.fixed-table-actions-panel {
+  .ant-table-header-column {
+    width: 100%;
+  }
+}

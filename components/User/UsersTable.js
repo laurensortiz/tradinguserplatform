@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import _ from 'lodash';
 
-import { Button, Icon, Popconfirm, Table, Tag, Input, Radio, Row, Col } from 'antd';
+import { Button, Icon, Popconfirm, Table, Tag, Input, Radio, Row, Col, Tooltip } from 'antd';
 import Highlighter from 'react-highlight-words';
 
 import { Sort, SortDate, FormatDate } from '../../common/utils';
@@ -132,9 +132,22 @@ class UsersTable extends Component {
   _handleActionTitle = () => {
     return (
       <div style={{textAlign: 'right'}}>
-        <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+        <Row>
+          <Col xs={12} style={ { textAlign: 'left' } }>
+            <Tooltip placement="top" title="Sincronizar Datos">
+              <Button type="primary" onClick={ () => this.props.onRequestUpdateTable() }><Icon type="history" /></Button>
+            </Tooltip>
+          </Col>
+          <Col xs={12} style={ { textAlign: 'right' } }>
+            <Button onClick={ this._onSelectMenuFold }><Icon type="swap"/></Button>
+          </Col>
+        </Row>
       </div>
     )
+  }
+
+  onTableChange = (pagination, filters, sorter, extra) => {
+    this.props.onRequestUpdateTable();
   }
 
   _displayTableFooter = () => (
@@ -179,7 +192,7 @@ class UsersTable extends Component {
         title: this._handleActionTitle,
         key: 'actions',
         render: this._getCTA,
-        className: 't-a-r'
+        className: 't-a-r fixed-table-actions-panel'
       },
     ];
 
@@ -193,6 +206,7 @@ class UsersTable extends Component {
         className={ classNames( { 'is-menu-fold': this.state.isMenuFold } ) }
         tableLayout="auto"
         footer={this._displayTableFooter}
+        onChange={ this.onTableChange }
       />
     );
   }

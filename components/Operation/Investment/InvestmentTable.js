@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
 
-import { Button, Col, Icon, Input, Popconfirm, Row, Table, Tag } from 'antd';
+import { Button, Col, Icon, Input, Popconfirm, Row, Table, Tag, Tooltip } from 'antd';
 import { Sort, FormatCurrency, FormatStatus, FormatDate, SortDate, DisplayTableAmount } from '../../../common/utils';
 import classNames from "classnames";
 import Highlighter from "react-highlight-words";
@@ -141,8 +141,18 @@ class InvestmentTable extends Component {
 
   _handleActionTitle = () =>(
     <div style={{textAlign: 'right'}}>
-      <Button onClick={this._onSelectMenuFold}><Icon type="swap" /></Button>
+      <Row>
+        <Col xs={12} style={ { textAlign: 'left' } }>
+          <Tooltip placement="top" title="Sincronizar Datos">
+            <Button type="primary" onClick={ () => this.props.onRequestUpdateTable() }><Icon type="history" /></Button>
+          </Tooltip>
+        </Col>
+        <Col xs={12} style={ { textAlign: 'right' } }>
+          <Button onClick={ this._onSelectMenuFold }><Icon type="swap"/></Button>
+        </Col>
+      </Row>
     </div>
+
   )
 
   _displayTableFooter = () => (
@@ -249,7 +259,7 @@ class InvestmentTable extends Component {
         key: 'actions',
         render: this._getCTA,
         fixed: 'right',
-        className: 't-a-r'
+        className: 't-a-r fixed-table-actions-panel'
       },
     ];
 

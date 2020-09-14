@@ -253,7 +253,7 @@ class Investment extends Component {
                 <TabPane tab="Activos" key="1">
                   <InvestmentTable
                     investmentOperations={ activeInvestmentOperations }
-
+                    onRequestUpdateTable={ this.props.fetchGetInvestmentOperations }
                     isLoading={ this.props.isLoading }
                     onEdit={ this._onSelectEdit }
                     onDelete={ this._handleDeleteUserOperation }
