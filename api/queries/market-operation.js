@@ -54,7 +54,7 @@ const queries = {
           as: 'assetClass',
         },
       ],
-      order: [ [ 'status', 'ASC' ], [ 'createdAt', 'DESC' ] ],
+      order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
   accountReport: ({ req,sequelize, UserAccount, User, Product, Broker, Commodity, AssetClass, Account }) => {
