@@ -114,7 +114,9 @@ class ReferralForm extends PureComponent {
       </Select>,
     );
     return (
-      <Draggable>
+      <Draggable
+        handle=".handle"
+      >
         <div className="modal-main-wrapper ant-modal-content ant-modal-body">
           <Button className="ant-modal-close" style={ { height: 'auto' } } onClick={ this.props.onCloseModal }>
             <span className="ant-modal-close-x">
@@ -122,7 +124,7 @@ class ReferralForm extends PureComponent {
             </span>
 
           </Button>
-          <div style={ { textAlign: 'center' } }>
+          <div className="handle" style={ { textAlign: 'center' } }>
             <h3>Referral Ticket</h3>
             <h2>{ user.username || '' } <span className="status-online"></span></h2>
           </div>

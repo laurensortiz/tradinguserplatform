@@ -402,7 +402,10 @@ body > div:first-of-type:not(#__next) {
   .ant-modal > .ant-modal-content {
     background: none;
     padding:0;
-    cursor: move;
+
+    .handle {
+      cursor: move;
+    }
 
     & > .ant-modal-close {
       display: none;
