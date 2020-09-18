@@ -1,6 +1,6 @@
 const SortText = (valueA, valueB) => {
   if (isNaN(valueA) || isNaN(valueB)) {
-    return valueA.length - valueB.length
+    return valueA.localeCompare(valueB)
   } else {
     return Number(valueA) - Number(valueB);
   }

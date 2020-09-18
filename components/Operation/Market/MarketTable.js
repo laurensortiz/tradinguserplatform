@@ -453,6 +453,7 @@ class MarketTable extends Component {
           { text: 'Hold', value: 3 },
           { text: 'Vendido', value: 4 },
         ],
+        defaultSortOrder: 'ascend',
         onFilter: (value, record) => record.status === value,
         render: status => {
           const { name, color } = FormatStatus( status );
@@ -483,8 +484,7 @@ class MarketTable extends Component {
         }),
         filteredValue: filteredInfo.assetClass || null,
         onFilter: (value, record) => record.assetClass.name.includes(value),
-        sorter: (a, b) => a.assetClass.name.length - b.assetClass.name.length,
-        sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+        sorter: (a, b) => Sort(a.assetClass.name.length,b.assetClass.name.length ),
         ellipsis: true,
       },
       {
@@ -617,7 +617,7 @@ class MarketTable extends Component {
           rowSelection={ isBulkUpdateActive ? rowSelection : null }
           rowKey={ record => record.id }
           columns={ columns }
-          dataSource={ marketOperations }
+          dataSource={ this.state.marketOperations }
           loading={ this.props.isLoading }
           scroll={ { x: true } }
           className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ), 'is-menu-fold': this.state.isMenuFold } ) }
