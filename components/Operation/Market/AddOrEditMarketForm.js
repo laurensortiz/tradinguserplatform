@@ -48,6 +48,7 @@ class AddOrEditMarketForm extends PureComponent {
     stopLost: '',
     maintenanceMargin: 0,
     amount: 0,
+    holdStatusCommission: 0,
     orderId: null,
     createdAt: null,
     endDate: null,
@@ -300,6 +301,8 @@ class AddOrEditMarketForm extends PureComponent {
     const longShortInitValue = !_.isNil( this.state.longShort ) ? this.state.longShort : undefined;
 
     const statusInitValue = !_.isNil( this.state.status ) ? this.state.status : undefined;
+    const holdStatusCommissionInitValue = !_.isNil( this.state.holdStatusCommission ) ? this.state.holdStatusCommission : undefined;
+
     const userAccountInitValue = !_.isEmpty( this.state.accountName ) ? this.state.accountName : undefined;
     const brokerInitValue = !_.isEmpty( this.state.brokerName ) ? this.state.brokerName : undefined;
     const productInitValue = !_.isEmpty( this.state.productName ) ? this.state.productName : undefined;
@@ -490,6 +493,19 @@ class AddOrEditMarketForm extends PureComponent {
           } )(
             <Input name="orderId" onChange={ this._handleChange }
                    placeholder="Número de Orden"/>
+          ) }
+        </Form.Item>
+        <Form.Item label="Comisión por HOLD">
+          { getFieldDecorator( 'holdStatusCommission', {
+            initialValue: holdStatusCommissionInitValue,
+            value: holdStatusCommissionInitValue,
+            rules: [ { required: false, message: 'Por favor indique la comisión por HOLD' },
+              {
+                validator: (rule, amount) => AmountFormatValidation( rule, amount )
+              } ],
+          } )(
+            <Input name="holdStatusCommission" onChange={ this._handleChange }
+                   placeholder="Comisión por HOLD"/>
           ) }
         </Form.Item>
         <Form.Item label="Estado">

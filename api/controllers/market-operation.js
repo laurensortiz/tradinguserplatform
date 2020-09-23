@@ -34,6 +34,7 @@ module.exports = {
         maintenanceMargin: req.body.maintenanceMargin,
         amount: req.body.amount,
         initialAmount: req.body.amount,
+        holdStatusCommission: req.body.holdStatusCommission || 0,
         orderId: req.body.orderId || 0,
         status: _.get( req, 'body.status', 1 ),
         createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
@@ -181,6 +182,7 @@ module.exports = {
           initialAmount: req.body.initialAmount || marketOperation.initialAmount,
           orderId: req.body.orderId || marketOperation.orderId,
           status: _.get( req, 'body.status', 1 ) || marketOperation.status,
+          holdStatusCommission: req.body.holdStatusCommission || marketOperation.holdStatusCommission,
           createdAt: !_.isNil(req.body.createdAt) ? moment( req.body.createdAt ).tz( 'America/New_York' ).format() : marketOperation.createdAt,
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
         }, { transaction: t } );
