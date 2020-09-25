@@ -45,7 +45,15 @@ const getExportFileName = (orgId) => {
 };
 
 const _formatData = (data) => {
-  const sortedData = data.sort((a, b) => a.guaranteeOperationValueEndOperation - b.guaranteeOperationValueEndOperation);
+  const sortedData = data.sort((a, b) => {
+    let start = a.endDate;
+    let end = b.endDate;
+    if (_.isNil( start )) start = '00-00-0000';
+    if (_.isNil( end )) end = '00-00-0000';
+
+    return moment( start ).unix() - moment( end ).unix()
+  });
+
   return _.map( sortedData, operation => {
     return {
       'Estado': FormatStatus(operation.status, true).name,

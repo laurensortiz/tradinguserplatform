@@ -26,7 +26,7 @@ const queries = {
         status: statusActive,
       },
       attributes: {
-        exclude: [ 'salt', 'password' ],
+        exclude: [ 'snapShotAccount' ],
       },
       include: [
         {
@@ -69,7 +69,7 @@ const queries = {
         status: 1,
       },
       attributes: {
-        exclude: [ 'salt', 'password' ],
+        exclude: [ 'snapShotAccount' ],
       },
       include: [
         {
