@@ -1916,3 +1916,35 @@ CREATE TABLE public."Referral" (
 /*
 * End Changes September 1, 2020
 */
+
+
+/*
+* Start Changes September 27, 2020
+*/
+/*MarketMovement*/
+
+
+-- Drop table
+
+-- DROP TABLE public."MarketMovement";
+
+CREATE TABLE public."UserAccountMovement" (
+	id serial NOT NULL,
+	"userAccountId" int4 NOT NULL,
+	"debit" numeric(10,2) NULL,
+	"credit" numeric(10,2) NULL,
+	"accountValue" numeric(10,2) NULL,
+	"reference" varchar(255) NULL,
+	"snapShotAccount" varchar DEFAULT '',
+	status int4 NOT NULL,
+	"createdAt" timestamptz NOT NULL,
+	"updatedAt" timestamptz NOT NULL,
+	CONSTRAINT "UserAccountMovement_pkey" PRIMARY KEY (id)
+);
+
+ALTER TABLE public."UserAccountMovement" ADD CONSTRAINT "UserAccountMovement_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
+
+
+/*
+* End Changes September 27, 2020
+*/

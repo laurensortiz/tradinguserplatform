@@ -83,6 +83,11 @@ module.exports = (Sequelize, DataTypes) => {
       as: 'broker',
     });
 
+    UserAccount.hasMany(models.UserAccountMovement, {
+      foreignKey: 'userAccountId',
+      as: 'userAccountMovement',
+    });
+
   };
 
   return UserAccount;

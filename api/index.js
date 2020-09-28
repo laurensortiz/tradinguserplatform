@@ -6,6 +6,7 @@ import {
   role,
   broker,
   userAccount,
+  userAccountMovement,
   investmentOperation,
   investmentMovement,
   marketOperation,
@@ -108,6 +109,13 @@ module.exports = app => {
   app.put( '/api/user-accounts/:userAccountId', userAccount.update );
   app.delete( '/api/user-accounts/:userAccountId', userAccount.delete );
 
+  // User Account Movement
+  app.get( '/api/user-account-movement/list/:userAccountId', userAccountMovement.list );
+  app.get( '/api/user-account-movement/:userAccountMovementId', userAccountMovement.get );
+  app.post( '/api/user-account-movement', userAccountMovement.create );
+  app.put( '/api/user-account-movement/:userAccountMovementId', userAccountMovement.update );
+  app.delete( '/api/user-account-movement/:userAccountMovementId', userAccountMovement.delete );
+
   // Investment Operation
   app.get( '/api/investment-operation', investmentOperation.list );
   app.get( '/api/investment-operation/:investmentOperationId', investmentOperation.get );
@@ -134,7 +142,6 @@ module.exports = app => {
 
   // Market Movement
   app.get( '/api/market-movement/list/:marketOperationId', marketMovement.list );
-
   app.get( '/api/market-movement/:marketMovementId', marketMovement.get );
   app.post( '/api/market-movement', marketMovement.create );
   app.put( '/api/market-movement/:marketMovementId', marketMovement.update );

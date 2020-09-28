@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 moment.locale( 'es' ); // Set Lang to Spanish
 
-import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon } from 'antd';
+import { Input, Button, Form, Select, Row, Col} from 'antd';
 
 import { accountOperations } from '../../state/modules/accounts';
 import { userOperations } from '../../state/modules/users';
@@ -202,149 +202,179 @@ class AddOrEditUserAccountForm extends PureComponent {
 
     return (
       <Form onSubmit={ this._handleSubmit } className="auth-form">
-        <Form.Item label="Usuario">
-          { getFieldDecorator( 'user', {
-            initialValue: userInitValue,
-            rules: [ { required: true, message: 'Por favor ingrese el Usuario' } ],
-          } )(
-            <Select
-              showSearch={ true }
-              name="user"
-              onChange={ value => this._handleChangeSelect( { name: 'user', value } ) }
-              placeholder="Usuario"
-              disabled={ !isAddAction }
-              showArrow={ isAddAction }
-            >
-              { this._getUserSelectOption( this.state.users ) }
-            </Select>
-          ) }
-        </Form.Item>
-        <Form.Item label="Cuenta">
-          { getFieldDecorator( 'account', {
-            initialValue: accountInitValue,
-            rules: [ { required: true, message: 'Por favor indique el tipo de Cuenta' } ],
-          } )(
-            <Select
-              showSearch={ true }
-              name="user"
-              onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }
-              placeholder="Cuenta"
-              showArrow={ isAddAction }
-            >
-              { this._getAccountSelectOption( this.state.accounts ) }
-            </Select>
-          ) }
-        </Form.Item>
-        <Form.Item label="Corredor">
-          { getFieldDecorator( 'broker', {
-            initialValue: brokerInitValue,
-            rules: [ { required: true, message: 'Por favor seleccione el corredor ' } ],
-          } )(
-            <Select
-              showSearch={ true }
-              name="broker"
-              onChange={ value => this._handleChangeSelect( { name: 'broker', value } ) }
-              placeholder="Corredor"
-              showArrow={ isAddAction }
-            >
-              { this._getSelectOptions( this.state.brokers ) }
-            </Select>
-          ) }
-        </Form.Item>
-        <Form.Item label="Valor de la Cuenta">
-          { getFieldDecorator( 'accountValue', {
-            initialValue: accountValueInitValue,
-            rules: [ { required: false, message: 'Por favor indique el valor de la cuenta' },
-              {
-                validator: (rule, amount) => AmountFormatValidation( rule, amount )
-              }
-            ],
-          } )(
-            <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
-          ) }
-        </Form.Item>
-        {_.isEqual(associatedOperation, 1) ? (
-          <Form.Item label="Garantías disponibles">
-            { getFieldDecorator( 'guaranteeOperation', {
-              initialValue: guaranteeOperationInitValue,
-              rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
-                {
-                  validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                }
-              ],
-            } )(
-              <Input name="guaranteeOperation" onChange={ this._handleChange }
-                     placeholder="Garantías disponibles para operar"/>
-            ) }
-          </Form.Item>
-        ) : null}
+        <Row gutter={10}>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Usuario">
+              { getFieldDecorator( 'user', {
+                initialValue: userInitValue,
+                rules: [ { required: true, message: 'Por favor ingrese el Usuario' } ],
+              } )(
+                <Select
+                  showSearch={ true }
+                  name="user"
+                  onChange={ value => this._handleChangeSelect( { name: 'user', value } ) }
+                  placeholder="Usuario"
+                  disabled={ !isAddAction }
+                  showArrow={ isAddAction }
+                >
+                  { this._getUserSelectOption( this.state.users ) }
+                </Select>
+              ) }
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Cuenta">
+              { getFieldDecorator( 'account', {
+                initialValue: accountInitValue,
+                rules: [ { required: true, message: 'Por favor indique el tipo de Cuenta' } ],
+              } )(
+                <Select
+                  showSearch={ true }
+                  name="user"
+                  onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }
+                  placeholder="Cuenta"
+                  showArrow={ isAddAction }
+                >
+                  { this._getAccountSelectOption( this.state.accounts ) }
+                </Select>
+              ) }
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Corredor">
+              { getFieldDecorator( 'broker', {
+                initialValue: brokerInitValue,
+                rules: [ { required: true, message: 'Por favor seleccione el corredor ' } ],
+              } )(
+                <Select
+                  showSearch={ true }
+                  name="broker"
+                  onChange={ value => this._handleChangeSelect( { name: 'broker', value } ) }
+                  placeholder="Corredor"
+                  showArrow={ isAddAction }
+                >
+                  { this._getSelectOptions( this.state.brokers ) }
+                </Select>
+              ) }
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={10}>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Valor de la Cuenta">
+              { getFieldDecorator( 'accountValue', {
+                initialValue: accountValueInitValue,
+                rules: [ { required: false, message: 'Por favor indique el valor de la cuenta' },
+                  {
+                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                  }
+                ],
+              } )(
+                <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
+              ) }
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8}>
+            {_.isEqual(associatedOperation, 1) ? (
+              <Form.Item label="Garantías disponibles">
+                { getFieldDecorator( 'guaranteeOperation', {
+                  initialValue: guaranteeOperationInitValue,
+                  rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
+                    {
+                      validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                    }
+                  ],
+                } )(
+                  <Input name="guaranteeOperation" onChange={ this._handleChange }
+                         placeholder="Garantías disponibles para operar"/>
+                ) }
+              </Form.Item>
+            ) : null}
+          </Col>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Garantía/Créditos">
+              { getFieldDecorator( 'guaranteeCredits', {
+                initialValue: guaranteeCreditsInitValue,
+                rules: [ { required: false, message: 'Por favor ingrese Garantía / Créditos' },
+                  {
+                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                  }
+                ],
+              } )(
+                <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
+              ) }
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={10}>
+          <Col xs={24} sm={8}>
+            {_.isEqual(associatedOperation, 1) ? (
+              <Form.Item label="Margen Utilizado 10%">
+                { getFieldDecorator( 'marginUsed', {
+                  initialValue: marginUsedInitValue,
+                  value: marginUsedInitValue,
+                  rules: [ { required: false, message: 'Por favor indique el margen utilizado' } ],
+                } )(
+                  <Input name="marginUsed" onChange={ this._handleChange }
+                         placeholder="Margen Utilizado"/>
+                ) }
+              </Form.Item>
+            ) : null}
+          </Col>
+          <Col xs={24} sm={8}>
+            {_.isEqual(associatedOperation, 1) ? (
+              <Form.Item label="Comisiones por referencia">
+                { getFieldDecorator( 'commissionByReference', {
+                  initialValue: commissionByReference,
+                  rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
+                    {
+                      validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                    }
+                  ],
+                } )(
+                  <Input name="commissionByReference" onChange={ this._handleChange }
+                         placeholder="Comisiones por referencia"/>
+                ) }
+              </Form.Item>
+            ) : null}
+          </Col>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Saldo Inicial">
+              { getFieldDecorator( 'balanceInitial', {
+                initialValue: balanceInitialInitValue,
+                rules: [ { required: false, message: 'Por favor ingrese el saldo inicial' },
+                  {
+                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                  }
+                ],
+              } )(
+                <Input name="balanceInitial" onChange={ this._handleChange } placeholder="Saldo Inicial"/>
+              ) }
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={10}>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Saldo Final">
+              { getFieldDecorator( 'balanceFinal', {
+                initialValue: balanceFinalInitValue,
+                rules: [ { required: false, message: 'Por favor ingrese el saldo final' },
+                  {
+                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                  }
+                ],
+              } )(
+                <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
+              ) }
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8}>
 
-        <Form.Item label="Garantía/Créditos">
-          { getFieldDecorator( 'guaranteeCredits', {
-            initialValue: guaranteeCreditsInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese Garantía / Créditos' },
-              {
-                validator: (rule, amount) => AmountFormatValidation( rule, amount )
-              }
-            ],
-          } )(
-            <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
-          ) }
-        </Form.Item>
+          </Col>
+          <Col xs={24} sm={8}>
 
-        {_.isEqual(associatedOperation, 1) ? (
-          <Form.Item label="Margen Utilizado 10%">
-            { getFieldDecorator( 'marginUsed', {
-              initialValue: marginUsedInitValue,
-              value: marginUsedInitValue,
-              rules: [ { required: false, message: 'Por favor indique el margen utilizado' } ],
-            } )(
-              <Input name="marginUsed" onChange={ this._handleChange }
-                     placeholder="Margen Utilizado"/>
-            ) }
-          </Form.Item>
-        ) : null}
-
-        {_.isEqual(associatedOperation, 1) ? (
-          <Form.Item label="Comisiones por referencia">
-            { getFieldDecorator( 'commissionByReference', {
-              initialValue: commissionByReference,
-              rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
-                {
-                  validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                }
-              ],
-            } )(
-              <Input name="commissionByReference" onChange={ this._handleChange }
-                     placeholder="Comisiones por referencia"/>
-            ) }
-          </Form.Item>
-        ) : null}
-
-        <Form.Item label="Saldo Inicial">
-          { getFieldDecorator( 'balanceInitial', {
-            initialValue: balanceInitialInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese el saldo inicial' },
-              {
-                validator: (rule, amount) => AmountFormatValidation( rule, amount )
-              }
-            ],
-          } )(
-            <Input name="balanceInitial" onChange={ this._handleChange } placeholder="Saldo Inicial"/>
-          ) }
-        </Form.Item>
-        <Form.Item label="Saldo Final">
-          { getFieldDecorator( 'balanceFinal', {
-            initialValue: balanceFinalInitValue,
-            rules: [ { required: false, message: 'Por favor ingrese el saldo final' },
-              {
-                validator: (rule, amount) => AmountFormatValidation( rule, amount )
-              }
-            ],
-          } )(
-            <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
-          ) }
-        </Form.Item>
+          </Col>
+        </Row>
         <Form.Item>
           <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
             { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }
