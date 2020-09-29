@@ -132,13 +132,16 @@ class Export extends PureComponent {
       var docDefinition = {
         pageSize: 'LETTER',
 
-        pageMargins: [ 40, 60, 40, 60 ],
+        pageMargins: [ 15, 40, 15, 40 ],
+        defaultStyle: {
+          fontSize: 10,
+        },
         header: {
           layout: 'noBorders',
           table: {
             // headers are automatically repeated if the table spans over multiple pages
             // you can declare how many rows should be treated as headers
-            headerRows: 3,
+            headerRows: 1,
             widths: [ '50%', '50%' ],
 
             body: [
@@ -160,31 +163,37 @@ class Export extends PureComponent {
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
-              headerRows: 2,
+              headerRows: 1,
               widths: [ '50%', '50%' ],
 
               body: [
                 [ {fontSize: 20, text: 'INFORMACION DE CUENTA', bold: true, alignment: 'left', margin:[0, 15, 0, 0]}, {text: `Fecha de Reporte`,  alignment: 'right', margin:[0, 15, 0, 0]} ],
-                [ {}, {text: moment().format('DD/MM/YYYY'), alignment: 'right' }],
+                [ {text: `${firstName} ${lastName}`, alignment: 'left', bold: true}, {text: moment().format('DD/MM/YYYY'), alignment: 'right' }],
+                [ {text: `${username}`, alignment: 'left', bold: true}, {} ],
               ]
             },
 
           },
+
+          {},
+          {fontSize: 18, text: 'Cuadro de Resumen', bold: true, alignment: 'center', margin:[0, 15, 0, 15]},
           {},
           {
             layout: 'noBorders',
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
-              headerRows: 1,
-              widths: [ '50%', '50%' ],
+              headerRows: 0,
+              widths: [ '22%', '11%', '22%', '11%', '22%', '11%' ],
 
               body: [
-                [ {text: `${firstName} ${lastName}`, alignment: 'left', bold: true} ],
-                [ {text: `${username}`, alignment: 'left', bold: true} ],
+                [ {text: `Tipo de cuenta:`, bold: true}, {text: `${userAccount.account.name}`}, {text: `Comisión sobre ganancias:`, bold: true}, {text: `${userAccount.account.percentage}%`}, {text: `Garantías disponibles:`, bold: true}, {text: `${ FormatCurrency.format(userAccount.guaranteeOperation)}`} ],
+                [ {text: `Garantías / Créditos:`, bold: true}, {text: `${FormatCurrency.format(userAccount.guaranteeCredits)}`}, {text: `Margen utilizado 10%:`, bold: true}, {text: `${FormatCurrency.format(userAccount.marginUsed)}`}, {text: `Comisiones por referencia:`, bold: true}, {text: `${ FormatCurrency.format(userAccount.commissionByReference || 0)}`} ],
+
               ]
             },
           },
+
           {},
           {fontSize: 18, text: 'Transferencias', bold: true, alignment: 'center', margin:[0, 15, 0, 15]},
           {
@@ -197,6 +206,7 @@ class Export extends PureComponent {
 
               body: [
                 [ {text: `Débito`, alignment: 'center', bold: true}, {text: `Crédito`, alignment: 'center', bold: true}, {text: `Valor de la Cuenta`, alignment: 'center', bold: true}, {text: `Detalle`, alignment: 'center', bold: true}, {text: `Fecha`, alignment: 'center', bold: true} ],
+
 
               ]
             },
