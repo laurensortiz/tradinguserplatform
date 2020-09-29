@@ -6,20 +6,15 @@ import XLSX from 'xlsx';
 import FileSaver from 'file-saver';
 import { FormatCurrency, FormatDate, FormatStatus } from '../../../common/utils';
 import PHE from 'print-html-element';
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
 
 moment.locale( 'es' ); // Set Lang to Spanish
 
-const EXCEL_HEADER_MARKET = [
-  'Débito',
-  'Crédito',
-  'Valor de la cuenta',
-  'Detalle',
-  'Fecha'
-];
+const addCommentToCell = (context, column, comment) => {
+  if (!context[ column ].c) context[ column ].c = [];
+
+  context[ column ].c.hidden = true;
+  return context[ column ].c.push( { t: comment } );
+};
 
 const getExportFileName = (orgId) => {
   const time = moment().format();
@@ -29,17 +24,14 @@ const getExportFileName = (orgId) => {
 
 class Export extends PureComponent {
 
-  _formatData = ({userAccountMovement}) => {
-    return _.map( userAccountMovement, movement => {
+  _formatData = (data) => {
+    return _.map( data, movement => {
       return {
-        'Débito': FormatCurrency.format( movement.debit ),
-        'Crédito': FormatCurrency.format( movement.credit ),
-        'Valor de la cuenta': FormatCurrency.format( movement.accountValue ),
-        'Detalle': movement.reference,
+        'Balance': FormatCurrency.format( movement.gpInversion ),
+        'Movimiento': FormatCurrency.format( movement.gpAmount ),
         'Fecha': FormatDate( movement.createdAt )
       }
     } )
-
   };
 
   _getAccountTemplate = (accounts) => {
@@ -72,18 +64,12 @@ class Export extends PureComponent {
 
 
   _downloadFile = (isPDF) => {
-    const { exportData, userAccounts } = this.props;
-    const workbook = this._formatData( _.first(userAccounts) );
+    const { exportData, currentOperation } = this.props;
+    const workbook = this._formatData( exportData );
 
     //Define template structure
     let ws = XLSX.utils.json_to_sheet(
-      workbook,
-      {
-        header: EXCEL_HEADER_MARKET,
-        origin: 'A7'
-      } );
-
-
+      workbook, );
     const wb = XLSX.utils.book_new();
     if (!wb.Props) wb.Props = {};
 
@@ -122,35 +108,8 @@ class Export extends PureComponent {
     const wbout = XLSX.write( wb, wopts );
     const blob = new Blob( [ wbout ], { type: "application/octet-stream" } );
 
-
-
-
-    if (isPDF) {
-      //PHE.printHtml(html, opts);
-
-      var docDefinition = {
-        content: [
-          {
-            layout: 'lightHorizontalLines', // optional
-            table: {
-              // headers are automatically repeated if the table spans over multiple pages
-              // you can declare how many rows should be treated as headers
-              headerRows: 1,
-              widths: [ '*', 'auto', 100, '*' ],
-
-              body: [
-                [ 'First', 'Second', 'Third', 'The last one' ],
-                [ 'Value 1', 'Value 2', 'Value 3', 'Value 4' ],
-                [ { text: 'Bold value', bold: true }, 'Val 2', 'Val 3', 'Val 4' ]
-              ]
-            }
-          }
-        ]
-      };
-
-
-      pdfMake.createPdf(docDefinition).download();
-
+    if (true) {
+      PHE.printHtml(html, opts);
     } else {
       FileSaver.saveAs(blob, getExportFileName())
     }
@@ -171,14 +130,14 @@ class Export extends PureComponent {
             >
               <Icon type="file-excel"/> Exportar Datos de la Cuenta
             </Button>
-            <Button
-              type="primary"
-              onClick={ () => this._downloadFile( true ) }
-              className="export-pdf-cta"
-              style={ { float: 'left' } }
-            >
-              <Icon type="file-pdf" /> Exportar Estado de Cuenta (PDF)
-            </Button>
+            {/*<Button*/}
+            {/*  type="primary"*/}
+            {/*  onClick={ () => this._downloadFile( true ) }*/}
+            {/*  className="export-pdf-cta"*/}
+            {/*  style={ { float: 'left' } }*/}
+            {/*>*/}
+            {/*  <Icon type="file-pdf" /> Imprimir (PDF)*/}
+            {/*</Button>*/}
           </Col>
         </Row>
       </>

@@ -60,6 +60,7 @@
     "obj-flatten": "^2.0.4",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
+    "pdfmake": "^0.1.68",
     "pg": "^7.9.0",
     "pg-hstore": "^2.3.2",
     "print-html-element": "^0.5.1",

@@ -335,7 +335,7 @@ class MovementsTable extends Component {
         inputType: 'number'
       },
       {
-        title: 'Referencia',
+        title: 'Detalle',
         dataIndex: 'reference',
         key: 'reference',
         editable: true,
