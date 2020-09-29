@@ -73,7 +73,8 @@ class Export extends PureComponent {
 
   _downloadFile = (isPDF) => {
     const { exportData, userAccounts } = this.props;
-    const workbook = this._formatData( _.first(userAccounts) );
+    const userAccount = _.first(userAccounts);
+    const workbook = this._formatData( userAccount );
 
     //Define template structure
     let ws = XLSX.utils.json_to_sheet(
@@ -127,25 +128,91 @@ class Export extends PureComponent {
 
     if (isPDF) {
       //PHE.printHtml(html, opts);
-
+      const {username, firstName, lastName} = userAccount.user;
       var docDefinition = {
+        pageSize: 'LETTER',
+
+        pageMargins: [ 40, 60, 40, 60 ],
+        header: {
+          layout: 'noBorders',
+          table: {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
+            headerRows: 3,
+            widths: [ '50%', '50%' ],
+
+            body: [
+              [ {fontSize: 20, text: 'LOGO', bold: true, alignment: 'left', fillColor: '#10253f', margin: [15, 15, 15, 15]}, {text: 'Estados Unidos',  alignment: 'right', fillColor: '#10253f', color: '#fff',  margin: [0, 15, 15, 0]} ],
+              [ {}, {text: 'PO BOX 10022', alignment: 'right', fillColor: '#10253f', color: '#fff', margin: [0, 0, 15, 0] }],
+              [ {}, {text: 'New York | NY', alignment: 'right', fillColor: '#10253f', color: '#fff', margin: [0, 0, 15, 0] }],
+            ]
+          },
+
+        },
+        footer : {
+          columns: [
+            {text: '© 2020 RC LLC. All rights reserved. ROYAL CAPITAL INTERNATIONAL TRADING AVISORS', alignment: 'center'}
+          ]
+        },
         content: [
           {
-            layout: 'lightHorizontalLines', // optional
+            layout: 'noBorders',
+            table: {
+              // headers are automatically repeated if the table spans over multiple pages
+              // you can declare how many rows should be treated as headers
+              headerRows: 2,
+              widths: [ '50%', '50%' ],
+
+              body: [
+                [ {fontSize: 20, text: 'INFORMACION DE CUENTA', bold: true, alignment: 'left', margin:[0, 15, 0, 0]}, {text: `Fecha de Reporte`,  alignment: 'right', margin:[0, 15, 0, 0]} ],
+                [ {}, {text: moment().format('DD/MM/YYYY'), alignment: 'right' }],
+              ]
+            },
+
+          },
+          {},
+          {
+            layout: 'noBorders',
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: [ '*', 'auto', 100, '*' ],
+              widths: [ '50%', '50%' ],
 
               body: [
-                [ 'First', 'Second', 'Third', 'The last one' ],
-                [ 'Value 1', 'Value 2', 'Value 3', 'Value 4' ],
-                [ { text: 'Bold value', bold: true }, 'Val 2', 'Val 3', 'Val 4' ]
+                [ {text: `${firstName} ${lastName}`, alignment: 'left', bold: true} ],
+                [ {text: `${username}`, alignment: 'left', bold: true} ],
               ]
-            }
+            },
+          },
+          {},
+          {fontSize: 18, text: 'Transferencias', bold: true, alignment: 'center', margin:[0, 15, 0, 15]},
+          {
+            layout: 'noBorders',
+            table: {
+              // headers are automatically repeated if the table spans over multiple pages
+              // you can declare how many rows should be treated as headers
+              headerRows: 1,
+              widths: [ '20%', '20%', '20%', '20%', '20%' ],
+
+              body: [
+                [ {text: `Débito`, alignment: 'center', bold: true}, {text: `Crédito`, alignment: 'center', bold: true}, {text: `Valor de la Cuenta`, alignment: 'center', bold: true}, {text: `Detalle`, alignment: 'center', bold: true}, {text: `Fecha`, alignment: 'center', bold: true} ],
+
+              ]
+            },
+          },
+        ],
+        styles: {
+          header: {
+            fontSize: 22,
+            bold: true,
+            background: '#10253f'
+          },
+          anotherStyle: {
+            italics: true,
+            alignment: 'right'
           }
-        ]
+        }
       };
 
 
