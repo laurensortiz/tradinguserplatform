@@ -178,8 +178,8 @@ class Export extends PureComponent {
             body: [
               [ {
                 image: 'logo',
-
-                width: 80, height: 60,
+                margin: [ 15, 0,0,0 ],
+                width: 240, height: 68,
                 fillColor: '#10253f',
 
               }, {
