@@ -226,7 +226,7 @@ class Market extends Component {
       isDetailViewVisible: false,
       currentOperationDetail: {}
     } );
-    this.props.fetchGetMarketOperations( 1 );
+    this.props.fetchGetMarketOperations( this.state.dataStatus );
   };
 
   _onTabChange = ({ target }) => {
@@ -308,7 +308,7 @@ class Market extends Component {
                     isBulkSuccess={ this.props.isBulkSuccess }
                     isBulkCompleted={ this.props.isBulkProcessCompleted }
                     onTabChange={ this._onTabChange }
-                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( 1 ) }
+                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( this.state.dataStatus ) }
                     dataStatus={ this.state.dataStatus }
                   />
                 </div>
