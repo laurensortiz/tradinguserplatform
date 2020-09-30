@@ -1,12 +1,13 @@
 function getWhereConditions(req, sequelize) {
   const Op = sequelize.Op;
   let whereConditions = {}
-  if (req.params.status === 'active') {
+  if (req.params.status === '1') {
     whereConditions.status = {
-      [Op.gt]: 0
+      [Op.gt]: 0,
+      [Op.lt]: 4
     }
   } else {
-    whereConditions.status = 0
+    whereConditions.status = req.params.status
   }
 
   return whereConditions

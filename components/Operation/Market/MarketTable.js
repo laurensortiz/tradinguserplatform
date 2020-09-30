@@ -231,6 +231,7 @@ class MarketTable extends Component {
           <Radio.Group defaultValue={this.props.dataStatus} buttonStyle="solid" onChange={ this.props.onTabChange }>
             <Radio.Button value={1}>Activos</Radio.Button>
             <Radio.Button value={0}>Eliminados</Radio.Button>
+            <Radio.Button value={4}>Vendidos</Radio.Button>
           </Radio.Group>
         </Col>
         <Col sm={12} style={ { textAlign: 'right' } }>

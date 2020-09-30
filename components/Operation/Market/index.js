@@ -64,7 +64,7 @@ class Market extends Component {
         nextProps.fetchGetMarketMovements( prevState.currentOperationDetail.id );
       }
 
-      nextProps.fetchGetMarketOperations( 'active' );
+      nextProps.fetchGetMarketOperations( 1 );
       nextProps.resetAfterMovementRequest();
     }
 
@@ -86,7 +86,7 @@ class Market extends Component {
         onClose: () => {
           prevState.actionType = 'add'; // default value
           nextProps.resetAfterRequest();
-          nextProps.fetchGetMarketOperations( 'active' );
+          nextProps.fetchGetMarketOperations( 1);
           nextProps.onClose( false )
         },
         duration: 1
@@ -116,7 +116,7 @@ class Market extends Component {
           onClose: () => {
             prevState.actionType = 'add'; // default value
 
-            nextProps.fetchGetMarketOperations( 'active' );
+            nextProps.fetchGetMarketOperations( 1 );
             nextProps.resetAfterRequest();
             nextProps.onClose( false )
           },
@@ -156,7 +156,7 @@ class Market extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchGetMarketOperations( 'active' );
+    this.props.fetchGetMarketOperations( 1 );
   };
 
   _onClose = () => {
@@ -226,14 +226,14 @@ class Market extends Component {
       isDetailViewVisible: false,
       currentOperationDetail: {}
     } );
-    this.props.fetchGetMarketOperations( 'active' );
+    this.props.fetchGetMarketOperations( this.state.dataStatus );
   };
 
   _onTabChange = ({ target }) => {
     this.setState( {
       dataStatus: target.value
     } )
-    this.props.fetchGetMarketOperations( target.value === 1 ? 'active' : 'deleted' );
+    this.props.fetchGetMarketOperations( target.value );
   }
 
   /**
@@ -308,7 +308,7 @@ class Market extends Component {
                     isBulkSuccess={ this.props.isBulkSuccess }
                     isBulkCompleted={ this.props.isBulkProcessCompleted }
                     onTabChange={ this._onTabChange }
-                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( 'active' ) }
+                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( this.state.dataStatus ) }
                     dataStatus={ this.state.dataStatus }
                   />
                 </div>

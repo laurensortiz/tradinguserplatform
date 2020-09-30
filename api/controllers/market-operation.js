@@ -59,7 +59,6 @@ module.exports = {
   },
 
   async list(req, res) {
-
     const marketOperation = await MarketOperation.findAll(
       marketOperationQuery.list( {
         req,
