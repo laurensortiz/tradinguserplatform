@@ -131,12 +131,12 @@ class Export extends PureComponent {
       const AccountMovements = _.reduce(userAccount.userAccountMovement, (result, movement) => {
         const debit = {
           text: FormatCurrency.format(movement.debit),
-          color: 'red',
+          color: '#ba382a',
           alignment: 'center',
         };
         const credit = {
           text: FormatCurrency.format(movement.credit),
-          color: 'green',
+          color: '#046d11',
           alignment: 'center',
         };
         const accountValue = {
