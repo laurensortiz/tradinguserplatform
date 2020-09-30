@@ -1,7 +1,7 @@
 import { isEmpty } from 'lodash';
 
 const amountFormatValidation = (rule, amount) => {
-  const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
+  const regex = /^[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
 
   return new Promise( (resolve, reject) => {
 
