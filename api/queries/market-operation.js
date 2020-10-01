@@ -4,7 +4,6 @@ function getWhereConditions(req, sequelize) {
   if (req.params.status === '1') {
     whereConditions.status = {
       [Op.gt]: 0,
-      [Op.lt]: 4
     }
   } else {
     whereConditions.status = req.params.status
