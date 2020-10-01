@@ -89,7 +89,7 @@ const queries = {
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  getByUser: ({ req, User, Account }) => {
+  getByUser: ({ req, User, Account, UserAccountMovement }) => {
     return {
       where: {
         status: 1,
@@ -107,6 +107,11 @@ const queries = {
         {
           model: Account,
           as: 'account',
+        },
+        {
+          model: UserAccountMovement,
+          as: 'userAccountMovement',
+          order: [ [ 'createdAt', 'ASC' ] ],
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],

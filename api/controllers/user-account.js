@@ -9,7 +9,8 @@ import {
   Broker,
   Commodity,
   AssetClass,
-  sequelize
+  sequelize,
+  UserAccountMovement
 } from '../models';
 import { userAccountQuery } from '../queries';
 import { getLastMovement } from './market-movement';
@@ -87,7 +88,7 @@ module.exports = {
   async getByUser(req, res) {
 
     const userAccount = await UserAccount.findAll(
-      userAccountQuery.getByUser( { req, User, Role, Account, Broker } )
+      userAccountQuery.getByUser( { req, User, Role, Account, Broker, UserAccountMovement } )
     );
 
     if (!userAccount) {

@@ -13,6 +13,7 @@ import AddOrEditUserAccountForm from '../components/UserAccount/AddOrEditUserAcc
 import { userAccountOperations } from "../state/modules/userAccounts";
 import ExportHistoryReport from '../components/Operation/shared/ExportUserAccountHistory';
 import ExportUserAccountDetail from '../components/Operation/shared/ExportUserAccountDetail';
+import MovementsTable  from "../components/UserAccount/MovementsTable";
 
 const { TabPane } = Tabs;
 
@@ -199,6 +200,8 @@ class Accounts extends Component {
     } );
   }
 
+
+
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Cuenta de Usuario'
@@ -240,7 +243,7 @@ class Accounts extends Component {
         </Row>
         <Drawer
           title={ modalTitle }
-          width={ 320 }
+          width="85%"
           onClose={ this._onClose }
           visible={ this.state.isVisibleAddOrEditUserAccount }
           destroyOnClose={ true }
@@ -251,6 +254,10 @@ class Accounts extends Component {
             isLoading={ this.props.isLoading }
             selectedAccount={ this.state.selectedUserAccount }
             actionType={ this.state.actionType }
+          />
+          <MovementsTable
+            selectedAccount={this.state.selectedUserAccount}
+            isAdmin={ true }
           />
         </Drawer>
       </Document>
