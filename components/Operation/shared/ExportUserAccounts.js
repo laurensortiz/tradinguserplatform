@@ -24,9 +24,9 @@ const EXCEL_HEADER_MARKET = [
   'Fecha'
 ];
 
-const getExportFileName = (orgId) => {
+const getExportFileName = (isPDF) => {
   const time = moment().format();
-  return `reporte_cuenta_${ time }.xlsx`
+  return `${isPDF ? 'estado_cuenta' : 'reporte_cuenta'}_${ time }.${isPDF ? 'pdf' : 'xlsx'}`
 };
 
 
@@ -77,13 +77,15 @@ class Export extends PureComponent {
   _downloadFile = (isPDF) => {
     const { exportData, userAccounts } = this.props;
     const userAccount = _.first( userAccounts );
-    const workbook = this._formatData( userAccount );
+    // const workbook = this._formatData( userAccount );
+    const workbook = [];
 
     //Define template structure
     let ws = XLSX.utils.json_to_sheet(
       workbook,
       {
-        header: EXCEL_HEADER_MARKET,
+        header: '',
+        //header: EXCEL_HEADER_MARKET,
         origin: 'A7'
       } );
 
@@ -423,8 +425,8 @@ class Export extends PureComponent {
         }
       };
 
-
-      pdfMake.createPdf( docDefinition ).download();
+      const fileName = getExportFileName(true)
+      pdfMake.createPdf( docDefinition ).download(fileName);
 
     } else {
       FileSaver.saveAs( blob, getExportFileName() )
