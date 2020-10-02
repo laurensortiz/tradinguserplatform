@@ -213,6 +213,7 @@ class Export extends PureComponent {
                   },
                 ],
               } ],
+              [{text:'', fillColor: '#254061', margin: [0,5]},{text:'', fillColor: '#254061', margin: [0,5]},{text:'', fillColor: '#254061', margin: [0,5]}]
 
             ]
           },
@@ -231,6 +232,7 @@ class Export extends PureComponent {
           logo: LOGO
         },
         content: [
+          {text:'', margin: [ 0, 5]},
           {
             layout: 'noBorders',
             table: {
@@ -448,14 +450,14 @@ class Export extends PureComponent {
             >
               <Icon type="file-excel"/> Exportar Datos de la Cuenta
             </Button>
-            {/*<Button*/}
-            {/*  type="primary"*/}
-            {/*  onClick={ () => this._downloadFile( true ) }*/}
-            {/*  className="export-pdf-cta"*/}
-            {/*  style={ { float: 'left' } }*/}
-            {/*>*/}
-            {/*  <Icon type="file-pdf"/> Exportar Estado de Cuenta (PDF)*/}
-            {/*</Button>*/}
+            <Button
+              type="primary"
+              onClick={ () => this._downloadFile( true ) }
+              className="export-pdf-cta"
+              style={ { float: 'left' } }
+            >
+              <Icon type="file-pdf"/> Exportar Estado de Cuenta (PDF)
+            </Button>
           </Col>
         </Row>
       </>
