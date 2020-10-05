@@ -128,9 +128,9 @@ module.exports = {
     }
 
     const updatedUserAccount = await userAccount.update({
-      userId: req.body.user.id || userAccount.userId,
-      accountId: req.body.account.id || userAccount.accountId,
-      brokerId: req.body.broker.id || userAccount.brokerId,
+      userId: _.get(req, 'body.user.id', userAccount.userId),
+      accountId: _.get(req, 'body.account.id', userAccount.accountId),
+      brokerId: _.get(req, 'body.broker.id', userAccount.brokerId),
       accountValue: req.body.accountValue || userAccount.accountValue,
       guaranteeOperation: req.body.guaranteeOperation || userAccount.guaranteeOperation,
       guaranteeCredits: req.body.guaranteeCredits || userAccount.guaranteeCredits,

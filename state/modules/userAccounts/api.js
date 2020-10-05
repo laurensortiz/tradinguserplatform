@@ -36,6 +36,7 @@ export const addUserAccount = async (userAccount) => {
 };
 
 export const editUserAccount = async (userAccount) => {
+
   return fetch( {
     method: 'put',
     url: `user-accounts/${ userAccount.id }`,
