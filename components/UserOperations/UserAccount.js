@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Icon, Typography, Skeleton, Empty, Tag, Row, Col, Avatar } from 'antd';
+import { Icon, Typography, Skeleton, Empty, Tag, Row, Col, Avatar, Menu, Button, Dropdown } from 'antd';
 import _ from 'lodash';
 
 import UserAccountInformation from './UserAccountInformation';
@@ -8,6 +8,20 @@ import { ExportUserAccounts } from '../Operation/shared'
 const { Title } = Typography;
 
 class UserAccount extends PureComponent {
+
+  state = {
+    userAccountId: 0,
+    accounts: []
+  };
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.isReferralCompleted && nextProps.isReferralSuccess) {
+      return {
+        isReferralFormVisible: false
+      }
+    }
+
+    return null
+  }
 
   _displayData = () => {
     if (_.isEmpty( this.props.accounts )) {
@@ -25,8 +39,40 @@ class UserAccount extends PureComponent {
     }
   };
 
+  _displayHistoryReportBtn = accounts => {
+
+    return _.map(accounts, userAccount => {
+
+      if (userAccount.account.associatedOperation === 1 ) {
+
+      return (
+        <Dropdown overlay={ (
+          <Menu onClick={ ({ key }) => this.props.onRequestStandardOperationsReport( {
+            id: userAccount.id,
+            status: key
+          } ) }>
+            <Menu.Item key={ null }>Todas las Operaciones</Menu.Item>
+            <Menu.Item key={ 4 }>Operaciones Vendidas</Menu.Item>
+          </Menu>
+        ) }>
+          <Button
+            type="primary"
+            data-testid="export-button"
+            className="export-excel-cta"
+            style={ { float: 'right', marginBottom: 10 } }
+          >
+            <Icon type="file-excel"/> <span>Reporte Histórico Operaciones de Bolsa OTC</span>
+          </Button>
+        </Dropdown>
+      )
+      }
+    })
+
+  }
+
   render() {
     const { firstName, lastName, firstName2, lastName2, firstName3, lastName3, firstName4, lastName4, userID, username } = this.props.currentUser;
+
     return (
       <>
         <Row style={ { marginBottom: 30 } }>
@@ -62,6 +108,11 @@ class UserAccount extends PureComponent {
             <ExportUserAccounts
               userAccounts={ this.props.accounts }
             />
+
+          </Col>
+          <Col sm={ 12 }>
+            {this._displayHistoryReportBtn(this.props.accounts)}
+
           </Col>
 
         </Row>
