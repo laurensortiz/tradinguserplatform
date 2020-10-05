@@ -59,19 +59,38 @@ module.exports = {
   },
 
   async list(req, res) {
-    const marketOperation = await MarketOperation.findAll(
-      marketOperationQuery.list( {
-        req,
-        sequelize,
-        UserAccount,
-        User,
-        Account,
-        Product,
-        Broker,
-        Commodity,
-        AssetClass
-      } )
-    );
+    let marketOperation;
+    if (req.user.roleId == 1) {
+
+      marketOperation = await MarketOperation.findAll(
+        marketOperationQuery.listAdmin( {
+          req,
+          sequelize,
+          UserAccount,
+          User,
+          Account,
+          Product,
+          Broker,
+          Commodity,
+          AssetClass
+        } )
+      );
+    } else {
+      marketOperation = await MarketOperation.findAll(
+        marketOperationQuery.list( {
+          req,
+          sequelize,
+          UserAccount,
+          User,
+          Account,
+          Product,
+          Broker,
+          Commodity,
+          AssetClass
+        } )
+      );
+
+    }
 
     if (!marketOperation) {
       return res.status( 404 ).send( {
