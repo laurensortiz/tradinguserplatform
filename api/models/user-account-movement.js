@@ -17,6 +17,11 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
         unique: false,
       },
+      previousAccountValue: {
+        type: DataTypes.DECIMAL( 10, 2 ),
+        allowNull: true,
+        unique: false,
+      },
       reference: {
         type: DataTypes.STRING,
         allowNull: true,

@@ -33,7 +33,17 @@ const getExportFileName = (isPDF) => {
 class Export extends PureComponent {
 
   _formatData = ({ userAccountMovement }) => {
-    return _.map( userAccountMovement, movement => {
+    const sortedData = userAccountMovement.sort((a, b) => {
+      let start = a.createdAt;
+      let end = b.createdAt;
+      if (_.isNil( start )) start = '00-00-0000';
+      if (_.isNil( end )) end = '00-00-0000';
+
+      return moment( start ).unix() - moment( end ).unix()
+    });
+
+
+    return _.map( sortedData, movement => {
       return {
         'Débito': FormatCurrency.format( movement.debit ),
         'Crédito': FormatCurrency.format( movement.credit ),
@@ -132,7 +142,17 @@ class Export extends PureComponent {
     if (isPDF) {
       //PHE.printHtml(html, opts);
       const { username, firstName, lastName } = userAccount.user;
-      const AccountMovements = _.reduce(userAccount.userAccountMovement, (result, movement) => {
+      const movements = userAccount.userAccountMovement || [];
+      const sortedData = movements.sort((a, b) => {
+        let start = a.createdAt;
+        let end = b.createdAt;
+        if (_.isNil( start )) start = '00-00-0000';
+        if (_.isNil( end )) end = '00-00-0000';
+
+        return moment( start ).unix() - moment( end ).unix()
+      });
+
+      const AccountMovements = _.reduce(sortedData, (result, movement) => {
         const debit = {
           text: FormatCurrency.format(movement.debit),
           color: '#ba382a',
@@ -213,6 +233,7 @@ class Export extends PureComponent {
                   },
                 ],
               } ],
+              [{text:'', fillColor: '#254061', margin: [0,5]},{text:'', fillColor: '#254061', margin: [0,5]},{text:'', fillColor: '#254061', margin: [0,5]}]
 
             ]
           },
@@ -231,6 +252,7 @@ class Export extends PureComponent {
           logo: LOGO
         },
         content: [
+          {text:'', margin: [ 0, 5]},
           {
             layout: 'noBorders',
             table: {
@@ -438,16 +460,19 @@ class Export extends PureComponent {
     return (
       <>
         <Row style={ { marginBottom: 30 } }>
-          <Col>
+          <Col >
             <Button
               type="primary"
               onClick={ () => this._downloadFile() }
               data-testid="export-button"
               className="export-excel-cta"
-              style={ { float: 'left', marginRight: 15 } }
+              style={ { float: 'left', marginRight: 15, marginBottom: 10 } }
             >
               <Icon type="file-excel"/> Exportar Datos de la Cuenta
             </Button>
+
+          </Col>
+          <Col>
             {/*<Button*/}
             {/*  type="primary"*/}
             {/*  onClick={ () => this._downloadFile( true ) }*/}

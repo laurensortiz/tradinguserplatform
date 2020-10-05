@@ -164,6 +164,17 @@ class Accounts extends Component {
     this._handleSelectEditUserAccount( userId )
   };
 
+  _onSelectActive = (accountId) => {
+    this.props.fetchEditUserAccount( {
+      id: accountId,
+      status: 1,
+    } );
+    this.setState( {
+      actionType: 'active'
+    } );
+
+  };
+
   _handleSelectEditUserAccount = (userId) => {
     const selectedUserAccount = _.find( this.props.userAccounts, { id: userId } );
     this.setState( {
@@ -230,6 +241,7 @@ class Accounts extends Component {
             <UserAccountsTable
               userAccounts={ this.props.userAccounts }
               isLoading={ this.props.isLoading || this.props.isHistoryReportLoading }
+              onActive={this._onSelectActive}
               onEdit={ this._onSelectEdit }
               onDelete={ this._handleDeleteUserAccount }
               isOperationStandard={ _.isEqual( this.state.associatedOperation, 1 ) }

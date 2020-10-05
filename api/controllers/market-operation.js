@@ -59,9 +59,6 @@ module.exports = {
   },
 
   async list(req, res) {
-    console.log('[=====  REE  =====>');
-    console.log(req.user.roleId);
-    console.log('<=====  /REE  =====]');
     let marketOperation;
     if (req.user.roleId == 1) {
 

@@ -1948,3 +1948,12 @@ ALTER TABLE public."UserAccountMovement" ADD CONSTRAINT "UserAccountMovement_use
 /*
 * End Changes September 27, 2020
 */
+
+/*
+* Start Changes Oct 5, 2020
+*/
+ALTER TABLE public."UserAccountMovement" ADD "previousAccountValue" numeric(10,2) DEFAULT 0;
+
+/*
+* End Changes Oct 5, 2020
+*/

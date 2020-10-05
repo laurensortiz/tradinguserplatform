@@ -115,6 +115,7 @@ class MovementsTable extends Component {
       credit: DEFAULT_INPUT_TEXT,
       reference: DEFAULT_INPUT_TEXT,
       accountValue: DEFAULT_INPUT_TEXT,
+      previousAccountValue: DEFAULT_INPUT_TEXT,
       createdAt: moment.parseZone(),
     };
     this.setState( {
@@ -324,7 +325,15 @@ class MovementsTable extends Component {
         required: false,
         inputType: 'number'
       },
-
+      {
+        title: 'Saldo Anterior',
+        dataIndex: 'previousAccountValue',
+        key: 'previousAccountValue',
+        render: value => FormatCurrency.format( value ),
+        editable: true,
+        required: true,
+        inputType: 'number'
+      },
       {
         title: 'Valor de la Cuenta',
         dataIndex: 'accountValue',
@@ -423,16 +432,17 @@ class MovementsTable extends Component {
    */
   _handleAddMovement = (newMovement) => {
     const { id: userAccountId } = this.props.selectedAccount;
-    const { debit , credit, accountValue } = newMovement;
+    const { debit , credit, accountValue, previousAccountValue } = newMovement;
     this.setState({
       actionType: 'add'
-    })
+    });
     this.props.fetchAddUserAccountMovement( {
       ...newMovement,
       userAccountId,
       debit: parseFloat( debit || 0.00 ).toFixed( 2 ),
       credit: parseFloat( credit || 0.00 ).toFixed( 2 ),
       accountValue: parseFloat( accountValue || 0.00 ).toFixed( 2 ),
+      previousAccountValue: parseFloat( previousAccountValue || 0.00 ).toFixed( 2 ),
     } )
   };
 
@@ -440,7 +450,7 @@ class MovementsTable extends Component {
    * Edit Movements
    */
   _handleEditMovement = (newMovement) => {
-    const { debit, credit, accountValue, reference, createdAt, id } = newMovement;
+    const { debit, credit, accountValue, reference, createdAt, id, previousAccountValue } = newMovement;
     this.setState({
       actionType: 'edit'
     })
@@ -449,6 +459,7 @@ class MovementsTable extends Component {
       reference,
       debit: parseFloat( debit ).toFixed( 2 ),
       credit: parseFloat( credit ).toFixed( 2 ),
+      previousAccountValue: parseFloat( previousAccountValue ).toFixed( 2 ),
       accountValue: parseFloat( accountValue ).toFixed( 2 ),
       createdAt: moment.parseZone( createdAt ),
     } )

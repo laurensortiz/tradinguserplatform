@@ -320,7 +320,7 @@ class Market extends Component {
                     <Col sm={ 12 }>
                       <h2>Operaciones de Bolsa OTC</h2>
                     </Col>
-                    <Col sm={ 12 }>
+                    <Col sm={ 12 } style={{display: 'none'}}>
                       <Dropdown overlay={ (
                         <Menu onClick={ ({ key }) => this.props.onRequestStandardOperationsReport( {
                           id: this.props.userAccountId,
