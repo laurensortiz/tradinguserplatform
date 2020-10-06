@@ -100,29 +100,29 @@ class Export extends PureComponent {
       const debit = {
         text: FormatCurrency.format( movement.debit ),
         color: '#ba382a',
-        alignment: 'center',
+        alignment: 'left',
       };
       const credit = {
         text: FormatCurrency.format( movement.credit ),
         color: '#046d11',
-        alignment: 'center',
+        alignment: 'left',
       };
       const previousAccountValue = {
         text: FormatCurrency.format( movement.previousAccountValue ),
-        alignment: 'center',
+        alignment: 'left',
       }
       const accountValue = {
         text: FormatCurrency.format( movement.accountValue ),
-        alignment: 'center',
+        alignment: 'left',
       };
       const reference = {
         text: movement.reference,
-        alignment: 'center',
+        alignment: 'left',
       };
 
       const createdAt = {
         text: FormatDate( movement.createdAt ),
-        alignment: 'center',
+        alignment: 'left',
       };
 
 
@@ -400,15 +400,15 @@ class Export extends PureComponent {
             widths: [ '16%', '16%','16%', '16%', '16%', '16%' ],
 
             body: [
-              [ { text: `Débito`, alignment: 'center', bold: true }, {
+              [ { text: `Débito`, alignment: 'left', bold: true }, {
                 text: `Crédito`,
-                alignment: 'center',
+                alignment: 'left',
                 bold: true
-              }, { text: `Saldo Anterior`, alignment: 'center', bold: true },{ text: `Valor de la Cuenta`, alignment: 'center', bold: true }, {
+              }, { text: `Saldo Anterior`, alignment: 'left', bold: true },{ text: `Valor de la Cuenta`, alignment: 'left', bold: true }, {
                 text: `Detalle`,
-                alignment: 'center',
+                alignment: 'left',
                 bold: true
-              }, { text: `Fecha`, alignment: 'center', bold: true } ],
+              }, { text: `Fecha`, alignment: 'left', bold: true } ],
               ...AccountMovements
             ],
           },
