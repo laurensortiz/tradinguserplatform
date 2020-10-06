@@ -155,7 +155,7 @@ class Export extends PureComponent {
       },
         { text: `${ FormatCurrency.format( userAccount.guaranteeCredits ) }` },
         {
-        text: `:`,
+        text: ``,
         bold: true,
       },
         { text: `` },
