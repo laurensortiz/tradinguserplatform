@@ -26,21 +26,21 @@ const EXCEL_HEADER_MARKET = [
 
 const getExportFileName = (isPDF) => {
   const time = moment().format();
-  return `${isPDF ? 'estado_cuenta' : 'reporte_cuenta'}_${ time }.${isPDF ? 'pdf' : 'xlsx'}`
+  return `${ isPDF ? 'estado_cuenta' : 'reporte_cuenta' }_${ time }.${ isPDF ? 'pdf' : 'xlsx' }`
 };
 
 
 class Export extends PureComponent {
 
   _formatData = ({ userAccountMovement }) => {
-    const sortedData = userAccountMovement.sort((a, b) => {
+    const sortedData = userAccountMovement.sort( (a, b) => {
       let start = a.createdAt;
       let end = b.createdAt;
       if (_.isNil( start )) start = '00-00-0000';
       if (_.isNil( end )) end = '00-00-0000';
 
       return moment( start ).unix() - moment( end ).unix()
-    });
+    } );
 
 
     return _.map( sortedData, movement => {
@@ -143,28 +143,32 @@ class Export extends PureComponent {
       //PHE.printHtml(html, opts);
       const { username, firstName, lastName } = userAccount.user;
       const movements = userAccount.userAccountMovement || [];
-      const sortedData = movements.sort((a, b) => {
+      const sortedData = movements.sort( (a, b) => {
         let start = a.createdAt;
         let end = b.createdAt;
         if (_.isNil( start )) start = '00-00-0000';
         if (_.isNil( end )) end = '00-00-0000';
 
         return moment( start ).unix() - moment( end ).unix()
-      });
+      } );
 
-      const AccountMovements = _.reduce(sortedData, (result, movement) => {
+      const AccountMovements = _.reduce( sortedData, (result, movement) => {
         const debit = {
-          text: FormatCurrency.format(movement.debit),
+          text: FormatCurrency.format( movement.debit ),
           color: '#ba382a',
           alignment: 'center',
         };
         const credit = {
-          text: FormatCurrency.format(movement.credit),
+          text: FormatCurrency.format( movement.credit ),
           color: '#046d11',
           alignment: 'center',
         };
+        const previousAccountValue = {
+          text: FormatCurrency.format( movement.previousAccountValue ),
+          alignment: 'center',
+        }
         const accountValue = {
-          text: FormatCurrency.format(movement.accountValue),
+          text: FormatCurrency.format( movement.accountValue ),
           alignment: 'center',
         };
         const reference = {
@@ -173,17 +177,17 @@ class Export extends PureComponent {
         };
 
         const createdAt = {
-          text: FormatDate(movement.createdAt),
+          text: FormatDate( movement.createdAt ),
           alignment: 'center',
         };
 
 
-        result.push([debit, credit, accountValue, reference, createdAt]);
+        result.push( [ debit, credit, previousAccountValue,accountValue, reference, createdAt ] );
 
         return result
 
-      }, []);
-      
+      }, [] );
+
       const docDefinition = {
         pageSize: 'LETTER',
         pageMargins: [ 15, 80, 15, 40 ],
@@ -192,24 +196,24 @@ class Export extends PureComponent {
         },
         header: {
           layout: 'noBorders',
-          margin: [5, 5],
+          margin: [ 5, 5 ],
 
           table: {
             // headers are automatically repeated if the table spans over multiple pages
             // you can declare how many rows should be treated as headers
             headerRows: 1,
-            widths: [ '50%', '25%','25%' ],
+            widths: [ '50%', '25%', '25%' ],
 
             body: [
               [ {
                 image: 'logo',
-                margin: [ 15, 0,0,0 ],
+                margin: [ 15, 0, 0, 0 ],
                 width: 190, height: 54,
                 fillColor: '#10253f',
 
-              },{text: '',fillColor: '#10253f'}, {
+              }, { text: '', fillColor: '#10253f' }, {
                 fillColor: '#10253f',
-                margin: [5,5],
+                margin: [ 5, 5 ],
                 stack: [
                   {
                     text: "Estados Unidos",
@@ -233,7 +237,11 @@ class Export extends PureComponent {
                   },
                 ],
               } ],
-              [{text:'', fillColor: '#254061', margin: [0,5]},{text:'', fillColor: '#254061', margin: [0,5]},{text:'', fillColor: '#254061', margin: [0,5]}]
+              [ { text: '', fillColor: '#254061', margin: [ 0, 5 ] }, {
+                text: '',
+                fillColor: '#254061',
+                margin: [ 0, 5 ]
+              }, { text: '', fillColor: '#254061', margin: [ 0, 5 ] } ]
 
             ]
           },
@@ -252,7 +260,7 @@ class Export extends PureComponent {
           logo: LOGO
         },
         content: [
-          {text:'', margin: [ 0, 5]},
+          { text: '', margin: [ 0, 5 ] },
           {
             layout: 'noBorders',
             table: {
@@ -275,20 +283,20 @@ class Export extends PureComponent {
                   bold: true,
                   fontSize: 15,
                 }, { text: moment().format( 'DD/MM/YYYY' ), alignment: 'right' } ],
-                [ { text: `${ username }`, alignment: 'left', bold: true,}, {} ],
+                [ { text: `${ username }`, alignment: 'left', bold: true, }, {} ],
               ]
             },
 
           },
 
-          {text:'', margin: [ 0, 10]},
+          { text: '', margin: [ 0, 10 ] },
           {
             layout: 'noBorders',
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: [ '100%'],
+              widths: [ '100%' ],
 
               body: [
                 [ {
@@ -298,12 +306,12 @@ class Export extends PureComponent {
                   alignment: 'center',
                   fillColor: '#10253f', color: '#fff',
                   margin: [ 0, 5 ]
-                }]
+                } ]
               ]
             },
 
           },
-          {text:'', margin: [ 0, 10]},
+          { text: '', margin: [ 0, 10 ] },
           {
             layout: 'noBorders',
             table: {
@@ -338,14 +346,14 @@ class Export extends PureComponent {
               ]
             },
           },
-          {text:'', margin: [ 0, 10]},
+          { text: '', margin: [ 0, 10 ] },
           {
             layout: 'noBorders',
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: [ '48%','2%', '48%' ],
+              widths: [ '48%', '2%', '48%' ],
               body: [
                 [
                   {
@@ -360,12 +368,12 @@ class Export extends PureComponent {
                   {},
                   {
                     text: `Saldo Inicial`, alignment: 'left', margin: [ 15, 15, 15, 5 ], fillColor: '#004079',
-                    color: '#fff',fontSize: 12,bold: true,
+                    color: '#fff', fontSize: 12, bold: true,
                   }
                 ],
                 [
                   {
-                    text: `${FormatCurrency.format(userAccount.accountValue)}`,
+                    text: `${ FormatCurrency.format( userAccount.accountValue ) }`,
                     margin: [ 15, 0, 15, 15 ],
                     fillColor: '#547f26',
                     color: '#fff',
@@ -373,7 +381,7 @@ class Export extends PureComponent {
                   },
                   {},
                   {
-                    text: `${FormatCurrency.format(userAccount.balanceInitial)}`,
+                    text: `${ FormatCurrency.format( userAccount.balanceInitial ) }`,
                     margin: [ 15, 0, 15, 15 ],
                     fillColor: '#004079',
                     color: '#fff',
@@ -385,14 +393,14 @@ class Export extends PureComponent {
 
           },
 
-          {text:'', margin: [ 0, 30, 0, 10]},
+          { text: '', margin: [ 0, 30, 0, 10 ] },
           {
             layout: 'noBorders',
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: [ '100%'],
+              widths: [ '100%' ],
 
               body: [
                 [ {
@@ -402,26 +410,26 @@ class Export extends PureComponent {
                   alignment: 'center',
                   fillColor: '#10253f', color: '#fff',
                   margin: [ 0, 5 ]
-                }]
+                } ]
               ]
             },
 
           },
-          {text:'', margin: [ 0, 10]},
+          { text: '', margin: [ 0, 10 ] },
           {
             layout: 'noBorders',
             table: {
               // headers are automatically repeated if the table spans over multiple pages
               // you can declare how many rows should be treated as headers
               headerRows: 1,
-              widths: [ '20%', '20%', '20%', '20%', '20%' ],
+              widths: [ '16%', '16%','16%', '16%', '16%', '16%' ],
 
               body: [
                 [ { text: `Débito`, alignment: 'center', bold: true }, {
                   text: `Crédito`,
                   alignment: 'center',
                   bold: true
-                }, { text: `Valor de la Cuenta`, alignment: 'center', bold: true }, {
+                }, { text: `Saldo Anterior`, alignment: 'center', bold: true },{ text: `Valor de la Cuenta`, alignment: 'center', bold: true }, {
                   text: `Detalle`,
                   alignment: 'center',
                   bold: true
@@ -447,8 +455,8 @@ class Export extends PureComponent {
         }
       };
 
-      const fileName = getExportFileName(true)
-      pdfMake.createPdf( docDefinition ).download(fileName);
+      const fileName = getExportFileName( true )
+      pdfMake.createPdf( docDefinition ).download( fileName );
 
     } else {
       FileSaver.saveAs( blob, getExportFileName() )
@@ -460,7 +468,7 @@ class Export extends PureComponent {
     return (
       <>
         <Row style={ { marginBottom: 30 } }>
-          <Col >
+          <Col>
             <Button
               type="primary"
               onClick={ () => this._downloadFile() }
