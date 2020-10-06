@@ -473,14 +473,14 @@ class Export extends PureComponent {
 
           </Col>
           <Col>
-            {/*<Button*/}
-            {/*  type="primary"*/}
-            {/*  onClick={ () => this._downloadFile( true ) }*/}
-            {/*  className="export-pdf-cta"*/}
-            {/*  style={ { float: 'left' } }*/}
-            {/*>*/}
-            {/*  <Icon type="file-pdf"/> Exportar Estado de Cuenta (PDF)*/}
-            {/*</Button>*/}
+            <Button
+              type="primary"
+              onClick={ () => this._downloadFile( true ) }
+              className="export-pdf-cta"
+              style={ { float: 'left' } }
+            >
+              <Icon type="file-pdf"/> Exportar Estado de Cuenta (PDF)
+            </Button>
           </Col>
         </Row>
       </>
