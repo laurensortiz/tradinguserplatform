@@ -3,7 +3,7 @@ import { Icon, Typography, Skeleton, Empty, Tag, Row, Col, Avatar, Menu, Button,
 import _ from 'lodash';
 
 import UserAccountInformation from './UserAccountInformation';
-import { ExportUserAccounts } from '../Operation/shared'
+import { ExportUserAccounts } from '../Operation/shared';
 
 const { Title } = Typography;
 

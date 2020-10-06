@@ -6,6 +6,8 @@ import _ from 'lodash';
 import { FormatCurrency, IsOperationPositive, StaticAmountBox } from '../../common/utils';
 import ReferralForm from "./ReferralForm";
 import { Investment, Market } from "../Operation";
+import { ExportUserAccountsPDF } from '../Operation/shared'
+
 
 class AccountInformation extends PureComponent {
 
@@ -49,6 +51,8 @@ class AccountInformation extends PureComponent {
     const isOperationPositive = IsOperationPositive( accountValue, balanceInitial );
 
     return (
+      <>
+        <ExportUserAccountsPDF userAccount={this.props.userAccount} />
       <Card title={ `Información de la Cuenta: ${ accountName }` } headStyle={ { backgroundColor: '#2D2D3B' } }
             bodyStyle={ { backgroundColor: '#0E0E0E' } } style={ { marginBottom: 20 } }
             className="account-detail">
@@ -154,6 +158,8 @@ class AccountInformation extends PureComponent {
           ) }
         </Row>
       </Card>
+
+        </>
     );
   }
 }
