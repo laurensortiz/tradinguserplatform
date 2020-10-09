@@ -132,7 +132,7 @@ module.exports = app => {
   app.delete( '/api/investment-movement/:investmentMovementId', investmentMovement.delete );
 
   // Market Operation
-  app.get( '/api/market-operation/:status', marketOperation.list );
+  app.get( '/api/market-operation/:status/:userAccountId/', marketOperation.list );
   app.post( '/api/market-operation/accountReport', marketOperation.accountReport );
   app.get( '/api/market-operation/:marketOperationId', marketOperation.get );
   app.post( '/api/market-operation', marketOperation.create );

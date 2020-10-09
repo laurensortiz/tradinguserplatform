@@ -5,8 +5,8 @@ import _ from 'lodash';
 
 import { FormatCurrency, IsOperationPositive, StaticAmountBox } from '../../common/utils';
 import ReferralForm from "./ReferralForm";
-import { Investment, Market } from "../Operation";
-import { ExportUserAccountsPDF } from '../Operation/shared'
+import { Investment, Market } from "./Operation";
+import { ExportUserAccountsPDF } from './Operation/shared'
 
 
 class AccountInformation extends PureComponent {

@@ -4,20 +4,26 @@ function getWhereConditions(req, sequelize, isAdmin) {
 
   if(isAdmin) {
     if (req.params.status === '1') {
-      whereConditions.status = {
-        [Op.gt]: 0,
-        [Op.lt]: 4,
-      }
+      whereConditions.status = req.params.status
     } else {
       whereConditions.status = req.params.status
     }
   } else {
+    console.log('[=====  params  =====>');
+    console.log(req.params);
+    console.log('<=====  /params  =====]');
     if (req.params.status === '1') {
-      whereConditions.status = {
-        [Op.gt]: 0,
+      whereConditions = {
+        status: {
+          [Op.gt]: 0,
+        },
+        userAccountId: req.params.userAccountId
       }
     } else {
-      whereConditions.status = req.params.status
+      whereConditions = {
+        status: req.params.status,
+        userAccountId: req.params.userAccountId
+      }
     }
   }
 
