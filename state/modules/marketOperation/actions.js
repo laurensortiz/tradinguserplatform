@@ -9,10 +9,10 @@ import types from './types';
 import { formatAxiosError } from "../../../common/utils";
 
 // List MarketOperations
-export const fetchGetMarketOperations = (status) => async dispatch => {
+export const fetchGetMarketOperations = (status, userAccountId) => async dispatch => {
   dispatch( requestMarketOperations() );
   try {
-    const res = await getMarketOperations(status);
+    const res = await getMarketOperations(status, userAccountId);
     dispatch( requestMarketOperationsSuccess( res.data ) )
   } catch (error) {
     dispatch( requestMarketOperationsError( error.response ) )

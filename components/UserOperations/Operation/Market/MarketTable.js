@@ -15,11 +15,11 @@ import {
   DisplayTableAmount,
   MarketBehaviorStatus,
   IsOperationPositive,
-} from '../../../common/utils';
+} from '../../../../common/utils';
 
 import BulkUpdateSteps from './BulkUpdateSteps';
 
-import { assetClassOperations } from "../../../state/modules/assetClasses";
+import { assetClassOperations } from "../../../../state/modules/assetClasses";
 
 momentDurationFormat( moment );
 extendMoment( moment );
@@ -230,9 +230,8 @@ class MarketTable extends Component {
         <Col sm={12} style={ { textAlign: 'left' } }>
           <Radio.Group defaultValue={this.props.dataStatus} buttonStyle="solid" onChange={ this.props.onTabChange }>
             <Radio.Button value={1}>Activos</Radio.Button>
-            <Radio.Button value={3}>On Hold</Radio.Button>
-            <Radio.Button value={4}>Vendidos</Radio.Button>
             <Radio.Button value={0}>Eliminados</Radio.Button>
+            <Radio.Button value={4}>Vendidos</Radio.Button>
           </Radio.Group>
         </Col>
         <Col sm={12} style={ { textAlign: 'right' } }>

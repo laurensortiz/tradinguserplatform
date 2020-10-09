@@ -118,9 +118,7 @@ class UserAccount extends PureComponent {
         </Row>
         <Row>
           <Col>
-            <Skeleton active loading={ this.props.isLoading }>
-              { this._displayData() }
-            </Skeleton>
+            { this._displayData() }
           </Col>
         </Row>
 
