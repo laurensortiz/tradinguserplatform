@@ -8,6 +8,13 @@ export const getReferrals = async (requestData) => {
   } );
 };
 
+export const getReferral = async (referralId) => {
+  return fetch( {
+    method: 'get',
+    url: `referral/${referralId}`,
+  } );
+};
+
 export const addReferral = async (referral) => {
   return fetch( {
     method: 'post',
