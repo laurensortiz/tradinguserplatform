@@ -61,7 +61,6 @@ module.exports = {
   async list(req, res) {
     let marketOperation;
     if (req.user.roleId == 1) {
-
       marketOperation = await MarketOperation.findAll(
         marketOperationQuery.listAdmin( {
           req,
@@ -150,7 +149,15 @@ module.exports = {
   async get(req, res) {
     const marketOperation = await MarketOperation.findByPk(
       req.params.marketOperationId,
-      marketOperationQuery.get( { req, UserAccount, Product, Broker } )
+      marketOperationQuery.get( {
+        req,
+        UserAccount,
+        User,
+        Account,
+        Product,
+        Broker,
+        Commodity,
+        AssetClass } )
     );
 
     if (!marketOperation) {
@@ -163,6 +170,7 @@ module.exports = {
   },
 
   async update(req, res) {
+    const userId = _.get(req, 'user.id', 0)
     await ORM.transaction( async (t) => {
 
       const marketOperation = await MarketOperation.findOne( {
@@ -267,7 +275,11 @@ module.exports = {
             accountValue: accountValueEndOperation, // Valor de la Cuenta
             guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
             marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
-            snapShotAccount: JSON.stringify( userAccount ),
+            snapShotAccount: JSON.stringify( {
+              actionType: 'operationSale',
+              actionByUser: userId,
+              userAccount
+            } ),
             updatedAt: new Date(),
 
           }, { transaction: t } );
@@ -300,6 +312,7 @@ module.exports = {
   },
 
   async bulkUpdate(req, res) {
+    const userId = _.get(req, 'user.id', 0)
     let valueFT = 0;
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body;
@@ -382,7 +395,11 @@ module.exports = {
                       accountValue: accountValueEndOperation, // Valor de la Cuenta
                       guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
                       marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
-                      snapShotAccount: JSON.stringify( userAccount ),
+                        snapShotAccount: JSON.stringify( {
+                          actionType: 'operationSale',
+                          actionByUser: userId,
+                          userAccount
+                        } ),
                       updatedAt: new Date(),
 
                     }, { transaction: t } );

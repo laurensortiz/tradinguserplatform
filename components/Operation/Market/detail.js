@@ -10,7 +10,6 @@ class Detail extends PureComponent {
   render() {
 
     const productName = _.get(this.props, 'currentOperation.product.name', '');
-    const productCode = _.get(this.props, 'currentOperation.product.code', '');
 
     const amount = _.get(this.props, 'currentOperation.amount', '0.00');
     const initialAmount = _.get(this.props, 'currentOperation.initialAmount', '0.00');

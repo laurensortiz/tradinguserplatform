@@ -35,31 +35,31 @@ class AddOrEditReferralForm extends PureComponent {
     downloadDocumentName: ''
   };
 
-  componentDidMount() {
-
-    if (!_.isEmpty( this.props.selectedReferral )) {
-      const { selectedReferral } = this.props;
+  static getDerivedStateFromProps(nextProps, prevState) {
+    let updatedState = {};
+    if (!_.isEmpty( nextProps.selectedReferral )) {
+      const { selectedReferral } = nextProps;
       const username = _.get(selectedReferral, 'userAccount.user.username', '');
       let personalIdDocument = '',
         personalIdDocumentDownloadType = 'pdf',
         downloadDocumentName = '';
-      if (selectedReferral.personalIdDocument.type === 'Buffer' && !_.isEmpty(selectedReferral.personalIdDocument.data)) {
+      if (_.get(selectedReferral, 'personalIdDocument.type', '') === 'Buffer' && !_.isEmpty(_.get(selectedReferral, 'personalIdDocument.data', ''))) {
         personalIdDocument = Buffer.from(selectedReferral.personalIdDocument.data, 'base64').toString('utf8');
         personalIdDocumentDownloadType = ((personalIdDocument.split(',')[0]).split('/')[1]).split(';')[0];
         downloadDocumentName = `ID-${selectedReferral.firstName}-${selectedReferral.lastName}.${personalIdDocumentDownloadType}`;
       }
-
-      this.setState( {
-        ...this.state,
-        ...selectedReferral,
+      _.assignIn(updatedState, {
+        ...prevState,
+        ...nextProps.selectedReferral,
         username,
         personalIdDocument,
         personalIdDocumentDownloadType,
         downloadDocumentName
-      } )
-    }
-  }
+      })
 
+    }
+    return !_.isEmpty(updatedState) ? updatedState : null;
+  }
 
   _handleChange = e => {
     let value = '';

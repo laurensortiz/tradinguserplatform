@@ -41,6 +41,33 @@ export function marketOperation(state = initialStateMarketOperation, action) {
         isLoading: false,
         message: action.payload,
       };
+
+    // Market Operation
+    case types.MARKET_OPERATION_REQUEST:
+      return {
+        ...state,
+        isFailure: false,
+        isLoading: true,
+        isSuccess: false,
+        item: {}
+      };
+    case types.MARKET_OPERATION_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        isFailure: false,
+        isLoading: false,
+        item: action.payload,
+      };
+    case types.MARKET_OPERATION_ERROR:
+      return {
+        ...state,
+        isSuccess: false,
+        isFailure: true,
+        isLoading: false,
+        message: action.payload,
+      };
+
     // Add Project
     case types.MARKET_OPERATION_ADD_REQUEST:
       return {
