@@ -131,7 +131,7 @@ const queries = {
         {
           model: Product,
           as: 'product',
-          attributes: ['name']
+          attributes: ['name', 'id', 'code']
         },
         {
           model: Broker,
@@ -141,12 +141,12 @@ const queries = {
         {
           model: Commodity,
           as: 'commodity',
-          attributes: ['name']
+          attributes: ['name', 'id']
         },
         {
           model: AssetClass,
           as: 'assetClass',
-          attributes: ['name']
+          attributes: ['name', 'id']
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
@@ -165,6 +165,9 @@ const queries = {
         {
           model: UserAccount,
           as: 'userAccount',
+          attributes: {
+            exclude: [ 'snapShotAccount' ],
+          },
           include: [
             {
               model: User,
@@ -213,6 +216,9 @@ const queries = {
         {
           model: UserAccount,
           as: 'userAccount',
+          attributes: {
+            exclude: [ 'snapShotAccount' ],
+          },
           include: [
             {
               model: User,
@@ -299,7 +305,7 @@ const queries = {
         {
           model: Product,
           as: 'product',
-          attributes: ['name']
+          attributes: ['name', 'id', 'code']
         },
         {
           model: Broker,
@@ -309,12 +315,12 @@ const queries = {
         {
           model: Commodity,
           as: 'commodity',
-          attributes: ['name']
+          attributes: ['name', 'id']
         },
         {
           model: AssetClass,
           as: 'assetClass',
-          attributes: ['name']
+          attributes: ['name', 'id']
         },
       ],
     };

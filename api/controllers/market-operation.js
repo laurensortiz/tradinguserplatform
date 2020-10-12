@@ -181,6 +181,9 @@ module.exports = {
           {
             model: UserAccount,
             as: 'userAccount',
+            attributes: {
+              exclude: [ 'snapShotAccount' ],
+            },
             include: [
               {
                 model: Account,
@@ -258,6 +261,7 @@ module.exports = {
             assetClassId === 3 ||
             assetClassId === 1
           ) ? 0 : Number( maintenanceMargin );
+
           const profit = Number( amount ) - Number( initialAmount );
           const isProfitPositive = Math.sign( profit ) >= 0;
           const commission = isProfitPositive ? Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) : 0
@@ -270,12 +274,6 @@ module.exports = {
           const accountValueEndOperation = Number( userAccount.accountValue ) + Number( endProfit );
           const accountGuaranteeEndOperation = Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct );
           const accountMarginUsedEndOperation = Number( userAccount.marginUsed ) - Number( marginUsed );
-          
-          console.log('[=====  CLOSE  =====>');
-          console.log(marginUsed);
-          console.log(guaranteeOperationProduct);
-          console.log(accountValueEndOperation);
-          console.log('<=====  /CLOSE  =====]');
 
           await userAccount.update( {
             accountValue: accountValueEndOperation, // Valor de la Cuenta
