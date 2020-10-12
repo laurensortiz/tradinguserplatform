@@ -133,8 +133,8 @@ module.exports = app => {
 
   // Market Operation
   app.get( '/api/market-operation/:status/:userAccountId/', marketOperation.list );
-  app.post( '/api/market-operation/accountReport', marketOperation.accountReport );
   app.get( '/api/market-operation/:marketOperationId', marketOperation.get );
+  app.post( '/api/market-operation/accountReport', marketOperation.accountReport );
   app.post( '/api/market-operation', marketOperation.create );
   app.put( '/api/market-operation/:marketOperationId', marketOperation.update );
   app.delete( '/api/market-operation/:marketOperationId', marketOperation.delete );

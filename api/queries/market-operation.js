@@ -36,13 +36,27 @@ const queries = {
   list: ({ req,sequelize, UserAccount, User, Product, Broker, Commodity, AssetClass, Account }) => {
     return {
       where: getWhereConditions(req, sequelize),
-      attributes: {
-        exclude: [],
-      },
+      attributes: [
+        'id',
+        'status',
+        'behavior',
+        'amount',
+        'initialAmount',
+        'longShort',
+        'commoditiesTotal',
+        'buyPrice',
+        'holdStatusCommission',
+        'maintenanceMargin',
+        'takingProfit',
+        'stopLost',
+        'orderId',
+        'createdAt',
+        'updatedAt'],
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
+          attributes: ['userId', 'accountId'],
           include: [
             {
               model: User,
@@ -57,37 +71,49 @@ const queries = {
 
           ],
         },
-
         {
           model: Product,
           as: 'product',
+          attributes: ['name']
         },
         {
           model: Broker,
           as: 'broker',
-        },
-        {
-          model: Commodity,
-          as: 'commodity',
+          attributes: ['name']
         },
         {
           model: AssetClass,
           as: 'assetClass',
+          attributes: ['name']
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  listAdmin: ({ req,sequelize, UserAccount, User, Product, Broker, Commodity, AssetClass, Account }) => {
+  listAdmin: ({ req,sequelize, UserAccount, User, Product, Broker, AssetClass, Account, Commodity }) => {
     return {
       where: getWhereConditions(req, sequelize, true),
-      attributes: {
-        exclude: [],
-      },
+      attributes: [
+        'id',
+        'status',
+        'behavior',
+        'amount',
+        'initialAmount',
+        'longShort',
+        'commoditiesTotal',
+        'buyPrice',
+        'holdStatusCommission',
+        'maintenanceMargin',
+        'takingProfit',
+        'stopLost',
+        'orderId',
+        'createdAt',
+        'updatedAt'],
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
+          attributes: ['userId', 'accountId'],
           include: [
             {
               model: User,
@@ -102,22 +128,25 @@ const queries = {
 
           ],
         },
-
         {
           model: Product,
           as: 'product',
+          attributes: ['name']
         },
         {
           model: Broker,
           as: 'broker',
+          attributes: ['name']
         },
         {
           model: Commodity,
           as: 'commodity',
+          attributes: ['name']
         },
         {
           model: AssetClass,
           as: 'assetClass',
+          attributes: ['name']
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
@@ -218,26 +247,76 @@ const queries = {
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  get: ({ req, UserAccount, Product, Broker }) => {
+  get: ({ UserAccount, User, Product, Broker, AssetClass, Account, Commodity }) => {
     return {
-      attributes: {
-        exclude: [],
-      },
+      attributes: [
+        'id',
+        'status',
+        'behavior',
+        'amount',
+        'initialAmount',
+        'longShort',
+        'commoditiesTotal',
+        'buyPrice',
+        'holdStatusCommission',
+        'maintenanceMargin',
+        'takingProfit',
+        'stopLost',
+        'orderId',
+        'createdAt',
+        'updatedAt'],
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
+          attributes: [
+            'id',
+            'userId',
+            'accountId',
+            'accountValue',
+            'balanceInitial',
+            'maintenanceMargin',
+            'marginUsed',
+            'guaranteeOperation',
+            'guaranteeCredits',
+            'commissionByReference',
+
+          ],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['id','username', 'firstName', 'lastName']
+            },
+            {
+              model: Account,
+              as: 'account',
+              attributes: ['id','name', 'percentage', 'associatedOperation']
+            },
+
+          ],
         },
         {
           model: Product,
           as: 'product',
+          attributes: ['name']
         },
         {
           model: Broker,
           as: 'broker',
+          attributes: ['name']
+        },
+        {
+          model: Commodity,
+          as: 'commodity',
+          attributes: ['name']
+        },
+        {
+          model: AssetClass,
+          as: 'assetClass',
+          attributes: ['name']
         },
       ],
-      order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
 };

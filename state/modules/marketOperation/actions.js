@@ -1,5 +1,6 @@
 import {
   getMarketOperations,
+  getMarketOperation,
   addMarketOperation,
   editMarketOperation,
   deleteMarketOperation,
@@ -36,6 +37,38 @@ const requestMarketOperationsSuccess = (markets) => {
 const requestMarketOperationsError = (error) => {
   return {
     type: types.MARKET_OPERATIONS_ERROR,
+    payload: formatAxiosError(error)
+  }
+};
+
+// MarketOperation
+export const fetchGetMarketOperation = (marketOperationId) => async dispatch => {
+  dispatch( requestMarketOperation() );
+  try {
+    const res = await getMarketOperation(marketOperationId);
+    dispatch( requestMarketOperationSuccess( res.data ) )
+  } catch (error) {
+    dispatch( requestMarketOperationError( error.response ) )
+  }
+
+};
+
+const requestMarketOperation = () => {
+  return {
+    type: types.MARKET_OPERATION_REQUEST
+  }
+};
+
+const requestMarketOperationSuccess = (operation) => {
+  return {
+    type: types.MARKET_OPERATION_SUCCESS,
+    payload: operation
+  }
+};
+
+const requestMarketOperationError = (error) => {
+  return {
+    type: types.MARKET_OPERATION_ERROR,
     payload: formatAxiosError(error)
   }
 };
@@ -177,6 +210,7 @@ export const resetAfterRequest = () => {
 
 export default {
   fetchGetMarketOperations,
+  fetchGetMarketOperation,
   fetchAddMarketOperation,
   fetchEditMarketOperation,
   fetchDeleteMarketOperation,

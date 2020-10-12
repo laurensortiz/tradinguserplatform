@@ -13,7 +13,7 @@ const initialState = {
 
 export function settings(state = initialState, action) {
   switch (action.type) {
-    // List All Users
+    // List All Referrals
     case types.REFERRALS_REQUEST:
       return {
         ...state,
@@ -30,6 +30,32 @@ export function settings(state = initialState, action) {
         list: action.payload,
       };
     case types.REFERRALS_ERROR:
+      return {
+        ...state,
+        isSuccess: false,
+        isCompleted: true,
+        isLoading: false,
+        message: action.payload,
+      };
+
+    // Referral
+    case types.REFERRAL_REQUEST:
+      return {
+        ...state,
+        isCompleted: false,
+        isLoading: true,
+        isSuccess: false,
+        item: {}
+      };
+    case types.REFERRAL_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        isCompleted: true,
+        isLoading: false,
+        item: action.payload,
+      };
+    case types.REFERRAL_ERROR:
       return {
         ...state,
         isSuccess: false,

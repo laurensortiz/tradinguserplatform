@@ -1,5 +1,6 @@
 import  {
   fetchGetMarketOperations,
+  fetchGetMarketOperation,
   fetchAddMarketOperation,
   fetchEditMarketOperation,
   fetchDeleteMarketOperation,
@@ -9,6 +10,7 @@ import  {
 
 export default {
   fetchGetMarketOperations,
+  fetchGetMarketOperation,
   fetchAddMarketOperation,
   fetchEditMarketOperation,
   fetchDeleteMarketOperation,

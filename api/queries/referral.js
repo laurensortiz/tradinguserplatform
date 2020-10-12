@@ -6,10 +6,14 @@ const queries = {
       where: {
         status,
       },
+      attributes: {
+        exclude: [ 'personalIdDocument' ],
+      },
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
+          exclude: [ 'snapShotAccount' ],
           attributes: ['id'],
           include: [
             {
@@ -29,6 +33,7 @@ const queries = {
         {
           model: UserAccount,
           as: 'userAccount',
+          exclude: [ 'snapShotAccount' ],
           attributes: ['id'],
           include: [
             {
