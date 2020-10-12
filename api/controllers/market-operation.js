@@ -60,8 +60,8 @@ module.exports = {
 
   async list(req, res) {
     let marketOperation;
-    if (req.user.roleId == 1) {
-
+    //if (req.user.roleId == 1) {
+    if (true) {
       marketOperation = await MarketOperation.findAll(
         marketOperationQuery.listAdmin( {
           req,
@@ -150,7 +150,15 @@ module.exports = {
   async get(req, res) {
     const marketOperation = await MarketOperation.findByPk(
       req.params.marketOperationId,
-      marketOperationQuery.get( { req, UserAccount, Product, Broker } )
+      marketOperationQuery.get( {
+        req,
+        UserAccount,
+        User,
+        Account,
+        Product,
+        Broker,
+        Commodity,
+        AssetClass } )
     );
 
     if (!marketOperation) {
