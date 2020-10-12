@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import { Broker, Product } from "../models";
 
 function conditionalStatus(req, sequelize) {
   const Op = sequelize.Op;
@@ -49,7 +48,7 @@ const queries = {
         {
           model: MarketOperation,
           as: 'marketOperation',
-          attributes: [ 'id', 'status' ],
+          attributes: [ 'status' ],
           include: [
             {
               model: Product,
@@ -95,7 +94,9 @@ const queries = {
         status: 1,
         userId: req.params.userId || 0
       },
-
+      attributes: {
+        exclude: [ 'snapShotAccount' ],
+      },
       include: [
         {
           model: User,
@@ -124,10 +125,14 @@ const queries = {
         userAccountId: req.body.id,
         status: conditionalStatus( req, sequelize ),
       },
+
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
+          attributes: {
+            exclude: [ 'snapShotAccount' ],
+          },
           include: [
             {
               model: User,
