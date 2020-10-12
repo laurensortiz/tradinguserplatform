@@ -48,12 +48,18 @@ const queries = {
         {
           model: MarketOperation,
           as: 'marketOperation',
-          attributes: [ 'id', 'status' ],
+          attributes: [ 'status' ],
+          where: {
+           status:  {
+             [ Op.lt ]: 4,
+             [ Op.gt ]: 0
+           }
+          },
           include: [
             {
               model: Product,
               as: 'product',
-              attributes: [ 'name', 'id' ],
+              attributes: [ 'name' ],
             },
           ]
         },

@@ -54,7 +54,8 @@ module.exports = {
 
   async get(req, res) {
     const referral = await Referral.findByPk(
-      req.params.referralId
+      req.params.referralId,
+      referralQuery.get({ req, UserAccount, User })
     );
 
     if (!referral) {
