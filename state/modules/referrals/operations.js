@@ -1,6 +1,5 @@
 import  {
   fetchGetReferrals,
-  fetchGetReferral,
   fetchAddReferral,
   fetchEditReferral,
   fetchDeleteReferral,
@@ -10,7 +9,6 @@ import  {
 
 export default {
   fetchGetReferrals,
-  fetchGetReferral,
   fetchAddReferral,
   fetchEditReferral,
   fetchDeleteReferral,

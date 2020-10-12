@@ -49,14 +49,13 @@ class Market extends Component {
         marketOperations: marketOperationUser
       } );
 
-    }
+      if (prevState.isDetailViewVisible) {
 
-    if (!_.isEqual( nextProps.currentOperationDetail, prevState.currentOperationDetail )) {
+        _.assignIn( updatedState, {
+          currentOperationDetail: _.find( nextProps.marketOperations, { id: prevState.currentOperationDetail.id } )
+        } )
 
-      _.assignIn( updatedState, {
-        currentOperationDetail: nextProps.currentOperationDetail
-      } );
-
+      }
     }
 
 
@@ -65,7 +64,7 @@ class Market extends Component {
         nextProps.fetchGetMarketMovements( prevState.currentOperationDetail.id );
       }
 
-      nextProps.fetchGetMarketOperations( 1, nextProps.userAccountId );
+      nextProps.fetchGetMarketOperations( 1 );
       nextProps.resetAfterMovementRequest();
     }
 
@@ -87,7 +86,7 @@ class Market extends Component {
         onClose: () => {
           prevState.actionType = 'add'; // default value
           nextProps.resetAfterRequest();
-          nextProps.fetchGetMarketOperations( 1, nextProps.userAccountId);
+          nextProps.fetchGetMarketOperations( 1);
           nextProps.onClose( false )
         },
         duration: 1
@@ -117,7 +116,7 @@ class Market extends Component {
           onClose: () => {
             prevState.actionType = 'add'; // default value
 
-            nextProps.fetchGetMarketOperations( 1, nextProps.userAccountId );
+            nextProps.fetchGetMarketOperations( 1 );
             nextProps.resetAfterRequest();
             nextProps.onClose( false )
           },
@@ -212,10 +211,13 @@ class Market extends Component {
   };
 
   _handleDetailUserOperation = (operationId) => {
+
+    const selectedOperation = _.find( this.props.marketOperations, { id: operationId } );
+
     this.setState( {
-      isDetailViewVisible: true
+      isDetailViewVisible: true,
+      currentOperationDetail: selectedOperation
     } );
-    this.props.fetchGetMarketOperation( operationId );
     this.props.fetchGetMarketMovements( operationId );
   };
 
@@ -224,14 +226,14 @@ class Market extends Component {
       isDetailViewVisible: false,
       currentOperationDetail: {}
     } );
-    this.props.fetchGetMarketOperations( this.state.dataStatus, this.props.userAccountId );
+    this.props.fetchGetMarketOperations( this.state.dataStatus );
   };
 
   _onTabChange = ({ target }) => {
     this.setState( {
       dataStatus: target.value
     } )
-    this.props.fetchGetMarketOperations( target.value, this.props.userAccountId );
+    this.props.fetchGetMarketOperations( target.value );
   }
 
   /**
@@ -306,7 +308,7 @@ class Market extends Component {
                     isBulkSuccess={ this.props.isBulkSuccess }
                     isBulkCompleted={ this.props.isBulkProcessCompleted }
                     onTabChange={ this._onTabChange }
-                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( this.state.dataStatus, this.props.userAccountId ) }
+                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( this.state.dataStatus ) }
                     dataStatus={ this.state.dataStatus }
                   />
                 </div>
@@ -406,7 +408,6 @@ function mapStateToProps(state) {
 
   return {
     marketOperations: state.marketOperationsState.list,
-    currentOperationDetail: state.marketOperationsState.item,
     isLoading: state.marketOperationsState.isLoading,
     isSuccess: state.marketOperationsState.isSuccess,
     isFailure: state.marketOperationsState.isFailure,
@@ -427,7 +428,6 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
     fetchGetMarketOperations: marketOperationOperations.fetchGetMarketOperations,
-    fetchGetMarketOperation: marketOperationOperations.fetchGetMarketOperation,
     fetchAddMarketOperation: marketOperationOperations.fetchAddMarketOperation,
     fetchEditMarketOperation: marketOperationOperations.fetchEditMarketOperation,
     fetchDeleteMarketOperation: marketOperationOperations.fetchDeleteMarketOperation,
