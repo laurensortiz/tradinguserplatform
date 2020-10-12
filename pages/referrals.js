@@ -27,12 +27,6 @@ class Referrals extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
 
-    if (!_.isEqual(nextProps.selectedReferral, prevState.selectedReferral)) {
-      _.assignIn(updatedState, {
-        selectedReferral: nextProps.selectedReferral
-      })
-    }
-
 
     if (nextProps.isSuccess && !_.isEmpty(nextProps.message)) {
       let message = 'Referral ha sido Creado';
@@ -133,11 +127,18 @@ class Referrals extends Component {
   };
 
   _handleSelectEditReferral = (referralId) => {
+    const selectedReferral = _.find( this.props.referrals, { id: referralId } );
     this.setState( {
+      selectedReferral,
       isVisibleAddOrEditReferral: true,
     } )
+  };
 
-    this.props.fetchGetReferral(referralId)
+  _onSelectOperationType = ({ target }) => {
+    this.setState( {
+      associatedOperation: target.value,
+    } );
+
   };
 
   _handleExportHistoryReport = (accountId) => {
@@ -214,7 +215,6 @@ class Referrals extends Component {
 function mapStateToProps(state) {
   return {
     referrals: state.referralsState.list,
-    selectedReferral: state.referralsState.item,
     isLoading: state.referralsState.isLoading,
     isSuccess: state.referralsState.isSuccess,
     isCompleted: state.referralsState.isCompleted,
@@ -225,7 +225,6 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
     fetchGetReferrals: referralOperations.fetchGetReferrals,
-    fetchGetReferral: referralOperations.fetchGetReferral,
     fetchEditReferral: referralOperations.fetchEditReferral,
     fetchDeleteReferral: referralOperations.fetchDeleteReferral,
     fetchGetReferralReferrals: referralOperations.fetchGetReferralReferrals,

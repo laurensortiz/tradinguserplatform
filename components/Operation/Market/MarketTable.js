@@ -230,6 +230,7 @@ class MarketTable extends Component {
         <Col sm={12} style={ { textAlign: 'left' } }>
           <Radio.Group defaultValue={this.props.dataStatus} buttonStyle="solid" onChange={ this.props.onTabChange }>
             <Radio.Button value={1}>Activos</Radio.Button>
+            <Radio.Button value={3}>On Hold</Radio.Button>
             <Radio.Button value={4}>Vendidos</Radio.Button>
             <Radio.Button value={0}>Eliminados</Radio.Button>
           </Radio.Group>
@@ -623,7 +624,7 @@ class MarketTable extends Component {
           scroll={ { x: true } }
           className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ), 'is-menu-fold': this.state.isMenuFold } ) }
           onChange={ this.onTableChange }
-          title={ this.tableHeader }
+          title={ this.props.isAdmin ? this.tableHeader : null }
           footer={this._displayTableFooter}
         />
       </>

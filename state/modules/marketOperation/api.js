@@ -7,13 +7,6 @@ export const getMarketOperations = async (status, userAccountId) => {
   });
 };
 
-export const getMarketOperation = async marketOperationId => {
-  return fetch({
-    method: 'get',
-    url: `market-operation/${marketOperationId}`,
-  });
-};
-
 export const addMarketOperation = async (marketOperation) => {
 
   return fetch({

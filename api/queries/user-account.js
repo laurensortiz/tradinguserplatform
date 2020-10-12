@@ -53,7 +53,7 @@ const queries = {
             {
               model: Product,
               as: 'product',
-              attributes: [ 'name' ],
+              attributes: [ 'name', 'id' ],
             },
           ]
         },

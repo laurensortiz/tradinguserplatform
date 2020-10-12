@@ -15,6 +15,7 @@ import { AccountInformation, MovementsTable } from '../shared';
 import { marketOperationOperations } from "../../../state/modules/marketOperation";
 import { marketMovementOperations } from "../../../state/modules/marketMovement";
 
+const { TabPane } = Tabs;
 
 class Market extends Component {
   state = {
@@ -37,18 +38,24 @@ class Market extends Component {
     let updatedState = {};
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
 
+      let marketOperationUser;
+      if (!nextProps.isAdmin) {
+        marketOperationUser = _.filter( nextProps.marketOperations, [ 'userAccount.userId', nextProps.currentUserId ] )
+      } else {
+        marketOperationUser = nextProps.marketOperations
+      }
+
       _.assignIn( updatedState, {
-        marketOperations: nextProps.marketOperations
+        marketOperations: marketOperationUser
       } );
 
-    }
+      if (prevState.isDetailViewVisible) {
 
-    if (!_.isEqual( nextProps.currentOperationDetail, prevState.currentOperationDetail )) {
+        _.assignIn( updatedState, {
+          currentOperationDetail: _.find( nextProps.marketOperations, { id: prevState.currentOperationDetail.id } )
+        } )
 
-      _.assignIn( updatedState, {
-        currentOperationDetail: nextProps.currentOperationDetail
-      } );
-
+      }
     }
 
 
@@ -204,10 +211,13 @@ class Market extends Component {
   };
 
   _handleDetailUserOperation = (operationId) => {
+
+    const selectedOperation = _.find( this.props.marketOperations, { id: operationId } );
+
     this.setState( {
-      isDetailViewVisible: true
+      isDetailViewVisible: true,
+      currentOperationDetail: selectedOperation
     } );
-    this.props.fetchGetMarketOperation( operationId );
     this.props.fetchGetMarketMovements( operationId );
   };
 
@@ -268,7 +278,6 @@ class Market extends Component {
     this.props.fetchBulkUpdateMarketOperation( bulkData )
   }
 
-
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
       ? 'Agregar Operación de Bolsa'
@@ -283,22 +292,67 @@ class Market extends Component {
       <>
         <Row>
           <Col>
-            <MarketTable
-              marketOperations={ this.state.marketOperations }
-              isLoading={ this.props.isLoading }
-              onEdit={ this._onSelectEdit }
-              onActive={ this._onSelectActive }
-              onDelete={ this._handleDeleteUserOperation }
-              onDetail={ this._handleDetailUserOperation }
-              isAdmin={ true }
-              onFetchBulkUpdate={ this._handleBulkUpdate }
-              isBulkLoading={ this.props.isBulkLoading }
-              isBulkSuccess={ this.props.isBulkSuccess }
-              isBulkCompleted={ this.props.isBulkProcessCompleted }
-              onTabChange={ this._onTabChange }
-              onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( this.state.dataStatus ) }
-              dataStatus={ this.state.dataStatus }
-            />
+            { this.props.isAdmin ? (
+              <>
+                <div>
+                  <MarketTable
+                    marketOperations={ this.state.marketOperations }
+                    isLoading={ this.props.isLoading }
+                    onEdit={ this._onSelectEdit }
+                    onActive={ this._onSelectActive }
+                    onDelete={ this._handleDeleteUserOperation }
+                    onDetail={ this._handleDetailUserOperation }
+                    isAdmin={ true }
+                    onFetchBulkUpdate={ this._handleBulkUpdate }
+                    isBulkLoading={ this.props.isBulkLoading }
+                    isBulkSuccess={ this.props.isBulkSuccess }
+                    isBulkCompleted={ this.props.isBulkProcessCompleted }
+                    onTabChange={ this._onTabChange }
+                    onRequestUpdateTable={ () => this.props.fetchGetMarketOperations( this.state.dataStatus ) }
+                    dataStatus={ this.state.dataStatus }
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                { !_.isEmpty( this.state.marketOperations ) ? (
+                  <Row>
+                    <Col sm={ 12 }>
+                      <h2>Operaciones de Bolsa OTC</h2>
+                    </Col>
+                    <Col sm={ 12 } style={{display: 'none'}}>
+                      <Dropdown overlay={ (
+                        <Menu onClick={ ({ key }) => this.props.onRequestStandardOperationsReport( {
+                          id: this.props.userAccountId,
+                          status: key
+                        } ) }>
+                          <Menu.Item key={ null }>Todas las Operaciones</Menu.Item>
+                          <Menu.Item key={ 4 }>Operaciones Vendidas</Menu.Item>
+                        </Menu>
+                      ) }>
+                        <Button
+                          type="primary"
+                          data-testid="export-button"
+                          className="export-excel-cta"
+                          style={ { float: 'right' } }
+                        >
+                          <Icon type="file-excel"/> <span>Reporte Histórico</span>
+                        </Button>
+                      </Dropdown>
+                    </Col>
+                  </Row>
+                ) : null }
+                <MarketTable
+                  marketOperations={ this.state.marketOperations }
+                  isLoading={ this.props.isLoading }
+                  onEdit={ this._onSelectEdit }
+                  onDelete={ this._handleDeleteUserOperation }
+                  onDetail={ this._handleDetailUserOperation }
+                  isAdmin={ false }
+                />
+              </>
+
+            ) }
           </Col>
         </Row>
         <Drawer
@@ -354,7 +408,6 @@ function mapStateToProps(state) {
 
   return {
     marketOperations: state.marketOperationsState.list,
-    currentOperationDetail: state.marketOperationsState.item,
     isLoading: state.marketOperationsState.isLoading,
     isSuccess: state.marketOperationsState.isSuccess,
     isFailure: state.marketOperationsState.isFailure,
@@ -375,7 +428,6 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
     fetchGetMarketOperations: marketOperationOperations.fetchGetMarketOperations,
-    fetchGetMarketOperation: marketOperationOperations.fetchGetMarketOperation,
     fetchAddMarketOperation: marketOperationOperations.fetchAddMarketOperation,
     fetchEditMarketOperation: marketOperationOperations.fetchEditMarketOperation,
     fetchDeleteMarketOperation: marketOperationOperations.fetchDeleteMarketOperation,
