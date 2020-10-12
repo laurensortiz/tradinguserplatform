@@ -270,16 +270,18 @@ module.exports = {
           const accountValueEndOperation = Number( userAccount.accountValue ) + Number( endProfit );
           const accountGuaranteeEndOperation = Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct );
           const accountMarginUsedEndOperation = Number( userAccount.marginUsed ) - Number( marginUsed );
+          
+          console.log('[=====  CLOSE  =====>');
+          console.log(marginUsed);
+          console.log(guaranteeOperationProduct);
+          console.log(accountValueEndOperation);
+          console.log('<=====  /CLOSE  =====]');
 
           await userAccount.update( {
             accountValue: accountValueEndOperation, // Valor de la Cuenta
             guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
             marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
-            snapShotAccount: JSON.stringify( {
-              actionType: 'operationSale',
-              actionByUser: userId,
-              userAccount
-            } ),
+            snapShotAccount: JSON.stringify( userAccount ),
             updatedAt: new Date(),
 
           }, { transaction: t } );
@@ -395,11 +397,7 @@ module.exports = {
                       accountValue: accountValueEndOperation, // Valor de la Cuenta
                       guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
                       marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
-                        snapShotAccount: JSON.stringify( {
-                          actionType: 'operationSale',
-                          actionByUser: userId,
-                          userAccount
-                        } ),
+                      snapShotAccount: JSON.stringify( userAccount ),
                       updatedAt: new Date(),
 
                     }, { transaction: t } );
