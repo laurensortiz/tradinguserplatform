@@ -380,7 +380,7 @@ class Export extends PureComponent {
             body: [
               [ {
                 fontSize: 16,
-                text: 'Transferencias',
+                text: 'Transacciones',
                 bold: true,
                 alignment: 'center',
                 fillColor: '#10253f', color: '#fff',
