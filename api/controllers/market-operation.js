@@ -335,6 +335,9 @@ module.exports = {
                       {
                         model: UserAccount,
                         as: 'userAccount',
+                        attributes: {
+                          exclude: [ 'snapShotAccount' ],
+                        },
                         include: [
                           {
                             model: Account,
