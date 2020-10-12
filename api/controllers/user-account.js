@@ -115,7 +115,6 @@ module.exports = {
   },
 
   async update(req, res) {
-    const userId = _.get(req, 'user.id', 0)
     const userAccount = await UserAccount.findOne({
       where: {
         id: req.params.userAccountId,
@@ -140,11 +139,6 @@ module.exports = {
       maintenanceMargin: req.body.maintenanceMargin || userAccount.maintenanceMargin,
       commissionByReference: req.body.commissionByReference || userAccount.commissionByReference,
       status: req.body.status || userAccount.status,
-      snapShotAccount: JSON.stringify( {
-        actionType: 'update',
-        actionByUser: userId,
-        userAccount
-      } ),
       updatedAt: new Date(),
       marginUsed: req.body.marginUsed || userAccount.marginUsed,
 

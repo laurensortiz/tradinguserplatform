@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Descriptions, Tag } from 'antd';
+import moment from 'moment';
+import { Row, Col, Button, Descriptions, Tag } from 'antd';
 import _ from 'lodash';
 
-import { FormatCurrency, FormatStatus, IsOperationPositive } from '../../../common/utils';
+import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive } from '../../../common/utils';
 
 class AccountInformation extends PureComponent {
 
@@ -10,14 +11,27 @@ class AccountInformation extends PureComponent {
 
     const accountValue = _.get(this.props, 'currentOperation.userAccount.accountValue', '0.00');
     const balanceInitial = _.get(this.props, 'currentOperation.userAccount.balanceInitial', '0.00');
+    const maintenanceMargin = _.get(this.props, 'currentOperation.userAccount.maintenanceMargin', '0.00');
+
+    const accountName = _.get(this.props, 'currentOperation.userAccount.account.name', '');
+    const accountPercentage = _.get(this.props, 'currentOperation.userAccount.account.percentage', '0');
     const marginUsed = _.get(this.props, 'currentOperation.userAccount.marginUsed', '0.00');
 
     const guaranteeOperation = _.get(this.props, 'currentOperation.userAccount.guaranteeOperation', '0.00');
     const guaranteeCredits = _.get(this.props, 'currentOperation.userAccount.guaranteeCredits', '0.00');
     const commissionByReference = _.get(this.props, 'currentOperation.userAccount.commissionByReference', '0.00');
 
-    const accountName = _.get(this.props, 'currentOperation.userAccount.account.name', '');
-    const accountPercentage = _.get(this.props, 'currentOperation.userAccount.account.percentage', '0');
+
+    const productName = _.get(this.props, 'currentOperation.product.name', '');
+    const productCode = _.get(this.props, 'currentOperation.product.code', '');
+
+
+    const amount = _.get(this.props, 'currentOperation.amount', '0.00');
+    const initialAmount = _.get(this.props, 'currentOperation.initialAmount', '0.00');
+
+    const startDate = _.get(this.props, 'currentOperation.startDate', '');
+    const endDate = _.get(this.props, 'currentOperation.endDate', '');
+
 
     const status = _.get(this.props, 'currentOperation.status', 1);
     const {name : statusName, color : statusColor} = FormatStatus(status);
