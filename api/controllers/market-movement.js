@@ -8,10 +8,10 @@ module.exports = {
   async create(req, res) {
     try {
       const marketMovement = await MarketMovement.create({
-        gpInversion: req.body.gpInversion,
+        gpInversion: req.body.gpInversion === '' || req.body.gpInversion === 'NaN' ? 0 : req.body.gpInversion,
         marketOperationId: Number(req.body.marketOperationId),
-        gpAmount: req.body.gpAmount,
-        marketPrice: req.body.marketPrice || 0,
+        gpAmount: req.body.gpAmount === '' || req.body.gpAmount === 'NaN' ? 0 : req.body.gpAmount,
+        marketPrice: req.body.marketPrice === '' || req.body.marketPrice === 'NaN' ? 0 : req.body.marketPrice || 0,
         status: _.get(req, 'body.status', 1),
         createdAt: moment(req.body.createdAt).tz('America/New_York').format() || moment(new Date()).tz('America/New_York').format(),
         updatedAt: moment(new Date()).tz('America/New_York').format()
@@ -78,10 +78,11 @@ module.exports = {
       });
     }
 
+
     const updatedMarketMovement = await marketMovement.update({
-      gpInversion: req.body.gpInversion || marketMovement.gpInversion,
-      gpAmount: req.body.gpAmount || marketMovement.gpAmount,
-      marketPrice: req.body.marketPrice || marketMovement.marketPrice,
+      gpInversion: req.body.gpInversion === '' || req.body.gpInversion === 'NaN' ? 0 : req.body.gpInversion || marketMovement.gpInversion,
+      gpAmount: req.body.gpAmount === '' || req.body.gpAmount === 'NaN' ? 0 : req.body.gpAmount || marketMovement.gpAmount,
+      marketPrice: req.body.marketPrice === '' || req.body.marketPrice === 'NaN'  ? 0 : req.body.marketPrice || marketMovement.marketPrice,
       status: _.get(req, 'body.status', 1),
       createdAt: req.body.createdAt || marketMovement.createdAt,
       updatedAt: new Date(),
