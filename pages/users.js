@@ -108,6 +108,17 @@ class Users extends Component {
     this.props.fetchEditUser( user )
   };
 
+  _onSelectActive = (userId) => {
+    this.props.fetchEditUser( {
+      id: userId,
+      status: 1,
+    } );
+    this.setState( {
+      actionType: 'active'
+    } );
+
+  };
+
   _handleDeleteUser = (userId) => {
     this.setState( {
       actionType: 'delete'
@@ -181,6 +192,7 @@ class Users extends Component {
             <UsersTable
               users={ this.props.users }
               isLoading={ this.props.isLoading }
+              onActive={this._onSelectActive}
               onEdit={ this._onSelectEdit }
               onDelete={ this._handleDeleteUser }
               onDetail={ this._setCurrentUser }
