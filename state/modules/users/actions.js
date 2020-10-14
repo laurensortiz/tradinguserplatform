@@ -21,10 +21,10 @@ const requestUsers = () => {
   }
 };
 
-const requestUsersSuccess = (projects) => {
+const requestUsersSuccess = (users) => {
   return {
     type: types.USERS_SUCCESS,
-    payload: projects
+    payload: users
   }
 };
 
@@ -53,10 +53,10 @@ const requestAddUser = () => {
   }
 };
 
-const requestAddUserSuccess = (project) => {
+const requestAddUserSuccess = (user) => {
   return {
     type: types.USER_ADD_SUCCESS,
-    payload: project
+    payload: user
   }
 };
 
@@ -68,10 +68,10 @@ const requestAddUserError = (error) => {
 };
 
 // Edit
-export const fetchEditUser = (project) => async dispatch => {
+export const fetchEditUser = (user) => async dispatch => {
   dispatch( requestEditUser() );
   try {
-    const res = await editUser( project );
+    const res = await editUser( user );
     dispatch( requestEditUserSuccess( res.data ) )
   } catch (e) {
     dispatch( requestEditUserError( e.message ) )
@@ -85,10 +85,10 @@ const requestEditUser = () => {
   }
 };
 
-const requestEditUserSuccess = (project) => {
+const requestEditUserSuccess = (user) => {
   return {
     type: types.USER_EDIT_SUCCESS,
-    payload: project
+    payload: user
   }
 };
 
@@ -100,10 +100,10 @@ const requestEditUserError = (error) => {
 };
 
 // Delete
-export const fetchDeleteUser = (projectId) => async dispatch => {
+export const fetchDeleteUser = (userId) => async dispatch => {
   dispatch( requestDeleteUser() );
   try {
-    const res = await deleteUser( projectId );
+    const res = await deleteUser( userId );
     dispatch( requestDeleteUserSuccess( res.data ) )
   } catch (e) {
     dispatch( requestDeleteUserError( e.message ) )
@@ -117,10 +117,10 @@ const requestDeleteUser = () => {
   }
 };
 
-const requestDeleteUserSuccess = (project) => {
+const requestDeleteUserSuccess = (user) => {
   return {
     type: types.USER_DELETE_SUCCESS,
-    payload: project
+    payload: user
   }
 };
 

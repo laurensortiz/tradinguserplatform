@@ -127,7 +127,6 @@ class AddOrEditUserForm extends PureComponent {
 
         const saveState = _.omit( this.state, [ 'accounts' ] );
 
-
         if (_.isEqual( this.props.actionType, 'add' )) {
           this.props.onAddNew( saveState )
         } else {
@@ -136,10 +135,6 @@ class AddOrEditUserForm extends PureComponent {
       }
     } );
 
-  };
-
-  _getSelectOption = options => {
-    return _.map( options, ({ id, name }) => <Option key={ `${ id }-${ name }` }>{ name }</Option> )
   };
 
   _setStartDate = (date) => {
@@ -259,7 +254,7 @@ class AddOrEditUserForm extends PureComponent {
     const endDateInitValue = !_.isEmpty( this.state.endDate ) ? moment.parseZone( this.state.endDate ) : undefined;
     return (
       <div className="add-edit-user-modal">
-        { _.isEqual( this.props.actionType, 'add' ) ? (
+        { _.isEqual( this.props.actionType, 'add' ) || _.isEqual( this.props.actionType, 'edit' )? (
           <Radio.Group onChange={ this._handleSelectUserType } value={ isAdminUser ? 'admin' : 'regular' }
                        buttonStyle="solid" size="large">
             <Radio.Button value="regular"><Icon type="user-add"/> Cliente</Radio.Button>
@@ -401,7 +396,7 @@ class AddOrEditUserForm extends PureComponent {
 
           <Form.Item>
             <Button type="primary" htmlType="submit" size="large" className="login-form-button" disabled={ this.props.isLoading }>
-              { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }
+              { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Actualizar' }
             </Button>
           </Form.Item>
         </Form>
