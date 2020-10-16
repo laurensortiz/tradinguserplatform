@@ -566,6 +566,17 @@ module.exports = {
                   }
                   break;
 
+                /**
+                 * US Wheat Contract FT
+                 */
+                case 'us-Wheat-Contract':
+                  if (marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 25 * gpAmount ) * commoditiesTotal; // 1 FT = $25
+                  } else {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  break;
+
                 default:
 
               }
