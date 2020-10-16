@@ -61,6 +61,11 @@ const BULK_UPDATE_TYPES = [
     code: 'crude-CFDs-Barrels',
     name: 'CRUDE CFDs Barrels',
     scope: 'price',
+  },
+  {
+    code: 'us-Wheat-Contract',
+    name: 'US Wheat Contract',
+    scope: 'price',
   }
 ];
 
