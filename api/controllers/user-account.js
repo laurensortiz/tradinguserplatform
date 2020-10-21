@@ -120,6 +120,9 @@ module.exports = {
       where: {
         id: req.params.userAccountId,
       },
+      attributes: {
+        exclude: [ 'snapShotAccount' ],
+      },
     });
 
     if (!userAccount) {
