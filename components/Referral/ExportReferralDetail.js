@@ -57,7 +57,7 @@ const _formatData = (data) => {
       'Cantidad': account.quantity,
       'IB Colaborador': account.collaboratorIB,
       'Descripción del cliente referido': account.description,
-      'Creado por el Usuario': _.get(account, 'userAccount.user.username', ' - '),
+      'Creado por el Usuario': _.get(account, 'username', ' - '),
       'Fecha de Creación': FormatDate(account.createdAt),
       'Fecha de Actualización': FormatDate(account.updatedAt)
     }

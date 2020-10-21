@@ -21,6 +21,7 @@ module.exports = {
         personalIdDocument: req.body.personalIdDocument,
         collaboratorIB: req.body.collaboratorIB,
         description: req.body.description,
+        username: req.body.username,
         status: 1,
         userAccountId: req.body.userAccountId,
         createdAt: new Date(),

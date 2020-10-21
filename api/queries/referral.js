@@ -34,7 +34,7 @@ const queries = {
           model: UserAccount,
           as: 'userAccount',
           exclude: [ 'snapShotAccount' ],
-          attributes: ['id'],
+          attributes: ['userId'],
           include: [
             {
               model: User,

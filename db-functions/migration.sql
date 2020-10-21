@@ -1957,3 +1957,5 @@ ALTER TABLE public."UserAccountMovement" ADD "previousAccountValue" numeric(10,2
 /*
 * End Changes Oct 5, 2020
 */
+
+ALTER TABLE public."Referral" ADD "username" varchar(255) DEFAULT '';

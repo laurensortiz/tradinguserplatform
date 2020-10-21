@@ -485,11 +485,11 @@ class ReferralsTable extends Component {
       },
       {
         title: 'Creado por el Usuario',
-        dataIndex: 'userAccount.user.username',
-        key: 'userAccount.user.username',
-        sorter: (a, b) => Sort( a.userAccount.user.username, b.userAccount.user.username ),
+        dataIndex: 'username',
+        key: 'username',
+        sorter: (a, b) => Sort( a.username, b.username ),
         sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'userAccount.user.username' ),
+        ...this.getColumnSearchProps( 'username' ),
       },
       {
         title: 'Fecha de Creación',
