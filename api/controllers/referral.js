@@ -70,7 +70,7 @@ module.exports = {
 
   async getByUserAccountId(req, res) {
     const referral = await Referral.findAll(
-      req.params.userAccountId
+      referralQuery.listByUsername({ req})
     );
 
     if (!referral) {
@@ -86,6 +86,9 @@ module.exports = {
     const referral = await Referral.findOne({
       where: {
         id: req.params.referralId,
+      },
+      attributes: {
+        exclude: [ 'personalIdDocument' ],
       },
     });
 
@@ -107,7 +110,7 @@ module.exports = {
       hasBrokerGuarantee: req.body.hasBrokerGuarantee,
       brokerGuaranteeCode: req.body.brokerGuaranteeCode || referral.brokerGuaranteeCode,
       quantity: Number(req.body.quantity) || referral.quantity,
-      personalIdDocument: req.body.personalIdDocument || referral.personalIdDocument,
+      //personalIdDocument: req.body.personalIdDocument || referral.personalIdDocument,
       collaboratorIB: req.body.collaboratorIB || referral.collaboratorIB,
       description: req.body.description || referral.description,
       userAccountId: req.body.userAccountId || referral.userAccountId,
@@ -123,6 +126,9 @@ module.exports = {
     const referral = await Referral.findOne({
       where: {
         id: req.params.referralId,
+      },
+      attributes: {
+        exclude: [ 'personalIdDocument' ],
       },
     });
 

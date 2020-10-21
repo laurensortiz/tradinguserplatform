@@ -47,6 +47,18 @@ const queries = {
       order: [ [ 'id', 'DESC' ] ],
     };
   },
+  listByUsername: ({ req, UserAccount, User }) => {
+    const username = get(req, 'body.username', '');
+    return {
+      where: {
+        username,
+      },
+      attributes: {
+        exclude: [ 'personalIdDocument' ],
+      },
+      order: [ [ 'id', 'DESC' ] ],
+    };
+  },
 };
 
 export default queries;
