@@ -15,6 +15,14 @@ const ORM = new Sequelize(
   }
 );
 
+ORM.authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch(err => {
+    console.error('Unable to connect to the database:', err);
+  });
+
 db.User = ORM.import(path.join(__dirname, 'user.js'));
 db.Role = ORM.import(path.join(__dirname, 'role.js'));
 db.Account = ORM.import(path.join(__dirname, 'account.js'));
