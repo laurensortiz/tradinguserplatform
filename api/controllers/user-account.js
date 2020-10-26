@@ -10,10 +10,10 @@ import {
   Commodity,
   AssetClass,
   sequelize,
-  UserAccountMovement
+  UserAccountMovement,
 } from '../models';
 import { userAccountQuery } from '../queries';
-import { getLastMovement } from './market-movement';
+import Log from '../../common/log';
 
 import _ from 'lodash';
 
@@ -143,20 +143,18 @@ module.exports = {
       maintenanceMargin: req.body.maintenanceMargin || userAccount.maintenanceMargin,
       commissionByReference: req.body.commissionByReference || userAccount.commissionByReference,
       status: req.body.status || userAccount.status,
-      snapShotAccount: JSON.stringify( {
-        actionType: 'update',
-        actionByUser: userId,
-        userAccount
-      } ),
       updatedAt: new Date(),
       marginUsed: req.body.marginUsed || userAccount.marginUsed,
 
     });
 
+    Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  JSON.stringify(userAccount), snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
+
     return res.status(200).send(updatedUserAccount);
   },
 
   async delete(req, res) {
+    const userId = _.get(req, 'user.id', 0)
     const userAccount = await UserAccount.findOne({
       where: {
         id: req.params.userAccountId,
@@ -168,6 +166,9 @@ module.exports = {
         message: 'UserAccount Not Found',
       });
     }
+
+    Log({userId, action: 'update', type:'delete'})
+
 
     //await userAccount.destroy();
     await userAccount.update( {

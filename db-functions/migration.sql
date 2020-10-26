@@ -1959,3 +1959,24 @@ ALTER TABLE public."UserAccountMovement" ADD "previousAccountValue" numeric(10,2
 */
 
 ALTER TABLE public."Referral" ADD "username" varchar(255) DEFAULT '';
+
+/*
+* Start Changes Oct 26, 2020
+*/
+CREATE TABLE public."Log" (
+	id serial NOT NULL,
+	"userId" int4 NOT NULL,
+	"tableUpdated" varchar(255) NULL,
+	"action" varchar(255) NULL,
+	"type" varchar(255) NULL,
+	"userAccountId" int4 NOT NULL,
+	"snapShotBeforeAction" varchar NULL,
+	"snapShotAfterAction" varchar NULL,
+	"createdAt" timestamptz NOT NULL,
+	"updatedAt" timestamptz NOT NULL,
+	CONSTRAINT "logs_pkey" PRIMARY KEY (id)
+);
+
+/*
+* End Changes Oct 26, 2020
+*/

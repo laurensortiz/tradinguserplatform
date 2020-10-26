@@ -28,8 +28,6 @@ function getWhereConditions(req, sequelize, isAdmin) {
     }
   }
 
-
-
   return whereConditions
 }
 const queries = {
@@ -182,22 +180,25 @@ const queries = {
 
           ],
         },
-
         {
           model: Product,
           as: 'product',
+          attributes: ['name', 'id', 'code']
         },
         {
           model: Broker,
           as: 'broker',
+          attributes: ['name', 'id']
         },
         {
           model: Commodity,
           as: 'commodity',
+          attributes: ['name', 'id']
         },
         {
           model: AssetClass,
           as: 'assetClass',
+          attributes: ['name', 'id']
         },
       ],
       order: [ [ 'status', 'ASC' ], [ 'guaranteeOperationValueEndOperation', 'ASC' ] ],
@@ -236,18 +237,22 @@ const queries = {
         {
           model: Product,
           as: 'product',
+          attributes: ['name', 'id', 'code']
         },
         {
           model: Broker,
           as: 'broker',
+          attributes: ['name', 'id']
         },
         {
           model: Commodity,
           as: 'commodity',
+          attributes: ['name', 'id']
         },
         {
           model: AssetClass,
           as: 'assetClass',
+          attributes: ['name', 'id']
         },
       ],
       order: [ [ 'createdAt', 'DESC' ] ],
@@ -310,7 +315,7 @@ const queries = {
         {
           model: Broker,
           as: 'broker',
-          attributes: ['name']
+          attributes: ['name', 'id']
         },
         {
           model: Commodity,
