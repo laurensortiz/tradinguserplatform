@@ -3,11 +3,15 @@ import React from 'react';
 import connect from '../common/connect';
 import { Provider } from 'react-redux';
 
+
+import '../i18n';
+
 import NextNProgress from '../components/NextNProgress';
 
 class MyApp extends App {
   render () {
     const { Component, pageProps, reduxStore } = this.props;
+
     return (
       <Container>
         <NextNProgress />

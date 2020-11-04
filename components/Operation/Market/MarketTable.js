@@ -8,6 +8,8 @@ import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio, D
 import momentDurationFormat from 'moment-duration-format';
 import moment from "moment-timezone";
 import { extendMoment } from 'moment-range';
+import { withNamespaces } from 'react-i18next';
+
 import {
   Sort,
   FormatStatus,
@@ -614,6 +616,7 @@ class MarketTable extends Component {
 
     return (
       <>
+        <p>{`TITLE ${this.props.t('welcome')}`}</p>
         <Table
           rowSelection={ isBulkUpdateActive ? rowSelection : null }
           rowKey={ record => record.id }
@@ -643,4 +646,4 @@ const mapDispatchToProps = dispatch =>
     fetchGetAssetClasses: assetClassOperations.fetchGetAssetClasses
   }, dispatch );
 
-export default connect( mapStateToProps, mapDispatchToProps )( MarketTable );
+export default connect( mapStateToProps, mapDispatchToProps )( withNamespaces()(MarketTable) );
