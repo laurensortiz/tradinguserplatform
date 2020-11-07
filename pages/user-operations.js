@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { withNamespaces } from 'react-i18next';
 
-import { Row, Col, Button, message, Icon, notification } from 'antd';
+import { message, notification } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -10,7 +11,7 @@ import Document from '../components/Document';
 import { userAccountOperations } from "../state/modules/userAccounts";
 import { referralOperations } from "../state/modules/referrals";
 import UserAccount from '../components/UserOperations/UserAccount'
-import ExportHistoryReport from "../components/Operation/shared/ExportUserAccountHistory";
+import ExportHistoryReport from "../components/UserOperations/Operation/shared/ExportUserAccountHistory";
 
 class UserOperations extends Component {
   state = {
@@ -59,7 +60,7 @@ class UserOperations extends Component {
           duration: 3
         } )
       } else {
-        ExportHistoryReport( nextProps.historyReportData )
+        ExportHistoryReport( nextProps.historyReportData, nextProps.t )
         notification.success( {
           message: 'Descargando Reporte Historico de la cuenta',
           onClose: () => {
@@ -164,4 +165,4 @@ const mapDispatchToProps = dispatch =>
   }, dispatch );
 
 
-export default connect( mapStateToProps, mapDispatchToProps )( UserOperations );
+export default connect( mapStateToProps, mapDispatchToProps )(  withNamespaces()(UserOperations) );

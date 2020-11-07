@@ -10,6 +10,7 @@ class NavPublic extends PureComponent {
 
   render() {
     const {t} = this.props;
+
     return (
 
       <ul className="main-menu"
