@@ -27,7 +27,7 @@ class UserAccount extends PureComponent {
 
   _displayData = () => {
     if (_.isEmpty( this.props.accounts )) {
-      return <Empty description="No se encontraron cuentas asociadas a su nombre."/>
+      return <Empty description={this.props.t('noAccountDataFound')}/>
     } else {
       return _.map( this.props.accounts, account =>
         <UserAccountInformation

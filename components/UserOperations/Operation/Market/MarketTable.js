@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Highlighter from "react-highlight-words";
-import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio, DatePicker, Tooltip } from 'antd';
+import { Button, Icon, Input, Table, Tag, Row, Col, Select, DatePicker, Tooltip } from 'antd';
 import momentDurationFormat from 'moment-duration-format';
 import moment from "moment-timezone";
 import { extendMoment } from 'moment-range';
@@ -17,8 +17,6 @@ import {
   MarketBehaviorStatus,
   IsOperationPositive,
 } from '../../../../common/utils';
-
-import BulkUpdateSteps from './BulkUpdateSteps';
 
 import { assetClassOperations } from "../../../../state/modules/assetClasses";
 
@@ -86,7 +84,7 @@ class MarketTable extends Component {
           ref={ node => {
             this.searchInput = node;
           } }
-          placeholder={ `${this.props.t('btn search')}` }
+          placeholder={ this.props.t('btn search') }
           value={ selectedKeys[ 0 ] }
           onChange={ e => setSelectedKeys( e.target.value ? [ e.target.value ] : [] ) }
           onPressEnter={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
@@ -188,8 +186,6 @@ class MarketTable extends Component {
     this.props.onRequestUpdateTable()
   }
 
-
-
   _onSelectMenuFold = () => {
     this.setState({
       isMenuFold: !this.state.isMenuFold
@@ -201,7 +197,7 @@ class MarketTable extends Component {
       <div style={{textAlign: 'right'}}>
         <Row>
           <Col xs={12} style={ { textAlign: 'left' } }>
-            <Tooltip placement="top" title="Sincronizar Datos">
+            <Tooltip placement="top" title={this.props.t('btn syncData')}>
               <Button type="primary" onClick={ () => this.props.onRequestUpdateTable() }><Icon type="history" /></Button>
             </Tooltip>
           </Col>

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import moment from 'moment';
+import { withNamespaces } from 'react-i18next';
 import _ from 'lodash';
 
 import { Button, Col, Icon, Input, Popconfirm, Row, Table, Tag, Tooltip } from 'antd';
@@ -70,7 +70,7 @@ class InvestmentTable extends Component {
           ref={ node => {
             this.searchInput = node;
           } }
-          placeholder={ `Buscar` }
+          placeholder={ this.props.t('btn search') }
           value={ selectedKeys[ 0 ] }
           onChange={ e => setSelectedKeys( e.target.value ? [ e.target.value ] : [] ) }
           onPressEnter={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
@@ -83,10 +83,10 @@ class InvestmentTable extends Component {
           size="small"
           style={ { width: 90, marginRight: 8 } }
         >
-          Buscar
+          {this.props.t('btn search')}
         </Button>
         <Button onClick={ () => this.handleReset( clearFilters ) } size="small" style={ { width: 90 } }>
-          Limpiar
+          {this.props.t('btn clean')}
         </Button>
       </div>
     ),
@@ -143,7 +143,7 @@ class InvestmentTable extends Component {
     <div style={{textAlign: 'right'}}>
       <Row>
         <Col xs={12} style={ { textAlign: 'left' } }>
-          <Tooltip placement="top" title="Sincronizar Datos">
+          <Tooltip placement="top" title={this.props.t('btn syncData')}>
             <Button type="primary" onClick={ () => this.props.onRequestUpdateTable() }><Icon type="history" /></Button>
           </Tooltip>
         </Col>
@@ -158,36 +158,37 @@ class InvestmentTable extends Component {
   _displayTableFooter = () => (
     <Row>
       <Col>
-        <h3>Total de Operaciones: <Tag color="#1b1f21" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.props.investmentOperations)}</Tag></h3>
+        <h3>{`${this.props.t('totalOperations')}:`} <Tag color="#1b1f21" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.props.investmentOperations)}</Tag></h3>
       </Col>
     </Row>
   )
 
   render() {
+    const {t} = this.props;
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden';
-
+    const langStatus = status => t(`status ${status}`)
     const columns = [
       {
-        title: 'Estado',
+        title: t('status'),
         dataIndex: 'status',
         key: 'status',
         filters: [
-          { text: 'Activo', value: 1 },
-          { text: 'Cerrado', value: 2 },
-          { text: 'Hold', value: 3 },
-          { text: 'Vendido', value: 4 },
+          { text: `${t('status active')}`, value: 1 },
+          { text: `${t('status marketClose')}`, value: 2 },
+          { text: `${t('status hold')}`, value: 3 },
+          { text: `${t('status sold')}`, value: 4 },
         ],
         onFilter: (value, record) => record.status === value,
         filterMultiple: false,
         render: status => {
-          const {name, color} = FormatStatus(status, true);
-          return <Tag color={color} >{ name }</Tag>
+          const {name, color} = FormatStatus(status);
+          return <Tag color={color} >{ langStatus(name) }</Tag>
         },
         sorter: (a, b) => Sort( a.status, b.status ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Usuario',
+        title: t('username'),
         dataIndex: 'userAccount.user.username',
         key: 'userAccount.user.username',
         className: `${showHandleClass} `,
@@ -196,7 +197,7 @@ class InvestmentTable extends Component {
         ...this.getColumnSearchProps( 'userAccount.user.username' ),
       },
       {
-        title: 'Nombre',
+        title: t('firstName'),
         dataIndex: 'userAccount.user.firstName',
         key: 'userAccount.user.firstName',
         render: text => <span key={ text }>{ text }</span>,
@@ -205,7 +206,7 @@ class InvestmentTable extends Component {
         ...this.getColumnSearchProps( 'userAccount.user.firstName' ),
       },
       {
-        title: 'Apellido',
+        title: t('lastName'),
         dataIndex: 'userAccount.user.lastName',
         key: 'userAccount.user.lastName',
         render: text => <span key={ text }>{ text }</span>,
@@ -214,7 +215,7 @@ class InvestmentTable extends Component {
         ...this.getColumnSearchProps( 'userAccount.user.lastName' ),
       },
       {
-        title: 'Tipo de Operación',
+        title: t('operationType'),
         dataIndex: 'operationType',
         key: 'operationType',
         render: text => <span key={ text }>{ text }</span>,
@@ -222,7 +223,7 @@ class InvestmentTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Cuenta de Usuario',
+        title: t('userAccount'),
         dataIndex: 'userAccount',
         key: 'account',
         render: text => <span key={ text.accountId }>{ text.account.name }</span>,
@@ -230,7 +231,7 @@ class InvestmentTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Saldo Actual',
+        title: t('currentAmount'),
         dataIndex: 'amount',
         key: 'amount',
         render: amount => <span key={ amount }>{ DisplayTableAmount( amount ) }</span>,
@@ -238,7 +239,7 @@ class InvestmentTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Fecha de Inicio',
+        title: t('createdAt'),
         dataIndex: 'startDate',
         key: 'startDate',
         render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
@@ -247,7 +248,7 @@ class InvestmentTable extends Component {
 
       },
       {
-        title: 'Fecha de Salida',
+        title: t('endDate'),
         dataIndex: 'endDate',
         key: 'endDate',
         render: (date, row) => <span className="date">{ FormatDate(date) }</span>,
@@ -287,4 +288,4 @@ const mapDispatchToProps = dispatch =>
   bindActionCreators( {}, dispatch );
 
 
-export default connect( mapStateToProps, mapDispatchToProps )( InvestmentTable );
+export default connect( mapStateToProps, mapDispatchToProps )( withNamespaces()(InvestmentTable) );

@@ -10,8 +10,12 @@
   "btn referral": "Referir",
   "btn search": "Buscar",
   "btn clean": "LImpiar",
+  "btn syncData": "Sincronizar Datos",
+  "btn sendReference": "Enviar Referencia",
 
   "title marketOperations": "Operaciones de Bolsa OTC",
+  "title investmentOperations": "Operaciones Fondo de Interés",
+  "title operationInformation": "Información de la Operación",
 
   "sharedAccount": "Cuenta Conjunta",
   "allOperations": "Todas las Operaciones",
@@ -22,6 +26,12 @@
   "summary": "Cuadro de Resumen",
   "transactions": "Transacciones",
   "totalOperations": "Total de Operaciones",
+  "noAccountDataFound": "No se encontraron cuentas asociadas a su nombre.",
+  "requiredFieldMessage": "Por favor ingrese su",
+  "notValidMessage": "No es un valor válido",
+  "yes": "Sí",
+  "uploadFileIndicator": "Arrastre y suelte o seleccione un archivo",
+  "uploadFileFormatValid": "Los formatos de archivo aceptados son: .pdf, .jpg y .png",
 
   "fileName accountReport": "reporte_cuenta",
 
@@ -39,7 +49,7 @@
   "guaranteesCredits": "Garantías / Créditos",
   "marginUsed": "Margen utilizado",
   "commissionsByReference": "Comisiones por referencia",
-  "initialAmount": "Saldo Inicial",
+  "initialAmount": "Saldo inicial",
   "createdAt": "Fecha de apertura",
   "updatedAt": "Fecha de actualización",
   "debit": "Débito",
@@ -73,8 +83,28 @@
   "derivative": "Derivado",
   "currentAmount":"Saldo Actual",
   "maintenanceMargin": "Margen de Mantenimiento",
+  "operationType": "Tipo de Operación",
+  "userAccount": "Cuenta de Usuario",
+  "orderNumber": "Número de orden",
+  "lotage": "Lotage",
+  "balance": "Balance",
+  "movement": "Movimiento",
+  "commissionStatusHold": "Comisión por Estado HOLD",
+  "investmentAmount": "Monto de inversión",
 
   "username": "Usuario",
   "firstName": "Nombre",
-  "lastName": "Apellido"
+  "lastName": "Apellido",
+  "email": "Correo electrónico",
+  "phone": "Teléfono",
+  "country": "País",
+  "city": "Ciudad",
+  "occupation": "Ocupación",
+  "buyBrokerGuarantee": "Compra Broker Guarantee",
+  "brokerGuaranteeCode": "Código de Broker Guarantee",
+  "personalID": "Identificación",
+  "Collaborator": "Colaborador",
+  "referredClientDescription": "Descripción del cliente referido",
+
+  "selectFilterType": "Seleccione el tipo de filtro"
 }

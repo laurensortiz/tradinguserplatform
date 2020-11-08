@@ -3,9 +3,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withNamespaces } from 'react-i18next';
 
-import { Row, Col, Drawer, Tabs, notification } from 'antd';
+import { Row, Col, Drawer } from 'antd';
 import _ from 'lodash';
-import moment from 'moment';
 
 import MarketTable from './MarketTable';
 import MarketMovementDetail from './detail';

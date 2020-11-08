@@ -1,9 +1,10 @@
 import React, { PureComponent } from 'react';
-import { Input, Button, Form, Tag, Upload, Switch, Icon, Select } from 'antd';
+import { Input, Button, Form, Upload, Switch, Icon, Select } from 'antd';
 import _ from 'lodash';
 import { AmountFormatValidation } from '../../common/utils';
 import PhoneAreaCode from '../../common/utils/phone-area-codes.json';
 import Draggable from 'react-draggable';
+import { withNamespaces } from 'react-i18next';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -68,12 +69,6 @@ class ReferralForm extends PureComponent {
 
   };
 
-  _onUploadCompleted = (fileAttached) => {
-    this.setState( {
-      fileName: _.get( fileAttached, 'file.name', 'no-file-name' ),
-    } )
-  }
-
   _handleUpload = (option) => {
     const reader = new FileReader();
     reader.readAsDataURL( option.file );
@@ -101,6 +96,7 @@ class ReferralForm extends PureComponent {
   }
 
   render() {
+    const { t } = this.props;
     const { getFieldDecorator } = this.props.form;
     const { fileList } = this.state;
     const { user } = this.props.userAccount;
@@ -109,8 +105,9 @@ class ReferralForm extends PureComponent {
       initialValue: 'Costa Rica (+506)',
     } )(
       <Select style={ { width: 200 } } showSearch={ true } onChange={ this._handlePhoneAreaCode }>
-        { _.map( PhoneAreaCode.countries, ({ code, name }) => <Option key={ code }
-                                                                      value={ `${ name }, ${ code }` }>{ `${ name } (${ code })` }</Option> ) }
+        { _.map( PhoneAreaCode.countries, ({ code, name }) =>
+          <Option key={ code } value={ `${ name }, ${ code }` }>{ `${ name } (${ code })` }</Option> )
+        }
       </Select>,
     );
     return (
@@ -129,93 +126,93 @@ class ReferralForm extends PureComponent {
             <h2>{ user.username || '' } <span className="status-online"></span></h2>
           </div>
           <Form onSubmit={ this._handleSubmit } className="auth-form">
-            <Form.Item label="Nombre">
+            <Form.Item label={ t( 'firstName' ) }>
               { getFieldDecorator( 'firstName', {
                 rules: [
                   {
                     required: true,
-                    message: 'Por favor ingrese su Nombre',
+                    message: `${ t( 'requiredFieldMessage' ) } ${ t( 'firstName' ) }`,
                   },
                 ],
-              } )( <Input placeholder="Nombre" name="firstName" onChange={ this._handleChange }/> ) }
+              } )( <Input placeholder={ t( 'firstName' ) } name="firstName" onChange={ this._handleChange }/> ) }
             </Form.Item>
-            <Form.Item label="Apellido">
+            <Form.Item label={ t( 'lastName' ) }>
               { getFieldDecorator( 'lastName', {
                 rules: [
                   {
                     required: true,
-                    message: 'Por favor ingrese su Apellido',
+                    message: `${ t( 'requiredFieldMessage' ) } ${ t( 'lastName' ) }`,
                   },
                 ],
-              } )( <Input placeholder="Apellido" name="lastName" onChange={ this._handleChange }/> ) }
+              } )( <Input placeholder={ t( 'lastName' ) } name="lastName" onChange={ this._handleChange }/> ) }
             </Form.Item>
             <Form.Item label="Email">
               { getFieldDecorator( 'email', {
                 rules: [ {
-                  type: 'email', message: 'No es un Email válido',
+                  type: 'email', message: t( 'notValidMessage' ),
                 }, {
                   required: true,
-                  message: 'Por favor ingrese el Email',
+                  message: `${ t( 'requiredFieldMessage' ) } ${ t( 'firstName' ) }`,
                 } ],
               } )(
                 <Input name="email" type="email" onChange={ this._handleChange }
                        prefix={ <Icon type="mail" style={ { color: 'rgba(0,0,0,.25)' } }/> } placeholder="Email"/>
               ) }
             </Form.Item>
-            <Form.Item label="Teléfono">
+            <Form.Item label={ t( 'phone' ) }>
               { getFieldDecorator( 'phoneNumber', {
                 rules: [
                   {
                     required: true,
-                    message: 'Por favor ingrese su Teléfono',
+                    message: `${ t( 'requiredFieldMessage' ) } ${ t( 'phone' ) }`,
                   },
                 ],
-              } )( <Input style={ { width: '100%' } } addonBefore={ prefixSelector } placeholder="Teléfono"
+              } )( <Input style={ { width: '100%' } } addonBefore={ prefixSelector } placeholder={ t( 'phone' ) }
                           name="phoneNumber" onChange={ this._handleChange }/> ) }
             </Form.Item>
-            <Form.Item label="País">
+            <Form.Item label={ t( 'country' ) }>
               { getFieldDecorator( 'country', {
                 rules: [
                   {
                     required: true,
-                    message: 'Por favor ingrese su País',
+                    message: `${ t( 'requiredFieldMessage' ) } ${ t( 'country' ) }`,
                   },
                 ],
-              } )( <Input placeholder="País" name="country" onChange={ this._handleChange }/> ) }
+              } )( <Input placeholder={ t( 'country' ) } name="country" onChange={ this._handleChange }/> ) }
             </Form.Item>
-            <Form.Item label="Ciudad">
+            <Form.Item label={ t( 'city' ) }>
               { getFieldDecorator( 'city', {
                 rules: [
                   {
                     required: true,
-                    message: 'Por favor ingrese su Ciudad',
+                    message: `${ t( 'requiredFieldMessage' ) } ${ t( 'city' ) }`,
                   },
                 ],
-              } )( <Input placeholder="Ciudad" name="city" onChange={ this._handleChange }/> ) }
+              } )( <Input placeholder={ t( 'city' ) } name="city" onChange={ this._handleChange }/> ) }
             </Form.Item>
-            <Form.Item label="Ocupación">
+            <Form.Item label={ t( 'occupation' ) }>
               { getFieldDecorator( 'jobTitle', {
                 rules: [
                   {
                     required: true,
-                    message: 'Por favor ingrese su Ocupación',
+                    message: `${ t( 'requiredFieldMessage' ) } ${ t( 'occupation' ) }`,
                   },
                 ],
-              } )( <Input placeholder="Ocupación" name="jobTitle" onChange={ this._handleChange }/> ) }
+              } )( <Input placeholder={ t( 'occupation' ) } name="jobTitle" onChange={ this._handleChange }/> ) }
             </Form.Item>
-            <Form.Item label="Monto de Inversión $">
+            <Form.Item label={ `${ t( 'investmentAmount' ) } $` }>
               { getFieldDecorator( 'initialAmount', {
-                rules: [ { required: false, message: 'Por favor ingrese el Monto de Inversión' },
+                rules: [ { required: false, message: `${ t( 'requiredFieldMessage' ) } ${ t( 'investmentAmount' ) }` },
                   {
                     validator: (rule, amount) => AmountFormatValidation( rule, amount )
                   }
                 ],
               } )(
                 <Input name="initialAmount" onChange={ this._handleChange }
-                       placeholder="Monto de Inversión $"/>
+                       placeholder={ `${ t( 'investmentAmount' ) } $` }/>
               ) }
             </Form.Item>
-            <Form.Item label="Compra Broker Guarantee">
+            <Form.Item label={ t( 'buyBrokerGuarantee' ) }>
               { getFieldDecorator( 'hasBrokerGuarantee', { valuePropName: 'checked' } )(
                 <Switch name="hasBrokerGuarantee" onChange={ (e) => this._handleChange( {
                   target: {
@@ -223,31 +220,31 @@ class ReferralForm extends PureComponent {
                     checked: e,
                     name: 'hasBrokerGuarantee'
                   }
-                } ) } checkedChildren="Sí" unCheckedChildren="No"/>
+                } ) } checkedChildren={ t( 'yes' ) } unCheckedChildren="No"/>
               ) }
             </Form.Item>
-            <Form.Item label="Código de Broker Guarantee">
+            <Form.Item label={ t( 'brokerGuaranteeCode' ) }>
               { getFieldDecorator( 'brokerGuaranteeCode', {
                 rules: [
                   {
                     required: false,
-                    message: 'Por favor ingrese su Código de Broker Guarantee',
+                    message: `${ t( 'requiredFieldMessage' ) } ${ t( 'brokerGuaranteeCode' ) }`
                   },
                 ],
-              } )( <Input placeholder="Código de Broker Guarantee" name="brokerGuaranteeCode"
+              } )( <Input placeholder={ t( 'brokerGuaranteeCode' ) } name="brokerGuaranteeCode"
                           onChange={ this._handleChange }/> ) }
             </Form.Item>
-            <Form.Item label="Cantidad">
+            <Form.Item label={ t( 'quantity' ) }>
               { getFieldDecorator( 'quantity', {
                 rules: [
                   {
                     required: false,
-                    message: 'Por favor ingrese su Cantidad',
+                    message: `${ t( 'requiredFieldMessage' ) } ${ t( 'quantity' ) }`
                   },
                 ],
-              } )( <Input placeholder="Cantidad" name="quantity" onChange={ this._handleChange }/> ) }
+              } )( <Input placeholder={ t( 'quantity' ) } name="quantity" onChange={ this._handleChange }/> ) }
             </Form.Item>
-            <Form.Item label="Identificación">
+            <Form.Item label={ t( 'personalID' ) }>
               { getFieldDecorator( 'personalIdDocument', {
                 valuePropName: 'files',
                 getValueFromEvent: this.normFile,
@@ -269,31 +266,30 @@ class ReferralForm extends PureComponent {
                   <p className="ant-upload-drag-icon">
                     <Icon type="inbox"/>
                   </p>
-                  <p className="ant-upload-text">Arrastre y suelte o seleccione un archivo</p>
-                  <p className="ant-upload-hint">Los formatos de archivo aceptados son: .pdf, .jpg y
-                    .png</p>
+                  <p className="ant-upload-text">{ t( 'uploadFileIndicator' ) }</p>
+                  <p className="ant-upload-hint">{ t( 'uploadFileFormatValid' ) }</p>
                 </Upload.Dragger>,
               ) }
             </Form.Item>
-            <Form.Item label="IB Colaborador">
+            <Form.Item label={ `IB ${t('Collaborator')}` }>
               { getFieldDecorator( 'collaboratorIB', {
                 rules: [
                   {
                     required: false,
-                    message: 'Por favor ingrese su IB Colaborador',
+                    message:  `${ t( 'requiredFieldMessage' ) } IB ${t('Collaborator')} }`
                   },
                 ],
-              } )( <Input placeholder="IB Colaborador" name="collaboratorIB" onChange={ this._handleChange }/> ) }
+              } )( <Input placeholder={ `IB ${t('Collaborator')}` } name="collaboratorIB" onChange={ this._handleChange }/> ) }
             </Form.Item>
-            <Form.Item label="Descripción del cliente referido">
+            <Form.Item label={ t('referredClientDescription') }>
               { getFieldDecorator( 'description', {
                 rules: [
                   {
                     required: true,
-                    message: 'Por favor ingrese su Descripción del cliente referido',
+                    message: `${ t( 'requiredFieldMessage' ) } ${t('referredClientDescription')} }`,
                   },
                 ],
-              } )( <TextArea placeholder="Descripción del cliente referido" name="description"
+              } )( <TextArea placeholder={t('referredClientDescription')} name="description"
                              onChange={ this._handleChange }/> ) }
             </Form.Item>
             <Form.Item>
@@ -310,4 +306,4 @@ class ReferralForm extends PureComponent {
   }
 }
 
-export default ( Form.create( { name: 'register' } )( ReferralForm ) );
+export default ( Form.create( { name: 'register' } )( withNamespaces()( ReferralForm ) ) );

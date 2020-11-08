@@ -1,14 +1,14 @@
 import React, { PureComponent } from 'react';
-import moment from 'moment';
-import { Row, Col, Button, Descriptions, Tag } from 'antd';
+import { Row, Col, Descriptions, Tag } from 'antd';
+import { withNamespaces } from 'react-i18next';
 import _ from 'lodash';
 
-import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive, AssetClassColor } from '../../../../common/utils';
+import { FormatCurrency, FormatStatusLang, FormatDate, IsOperationPositive, AssetClassColor } from '../../../../common/utils';
 
 class Detail extends PureComponent {
 
   render() {
-
+    const {t} = this.props;
     const productName = _.get(this.props, 'currentOperation.product.name', '');
     const productCode = _.get(this.props, 'currentOperation.product.code', '');
 
@@ -29,31 +29,32 @@ class Detail extends PureComponent {
     const assetClassName = _.get(this.props, 'currentOperation.assetClass.name', '');
 
     const status = _.get(this.props, 'currentOperation.status', 1);
-    const {name : statusName, color : statusColor} = FormatStatus(status);
+    const {name : statusName, color : statusColor} = FormatStatusLang(status);
+    const langStatus = status => t(`status ${status}`)
 
     return (
       <>
         <Row>
           <Col>
-            <Descriptions title="Información de la Operación:">
-              <Descriptions.Item label="Producto"><Tag className="product-tag">{productName}</Tag></Descriptions.Item>
-              <Descriptions.Item label="Fecha de Apertura">{FormatDate(startDate)} </Descriptions.Item>
-              <Descriptions.Item label="Inversión">{FormatCurrency.format(initialAmount)} </Descriptions.Item>
-              <Descriptions.Item label="Saldo Actual"><span className={IsOperationPositive(amount, initialAmount) ? 'positive txt-highlight' : 'negative txt-highlight'}>{FormatCurrency.format(amount)}</span> </Descriptions.Item>
+            <Descriptions title={t('title operationInformation')}>
+              <Descriptions.Item label={t('product')}><Tag className="product-tag">{productName}</Tag></Descriptions.Item>
+              <Descriptions.Item label={ t('createdAt') }>{FormatDate(startDate)} </Descriptions.Item>
+              <Descriptions.Item label={ t('investment') }>{FormatCurrency.format(initialAmount)} </Descriptions.Item>
+              <Descriptions.Item label={ t('currentAmount') }><span className={IsOperationPositive(amount, initialAmount) ? 'positive txt-highlight' : 'negative txt-highlight'}>{FormatCurrency.format(amount)}</span> </Descriptions.Item>
               <Descriptions.Item label="L/S">{longShort}</Descriptions.Item>
-              <Descriptions.Item label="Margen de Mantenimiento">{FormatCurrency.format(maintenanceMargin)}</Descriptions.Item>
-              <Descriptions.Item label="Lotage">{commoditiesTotal} <Tag>{commodityName}</Tag> <Tag className={`asset-class ${AssetClassColor(assetClassName).name}`}>{assetClassName}</Tag></Descriptions.Item>
-              <Descriptions.Item label="Precio de Compra">{FormatCurrency.format(buyPrice)}</Descriptions.Item>
-              <Descriptions.Item label="Taking Profit">{FormatCurrency.format(takingProfit)}</Descriptions.Item>
-              <Descriptions.Item label="S/L">{stopLost}%</Descriptions.Item>
-              <Descriptions.Item label="Número de Orden">{orderId}</Descriptions.Item>
-              <Descriptions.Item label="Broker">{brokerName}</Descriptions.Item>
+              <Descriptions.Item label={ t('maintenanceMargin') }>{FormatCurrency.format(maintenanceMargin)}</Descriptions.Item>
+              <Descriptions.Item label={ t('lotage') }>{commoditiesTotal} <Tag>{commodityName}</Tag> <Tag className={`asset-class ${AssetClassColor(assetClassName).name}`}>{assetClassName}</Tag></Descriptions.Item>
+              <Descriptions.Item label={t('buyPrice')}>{FormatCurrency.format(buyPrice)}</Descriptions.Item>
+              <Descriptions.Item label={t('takingProfit')}>{FormatCurrency.format(takingProfit)}</Descriptions.Item>
+              <Descriptions.Item label={t('stopLost')}>{stopLost}%</Descriptions.Item>
+              <Descriptions.Item label={t('orderNumber')}>{orderId}</Descriptions.Item>
+              <Descriptions.Item label={ t('broker') }>{brokerName}</Descriptions.Item>
 
 
-              <Descriptions.Item label="Estado">
-                <Tag color={statusColor} >{ statusName }</Tag>
+              <Descriptions.Item label={ t('status') }>
+                <Tag color={statusColor} >{ langStatus(statusName) }</Tag>
               </Descriptions.Item>
-              <Descriptions.Item label="Comisión por Estado HOLD">{FormatCurrency.format(holdStatusCommission)}</Descriptions.Item>
+              <Descriptions.Item label={ t('commissionStatusHold') }>{FormatCurrency.format(holdStatusCommission)}</Descriptions.Item>
 
             </Descriptions>
           </Col>
@@ -96,4 +97,4 @@ Detail.defaultProps = {
 
 
 
-export default Detail;
+export default withNamespaces()(Detail);

@@ -5,6 +5,7 @@ import { Button, Table, Form, Popconfirm, Icon, Select, DatePicker, Row, Col } f
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
 import moment from 'moment-timezone';
+import { withNamespaces } from 'react-i18next';
 
 import momentDurationFormat from 'moment-duration-format';
 import { extendMoment } from 'moment-range';
@@ -12,7 +13,7 @@ import { extendMoment } from 'moment-range';
 import { EditableProvider, EditableConsumer } from './editable/editableContext';
 import EditableCell from './editable/editableCell';
 
-import { FormatCurrency, FormatDate, GetGP, getGPInversion } from '../../../../common/utils';
+import { FormatCurrency, FormatDate } from '../../../../common/utils';
 
 import { investmentMovementOperations } from '../../../../state/modules/investmentMovement';
 import { Export } from "./index";
@@ -107,56 +108,6 @@ class MovementsTable extends Component {
 
   /************************/
 
-  cancel = () => {
-    this.setState( {
-      editingKey: '',
-      tempDataSource: [],
-      currentAmount: this.props.currentOperation.amount
-    } );
-  };
-
-  save = (key) => {
-    this.props.form.validateFields( (error, row) => {
-      if (error) {
-        return;
-      }
-
-      const newMovement = _.first( this.state.tempDataSource );
-      const newData = {
-        ...newMovement,
-        ...row,
-        id: key
-      };
-
-      if (_.isString( key )) {
-        this.props.onAdd( newData )
-      } else {
-        this.props.onEdit( newData )
-      }
-    } );
-  };
-
-  edit = (key) => {
-    this.setState( { editingKey: key } );
-  };
-
-
-  _onChangeInput = (value) => {
-    if (!_.isNumber( this.state.editingKey )) {
-      const currentAmount = getGPInversion( this.props.currentOperation.amount || 0, _.isNumber( value ) ? parseFloat( value ).toFixed( 2 ) : 0 );
-      const tempData = _.first( this.state.tempDataSource );
-
-      const tempDataSourceUpdate = {
-        ...tempData,
-        gpInversion: parseFloat( currentAmount ).toFixed( 2 )
-      };
-
-      this.setState( {
-        tempDataSource: [ tempDataSourceUpdate ]
-      } )
-    }
-
-  };
   /*
   * RANGE
   *
@@ -433,12 +384,6 @@ class MovementsTable extends Component {
       <div>
         <Row style={ { marginBottom: 30, marginTop: 30 } }>
           <Col sm={ 12 }>
-            { this.props.isAdmin ? (
-              <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                      disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn }>
-                <Icon type="dollar"/> Agregar Movimiento
-              </Button>
-            ) : null }
           </Col>
           <Col sm={ 12 }>
             <Export
@@ -490,4 +435,4 @@ const mapDispatchToProps = dispatch =>
     resetAfterRequest: investmentMovementOperations.resetAfterRequest,
   }, dispatch );
 
-export default connect( mapStateToProps, mapDispatchToProps )( Form.create()( MovementsTable ) );
+export default connect( mapStateToProps, mapDispatchToProps )( Form.create()( withNamespaces()(MovementsTable) ) );

@@ -10,8 +10,12 @@
   "btn referral": "Referral",
   "btn search": "Procurar",
   "btn clean": "Limpiar",
+  "btn syncData": "Sincronizar Dados",
+  "btn sendReference": "Enviar Referência",
 
   "title marketOperations": "Operações do mercado de ações OTC",
+  "title investmentOperations": "Operações de fundos de juros",
+  "title operationInformation": "Informação de Transação",
 
   "sharedAccount": "Shared Account",
   "allOperations": "Todas as Operações",
@@ -22,6 +26,12 @@
   "summary": "Caixa de Resumo",
   "transactions": "Transações",
   "totalOperations": "Operações Totais",
+  "noAccountDataFound": "Nenhuma conta associada ao seu nome foi encontrada.",
+  "requiredFieldMessage": "Por favor insira o seu",
+  "notValidMessage": "Não é um valor válido",
+  "yes": "Sim",
+  "uploadFileIndicator": "Arraste e solte ou selecione um arquivo",
+  "uploadFileFormatValid": "Os formatos de arquivo aceitos são: .pdf, .jpg y .png",
 
   "fileName accountReport": "relatorio_conta",
 
@@ -73,8 +83,29 @@
   "derivative": "Derivado",
   "currentAmount":"Saldo Atual",
   "maintenanceMargin": "Margem de Manutenção",
+  "operationType": "Tipo de operação",
+  "userAccount": "Conta de Usuario",
+  "orderNumber": "Numero de ordem",
+  "lotage": "Lotage",
+  "balance": "Balançado",
+  "movement": "Movimento",
+  "commissionStatusHold": "Comissão por estado HOLD",
+  "investmentAmount": "Valor do investimento",
 
   "username": "Username",
   "firstName": "Nome",
-  "lastName": "Sobrenome"
+  "lastName": "Sobrenome",
+  "email": "Email",
+  "phone": "Telefone",
+  "country": "País",
+  "city": "Cidade",
+  "occupation": "Ocupação",
+  "buyBrokerGuarantee": "Compra Broker Guarantee",
+  "brokerGuaranteeCode": "Código de Broker Guarantee",
+  "personalID": "EU IRIA",
+  "Collaborator": "Colaborador",
+  "referredClientDescription": "Descrição do cliente referido",
+
+  "selectFilterType": "Selecione o tipo de filtro"
+
 }

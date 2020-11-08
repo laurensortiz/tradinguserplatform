@@ -10,8 +10,12 @@
   "btn referral": "Referral",
   "btn search": "Search",
   "btn clean": "Clean",
+  "btn syncData": "Sync Data",
+  "btn sendReference": "Send Reference",
 
   "title marketOperations": "Market Operations OTC",
+  "title investmentOperations": "Investment Operations",
+  "title operationInformation": "Operation Information",
 
   "sharedAccount": "Shared Account",
   "allOperations": "All Operations",
@@ -22,6 +26,12 @@
   "summary": "Summary",
   "transactions": "Transactions",
   "totalOperations": "Total Operations",
+  "noAccountDataFound": "No accounts associated with your name were found.",
+  "requiredFieldMessage": "Please enter your",
+  "notValidMessage": "Not valid value",
+  "yes": "Yes",
+  "uploadFileIndicator": "Drag and drop or select a file",
+  "uploadFileFormatValid": "Accepted file formats are: .pdf, .jpg y .png",
 
   "fileName accountReport": "account_report",
 
@@ -73,8 +83,29 @@
   "derivative": "Derivative",
   "currentAmount":"Current Amount",
   "maintenanceMargin": "Maintenance Margin",
+  "operationType": "Operation Type",
+  "userAccount": "User Account",
+  "orderNumber": "Order Number",
+  "lotage": "Lotage",
+  "balance": "Balance",
+  "movement": "Movement",
+  "commissionStatusHold": "Commission by HOLD status",
+  "investmentAmount": "Investment amount",
 
   "username": "Username",
   "firstName": "Name",
-  "lastName": "Last Name"
+  "lastName": "Last Name",
+  "email": "Email",
+  "phone": "Phone Number",
+  "country": "Country",
+  "city": "City",
+  "occupation": "Occupation",
+  "buyBrokerGuarantee": "Buy Broker Guarantee",
+  "brokerGuaranteeCode": "Broker Guarantee Code",
+  "personalID": "Personal ID",
+  "Collaborator": "Collaborator",
+  "referredClientDescription": "Referred client description",
+
+  "selectFilterType": "Select filter type"
+
 }
