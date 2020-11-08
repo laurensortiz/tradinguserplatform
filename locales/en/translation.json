@@ -17,6 +17,11 @@
   "title investmentOperations": "Investment Operations",
   "title operationInformation": "Operation Information",
 
+  "actionMessage creatingTicket": "Creating Referral Ticket",
+  "actionMessage ticketCreated": "Referral Ticket has been created",
+  "actionMessage noOperationFound": "No Trades found for this account",
+  "actionMessage downloadingHistoryReport": "Downloading Account History Report",
+
   "sharedAccount": "Shared Account",
   "allOperations": "All Operations",
   "soldOperations": "Sold Operations",

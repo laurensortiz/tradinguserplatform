@@ -30,12 +30,12 @@ class UserOperations extends Component {
     let updatedState = {};
 
     if (!nextProps.isReferralCompleted && nextProps.isReferralLoading) {
-      message.loading('Creando Referral Ticket', [60])
+      message.loading(nextProps.t('actionMessage creatingTicket'), [60])
     }
 
     if (nextProps.isReferralCompleted && nextProps.isReferralSuccess) {
       message.destroy()
-      message.success('Referral Ticket Creado ', [3], () => {
+      message.success(nextProps.t('actionMessage ticketCreated'), [3], () => {
         nextProps.resetReferralAfterRequest();
 
       })
@@ -53,7 +53,7 @@ class UserOperations extends Component {
     if (nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
       if (_.isEmpty( nextProps.historyReportData )) {
         notification.info( {
-          message: 'No se encontraron Operaciones para esta cuenta',
+          message: nextProps.t('actionMessage noOperationFound'),
           onClose: () => {
             nextProps.resetAfterRequest();
           },
@@ -62,7 +62,7 @@ class UserOperations extends Component {
       } else {
         ExportHistoryReport( nextProps.historyReportData, nextProps.t )
         notification.success( {
-          message: 'Descargando Reporte Historico de la cuenta',
+          message: nextProps.t('actionMessage downloadingHistoryReport'),
           onClose: () => {
             nextProps.resetAfterRequest();
           },

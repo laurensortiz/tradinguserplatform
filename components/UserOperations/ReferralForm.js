@@ -296,7 +296,7 @@ class ReferralForm extends PureComponent {
               <Button style={ { width: '100%' } } type="primary" htmlType="submit" size="large"
                       className="login-form-button"
                       disabled={ this.props.isReferralLoading } loading={ this.props.isReferralLoading }>
-                Enviar Referencia
+                {t('btn sendReference')}
               </Button>
             </Form.Item>
           </Form>

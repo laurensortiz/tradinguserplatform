@@ -37,7 +37,6 @@ class AccountInformation extends PureComponent {
     const accountValue = _.get( this.props, 'userAccount.accountValue', '0.00' );
     const accountType = _.get( this.props, 'userAccount.account.associatedOperation', 1 );
     const balanceInitial = _.get( this.props, 'userAccount.balanceInitial', '0.00' );
-    const maintenanceMargin = _.get( this.props, 'userAccount.maintenanceMargin', '0.00' );
 
     const accountName = _.get( this.props, 'userAccount.account.name', '' );
     const accountPercentage = _.get( this.props, 'userAccount.account.percentage', '0' );

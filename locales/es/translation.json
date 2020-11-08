@@ -17,6 +17,11 @@
   "title investmentOperations": "Operaciones Fondo de Interés",
   "title operationInformation": "Información de la Operación",
 
+  "actionMessage creatingTicket": "Creando Referral Ticket",
+  "actionMessage ticketCreated": "Referral Ticket Creado",
+  "actionMessage noOperationFound": "No se encontraron Operaciones para esta cuenta",
+  "actionMessage downloadingHistoryReport": "Descargando Reporte Histórico de la cuenta",
+
   "sharedAccount": "Cuenta Conjunta",
   "allOperations": "Todas las Operaciones",
   "soldOperations": "Operaciones Vendidas",
