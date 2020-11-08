@@ -605,6 +605,79 @@ module.exports = {
               }, { transaction: t } );
 
             } ) )
+
+          case 'create-operation':
+            result = await Promise.all( operationsIds.map( async (operationID) => {
+
+
+                const userAccount = await UserAccount.findOne( {
+                  where: {
+                    id: marketOperation.userAccountId,
+                  },
+                },{ transaction: t } );
+
+                if (!userAccount) {
+                  throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
+                }
+
+                const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
+                const { percentage } = marketOperation.userAccount.account;
+
+                const maintenanceMarginAmount = (
+                  assetClassId === 8 ||
+                  assetClassId === 7 ||
+                  assetClassId === 5 ||
+                  assetClassId === 4 ||
+                  assetClassId === 3 ||
+                  assetClassId === 1
+                ) ? 0 : Number( maintenanceMargin );
+
+                const profit = ToFixNumber(Number( amount ) - Number( initialAmount ));
+                const isProfitPositive = Math.sign( profit ) >= 0;
+                const commission = isProfitPositive ? ToFixNumber(Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) )) : 0
+                const hold = isProfitPositive ? Number( holdStatusCommission ) : 0;
+                const endProfit = ToFixNumber(profit - commission - hold);
+
+                // Close Calculations
+                const marginUsed = ToFixNumber(( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100);
+                const guaranteeOperationProduct = ToFixNumber(Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit);
+                const accountValueEndOperation = ToFixNumber(Number( userAccount.accountValue ) + Number( endProfit ));
+                const accountGuaranteeEndOperation = ToFixNumber(Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct ));
+                const accountMarginUsedEndOperation = ToFixNumber(Number( userAccount.marginUsed ) - Number( marginUsed ));
+
+                try {
+                  const updatedUserAccount = await userAccount.update( {
+                    accountValue: accountValueEndOperation, // Valor de la Cuenta
+                    guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
+                    marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
+                    updatedAt: new Date(),
+
+                  }, { transaction: t } );
+
+                  Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'sellOperation', snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
+
+
+                  const updatedMarketOperation = await marketOperation.update( {
+                    profitBrut: profit,
+                    profitNet: endProfit,
+                    accountValueEndOperation: accountValueEndOperation,
+                    guaranteeValueEndOperation: accountGuaranteeEndOperation,
+                    commissionValueEndOperation: commission,
+                    guaranteeOperationValueEndOperation: guaranteeOperationProduct,
+                    holdStatusCommissionEndOperation: hold,
+                    endDate: moment( new Date() ).tz( 'America/New_York' ).format(),
+                    status: 4
+
+                  }, { transaction: t } )
+
+                  Log({userId, userAccountId: userAccount.id, tableUpdated: 'marketOperation', action: 'update', type:'sellOperation', snapShotBeforeAction:  JSON.stringify(marketOperation), snapShotAfterAction:  JSON.stringify(updatedMarketOperation)})
+
+
+                } catch (e) {
+                  throw new Error( `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${ e }` )
+                }
+              } )
+            )
         }
         return res.status( 200 ).send( result );
       } );

@@ -616,7 +616,6 @@ class MarketTable extends Component {
 
     return (
       <>
-        <p>{`TITLE ${this.props.t('welcome')}`}</p>
         <Table
           rowSelection={ isBulkUpdateActive ? rowSelection : null }
           rowKey={ record => record.id }

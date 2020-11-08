@@ -6,6 +6,7 @@ import Highlighter from 'react-highlight-words';
 import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu, Row, Col, Tag, Tooltip } from 'antd';
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
 import classNames from "classnames";
+import BulkUpdateSteps from "./BulkUpdateSteps";
 
 
 class UserAccountsTable extends Component {
@@ -16,7 +17,9 @@ class UserAccountsTable extends Component {
     isMenuFold: true,
     currentDataSource: [],
     selectedRowKeys: [],
-    isBulkActive: false,
+    selectedBulkUpdateType: 'report',
+    bulkUpdateValue: null,
+    isBulkUpdateActive: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -26,14 +29,6 @@ class UserAccountsTable extends Component {
       }
     }
     return null;
-  }
-
-  _handleExportHistory = (accountSelected) => {
-    this.props.onReqeuestExportHistoryReport( accountSelected )
-  }
-
-  onSelectOperation = (selectedRowKeys) => {
-    this.setState( { selectedRowKeys } )
   }
 
   onSelectAllOperation = (isSelected) => {
@@ -190,22 +185,45 @@ class UserAccountsTable extends Component {
     this.props.onRequestUpdateTable();
   }
 
+  _handleExportHistory = (accountSelected) => {
+    this.props.onReqeuestExportHistoryReport( accountSelected )
+  }
+
+  onSelectOperation = (selectedRowKeys) => {
+    this.setState( { selectedRowKeys } )
+  }
+
   _onSelectBulkReport = () => {
     const exportData = _.isEmpty(this.state.currentDataSource) ? this.state.userAccounts : this.state.currentDataSource;
     const selectedAccounts = _.filter(exportData, account => _.includes(this.state.selectedRowKeys, account.id))
 
     this.props.onReqeuestExportAccountReport( selectedAccounts );
   }
+
+
+  _handleClickBulkUpdate = bulkOperation => {
+    if (bulkOperation.updateType === 'report') {
+      this._onSelectBulkReport()
+    } else {
+      this.props.onFetchBulkUpdate( {
+        ...bulkOperation,
+        operationsIds: this.state.selectedRowKeys
+      } )
+    }
+
+  }
   onCancelBulkProcess = () => {
     this.setState( {
-      isBulkActive: false,
+      isBulkUpdateActive: false,
       selectedRowKeys: [],
+      selectedBulkUpdateType: 'report',
       bulkUpdateValue: null,
     } )
     this.props.onRequestUpdateTable()
   }
 
   _displayTableHeader = () => (
+    <>
     <Row>
       <Col sm={ 12 }>
         <Radio.Group defaultValue={ 1 } buttonStyle="solid" onChange={ this.props.onTabChange }>
@@ -213,29 +231,58 @@ class UserAccountsTable extends Component {
           <Radio.Button value={ 0 }>Eliminados</Radio.Button>
         </Radio.Group>
       </Col>
-      <Col sm={ 12 } className={this.props.isOperationStandard ? '' : 'hidden'}>
-        { this.state.isBulkActive ? (
-          <>
-            <Button onClick={ this.onCancelBulkProcess } type="danger" style={ { float: 'right' } }><Icon
-              type="close-circle"/><span>Cancelar</span></Button>
-            <Button
-              type="primary"
-              data-testid="export-button"
-              className="export-excel-cta"
-              style={ { float: 'right', marginRight: 20 } }
-              onClick={ this._onSelectBulkReport }
-            >
-              <Icon type="file-excel"/> <span>Descargar Reporte</span>
-            </Button>
-          </>
-        ) : (
-          <Button size="large" type="secondary" style={ { float: 'right' } } onClick={ () => this.setState( { isBulkActive: true } ) }>
-            <Icon type="interaction"/> <span>Generar Reporte de Cuentas</span></Button>
-
-        ) }
-
+      <Col sm={12} style={ { textAlign: 'right' } }>
+        <Button type="secondary" className={classNames({'hidden': this.state.isBulkUpdateActive})}
+                onClick={ () => this.setState( { isBulkUpdateActive: true } ) } size="large">
+          <Icon type="retweet"/> Actualización Masiva
+        </Button>
+        <Button type="danger" className={classNames({'hidden': !this.state.isBulkUpdateActive})}
+                onClick={ this.onCancelBulkProcess } >
+          <Icon type="close-circle"/> Cerrar
+        </Button>
       </Col>
+
+      {/*<Col sm={ 12 } className={this.props.isOperationStandard ? '' : 'hidden'}>*/}
+      {/*  { this.state.isBulkActive ? (*/}
+      {/*    <>*/}
+      {/*      <Button onClick={ this.onCancelBulkProcess } type="danger" style={ { float: 'right' } }><Icon*/}
+      {/*        type="close-circle"/><span>Cancelar</span></Button>*/}
+      {/*      <Button*/}
+      {/*        type="primary"*/}
+      {/*        data-testid="export-button"*/}
+      {/*        className="export-excel-cta"*/}
+      {/*        style={ { float: 'right', marginRight: 20 } }*/}
+      {/*        onClick={ this._onSelectBulkReport }*/}
+      {/*      >*/}
+      {/*        <Icon type="file-excel"/> <span>Descargar Reporte</span>*/}
+      {/*      </Button>*/}
+      {/*    </>*/}
+      {/*  ) : (*/}
+      {/*    <Button size="large" type="secondary" style={ { float: 'right' } } onClick={ () => this.setState( { isBulkActive: true } ) }>*/}
+      {/*      <Icon type="interaction"/> <span>Generar Reporte de Cuentas</span></Button>*/}
+
+      {/*  ) }*/}
+
+      {/*</Col>*/}
     </Row>
+      {
+        this.state.isBulkUpdateActive ? (
+          <Row>
+            <Col>
+              <div className="multiple-actualization-module">
+                <BulkUpdateSteps
+                  selectedElements={ this.state.selectedRowKeys.length }
+                  onClickUpdate={ this._handleClickBulkUpdate }
+                  isProcessComplete={ this.props.isBulkCompleted }
+                  isBulkLoading={ this.props.isBulkLoading }
+                  isBulkSuccess={ this.props.isBulkSuccess }
+                />
+              </div>
+            </Col>
+          </Row>
+        ) : null
+      }
+    </>
   );
 
   _onSelectMenuFold = () => {
@@ -273,7 +320,7 @@ class UserAccountsTable extends Component {
 
     const {
       selectedRowKeys,
-      isBulkActive,
+      isBulkUpdateActive,
     } = this.state;
 
     const columns = [
@@ -381,7 +428,7 @@ class UserAccountsTable extends Component {
 
     return (
       <Table
-        rowSelection={ isBulkActive ? rowSelection : null }
+        rowSelection={ isBulkUpdateActive ? rowSelection : null }
         rowKey={ record => record.id }
         columns={ columns }
         dataSource={ this.state.userAccounts }

@@ -272,7 +272,7 @@ class MovementsTable extends Component {
         className: isMarketMovement ? 'show' : 'hidden'
       },
       {
-        title: 'Fecha de movimiento',
+        title: this.props.t('date'),
         dataIndex: 'createdAt',
         key: 'createdAt',
         render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),

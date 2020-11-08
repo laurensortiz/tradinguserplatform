@@ -2,7 +2,7 @@
   "mainMenu market": "Market",
   "mainMenu economicCalendar": "Economic Calendar",
   "mainMenu operations": "Operations",
-  "mainMenu logout": "LogOut",
+  "mainMenu logout": "Logout",
 
   "btn exportAccountInformation": "Export Account Information",
   "btn historicalOperationOTCReport": "Historical OTC Operation Report",

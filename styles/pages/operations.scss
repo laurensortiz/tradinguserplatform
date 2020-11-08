@@ -16,3 +16,19 @@
 .negative-amount .ant-input-group-addon {
   background-color: $negative;
 }
+
+.is-bulk-operation-form {
+  display: flex;
+  flex-wrap: wrap;
+  .ant-row {
+    flex: 1 0 100%;
+    margin: 5px;
+
+    @media screen and (min-width: $md) {
+      flex: 1 0 40%;
+    }
+
+  }
+
+
+}

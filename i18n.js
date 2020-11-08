@@ -2,7 +2,6 @@ import i18n from "i18next";
 import detector from "i18next-browser-languagedetector";
 import backend from "i18next-xhr-backend";
 
-
 import { reactI18nextModule } from "react-i18next";
 
 import translationEN from './locales/en/translation.json';
