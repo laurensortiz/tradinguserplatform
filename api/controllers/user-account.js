@@ -99,19 +99,6 @@ module.exports = {
 
     return res.status(200).send(userAccount);
 
-    // const accountIds = _.map(userAccount, ({id}) => id);
-    // const marketOperations = await MarketOperation.findAll(
-    //   marketOperationQuery.getByUser({ accountIds, UserAccount, User, Account, Product, Broker, Commodity })
-    // );
-    //
-    // const investmentOperations = await InvestmentOperation.findAll(
-    //   investmentOperationQuery.getByUser({ accountIds, UserAccount, User, Account })
-    // );
-    //
-    // return res.status(200).send({
-    //   marketOperations,
-    //   investmentOperations,
-    // });
   },
 
   async update(req, res) {

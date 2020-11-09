@@ -131,11 +131,13 @@ class UserAccountsTable extends Component {
       <Icon type="filter" theme="filled" style={ { color: filtered ? '#1890ff' : undefined } }/>
     ),
     onFilter: (value, record) => {
+      if (_.get( record, dataIndex )) {
+        return _.get( record, dataIndex )
+          .toString()
+          .toLowerCase()
+          .includes( value.toLowerCase() )
+      }
 
-      return _.get( record, dataIndex )
-        .toString()
-        .toLowerCase()
-        .includes( value.toLowerCase() )
     },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
@@ -200,7 +202,6 @@ class UserAccountsTable extends Component {
     this.props.onReqeuestExportAccountReport( selectedAccounts );
   }
 
-
   _handleClickBulkUpdate = bulkOperation => {
     if (bulkOperation.updateType === 'report') {
       this._onSelectBulkReport()
@@ -241,29 +242,6 @@ class UserAccountsTable extends Component {
           <Icon type="close-circle"/> Cerrar
         </Button>
       </Col>
-
-      {/*<Col sm={ 12 } className={this.props.isOperationStandard ? '' : 'hidden'}>*/}
-      {/*  { this.state.isBulkActive ? (*/}
-      {/*    <>*/}
-      {/*      <Button onClick={ this.onCancelBulkProcess } type="danger" style={ { float: 'right' } }><Icon*/}
-      {/*        type="close-circle"/><span>Cancelar</span></Button>*/}
-      {/*      <Button*/}
-      {/*        type="primary"*/}
-      {/*        data-testid="export-button"*/}
-      {/*        className="export-excel-cta"*/}
-      {/*        style={ { float: 'right', marginRight: 20 } }*/}
-      {/*        onClick={ this._onSelectBulkReport }*/}
-      {/*      >*/}
-      {/*        <Icon type="file-excel"/> <span>Descargar Reporte</span>*/}
-      {/*      </Button>*/}
-      {/*    </>*/}
-      {/*  ) : (*/}
-      {/*    <Button size="large" type="secondary" style={ { float: 'right' } } onClick={ () => this.setState( { isBulkActive: true } ) }>*/}
-      {/*      <Icon type="interaction"/> <span>Generar Reporte de Cuentas</span></Button>*/}
-
-      {/*  ) }*/}
-
-      {/*</Col>*/}
     </Row>
       {
         this.state.isBulkUpdateActive ? (
@@ -358,7 +336,6 @@ class UserAccountsTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'account.name' ),
       },
-
       {
         title: 'Comisión',
         dataIndex: 'account',
@@ -410,6 +387,15 @@ class UserAccountsTable extends Component {
         sorter: (a, b) => Sort( a.guaranteeCredits, b.guaranteeCredits ),
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'guaranteeCredits' ),
+      },
+      {
+        title: 'Corredor',
+        dataIndex: 'broker.name',
+        key: 'broker.name',
+        render: text => <span key={ text }>{ text }</span>,
+        sorter: (a, b) => a.broker && b.broker ? Sort( a.broker.name, b.broker.name ) : null,
+        sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'broker.name' ),
       },
       {
         title: this._handleActionTitle,
