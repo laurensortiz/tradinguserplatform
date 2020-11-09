@@ -616,8 +616,8 @@ module.exports = {
                 /**
                  * COOPER FT | OP
                  */
-                case 'cooper-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                case 'cooper-EQ':
+                  if (marketOperation.assetClassId === 5) {
                     calculatedValue = ( 12.5 * gpAmount ) * commoditiesTotal;
                   } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
@@ -627,8 +627,8 @@ module.exports = {
                 /**
                  * CBO FT | OP
                  */
-                case 'cbo-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                case 'cbo-EQ':
+                  if (marketOperation.assetClassId === 5) {
                     calculatedValue = ( 10 * gpAmount ) * commoditiesTotal;
                   } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
@@ -638,8 +638,8 @@ module.exports = {
                 /**
                  * ORANGE FT | OP
                  */
-                case 'orange-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                case 'orange-EQ':
+                  if (marketOperation.assetClassId === 5) {
                     calculatedValue = ( 1.50 * gpAmount ) * commoditiesTotal;
                   } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
