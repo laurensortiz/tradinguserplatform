@@ -5,18 +5,11 @@ import classNames from 'classnames';
 const { Step } = Steps;
 const { Option } = Select;
 
-import AddOperationForm from './AddOrEditMarketForm';
-
 const BULK_UPDATE_TYPES = [
   {
     code: 'status',
     name: 'Estado',
     scope: 'status'
-  },
-  {
-    code: 'create-operation',
-    name: 'Colocaciones',
-    scope: 'create-operation'
   },
   {
     code: 'stocks',
@@ -160,10 +153,6 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
                    onChange={ _handlePriceInputChange }
                    placeholder="MP"/>
           </>
-        )
-      case 'create-operation':
-        return (
-          <AddOperationForm actionType="add" isBulkOperation={true} onRequestSaveOperation={_onRequestSaveOperation} />
         )
       default:
         return <div className="no-visible" style={ { width: 150, height: 40 } } />

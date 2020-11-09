@@ -20,41 +20,68 @@ import ToFixNumber from '../../common/to-fix-number';
 
 module.exports = {
   async create(req, res) {
+    const userId = _.get(req, 'user.id', 0)
     try {
+      await ORM.transaction( async (t) => {
 
-      const marketOperation = await MarketOperation.create( {
-        longShort: req.body.longShort,
-        userAccountId: _.get( req, 'body.userAccount.id', 0 ),
-        brokerId: _.get( req, 'body.broker.id', 0 ),
-        productId: _.get( req, 'body.product.id', 0 ),
-        commoditiesTotal: req.body.commoditiesTotal,
-        commodityId: _.get( req, 'body.commodity.id', 1 ),
-        assetClassId: _.get( req, 'body.assetClass.id', 1 ),
-        buyPrice: req.body.buyPrice,
-        takingProfit: req.body.takingProfit,
-        stopLost: req.body.stopLost,
-        maintenanceMargin: req.body.maintenanceMargin,
-        amount: req.body.amount,
-        initialAmount: req.body.amount,
-        holdStatusCommission: req.body.holdStatusCommission || 0,
-        orderId: req.body.orderId || 0,
-        status: _.get( req, 'body.status', 1 ),
-        createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
-        updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
-      } );
+        const userAccount = await UserAccount.findOne( {
+          where: {
+            id: _.get( req, 'body.userAccount.id', 0 ),
+          },
+        },{ transaction: t } );
+
+        if (!userAccount) {
+          throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
+        }
+
+        const snapShotAccount = JSON.stringify(userAccount);
+
+        const marketOperation = await MarketOperation.create( {
+          longShort: req.body.longShort,
+          userAccountId: _.get( req, 'body.userAccount.id', 0 ),
+          brokerId: _.get( req, 'body.broker.id', 0 ),
+          productId: _.get( req, 'body.product.id', 0 ),
+          commoditiesTotal: req.body.commoditiesTotal,
+          commodityId: _.get( req, 'body.commodity.id', 1 ),
+          assetClassId: _.get( req, 'body.assetClass.id', 1 ),
+          buyPrice: req.body.buyPrice,
+          takingProfit: req.body.takingProfit,
+          stopLost: req.body.stopLost,
+          maintenanceMargin: req.body.maintenanceMargin,
+          amount: req.body.amount,
+          initialAmount: req.body.amount,
+          holdStatusCommission: req.body.holdStatusCommission || 0,
+          orderId: req.body.orderId || 0,
+          status: _.get( req, 'body.status', 1 ),
+          createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
+          updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+        }, { transaction: t }  );
 
 
-      await MarketMovement.create( {
-        gpInversion: req.body.amount,
-        marketOperationId: Number( marketOperation.id ),
-        gpAmount: 0,
-        marketPrice: 0,
-        status: _.get( req, 'body.status', 1 ),
-        createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
-        updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
-      } );
+        await MarketMovement.create( {
+          gpInversion: req.body.amount,
+          marketOperationId: Number( marketOperation.id ),
+          gpAmount: 0,
+          marketPrice: 0,
+          status: _.get( req, 'body.status', 1 ),
+          createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
+          updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
+        }, { transaction: t }  );
 
-      return res.status( 200 ).send( marketOperation );
+        const marginOperation = ToFixNumber((Number(req.body.maintenanceMargin) + Number(req.body.amount)) * 0.1)
+        const guaranteeOperation = ToFixNumber(Number(userAccount.guaranteeOperation) - (Number(req.body.maintenanceMargin) + Number(req.body.amount) + marginOperation));
+
+        const updatedUserAccount = await userAccount.update( {
+          guaranteeOperation,
+          marginUsed: ToFixNumber(Number(userAccount.marginUsed || 0) + marginOperation), // Margen Utilizado 10%
+          updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+
+        }, { transaction: t } );
+
+        Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'createOperation',snapShotBeforeAction:snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
+
+        return res.status( 200 ).send( marketOperation );
+      })
     } catch (err) {
       return res.status( 500 ).send( err );
     }
@@ -607,12 +634,12 @@ module.exports = {
             } ) )
 
           case 'create-operation':
-            result = await Promise.all( operationsIds.map( async (operationID) => {
-
+            const accountIds = operationsIds;
+            result = await Promise.all( accountIds.map( async (accountId) => {
 
                 const userAccount = await UserAccount.findOne( {
                   where: {
-                    id: marketOperation.userAccountId,
+                    id: accountId,
                   },
                 },{ transaction: t } );
 
@@ -620,57 +647,52 @@ module.exports = {
                   throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
                 }
 
-                const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
-                const { percentage } = marketOperation.userAccount.account;
-
-                const maintenanceMarginAmount = (
-                  assetClassId === 8 ||
-                  assetClassId === 7 ||
-                  assetClassId === 5 ||
-                  assetClassId === 4 ||
-                  assetClassId === 3 ||
-                  assetClassId === 1
-                ) ? 0 : Number( maintenanceMargin );
-
-                const profit = ToFixNumber(Number( amount ) - Number( initialAmount ));
-                const isProfitPositive = Math.sign( profit ) >= 0;
-                const commission = isProfitPositive ? ToFixNumber(Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) )) : 0
-                const hold = isProfitPositive ? Number( holdStatusCommission ) : 0;
-                const endProfit = ToFixNumber(profit - commission - hold);
-
-                // Close Calculations
-                const marginUsed = ToFixNumber(( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100);
-                const guaranteeOperationProduct = ToFixNumber(Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit);
-                const accountValueEndOperation = ToFixNumber(Number( userAccount.accountValue ) + Number( endProfit ));
-                const accountGuaranteeEndOperation = ToFixNumber(Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct ));
-                const accountMarginUsedEndOperation = ToFixNumber(Number( userAccount.marginUsed ) - Number( marginUsed ));
-
+                const snapShotAccount = JSON.stringify(userAccount);
                 try {
+
+                  const marketOperation = await MarketOperation.create( {
+                    longShort: updateValue.longShort,
+                    userAccountId: userAccount.id,
+                    brokerId: _.get( updateValue, 'broker.id', 0 ),
+                    productId: _.get( updateValue, 'product.id', 0 ),
+                    commoditiesTotal: updateValue.commoditiesTotal,
+                    commodityId: _.get( updateValue, 'commodity.id', 1 ),
+                    assetClassId: _.get( updateValue, 'assetClass.id', 1 ),
+                    buyPrice: updateValue.buyPrice,
+                    takingProfit: updateValue.takingProfit,
+                    stopLost: updateValue.stopLost,
+                    maintenanceMargin: updateValue.maintenanceMargin,
+                    amount: updateValue.amount,
+                    initialAmount: updateValue.amount,
+                    holdStatusCommission: updateValue.holdStatusCommission || 0,
+                    orderId: updateValue.orderId || 0,
+                    status: _.get( updateValue, 'status', 1 ),
+                    createdAt: moment( updateValue.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
+                    updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+                  },{ transaction: t } );
+
+
+                  await MarketMovement.create( {
+                    gpInversion: updateValue.amount,
+                    marketOperationId: Number( marketOperation.id ),
+                    gpAmount: 0,
+                    marketPrice: 0,
+                    status: _.get( updateValue, 'status', 1 ),
+                    createdAt: moment( updateValue.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
+                    updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
+                  },{ transaction: t } );
+
+                  const marginOperation = ToFixNumber((Number(updateValue.maintenanceMargin) + Number(updateValue.amount)) * 0.1)
+                  const guaranteeOperation = ToFixNumber(Number(userAccount.guaranteeOperation) - (Number(updateValue.maintenanceMargin) + Number(updateValue.amount) + marginOperation));
+
                   const updatedUserAccount = await userAccount.update( {
-                    accountValue: accountValueEndOperation, // Valor de la Cuenta
-                    guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
-                    marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
-                    updatedAt: new Date(),
+                    guaranteeOperation,
+                    marginUsed: ToFixNumber(Number(userAccount.marginUsed || 0) + marginOperation), // Margen Utilizado 10%
+                    updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
 
                   }, { transaction: t } );
 
-                  Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'sellOperation', snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
-
-
-                  const updatedMarketOperation = await marketOperation.update( {
-                    profitBrut: profit,
-                    profitNet: endProfit,
-                    accountValueEndOperation: accountValueEndOperation,
-                    guaranteeValueEndOperation: accountGuaranteeEndOperation,
-                    commissionValueEndOperation: commission,
-                    guaranteeOperationValueEndOperation: guaranteeOperationProduct,
-                    holdStatusCommissionEndOperation: hold,
-                    endDate: moment( new Date() ).tz( 'America/New_York' ).format(),
-                    status: 4
-
-                  }, { transaction: t } )
-
-                  Log({userId, userAccountId: userAccount.id, tableUpdated: 'marketOperation', action: 'update', type:'sellOperation', snapShotBeforeAction:  JSON.stringify(marketOperation), snapShotAfterAction:  JSON.stringify(updatedMarketOperation)})
+                  Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'createOperation',snapShotBeforeAction:snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
 
 
                 } catch (e) {
