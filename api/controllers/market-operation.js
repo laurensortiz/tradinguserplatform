@@ -53,7 +53,7 @@ module.exports = {
           holdStatusCommission: req.body.holdStatusCommission || 0,
           orderId: req.body.orderId || 0,
           status: _.get( req, 'body.status', 1 ),
-          createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
+          createdAt: moment( req.body.createdAt || new Date() ).tz( 'America/New_York' ).format() ,
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
         }, { transaction: t }  );
 
@@ -64,7 +64,7 @@ module.exports = {
           gpAmount: 0,
           marketPrice: 0,
           status: _.get( req, 'body.status', 1 ),
-          createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
+          createdAt: moment( req.body.createdAt || new Date() ).tz( 'America/New_York' ).format() ,
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
         }, { transaction: t }  );
 
@@ -667,7 +667,7 @@ module.exports = {
                     holdStatusCommission: updateValue.holdStatusCommission || 0,
                     orderId: updateValue.orderId || 0,
                     status: _.get( updateValue, 'status', 1 ),
-                    createdAt: moment( updateValue.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
+                    createdAt: moment( updateValue.createdAt || new Date() ).tz( 'America/New_York' ).format(),
                     updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
                   },{ transaction: t } );
 
@@ -678,7 +678,7 @@ module.exports = {
                     gpAmount: 0,
                     marketPrice: 0,
                     status: _.get( updateValue, 'status', 1 ),
-                    createdAt: moment( updateValue.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
+                    createdAt: moment( updateValue.createdAt || new Date() ).tz( 'America/New_York' ).format() ,
                     updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
                   },{ transaction: t } );
 
