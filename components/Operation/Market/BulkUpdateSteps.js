@@ -67,17 +67,17 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'cooper-EQ',
+    code: 'cooper-FT-OP',
     name: 'Cooper',
     scope: 'price',
   },
   {
-    code: 'cbo-EQ',
+    code: 'cbo-FT-OP',
     name: 'CBO',
     scope: 'price',
   },
   {
-    code: 'orange-EQ',
+    code: 'orange-FT-OP',
     name: 'Orange',
     scope: 'price',
   }
