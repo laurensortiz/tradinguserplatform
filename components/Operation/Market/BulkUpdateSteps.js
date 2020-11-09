@@ -65,6 +65,21 @@ const BULK_UPDATE_TYPES = [
     code: 'us-Wheat-Contract',
     name: 'US Wheat Contract',
     scope: 'price',
+  },
+  {
+    code: 'cooper-FT-OP',
+    name: 'Cooper',
+    scope: 'price',
+  },
+  {
+    code: 'cbo-FT-OP',
+    name: 'CBO',
+    scope: 'price',
+  },
+  {
+    code: 'orange-FT-OP',
+    name: 'Orange',
+    scope: 'price',
   }
 ];
 

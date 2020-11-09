@@ -613,7 +613,41 @@ module.exports = {
                   }
                   break;
 
+                /**
+                 * COOPER FT | OP
+                 */
+                case 'cooper-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 12.5 * gpAmount ) * commoditiesTotal;
+                  } else {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  break;
+
+                /**
+                 * CBO FT | OP
+                 */
+                case 'cbo-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 10 * gpAmount ) * commoditiesTotal;
+                  } else {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  break;
+
+                /**
+                 * ORANGE FT | OP
+                 */
+                case 'orange-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 1.50 * gpAmount ) * commoditiesTotal;
+                  } else {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  break;
+
                 default:
+
 
               }
               /**
@@ -622,9 +656,9 @@ module.exports = {
 
 
               return await MarketMovement.create( {
-                gpInversion: calculatedValue + amount,
+                gpInversion: ToFixNumber(calculatedValue + amount),
                 marketOperationId: operationID,
-                gpAmount: calculatedValue,
+                gpAmount: ToFixNumber(calculatedValue),
                 marketPrice,
                 status: 1,
                 createdAt: moment( new Date() ).tz( 'America/New_York' ).format(),
