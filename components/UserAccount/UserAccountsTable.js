@@ -7,11 +7,12 @@ import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu, Row, Col
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
 import classNames from "classnames";
 import BulkUpdateSteps from "./BulkUpdateSteps";
-
+import { brokerOperations } from "../../state/modules/brokers";
 
 class UserAccountsTable extends Component {
   state = {
     userAccounts: [],
+    brokers: [],
     searchText: '',
     searchedColumn: '',
     isMenuFold: true,
@@ -20,15 +21,29 @@ class UserAccountsTable extends Component {
     selectedBulkUpdateType: 'report',
     bulkUpdateValue: null,
     isBulkUpdateActive: false,
+    filteredInfo: {},
+    sortedInfo: {},
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    let updatedState = {}
     if (!_.isEqual( nextProps.userAccounts, prevState.userAccounts )) {
-      return {
+      _.assignIn(updatedState, {
         userAccounts: nextProps.userAccounts
-      }
+      })
     }
-    return null;
+
+    if (!_.isEqual( nextProps.brokers, prevState.brokers )) {
+      _.assignIn(updatedState, {
+        brokers: nextProps.brokers
+      })
+
+    }
+    return _.isEmpty(updatedState) ? null : updatedState;
+  }
+
+  componentDidMount() {
+    this.props.fetchGetBrokers();
   }
 
   onSelectAllOperation = (isSelected) => {
@@ -292,13 +307,14 @@ class UserAccountsTable extends Component {
     </Row>
   )
 
-
   render() {
     const dynamicClass = this.props.isOperationStandard ? 'show' : 'hidden';
 
     const {
       selectedRowKeys,
       isBulkUpdateActive,
+      filteredInfo,
+      brokers
     } = this.state;
 
     const columns = [
@@ -395,7 +411,15 @@ class UserAccountsTable extends Component {
         render: text => <span key={ text }>{ text }</span>,
         sorter: (a, b) => a.broker && b.broker ? Sort( a.broker.name, b.broker.name ) : null,
         sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'broker.name' ),
+        filters: brokers.map(({name}) => {
+          return {
+            text: name,
+            value: name
+          }
+        }),
+        filteredValue: filteredInfo['broker.name'] || null,
+        onFilter: (value, record) => record.broker ? record.broker.name.includes(value) : null,
+        ellipsis: true,
       },
       {
         title: this._handleActionTitle,
@@ -432,11 +456,15 @@ class UserAccountsTable extends Component {
 
 function mapStateToProps(state) {
 
-  return {}
+  return {
+    brokers: state.brokersState.list,
+  }
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators( {}, dispatch );
+  bindActionCreators( {
+    fetchGetBrokers: brokerOperations.fetchGetBrokers,
+  }, dispatch );
 
 
 export default connect( mapStateToProps, mapDispatchToProps )( UserAccountsTable );
