@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { withNamespaces } from 'react-i18next';
 
-import { Row, Col, Button, message, Icon, notification } from 'antd';
+import { message, notification } from 'antd';
 import _ from 'lodash';
 
 import Document from '../components/Document';
@@ -10,7 +11,7 @@ import Document from '../components/Document';
 import { userAccountOperations } from "../state/modules/userAccounts";
 import { referralOperations } from "../state/modules/referrals";
 import UserAccount from '../components/UserOperations/UserAccount'
-import ExportHistoryReport from "../components/Operation/shared/ExportUserAccountHistory";
+import ExportHistoryReport from "../components/UserOperations/Operation/shared/ExportUserAccountHistory";
 
 class UserOperations extends Component {
   state = {
@@ -29,12 +30,12 @@ class UserOperations extends Component {
     let updatedState = {};
 
     if (!nextProps.isReferralCompleted && nextProps.isReferralLoading) {
-      message.loading('Creando Referral Ticket', [60])
+      message.loading(nextProps.t('actionMessage creatingTicket'), [60])
     }
 
     if (nextProps.isReferralCompleted && nextProps.isReferralSuccess) {
       message.destroy()
-      message.success('Referral Ticket Creado ', [3], () => {
+      message.success(nextProps.t('actionMessage ticketCreated'), [3], () => {
         nextProps.resetReferralAfterRequest();
 
       })
@@ -52,16 +53,16 @@ class UserOperations extends Component {
     if (nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
       if (_.isEmpty( nextProps.historyReportData )) {
         notification.info( {
-          message: 'No se encontraron Operaciones para esta cuenta',
+          message: nextProps.t('actionMessage noOperationFound'),
           onClose: () => {
             nextProps.resetAfterRequest();
           },
           duration: 3
         } )
       } else {
-        ExportHistoryReport( nextProps.historyReportData )
+        ExportHistoryReport( nextProps.historyReportData, nextProps.t )
         notification.success( {
-          message: 'Descargando Reporte Historico de la cuenta',
+          message: nextProps.t('actionMessage downloadingHistoryReport'),
           onClose: () => {
             nextProps.resetAfterRequest();
           },
@@ -164,4 +165,4 @@ const mapDispatchToProps = dispatch =>
   }, dispatch );
 
 
-export default connect( mapStateToProps, mapDispatchToProps )( UserOperations );
+export default connect( mapStateToProps, mapDispatchToProps )(  withNamespaces()(UserOperations) );

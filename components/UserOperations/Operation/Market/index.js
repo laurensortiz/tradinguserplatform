@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { withNamespaces } from 'react-i18next';
 
-import { Row, Col, Drawer, Tabs, notification, Button, Dropdown, Menu, Icon } from 'antd';
+import { Row, Col, Drawer } from 'antd';
 import _ from 'lodash';
-import moment from 'moment';
 
 import MarketTable from './MarketTable';
-import AddOrEditMarketForm from './AddOrEditMarketForm';
 import MarketMovementDetail from './detail';
 
 import { AccountInformation, MovementsTable } from '../shared';
@@ -15,7 +14,6 @@ import { AccountInformation, MovementsTable } from '../shared';
 import { marketOperationOperations } from "../../../../state/modules/marketOperation";
 import { marketMovementOperations } from "../../../../state/modules/marketMovement";
 
-const { TabPane } = Tabs;
 
 class Market extends Component {
   state = {
@@ -76,139 +74,12 @@ class Market extends Component {
 
     }
 
-    if (nextProps.isBulkSuccess && nextProps.isBulkProcessCompleted) {
-      const message = 'Actualización exitosa!';
-      _.assignIn( updatedState, {
-        isVisibleAddOrEditOperation: false,
-      } );
-
-      notification.success( {
-        message,
-        onClose: () => {
-          prevState.actionType = 'add'; // default value
-          nextProps.resetAfterRequest();
-          nextProps.fetchGetMarketOperations( 1, nextProps.userAccountId);
-          nextProps.onClose( false )
-        },
-        duration: 1
-      } );
-
-    } else {
-      if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-        let message = 'Operación de Bolsa OTC Creada';
-
-        if (_.isEqual( prevState.actionType, 'edit' )) {
-          message = 'Operación de Bolsa OTC Modificado';
-        }
-
-        if (_.isEqual( prevState.actionType, 'delete' )) {
-          message = 'Operación de Bolsa OTC Eliminado';
-        }
-
-        if (_.isEqual( prevState.actionType, 'active' )) {
-          message = 'Operación de Bolsa OTC Activado';
-        }
-        _.assignIn( updatedState, {
-          isVisibleAddOrEditOperation: false,
-        } );
-
-        notification.success( {
-          message,
-          onClose: () => {
-            prevState.actionType = 'add'; // default value
-
-            nextProps.fetchGetMarketOperations( 1, nextProps.userAccountId );
-            nextProps.resetAfterRequest();
-            nextProps.onClose( false )
-          },
-          duration: 1
-        } );
-
-      }
-    }
-
-
-    if (nextProps.isBulkFailure && nextProps.isBulkProcessCompleted) {
-      notification.error( {
-        message: 'Ha ocurrido un error en el proceso de actualización',
-        description: nextProps.message,
-        onClose: () => {
-          nextProps.resetAfterRequest();
-        },
-        duration: 3
-      } );
-
-    } else {
-      if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
-
-        notification.error( {
-          message: 'Ha ocurrido un error',
-          description: nextProps.message,
-          onClose: () => {
-            nextProps.resetAfterRequest();
-          },
-          duration: 3
-        } );
-
-      }
-    }
 
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
   componentDidMount() {
     this.props.fetchGetMarketOperations( 1, this.props.userAccountId );
-  };
-
-  _onClose = () => {
-    this.setState( {
-      isVisibleAddOrEditOperation: false,
-      selectedOperation: {},
-      actionType: 'add'
-    } );
-    this.props.onClose( false );
-  };
-
-  _handleAddNewUserOperation = (userOperation) => {
-    this.props.fetchAddMarketOperation( userOperation )
-  };
-
-  _handleEditUserOperation = (userAccount) => {
-    this.props.fetchEditMarketOperation( userAccount )
-  };
-
-  _handleDeleteUserOperation = (operationId) => {
-    this.setState( {
-      actionType: 'delete'
-    } );
-    this.props.fetchDeleteMarketOperation( operationId );
-  };
-
-  _onSelectEdit = (operationId) => {
-    this.setState( {
-      actionType: 'edit'
-    } );
-    this._handleSelectEditUserOperation( operationId )
-  };
-
-  _onSelectActive = (operationId) => {
-    this.props.fetchEditMarketOperation( {
-      id: operationId,
-      status: 1,
-    } );
-    this.setState( {
-      actionType: 'active'
-    } );
-
-  };
-
-  _handleSelectEditUserOperation = (operationId) => {
-    const selectedOperation = _.find( this.props.marketOperations, { id: operationId } );
-    this.setState( {
-      selectedOperation,
-      isVisibleAddOrEditOperation: true,
-    } );
-    this.props.handleFormVisible( true );
   };
 
   _handleDetailUserOperation = (operationId) => {
@@ -227,59 +98,9 @@ class Market extends Component {
     this.props.fetchGetMarketOperations( this.state.dataStatus, this.props.userAccountId );
   };
 
-  _onTabChange = ({ target }) => {
-    this.setState( {
-      dataStatus: target.value
-    } )
-    this.props.fetchGetMarketOperations( target.value, this.props.userAccountId );
-  }
-
-  /**
-   * Add Movements
-   */
-  _handleAddMovement = (newMovement) => {
-    const { id: marketOperationId } = this.state.currentOperationDetail;
-    const { gpInversion, gpAmount } = newMovement;
-
-    this.props.fetchAddMarketMovement( {
-      ...newMovement,
-      marketOperationId,
-      gpInversion: parseFloat( gpInversion ).toFixed( 2 ),
-      gpAmount: parseFloat( gpAmount ).toFixed( 2 ),
-    } )
-  };
-
-  /**
-   * Edit Movements
-   */
-  _handleEditMovement = (newMovement) => {
-    const { gpInversion, gpAmount, marketPrice, createdAt, id } = newMovement;
-    this.props.fetchEditMarketMovement( {
-      id,
-      gpInversion: parseFloat( gpInversion ).toFixed( 2 ),
-      gpAmount: parseFloat( gpAmount ).toFixed( 2 ),
-      marketPrice: parseFloat( marketPrice ).toFixed( 2 ),
-      createdAt: moment.parseZone( createdAt ),
-    } )
-  };
-
-  /**
-   * Delete Movements
-   */
-  _handleDeleteMovement = (movementId) => {
-    this.props.fetchDeleteMarketMovement( movementId )
-  };
-  /**
-   * Bulk Update
-   */
-  _handleBulkUpdate = bulkData => {
-    this.props.fetchBulkUpdateMarketOperation( bulkData )
-  }
 
   render() {
-    const modalTitle = _.isEqual( this.state.actionType, 'add' )
-      ? 'Agregar Operación de Bolsa'
-      : 'Editar Operación de Bolsa';
+    const {t} = this.props;
 
     const currentUsername = _.get( this.state.currentOperationDetail, 'userAccount.user.username', '' );
     const currentUserFirstName = _.get( this.state.currentOperationDetail, 'userAccount.user.firstName', '' );
@@ -316,27 +137,7 @@ class Market extends Component {
                 { !_.isEmpty( this.state.marketOperations ) ? (
                   <Row>
                     <Col sm={ 12 }>
-                      <h2>Operaciones de Bolsa OTC</h2>
-                    </Col>
-                    <Col sm={ 12 } style={{display: 'none'}}>
-                      <Dropdown overlay={ (
-                        <Menu onClick={ ({ key }) => this.props.onRequestStandardOperationsReport( {
-                          id: this.props.userAccountId,
-                          status: key
-                        } ) }>
-                          <Menu.Item key={ null }>Todas las Operaciones</Menu.Item>
-                          <Menu.Item key={ 4 }>Operaciones Vendidas</Menu.Item>
-                        </Menu>
-                      ) }>
-                        <Button
-                          type="primary"
-                          data-testid="export-button"
-                          className="export-excel-cta"
-                          style={ { float: 'right' } }
-                        >
-                          <Icon type="file-excel"/> <span>Reporte Histórico</span>
-                        </Button>
-                      </Dropdown>
+                      <h2>{t('title marketOperations')}</h2>
                     </Col>
                   </Row>
                 ) : null }
@@ -353,22 +154,6 @@ class Market extends Component {
             ) }
           </Col>
         </Row>
-        <Drawer
-          title={ modalTitle }
-          width={ 340 }
-
-          onClose={ this._onClose }
-          visible={ this.props.isFormVisible }
-          destroyOnClose={ true }
-        >
-          <AddOrEditMarketForm
-            onAddNew={ this._handleAddNewUserOperation }
-            onEdit={ this._handleEditUserOperation }
-            isLoading={ this.props.isLoading }
-            selectedOperation={ this.state.selectedOperation }
-            actionType={ this.state.actionType }
-          />
-        </Drawer>
 
         <Drawer
           title={ modalDetailTitle }
@@ -442,4 +227,4 @@ const mapDispatchToProps = dispatch =>
   }, dispatch );
 
 
-export default connect( mapStateToProps, mapDispatchToProps )( Market );
+export default connect( mapStateToProps, mapDispatchToProps )( withNamespaces()(Market) );

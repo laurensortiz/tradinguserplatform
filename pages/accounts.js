@@ -11,9 +11,12 @@ import UserAccountsTable from '../components/UserAccount/UserAccountsTable';
 import AddOrEditUserAccountForm from '../components/UserAccount/AddOrEditUserAccountForm';
 
 import { userAccountOperations } from "../state/modules/userAccounts";
+import { marketOperationOperations } from "../state/modules/marketOperation";
 import ExportHistoryReport from '../components/Operation/shared/ExportUserAccountHistory';
 import ExportUserAccountDetail from '../components/Operation/shared/ExportUserAccountDetail';
 import MovementsTable  from "../components/UserAccount/MovementsTable";
+
+
 
 const { TabPane } = Tabs;
 
@@ -24,7 +27,9 @@ class Accounts extends Component {
     selectedUserAccount: {},
     isCreatingOperation: false,
     associatedOperation: 1,
-    status: 1
+    status: 1,
+    isBulkSuccess: false,
+    isBulkProcessCompleted: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -62,50 +67,81 @@ class Accounts extends Component {
 
     }
 
-    if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
-      let message = 'Cuenta de Usuario Creada';
+    if (nextProps.isBulkSuccess && nextProps.isBulkProcessCompleted) {
+      const message = 'Actualización exitosa!';
 
-      if (_.isEqual( prevState.actionType, 'edit' )) {
-        message = 'Cuenta de Usuario Modificado';
-      }
 
-      if (_.isEqual( prevState.actionType, 'delete' )) {
-        message = 'Cuenta de Usuario Eliminado';
-      }
-
-      if (_.isEqual( prevState.actionType, 'active' )) {
-        message = 'Cuenta de Usuario Activado';
-      }
-
-      prevState.isVisibleAddOrEditUserAccount = false;
       notification.success( {
         message,
         onClose: () => {
-          prevState.actionType = 'add'; // default value
-
+          nextProps.resetAfterRequest();
+          nextProps.resetAfterBulkRequest();
           nextProps.fetchGetAllUserAccounts( {
             associatedOperation: prevState.associatedOperation,
             status: prevState.status
           } );
-          nextProps.resetAfterRequest();
+
         },
         duration: 1
-      } )
+      } );
 
+    } else {
+      if (nextProps.isSuccess && !_.isEmpty( nextProps.message )) {
+        let message = 'Cuenta de Usuario Creada';
+
+        if (_.isEqual( prevState.actionType, 'edit' )) {
+          message = 'Cuenta de Usuario Modificado';
+        }
+
+        if (_.isEqual( prevState.actionType, 'delete' )) {
+          message = 'Cuenta de Usuario Eliminado';
+        }
+
+        if (_.isEqual( prevState.actionType, 'active' )) {
+          message = 'Cuenta de Usuario Activado';
+        }
+
+        prevState.isVisibleAddOrEditUserAccount = false;
+        notification.success( {
+          message,
+          onClose: () => {
+            prevState.actionType = 'add'; // default value
+
+            nextProps.fetchGetAllUserAccounts( {
+              associatedOperation: prevState.associatedOperation,
+              status: prevState.status
+            } );
+            nextProps.resetAfterRequest();
+          },
+          duration: 1
+        } )
+
+      }
     }
 
-    if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
+    if (nextProps.isBulkFailure && nextProps.isBulkProcessCompleted) {
       notification.error( {
-        message: 'Ha ocurrido un error',
+        message: 'Ha ocurrido un error en el proceso de actualización',
         description: nextProps.message,
         onClose: () => {
           nextProps.resetAfterRequest();
         },
         duration: 3
-      } )
+      } );
 
+    } else {
+      if (nextProps.isFailure && !_.isEmpty( nextProps.message )) {
+        notification.error( {
+          message: 'Ha ocurrido un error',
+          description: nextProps.message,
+          onClose: () => {
+            nextProps.resetAfterRequest();
+          },
+          duration: 3
+        } )
+
+      }
     }
-
     return null;
   }
 
@@ -211,7 +247,12 @@ class Accounts extends Component {
     } );
   }
 
-
+  /**
+   * Bulk Update
+   */
+  _handleBulkUpdate = bulkData => {
+    this.props.fetchBulkUpdateMarketOperation( bulkData )
+  }
 
   render() {
     const modalTitle = _.isEqual( this.state.actionType, 'add' )
@@ -250,6 +291,10 @@ class Accounts extends Component {
               onReqeuestExportAccountReport={ this._handleExportAccountReport}
               onTabChange={ this._handleTabChange }
               dataStatus={ this.state.status }
+              onFetchBulkUpdate={ this._handleBulkUpdate }
+              isBulkLoading={ this.props.isBulkLoading }
+              isBulkSuccess={ this.state.isBulkSuccess }
+              isBulkCompleted={ this.state.isBulkCompleted }
             />
           </Col>
         </Row>
@@ -288,6 +333,11 @@ function mapStateToProps(state) {
     isHistoryReportSuccess: state.userAccountsState.isHistoryReportSuccess,
     isHistoryReportComplete: state.userAccountsState.isHistoryReportComplete,
     historyReportData: state.userAccountsState.historyReportData,
+
+    isBulkLoading: state.marketOperationsState.isBulkLoading,
+    isBulkSuccess: state.marketOperationsState.isBulkSuccess,
+    isBulkFailure: state.marketOperationsState.isBulkFailure,
+    isBulkProcessCompleted: state.marketOperationsState.isBulkProcessCompleted,
   }
 }
 
@@ -299,6 +349,9 @@ const mapDispatchToProps = dispatch =>
     fetchDeleteUserAccount: userAccountOperations.fetchDeleteUserAccount,
     fetchGetUserAccountHistoryReport: userAccountOperations.fetchGetUserAccountHistoryReport,
     resetAfterRequest: userAccountOperations.resetAfterRequest,
+
+    fetchBulkUpdateMarketOperation: marketOperationOperations.fetchBulkUpdateMarketOperation,
+    resetAfterBulkRequest: marketOperationOperations.resetAfterRequest,
   }, dispatch );
 
 

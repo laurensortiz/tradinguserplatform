@@ -4,20 +4,19 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import classNames from 'classnames';
 import Highlighter from "react-highlight-words";
-import { Button, Icon, Input, Popconfirm, Table, Tag, Row, Col, Select, Radio, DatePicker, Tooltip } from 'antd';
+import { Button, Icon, Input, Table, Tag, Row, Col, Select, DatePicker, Tooltip } from 'antd';
 import momentDurationFormat from 'moment-duration-format';
 import moment from "moment-timezone";
 import { extendMoment } from 'moment-range';
+import { withNamespaces } from 'react-i18next';
 import {
   Sort,
-  FormatStatus,
+  FormatStatusLang,
   FormatDate,
   DisplayTableAmount,
   MarketBehaviorStatus,
   IsOperationPositive,
 } from '../../../../common/utils';
-
-import BulkUpdateSteps from './BulkUpdateSteps';
 
 import { assetClassOperations } from "../../../../state/modules/assetClasses";
 
@@ -70,39 +69,11 @@ class MarketTable extends Component {
   }
 
   _getCTA = (type, row) => {
-    if (_.isEqual( this.props.dataStatus, 0 )) {
-      return (
-        <div className="cta-container">
-          <Popconfirm
-            okText="Si"
-            title="Está seguro que desea activarlo ?"
-            cancelText="Cancelar"
-            onConfirm={ () => this.props.onActive( row.id ) }
-          >
-            <Button type="danger"><Icon type="undo" /><span>Activar</span></Button>
-          </Popconfirm>
-        </div>
-      )
-    } else {
-      return (
-        <div className="cta-container">
-          <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd"/><span>Detalle</span></Button>
-          { this.props.isAdmin ? (
-            <>
-              <Popconfirm
-                okText="Si"
-                title="Está seguro ?"
-                cancelText="Cancelar"
-                onConfirm={ () => this.props.onDelete( row.id ) }
-              >
-                <Button type="danger"><Icon type="delete"/><span>Eliminar</span></Button>
-              </Popconfirm>
-              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
-            </>
-          ) : null }
-        </div>
-      )
-    }
+    return (
+      <div className="cta-container">
+        <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd"/><span>{this.props.t('detail')}</span></Button>
+      </div>
+    )
 
   };
 
@@ -113,7 +84,7 @@ class MarketTable extends Component {
           ref={ node => {
             this.searchInput = node;
           } }
-          placeholder={ `Buscar` }
+          placeholder={ this.props.t('btn search') }
           value={ selectedKeys[ 0 ] }
           onChange={ e => setSelectedKeys( e.target.value ? [ e.target.value ] : [] ) }
           onPressEnter={ () => this.handleSearch( selectedKeys, confirm, dataIndex ) }
@@ -126,10 +97,10 @@ class MarketTable extends Component {
           size="small"
           style={ { width: 90, marginRight: 8 } }
         >
-          Buscar
+          {this.props.t('btn search')}
         </Button>
         <Button onClick={ () => this.handleReset( clearFilters ) } size="small" style={ { width: 90 } }>
-          Limpiar
+          {this.props.t('btn clean')}
         </Button>
       </div>
     ),
@@ -215,56 +186,6 @@ class MarketTable extends Component {
     this.props.onRequestUpdateTable()
   }
 
-  _handleClickBulkUpdate = bulkOperation => {
-
-    this.props.onFetchBulkUpdate( {
-      ...bulkOperation,
-      operationsIds: this.state.selectedRowKeys
-    } )
-
-  }
-
-  tableHeader = () => (
-    <>
-      <Row>
-        <Col sm={12} style={ { textAlign: 'left' } }>
-          <Radio.Group defaultValue={this.props.dataStatus} buttonStyle="solid" onChange={ this.props.onTabChange }>
-            <Radio.Button value={1}>Activos</Radio.Button>
-            <Radio.Button value={0}>Eliminados</Radio.Button>
-            <Radio.Button value={4}>Vendidos</Radio.Button>
-          </Radio.Group>
-        </Col>
-        <Col sm={12} style={ { textAlign: 'right' } }>
-          <Button type="secondary" className={classNames({'hidden': this.state.isBulkUpdateActive})}
-                  onClick={ () => this.setState( { isBulkUpdateActive: true } ) } size="large">
-            <Icon type="retweet"/> Actualización Masiva
-          </Button>
-          <Button type="danger" className={classNames({'hidden': !this.state.isBulkUpdateActive})}
-                  onClick={ this.onCancelBulkProcess } >
-            <Icon type="close-circle"/> Cerrar
-          </Button>
-        </Col>
-      </Row>
-      {
-        this.state.isBulkUpdateActive ? (
-          <Row>
-            <Col>
-              <div className="multiple-actualization-module">
-                <BulkUpdateSteps
-                  selectedElements={ this.state.selectedRowKeys.length }
-                  onClickUpdate={ this._handleClickBulkUpdate }
-                  isProcessComplete={ this.props.isBulkCompleted }
-                  isBulkLoading={ this.props.isBulkLoading }
-                  isBulkSuccess={ this.props.isBulkSuccess }
-                />
-              </div>
-            </Col>
-          </Row>
-        ) : null
-      }
-    </>
-  )
-
   _onSelectMenuFold = () => {
     this.setState({
       isMenuFold: !this.state.isMenuFold
@@ -276,7 +197,7 @@ class MarketTable extends Component {
       <div style={{textAlign: 'right'}}>
         <Row>
           <Col xs={12} style={ { textAlign: 'left' } }>
-            <Tooltip placement="top" title="Sincronizar Datos">
+            <Tooltip placement="top" title={this.props.t('btn syncData')}>
               <Button type="primary" onClick={ () => this.props.onRequestUpdateTable() }><Icon type="history" /></Button>
             </Tooltip>
           </Col>
@@ -418,12 +339,13 @@ class MarketTable extends Component {
   _displayTableFooter = () => (
     <Row>
       <Col>
-        <h3>Total de Operaciones: <Tag color="#1b1f21" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.state.marketOperations)}</Tag></h3>
+        <h3>{`${this.props.t('totalOperations')}:`} <Tag color="#1b1f21" style={{fontSize: 14, marginLeft: 10}}>{_.size(this.state.marketOperations)}</Tag></h3>
       </Col>
     </Row>
   )
 
   render() {
+    const {t} = this.props;
     const datesInTimes = _.map( this.state.marketOperations, record => moment( record.createdAt ) ),
       maxDatesInTimes = moment.max( datesInTimes ).add( 1, 'days' ),
       minDatesInTimes = moment.min( datesInTimes ).subtract( 1, 'days' );
@@ -436,6 +358,7 @@ class MarketTable extends Component {
       filteredInfo,
       assetClasses,
     } = this.state;
+    const langStatus = status => t(`status ${status}`)
 
     const columns = [
       {
@@ -445,26 +368,26 @@ class MarketTable extends Component {
         render: status => MarketBehaviorStatus( status )
       },
       {
-        title: 'Estado',
+        title: t('status'),
         dataIndex: 'status',
         key: 'status',
         filters: [
-          { text: 'Activo', value: 1 },
-          { text: 'Market Close', value: 2 },
-          { text: 'Hold', value: 3 },
-          { text: 'Vendido', value: 4 },
+          { text: `${t('status active')}`, value: 1 },
+          { text: `${t('status marketClose')}`, value: 2 },
+          { text: `${t('status hold')}`, value: 3 },
+          { text: `${t('status sold')}`, value: 4 },
         ],
         defaultSortOrder: 'ascend',
         onFilter: (value, record) => record.status === value,
         render: status => {
-          const { name, color } = FormatStatus( status );
-          return <Tag color={ color }>{ name }</Tag>
+          const { name, color } = FormatStatusLang( status );
+          return <Tag color={ color }>{ langStatus(name) }</Tag>
         },
         sorter: (a, b) => Sort( a.status, b.status ),
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Producto',
+        title: t('product'),
         dataIndex: 'product.name',
         key: 'product.name',
         render: text => <span key={ `${ text.code }-${ text.name }` }>{ `${ text.code }-${ text.name }` }</span>,
@@ -473,7 +396,7 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps( 'product.name' ),
       },
       {
-        title: 'Derivado',
+        title: t('derivative'),
         dataIndex: 'assetClass',
         key: 'assetClass',
         render: assetClass => <Tag color="#1b1f21">{assetClass.name}</Tag>,
@@ -489,7 +412,7 @@ class MarketTable extends Component {
         ellipsis: true,
       },
       {
-        title: 'Usuario',
+        title: t('username'),
         dataIndex: 'userAccount.user.username',
         key: 'userAccount.user.username',
         className: `${ showHandleClass } `,
@@ -498,7 +421,7 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps( 'userAccount.user.username' ),
       },
       {
-        title: 'Nombre',
+        title: t('firstName'),
         dataIndex: 'userAccount.user.firstName',
         key: 'userAccount.user.firstName',
         render: text => <span key={ text }>{ text }</span>,
@@ -507,7 +430,7 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps( 'userAccount.user.firstName' ),
       },
       {
-        title: 'Apellido',
+        title: t('lastName'),
         dataIndex: 'userAccount.user.lastName',
         key: 'userAccount.user.lastName',
         render: text => <span key={ text }>{ text }</span>,
@@ -516,7 +439,7 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps( 'userAccount.user.lastName' ),
       },
       {
-        title: 'Saldo Actual',
+        title: t('currentAmount'),
         key: 'amount',
         render: data => <span
           className={ IsOperationPositive( data.amount, data.initialAmount ) ? 'positive txt-highlight' : 'negative txt-highlight' }
@@ -525,7 +448,7 @@ class MarketTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Inversión',
+        title: t('investment'),
         dataIndex: 'initialAmount',
         key: 'initialAmount',
         render: initialAmount => <span key={ initialAmount }>{ DisplayTableAmount( initialAmount ) }</span>,
@@ -533,7 +456,7 @@ class MarketTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Margen de Mantenimiento',
+        title: t('maintenanceMargin'),
         dataIndex: 'maintenanceMargin',
         key: 'maintenanceMargin',
         render: maintenanceMargin => <span key={ maintenanceMargin }>{ DisplayTableAmount( maintenanceMargin ) }</span>,
@@ -541,7 +464,7 @@ class MarketTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
       },
       {
-        title: 'Taking Profit',
+        title: t('takingProfit'),
         dataIndex: 'takingProfit',
         key: 'takingProfit',
         render: takingProfit => <span key={ takingProfit }>{ DisplayTableAmount( takingProfit ) }</span>,
@@ -550,7 +473,7 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps( 'takingProfit' ),
       },
       {
-        title: 'Fecha de Apertura',
+        title: t('createdAt'),
         dataIndex: 'createdAt',
         key: 'createdAt',
         render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
@@ -570,7 +493,7 @@ class MarketTable extends Component {
         )
       },
       {
-        title: 'Fecha de Actualización',
+        title: t('updatedAt'),
         dataIndex: 'updatedAt',
         key: 'updatedAt',
         render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
@@ -590,7 +513,7 @@ class MarketTable extends Component {
         )
       },
       {
-        title: 'Corredor',
+        title: t('broker'),
         dataIndex: 'broker.name',
         key: 'broker.name',
         sorter: (a, b) => Sort( a.broker.name, b.broker.name ),
@@ -623,7 +546,6 @@ class MarketTable extends Component {
           scroll={ { x: true } }
           className={ classNames( { 'hidden-table': !this.props.isAdmin && _.isEmpty( this.state.marketOperations ), 'is-menu-fold': this.state.isMenuFold } ) }
           onChange={ this.onTableChange }
-          title={ this.props.isAdmin ? this.tableHeader : null }
           footer={this._displayTableFooter}
         />
       </>
@@ -643,4 +565,4 @@ const mapDispatchToProps = dispatch =>
     fetchGetAssetClasses: assetClassOperations.fetchGetAssetClasses
   }, dispatch );
 
-export default connect( mapStateToProps, mapDispatchToProps )( MarketTable );
+export default connect( mapStateToProps, mapDispatchToProps )( withNamespaces()(MarketTable) );

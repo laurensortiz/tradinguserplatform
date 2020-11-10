@@ -1,72 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { isEmpty, split } from 'lodash';
+import _, { isEmpty, split } from 'lodash';
 import { Steps, Button, Icon, Tag, Select, Input, Result, Radio } from 'antd';
 import classNames from 'classnames';
 const { Step } = Steps;
 const { Option } = Select;
 
+import AddOperationForm from '../Operation/Market/AddOrEditMarketForm';
 
 const BULK_UPDATE_TYPES = [
   {
-    code: 'status',
-    name: 'Estado',
-    scope: 'status'
+    code: 'report',
+    name: 'Generar Reporte de cuentas',
+    scope: 'report'
   },
   {
-    code: 'stocks',
-    name: 'Stocks',
-    scope: 'price',
+    code: 'create-operation',
+    name: 'Colocaciones',
+    scope: 'create-operation'
   },
-  {
-    code: 'gold-FU-OP',
-    name: 'GOLD Futures - Options',
-    scope: 'price'
-  },
-  {
-    code: 'gold-CFD-Ounces',
-    name: 'GOLD CFD Ounces',
-    scope: 'price'
-  },
-  {
-    code: 'gold-Spot-XAU',
-    name: 'GOLD Spot XAU/USD',
-    scope: 'price'
-  },
-  {
-    code: 'silver-FT-OP',
-    name: 'SILVER Futures - Options',
-    scope: 'price'
-  },
-  {
-    code: 'silver-CFD-Ounces',
-    name: 'SILVER CFD Ounces',
-    scope: 'price'
-  },
-  {
-    code: 'platinum-FT-OP',
-    name: 'PLATINUM Futures - Options',
-    scope: 'price'
-  },
-  {
-    code: 'platinum-CFD-Ounces',
-    name: 'PLATINUM CFD Ounces',
-    scope: 'price'
-  },
-  {
-    code: 'crudeOil-FT-OP',
-    name: 'CRUDE OIL WTI Futures - Options',
-    scope: 'price',
-  },
-  {
-    code: 'crude-CFDs-Barrels',
-    name: 'CRUDE CFDs Barrels',
-    scope: 'price',
-  },
-  {
-    code: 'us-Wheat-Contract',
-    name: 'US Wheat Contract',
-    scope: 'price',
-  }
 ];
 
 function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, isBulkLoading, isBulkSuccess }) {
@@ -76,6 +27,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
   const [ updateValue, setUpdateValue ] = useState( {} );
   const [ behaviorClass, setBehaviorClass ] = useState( '' );
   const [ isValidAmount, setIsValidAmount ] = useState( true );
+  const [ isValidOperation, setIsValidOperation ] = useState( false );
 
   useEffect( () => {
     setIsValidAmount( true )
@@ -124,17 +76,18 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
     setUpdateScope(operationValue[1]);
   }
 
+  const _onRequestSaveOperation = operationInfo => {
+    setIsValidOperation(true);
+    setUpdateValue(operationInfo)
+  }
+
+
   const _bulkUpdateValue = () => {
 
     switch (updateScope) {
-      case 'status':
+      case 'report':
         return (
-          <Radio.Group name="status" onChange={ _handleRadioInputChange } >
-            <Radio value={ 1 }><Tag color="#039B01">Activo</Tag></Radio>
-            <Radio value={ 2 }><Tag color="#D63930">Market Close</Tag></Radio>
-            <Radio value={ 3 }><Tag color="#E2A11A">On Hold</Tag></Radio>
-            <Radio value={ 4 }><Tag color="#414241">Vendido</Tag></Radio>
-          </Radio.Group>
+          <span></span>
 
         )
       case 'price':
@@ -148,6 +101,10 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
                    onChange={ _handlePriceInputChange }
                    placeholder="MP"/>
           </>
+        )
+      case 'create-operation':
+        return (
+          <AddOperationForm actionType="add" isBulkOperation={true} onRequestSaveOperation={_onRequestSaveOperation} />
         )
       default:
         return <div className="no-visible" style={ { width: 150, height: 40 } } />
@@ -175,8 +132,8 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
   );
 
   const _lastStepContent = () => {
-    const title = isProcessComplete ? isBulkSuccess ? <span><Tag color="#046d11">{ selectedElements }</Tag>Productos actualizados correctamente</span> : 'Ocurrió un error' :
-      <span>Proceder con la actualización de <Tag color="#046d11">{ selectedElements }</Tag>productos</span>;
+    const title = isProcessComplete ? isBulkSuccess ? <span><Tag color="#046d11">{ selectedElements }</Tag>Cuentas actualizadas correctamente</span> : 'Ocurrió un error' :
+      <span>Proceder con la actualización de <Tag color="#046d11">{ selectedElements }</Tag>cuentas</span>;
     const status = isProcessComplete ? isBulkSuccess ? 'success' : 'error' : 'info';
 
     return (
@@ -191,7 +148,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
           loading={ isBulkLoading }
           className={classNames({'no-visible': isProcessComplete})}
         >
-          Realizar actualización
+          Realizar proceso
         </Button>}
       />
     )
@@ -199,9 +156,9 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
 
   const steps = [
     {
-      title: 'Seleccione las operaciones',
+      title: 'Seleccione las cuentas',
       content: (
-        <h3>Operaciones seleccionadas <Tag color="#046d11">{ selectedElements }</Tag></h3>
+        <h3>Cuentas seleccionadas <Tag color="#046d11">{ selectedElements }</Tag></h3>
       ),
     },
     {
@@ -231,7 +188,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
         ) }
         { currentStep < steps.length - 1 && selectedElements > 0 && (
           <Button type="primary" onClick={ () => setCurrentStep( currentStep + 1 ) }
-                  disabled={ (updateType !== 'status' && !isValidAmount && isEmpty(updateValue)) || (updateType === 'status' && !Number.isInteger(updateValue))}>
+                  disabled={ (updateType !== 'status' && !isValidAmount && isEmpty(updateValue)) || (updateType === 'status' && !Number.isInteger(updateValue)) || (updateType === 'create-operation' && !isValidOperation)}>
             Siguiente <Icon type="right-square"/>
           </Button>
         ) }

@@ -1,9 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Icon, Typography, Skeleton, Empty, Tag, Row, Col, Avatar, Menu, Button, Dropdown } from 'antd';
 import _ from 'lodash';
+import { withNamespaces } from 'react-i18next';
+
 
 import UserAccountInformation from './UserAccountInformation';
-import { ExportUserAccounts } from '../Operation/shared';
+import { ExportUserAccounts } from './Operation/shared';
 
 const { Title } = Typography;
 
@@ -25,7 +27,7 @@ class UserAccount extends PureComponent {
 
   _displayData = () => {
     if (_.isEmpty( this.props.accounts )) {
-      return <Empty description="No se encontraron cuentas asociadas a su nombre."/>
+      return <Empty description={this.props.t('noAccountDataFound')}/>
     } else {
       return _.map( this.props.accounts, account =>
         <UserAccountInformation
@@ -51,8 +53,8 @@ class UserAccount extends PureComponent {
             id: userAccount.id,
             status: key
           } ) }>
-            <Menu.Item key={ null }>Todas las Operaciones</Menu.Item>
-            <Menu.Item key={ 4 }>Operaciones Vendidas</Menu.Item>
+            <Menu.Item key={ null }>{this.props.t('allOperations')}</Menu.Item>
+            <Menu.Item key={ 4 }>{this.props.t('soldOperations')}</Menu.Item>
           </Menu>
         ) }>
           <Button
@@ -61,7 +63,7 @@ class UserAccount extends PureComponent {
             className="export-excel-cta"
             style={ { float: 'right', marginBottom: 10 } }
           >
-            <Icon type="file-excel"/> <span>Reporte Histórico Operaciones de Bolsa OTC</span>
+            <Icon type="file-excel"/> <span>{this.props.t('btn historicalOperationOTCReport')}</span>
           </Button>
         </Dropdown>
       )
@@ -72,7 +74,7 @@ class UserAccount extends PureComponent {
 
   render() {
     const { firstName, lastName, firstName2, lastName2, firstName3, lastName3, firstName4, lastName4, userID, username } = this.props.currentUser;
-
+    const { t } = this.props;
     return (
       <>
         <Row style={ { marginBottom: 30 } }>
@@ -97,7 +99,7 @@ class UserAccount extends PureComponent {
           </Col>
           <Col xs={24} sm={8} >
             { !_.isEmpty( firstName2 ) || !_.isEmpty( firstName3 ) || !_.isEmpty( firstName4 ) ? (
-              <Title  level={ 2 }><Icon type="hdd" theme="filled" color="#e29524"/> Cuenta Conjunta </Title>
+              <Title  level={ 2 }><Icon type="hdd" theme="filled" color="#e29524"/> {t('sharedAccount')} </Title>
             ) : null }
             <Title level={ 4 }><Icon type="bank" theme="filled"/> { userID }</Title>
           </Col>
@@ -129,4 +131,4 @@ class UserAccount extends PureComponent {
 
 }
 
-export default UserAccount;
+export default withNamespaces()(UserAccount);

@@ -6,34 +6,44 @@ import Highlighter from 'react-highlight-words';
 import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu, Row, Col, Tag, Tooltip } from 'antd';
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
 import classNames from "classnames";
-
+import BulkUpdateSteps from "./BulkUpdateSteps";
+import { brokerOperations } from "../../state/modules/brokers";
 
 class UserAccountsTable extends Component {
   state = {
     userAccounts: [],
+    brokers: [],
     searchText: '',
     searchedColumn: '',
     isMenuFold: true,
     currentDataSource: [],
     selectedRowKeys: [],
-    isBulkActive: false,
+    selectedBulkUpdateType: 'report',
+    bulkUpdateValue: null,
+    isBulkUpdateActive: false,
+    filteredInfo: {},
+    sortedInfo: {},
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    let updatedState = {}
     if (!_.isEqual( nextProps.userAccounts, prevState.userAccounts )) {
-      return {
+      _.assignIn(updatedState, {
         userAccounts: nextProps.userAccounts
-      }
+      })
     }
-    return null;
+
+    if (!_.isEqual( nextProps.brokers, prevState.brokers )) {
+      _.assignIn(updatedState, {
+        brokers: nextProps.brokers
+      })
+
+    }
+    return _.isEmpty(updatedState) ? null : updatedState;
   }
 
-  _handleExportHistory = (accountSelected) => {
-    this.props.onReqeuestExportHistoryReport( accountSelected )
-  }
-
-  onSelectOperation = (selectedRowKeys) => {
-    this.setState( { selectedRowKeys } )
+  componentDidMount() {
+    this.props.fetchGetBrokers();
   }
 
   onSelectAllOperation = (isSelected) => {
@@ -136,11 +146,13 @@ class UserAccountsTable extends Component {
       <Icon type="filter" theme="filled" style={ { color: filtered ? '#1890ff' : undefined } }/>
     ),
     onFilter: (value, record) => {
+      if (_.get( record, dataIndex )) {
+        return _.get( record, dataIndex )
+          .toString()
+          .toLowerCase()
+          .includes( value.toLowerCase() )
+      }
 
-      return _.get( record, dataIndex )
-        .toString()
-        .toLowerCase()
-        .includes( value.toLowerCase() )
     },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
@@ -190,22 +202,44 @@ class UserAccountsTable extends Component {
     this.props.onRequestUpdateTable();
   }
 
+  _handleExportHistory = (accountSelected) => {
+    this.props.onReqeuestExportHistoryReport( accountSelected )
+  }
+
+  onSelectOperation = (selectedRowKeys) => {
+    this.setState( { selectedRowKeys } )
+  }
+
   _onSelectBulkReport = () => {
     const exportData = _.isEmpty(this.state.currentDataSource) ? this.state.userAccounts : this.state.currentDataSource;
     const selectedAccounts = _.filter(exportData, account => _.includes(this.state.selectedRowKeys, account.id))
 
     this.props.onReqeuestExportAccountReport( selectedAccounts );
   }
+
+  _handleClickBulkUpdate = bulkOperation => {
+    if (bulkOperation.updateType === 'report') {
+      this._onSelectBulkReport()
+    } else {
+      this.props.onFetchBulkUpdate( {
+        ...bulkOperation,
+        operationsIds: this.state.selectedRowKeys
+      } )
+    }
+
+  }
   onCancelBulkProcess = () => {
     this.setState( {
-      isBulkActive: false,
+      isBulkUpdateActive: false,
       selectedRowKeys: [],
+      selectedBulkUpdateType: 'report',
       bulkUpdateValue: null,
     } )
     this.props.onRequestUpdateTable()
   }
 
   _displayTableHeader = () => (
+    <>
     <Row>
       <Col sm={ 12 }>
         <Radio.Group defaultValue={ 1 } buttonStyle="solid" onChange={ this.props.onTabChange }>
@@ -213,29 +247,35 @@ class UserAccountsTable extends Component {
           <Radio.Button value={ 0 }>Eliminados</Radio.Button>
         </Radio.Group>
       </Col>
-      <Col sm={ 12 } className={this.props.isOperationStandard ? '' : 'hidden'}>
-        { this.state.isBulkActive ? (
-          <>
-            <Button onClick={ this.onCancelBulkProcess } type="danger" style={ { float: 'right' } }><Icon
-              type="close-circle"/><span>Cancelar</span></Button>
-            <Button
-              type="primary"
-              data-testid="export-button"
-              className="export-excel-cta"
-              style={ { float: 'right', marginRight: 20 } }
-              onClick={ this._onSelectBulkReport }
-            >
-              <Icon type="file-excel"/> <span>Descargar Reporte</span>
-            </Button>
-          </>
-        ) : (
-          <Button size="large" type="secondary" style={ { float: 'right' } } onClick={ () => this.setState( { isBulkActive: true } ) }>
-            <Icon type="interaction"/> <span>Generar Reporte de Cuentas</span></Button>
-
-        ) }
-
+      <Col sm={12} style={ { textAlign: 'right' } }>
+        <Button type="secondary" className={classNames({'hidden': this.state.isBulkUpdateActive})}
+                onClick={ () => this.setState( { isBulkUpdateActive: true } ) } size="large">
+          <Icon type="retweet"/> Actualización Masiva
+        </Button>
+        <Button type="danger" className={classNames({'hidden': !this.state.isBulkUpdateActive})}
+                onClick={ this.onCancelBulkProcess } >
+          <Icon type="close-circle"/> Cerrar
+        </Button>
       </Col>
     </Row>
+      {
+        this.state.isBulkUpdateActive ? (
+          <Row>
+            <Col>
+              <div className="multiple-actualization-module">
+                <BulkUpdateSteps
+                  selectedElements={ this.state.selectedRowKeys.length }
+                  onClickUpdate={ this._handleClickBulkUpdate }
+                  isProcessComplete={ this.props.isBulkCompleted }
+                  isBulkLoading={ this.props.isBulkLoading }
+                  isBulkSuccess={ this.props.isBulkSuccess }
+                />
+              </div>
+            </Col>
+          </Row>
+        ) : null
+      }
+    </>
   );
 
   _onSelectMenuFold = () => {
@@ -267,13 +307,14 @@ class UserAccountsTable extends Component {
     </Row>
   )
 
-
   render() {
     const dynamicClass = this.props.isOperationStandard ? 'show' : 'hidden';
 
     const {
       selectedRowKeys,
-      isBulkActive,
+      isBulkUpdateActive,
+      filteredInfo,
+      brokers
     } = this.state;
 
     const columns = [
@@ -311,7 +352,6 @@ class UserAccountsTable extends Component {
         sortDirections: [ 'descend', 'ascend' ],
         ...this.getColumnSearchProps( 'account.name' ),
       },
-
       {
         title: 'Comisión',
         dataIndex: 'account',
@@ -365,6 +405,23 @@ class UserAccountsTable extends Component {
         ...this.getColumnSearchProps( 'guaranteeCredits' ),
       },
       {
+        title: 'Corredor',
+        dataIndex: 'broker.name',
+        key: 'broker.name',
+        render: text => <span key={ text }>{ text }</span>,
+        sorter: (a, b) => a.broker && b.broker ? Sort( a.broker.name, b.broker.name ) : null,
+        sortDirections: [ 'descend', 'ascend' ],
+        filters: brokers.map(({name}) => {
+          return {
+            text: name,
+            value: name
+          }
+        }),
+        filteredValue: filteredInfo['broker.name'] || null,
+        onFilter: (value, record) => record.broker ? record.broker.name.includes(value) : null,
+        ellipsis: true,
+      },
+      {
         title: this._handleActionTitle,
         key: 'actions',
         render: this._getCTA,
@@ -381,7 +438,7 @@ class UserAccountsTable extends Component {
 
     return (
       <Table
-        rowSelection={ isBulkActive ? rowSelection : null }
+        rowSelection={ isBulkUpdateActive ? rowSelection : null }
         rowKey={ record => record.id }
         columns={ columns }
         dataSource={ this.state.userAccounts }
@@ -399,11 +456,15 @@ class UserAccountsTable extends Component {
 
 function mapStateToProps(state) {
 
-  return {}
+  return {
+    brokers: state.brokersState.list,
+  }
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators( {}, dispatch );
+  bindActionCreators( {
+    fetchGetBrokers: brokerOperations.fetchGetBrokers,
+  }, dispatch );
 
 
 export default connect( mapStateToProps, mapDispatchToProps )( UserAccountsTable );

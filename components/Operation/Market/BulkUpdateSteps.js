@@ -5,7 +5,6 @@ import classNames from 'classnames';
 const { Step } = Steps;
 const { Option } = Select;
 
-
 const BULK_UPDATE_TYPES = [
   {
     code: 'status',
@@ -66,6 +65,21 @@ const BULK_UPDATE_TYPES = [
     code: 'us-Wheat-Contract',
     name: 'US Wheat Contract',
     scope: 'price',
+  },
+  {
+    code: 'cooper-FT-OP',
+    name: 'Cooper',
+    scope: 'price',
+  },
+  {
+    code: 'cbo-FT-OP',
+    name: 'CBO',
+    scope: 'price',
+  },
+  {
+    code: 'orange-FT-OP',
+    name: 'Orange',
+    scope: 'price',
   }
 ];
 
@@ -76,6 +90,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
   const [ updateValue, setUpdateValue ] = useState( {} );
   const [ behaviorClass, setBehaviorClass ] = useState( '' );
   const [ isValidAmount, setIsValidAmount ] = useState( true );
+  const [ isValidOperation, setIsValidOperation ] = useState( false );
 
   useEffect( () => {
     setIsValidAmount( true )
@@ -122,6 +137,11 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
 
     setUpdateType(operationValue[0]);
     setUpdateScope(operationValue[1]);
+  }
+
+  const _onRequestSaveOperation = operationInfo => {
+    setIsValidOperation(true);
+    setUpdateValue(operationInfo)
   }
 
   const _bulkUpdateValue = () => {
@@ -231,7 +251,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
         ) }
         { currentStep < steps.length - 1 && selectedElements > 0 && (
           <Button type="primary" onClick={ () => setCurrentStep( currentStep + 1 ) }
-                  disabled={ (updateType !== 'status' && !isValidAmount && isEmpty(updateValue)) || (updateType === 'status' && !Number.isInteger(updateValue))}>
+                  disabled={ (updateType !== 'status' && !isValidAmount && isEmpty(updateValue)) || (updateType === 'status' && !Number.isInteger(updateValue)) || (updateType === 'create-operation' && !isValidOperation)}>
             Siguiente <Icon type="right-square"/>
           </Button>
         ) }

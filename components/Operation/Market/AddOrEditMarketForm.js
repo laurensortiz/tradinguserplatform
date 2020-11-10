@@ -69,6 +69,7 @@ class AddOrEditMarketForm extends PureComponent {
     accountPercentage: 0,
     accountGuarantee: 0,
     isOperationClosed: false,
+    isBulkOperation: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -77,6 +78,12 @@ class AddOrEditMarketForm extends PureComponent {
     if (!_.isEqual( nextProps.userAccounts, prevState.userAccounts )) {
       _.assign( stateUpdated, {
         userAccounts: nextProps.userAccounts
+      } )
+    }
+
+    if (!_.isNil( nextProps.isBulkOperation ) && !_.isEqual( nextProps.isBulkOperation, prevState.isBulkOperation )) {
+      _.assign( stateUpdated, {
+        isBulkOperation: nextProps.isBulkOperation
       } )
     }
 
@@ -165,7 +172,7 @@ class AddOrEditMarketForm extends PureComponent {
     if (_.isEqual( fieldName, 'userAccount' )) {
       const selectedUserAccount = _.find( this.state.userAccounts, { id } );
       const { broker } = selectedUserAccount;
-      const brokerName = _.get(broker, 'name', '');
+      const brokerName = _.get( broker, 'name', '' );
 
       this.setState( {
         userAccount: {
@@ -213,21 +220,22 @@ class AddOrEditMarketForm extends PureComponent {
   _handleSubmit = e => {
     e.preventDefault();
     this.props.form.validateFields( (err, values) => {
+
       if (!err) {
         const saveState = _.omit( this.state, [ 'userAccounts', 'brokers', 'products', 'commodities', 'assetClasses' ] );
 
         if (_.isEqual( this.props.actionType, 'add' )) {
-          this.props.onAddNew( saveState )
+          if (!_.isNil( this.props.isBulkOperation ) && this.props.isBulkOperation) {
+            this.props.onRequestSaveOperation( saveState );
+          } else {
+            this.props.onAddNew( saveState )
+          }
         } else {
           this.props.onEdit( saveState )
         }
       }
     } );
 
-  };
-
-  _getSelectOption = options => {
-    return _.map( options, ({ id, name }) => <Option key={ `${ id }_${ name }` }>{ name }</Option> )
   };
 
   _getAccountUserSelectOption = options => {
@@ -259,12 +267,6 @@ class AddOrEditMarketForm extends PureComponent {
     } )
   };
 
-
-  _handleConfirmBlur = (e) => {
-    const value = e.target.value;
-    this.setState( { confirmDirty: this.state.confirmDirty || !!value } );
-  };
-
   handleInversion = (rule, value, callback) => {
     const { getFieldValue } = this.props.form;
     const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
@@ -283,6 +285,11 @@ class AddOrEditMarketForm extends PureComponent {
         reject( "La opereración debe ser mayor a 0" );
       }
 
+      // If we are creating the operation through buulk operation is not necessary go beyond this validation
+      if (this.state.isBulkOperation) {
+        resolve();
+      }
+
       if (( parseFloat( this.state.accountGuarantee ) - parseFloat( value ) ) < 0) {
         reject( "El usuario no cuenta con Garantías disponibles" );  // reject with error message
       } else {
@@ -292,11 +299,8 @@ class AddOrEditMarketForm extends PureComponent {
   };
 
   render() {
-
     const { getFieldDecorator } = this.props.form;
     const isAddAction = _.isEqual( this.props.actionType, 'add' );
-
-    // Default values for edit action
 
     const longShortInitValue = !_.isNil( this.state.longShort ) ? this.state.longShort : undefined;
 
@@ -312,7 +316,6 @@ class AddOrEditMarketForm extends PureComponent {
     const assetClassInitValue = !_.isEmpty( this.state.assetClassName ) ? this.state.assetClassName : undefined;
 
     const buyPriceInitValue = !_.isEmpty( this.state.buyPrice ) ? this.state.buyPrice : undefined;
-    //const initialAmountInitValue = !_.isEmpty( this.state.initialAmount ) ? this.state.initialAmount : undefined;
     const takingProfitInitValue = !_.isEmpty( this.state.takingProfit ) ? this.state.takingProfit : undefined;
     const stopLostInitValue = !_.isEmpty( this.state.stopLost ) ? this.state.stopLost : undefined;
     const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
@@ -322,25 +325,33 @@ class AddOrEditMarketForm extends PureComponent {
     const endDateInitValue = !_.isNull( this.state.endDate ) ? moment.tz( this.state.endDate, 'America/New_York' ) : undefined;
 
     const isDisableSubmitBtn = this.props.isLoading || ( this.state.status === 4 && _.isNil( this.state.endDate ) )
+    const dynamicRequiredField = !this.state.isBulkOperation; // Disable regular required fields on bulk operation
+
     return (
-      <Form onSubmit={ this._handleSubmit } className="auth-form">
-        <Form.Item label="Cuenta de Usuario">
-          { getFieldDecorator( 'userAccount', {
-            initialValue: userAccountInitValue,
-            rules: [ { required: true, message: 'Por favor seleccione la cuenta de usuario ' } ],
-          } )(
-            <Select
-              showSearch={ true }
-              name="user"
-              onChange={ value => this._handleChangeSelect( { name: 'userAccount', value } ) }
-              placeholder="Cuenta de Usuario"
-              disabled={ !isAddAction }
-              showArrow={ isAddAction }
-            >
-              { this._getAccountUserSelectOption( this.state.userAccounts ) }
-            </Select>
-          ) }
-        </Form.Item>
+      <Form onSubmit={ this._handleSubmit }
+            className={ `auth-form ${ this.state.isBulkOperation ? 'is-bulk-operation-form' : '' }` }>
+        {
+          !this.state.isBulkOperation ? (
+            <Form.Item label="Cuenta de Usuario">
+              { getFieldDecorator( 'userAccount', {
+                initialValue: userAccountInitValue,
+                rules: [ { required: dynamicRequiredField, message: 'Por favor seleccione la cuenta de usuario ' } ],
+              } )(
+                <Select
+                  showSearch={ true }
+                  name="user"
+                  onChange={ value => this._handleChangeSelect( { name: 'userAccount', value } ) }
+                  placeholder="Cuenta de Usuario"
+                  disabled={ !isAddAction }
+                  showArrow={ isAddAction }
+                >
+                  { this._getAccountUserSelectOption( this.state.userAccounts ) }
+                </Select>
+              ) }
+            </Form.Item>
+          ) : null
+        }
+
         <Form.Item label="Corredor">
           { getFieldDecorator( 'broker', {
             initialValue: brokerInitValue,
@@ -508,26 +519,31 @@ class AddOrEditMarketForm extends PureComponent {
                    placeholder="Comisión por HOLD"/>
           ) }
         </Form.Item>
-        <Form.Item label="Estado">
-          { getFieldDecorator( 'status', {
-            initialValue: statusInitValue,
-            rules: [ { required: true, message: 'Por favor indique el estado' } ],
-          } )(
-            <Select
-              name="status"
-              onChange={ value => this.setState( {
-                status: value
-              } ) }
-              placeholder="Estado"
-              showArrow={ isAddAction }
-            >
-              <Option value={ 1 }>Activo</Option>
-              <Option value={ 2 }>Market Close</Option>
-              <Option value={ 3 }>On Hold</Option>
-              <Option value={ 4 }>Vendido</Option>
-            </Select>
-          ) }
-        </Form.Item>
+        {
+          !this.state.isBulkOperation ? (
+            <Form.Item label="Estado">
+              { getFieldDecorator( 'status', {
+                initialValue: statusInitValue,
+                rules: [ { required: true, message: 'Por favor indique el estado' } ],
+              } )(
+                <Select
+                  name="status"
+                  onChange={ value => this.setState( {
+                    status: value
+                  } ) }
+                  placeholder="Estado"
+                  showArrow={ isAddAction }
+                >
+                  <Option value={ 1 }>Activo</Option>
+                  <Option value={ 2 }>Market Close</Option>
+                  <Option value={ 3 }>On Hold</Option>
+                  <Option value={ 4 }>Vendido</Option>
+                </Select>
+              ) }
+            </Form.Item>
+          ) : null
+        }
+
         <Form.Item label="Fecha de Apertura">
           { getFieldDecorator( 'createdAt', {
             initialValue: createdAtInitValue
@@ -548,11 +564,15 @@ class AddOrEditMarketForm extends PureComponent {
             </Form.Item>
           ) : null
         }
-        <Form.Item>
+        <div style={ { width: '100%', padding: 20 } }>
           <Button type="primary" htmlType="submit" className="login-form-button" disabled={ isDisableSubmitBtn }>
-            { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }
+            {
+              this.state.isBulkOperation ?
+                'Confirmar Orden' :
+                _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar'
+            }
           </Button>
-        </Form.Item>
+        </div>
       </Form>
 
     );

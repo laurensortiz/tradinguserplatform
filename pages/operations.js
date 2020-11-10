@@ -29,7 +29,6 @@ class Operations extends Component {
   };
 
   render() {
-
     return (
       <Document id="userOperations-page">
         { this.props.isAdmin ? (

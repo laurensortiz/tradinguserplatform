@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
-import moment from 'moment';
-import { Row, Col, Button, Descriptions, Tag } from 'antd';
+import { Row, Col, Descriptions, Tag } from 'antd';
 import _ from 'lodash';
+import { withNamespaces } from 'react-i18next';
 
-import { FormatCurrency, FormatStatus, FormatDate, IsOperationPositive } from '../../../../common/utils';
+import { FormatCurrency, FormatStatusLang, FormatDate, IsOperationPositive } from '../../../../common/utils';
 
 class Detail extends PureComponent {
 
@@ -15,26 +15,24 @@ class Detail extends PureComponent {
     const startDate = _.get( this.props, 'currentOperation.startDate', '' );
     const endDate = _.get( this.props, 'currentOperation.endDate', '' );
 
-    const accountName = _.get( this.props, 'currentOperation.userAccount.account.name', '' );
-    const accountPercentage = _.get( this.props, 'currentOperation.userAccount.account.percentage', '0' );
     const status = _.get( this.props, 'currentOperation.status', 1 );
-    const { name: statusName, color: statusColor } = FormatStatus( status );
-
+    const { name: statusName, color: statusColor } = FormatStatusLang( status );
+    const langStatus = status => t(`status ${status}`)
     return (
       <>
         <Row>
 
           <Col>
-            <Descriptions title="Información de la Operación:">
-              <Descriptions.Item label="Tipo de Operación">{ operationType }</Descriptions.Item>
-              <Descriptions.Item label="Fecha de Apertura">{ FormatDate( startDate ) } </Descriptions.Item>
-              <Descriptions.Item label="Fecha de Cierre">{ FormatDate( endDate ) } </Descriptions.Item>
-              <Descriptions.Item label="Saldo Inicial">{ FormatCurrency.format( initialAmount ) } </Descriptions.Item>
-              <Descriptions.Item label="Saldo Actual"><span
+            <Descriptions title={t('title operationInformation')}>
+              <Descriptions.Item label={ t('operationType') }>{ operationType }</Descriptions.Item>
+              <Descriptions.Item label={ t('createdAt') }>{ FormatDate( startDate ) } </Descriptions.Item>
+              <Descriptions.Item label={ t('endDate') }>{ FormatDate( endDate ) } </Descriptions.Item>
+              <Descriptions.Item label={ t('initialAmount') }>{ FormatCurrency.format( initialAmount ) } </Descriptions.Item>
+              <Descriptions.Item label={ t('currentAmount') }><span
                 className={ IsOperationPositive( amount, initialAmount ) ? 'positive txt-highlight' : 'negative txt-highlight' }>{ FormatCurrency.format( amount ) }</span>
               </Descriptions.Item>
-              <Descriptions.Item label="Estado">
-                <Tag color={ statusColor }>{ statusName }</Tag>
+              <Descriptions.Item label={ t('status') }>
+                <Tag color={ statusColor }>{ langStatus(statusName)}</Tag>
               </Descriptions.Item>
             </Descriptions>
           </Col>
@@ -44,4 +42,4 @@ class Detail extends PureComponent {
   }
 }
 
-export default Detail;
+export default withNamespaces()(Detail);

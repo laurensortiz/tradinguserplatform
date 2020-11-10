@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "engines": {
-    "node": "^13.14.0"
+    "node": "12.18.0"
   },
   "scripts": {
     "dev": "node index.js",
@@ -46,6 +46,9 @@
     "file-saver": "^2.0.2",
     "group-array": "^1.0.0",
     "has-flag": "^3.0.0",
+    "i18next": "^19.8.3",
+    "i18next-browser-languagedetector": "^6.0.1",
+    "i18next-xhr-backend": "^3.2.2",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "moment-duration-format": "^2.3.2",
@@ -70,6 +73,7 @@
     "react-dom": "^16.8.4",
     "react-draggable": "^4.4.3",
     "react-highlight-words": "^0.16.0",
+    "react-i18next": "^9.0.10",
     "react-redux": "^6.0.1",
     "react-responsive-navbar": "^1.0.11",
     "redux": "^4.0.1",
@@ -78,7 +82,7 @@
     "sequelize": "^5.1.0",
     "sequelize-cli": "^5.4.0",
     "uuid": "^3.3.3",
-    "video.js": "^7.8.2",
+    "video.js": "7.7.4",
     "webpack": "^4.29.6",
     "xlsx": "^0.15.1"
   },

@@ -20,41 +20,76 @@ import ToFixNumber from '../../common/to-fix-number';
 
 module.exports = {
   async create(req, res) {
+    const userId = _.get( req, 'user.id', 0 )
     try {
+      await ORM.transaction( async (t) => {
 
-      const marketOperation = await MarketOperation.create( {
-        longShort: req.body.longShort,
-        userAccountId: _.get( req, 'body.userAccount.id', 0 ),
-        brokerId: _.get( req, 'body.broker.id', 0 ),
-        productId: _.get( req, 'body.product.id', 0 ),
-        commoditiesTotal: req.body.commoditiesTotal,
-        commodityId: _.get( req, 'body.commodity.id', 1 ),
-        assetClassId: _.get( req, 'body.assetClass.id', 1 ),
-        buyPrice: req.body.buyPrice,
-        takingProfit: req.body.takingProfit,
-        stopLost: req.body.stopLost,
-        maintenanceMargin: req.body.maintenanceMargin,
-        amount: req.body.amount,
-        initialAmount: req.body.amount,
-        holdStatusCommission: req.body.holdStatusCommission || 0,
-        orderId: req.body.orderId || 0,
-        status: _.get( req, 'body.status', 1 ),
-        createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
-        updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
-      } );
+        const userAccount = await UserAccount.findOne( {
+          where: {
+            id: _.get( req, 'body.userAccount.id', 0 ),
+          },
+        }, { transaction: t } );
+
+        if (!userAccount) {
+          throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
+        }
+
+        const snapShotAccount = JSON.stringify( userAccount );
+
+        const marketOperation = await MarketOperation.create( {
+          longShort: req.body.longShort,
+          userAccountId: _.get( req, 'body.userAccount.id', 0 ),
+          brokerId: _.get( req, 'body.broker.id', 0 ),
+          productId: _.get( req, 'body.product.id', 0 ),
+          commoditiesTotal: req.body.commoditiesTotal,
+          commodityId: _.get( req, 'body.commodity.id', 1 ),
+          assetClassId: _.get( req, 'body.assetClass.id', 1 ),
+          buyPrice: req.body.buyPrice,
+          takingProfit: req.body.takingProfit,
+          stopLost: req.body.stopLost,
+          maintenanceMargin: req.body.maintenanceMargin,
+          amount: req.body.amount,
+          initialAmount: req.body.amount,
+          holdStatusCommission: req.body.holdStatusCommission || 0,
+          orderId: req.body.orderId || 0,
+          status: _.get( req, 'body.status', 1 ),
+          createdAt: moment( req.body.createdAt || new Date() ).tz( 'America/New_York' ).format(),
+          updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+        }, { transaction: t } );
 
 
-      await MarketMovement.create( {
-        gpInversion: req.body.amount,
-        marketOperationId: Number( marketOperation.id ),
-        gpAmount: 0,
-        marketPrice: 0,
-        status: _.get( req, 'body.status', 1 ),
-        createdAt: moment( req.body.createdAt ).tz( 'America/New_York' ).format() || moment( new Date() ).tz( 'America/New_York' ).format(),
-        updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
-      } );
+        await MarketMovement.create( {
+          gpInversion: req.body.amount,
+          marketOperationId: Number( marketOperation.id ),
+          gpAmount: 0,
+          marketPrice: 0,
+          status: _.get( req, 'body.status', 1 ),
+          createdAt: moment( req.body.createdAt || new Date() ).tz( 'America/New_York' ).format(),
+          updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
+        }, { transaction: t } );
 
-      return res.status( 200 ).send( marketOperation );
+        const marginOperation = ToFixNumber( ( Number( req.body.maintenanceMargin ) + Number( req.body.amount ) ) * 0.1 )
+        const guaranteeOperation = ToFixNumber( Number( userAccount.guaranteeOperation ) - ( Number( req.body.maintenanceMargin ) + Number( req.body.amount ) + marginOperation ) );
+
+        const updatedUserAccount = await userAccount.update( {
+          guaranteeOperation,
+          marginUsed: ToFixNumber( Number( userAccount.marginUsed || 0 ) + marginOperation ), // Margen Utilizado 10%
+          updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+
+        }, { transaction: t } );
+
+        Log( {
+          userId,
+          userAccountId: userAccount.id,
+          tableUpdated: 'userAccount',
+          action: 'update',
+          type: 'createOperation',
+          snapShotBeforeAction: snapShotAccount,
+          snapShotAfterAction: JSON.stringify( updatedUserAccount )
+        } )
+
+        return res.status( 200 ).send( marketOperation );
+      } )
     } catch (err) {
       return res.status( 500 ).send( err );
     }
@@ -159,7 +194,8 @@ module.exports = {
         Product,
         Broker,
         Commodity,
-        AssetClass } )
+        AssetClass
+      } )
     );
 
     if (!marketOperation) {
@@ -172,7 +208,7 @@ module.exports = {
   },
 
   async update(req, res) {
-    const userId = _.get(req, 'user.id', 0)
+    const userId = _.get( req, 'user.id', 0 )
     await ORM.transaction( async (t) => {
 
       const marketOperation = await MarketOperation.findOne( {
@@ -205,16 +241,16 @@ module.exports = {
         } );
       }
 
-      if (marketOperation.status === 4 && _.isNil(req.body.endDate)) {
+      if (marketOperation.status === 4 && _.isNil( req.body.endDate )) {
         return res.status( 401 ).send( {
           message: 'Esta operación ya se encuentra cerrada. Sólo es permitido cambiar la fecha de cierre',
         } );
       }
 
-      if (marketOperation.status === 4 && !_.isNil(req.body.endDate)) {
+      if (marketOperation.status === 4 && !_.isNil( req.body.endDate )) {
         await marketOperation.update( {
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
-          endDate: !_.isNil(req.body.endDate) ? moment( req.body.endDate ).tz( 'America/New_York' ).format() : marketOperation.endDate,
+          endDate: !_.isNil( req.body.endDate ) ? moment( req.body.endDate ).tz( 'America/New_York' ).format() : marketOperation.endDate,
         }, { transaction: t } );
         return res.status( 200 ).send( marketOperation );
       }
@@ -237,7 +273,7 @@ module.exports = {
           orderId: req.body.orderId || marketOperation.orderId,
           status: _.get( req, 'body.status', 1 ) || marketOperation.status,
           holdStatusCommission: req.body.holdStatusCommission || marketOperation.holdStatusCommission,
-          createdAt: !_.isNil(req.body.createdAt) ? moment( req.body.createdAt ).tz( 'America/New_York' ).format() : marketOperation.createdAt,
+          createdAt: !_.isNil( req.body.createdAt ) ? moment( req.body.createdAt ).tz( 'America/New_York' ).format() : marketOperation.createdAt,
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
         }, { transaction: t } );
 
@@ -264,18 +300,18 @@ module.exports = {
             assetClassId === 1
           ) ? 0 : Number( maintenanceMargin );
 
-          const profit = ToFixNumber(Number( amount ) - Number( initialAmount ));
+          const profit = ToFixNumber( Number( amount ) - Number( initialAmount ) );
           const isProfitPositive = Math.sign( profit ) >= 0;
-          const commission = isProfitPositive ? ToFixNumber(Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 )) ) : 0
+          const commission = isProfitPositive ? ToFixNumber( Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) ) : 0
           const hold = isProfitPositive ? Number( holdStatusCommission ) : 0;
-          const endProfit = ToFixNumber(profit - commission - hold);
+          const endProfit = ToFixNumber( profit - commission - hold );
 
           // Close Calculations
-          const marginUsed = ToFixNumber(( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100);
-          const guaranteeOperationProduct = ToFixNumber(Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit);
-          const accountValueEndOperation = ToFixNumber(Number( userAccount.accountValue ) + Number( endProfit ));
-          const accountGuaranteeEndOperation = ToFixNumber(Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct ));
-          const accountMarginUsedEndOperation = ToFixNumber(Number( userAccount.marginUsed ) - Number( marginUsed ));
+          const marginUsed = ToFixNumber( ( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100 );
+          const guaranteeOperationProduct = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit );
+          const accountValueEndOperation = ToFixNumber( Number( userAccount.accountValue ) + Number( endProfit ) );
+          const accountGuaranteeEndOperation = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct ) );
+          const accountMarginUsedEndOperation = ToFixNumber( Number( userAccount.marginUsed ) - Number( marginUsed ) );
 
           const updatedUserAccount = await userAccount.update( {
             accountValue: accountValueEndOperation, // Valor de la Cuenta
@@ -285,7 +321,14 @@ module.exports = {
 
           }, { transaction: t } );
 
-          Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'sellOperation',  snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
+          Log( {
+            userId,
+            userAccountId: userAccount.id,
+            tableUpdated: 'userAccount',
+            action: 'update',
+            type: 'sellOperation',
+            snapShotAfterAction: JSON.stringify( updatedUserAccount )
+          } )
 
           const updatedMarketOperation = await marketOperation.update( {
             profitBrut: profit,
@@ -295,11 +338,19 @@ module.exports = {
             commissionValueEndOperation: commission,
             guaranteeOperationValueEndOperation: guaranteeOperationProduct,
             holdStatusCommissionEndOperation: hold,
-            endDate: !_.isNil(req.body.endDate) ? moment( req.body.endDate ).tz( 'America/New_York' ).format() : marketOperation.endDate,
+            endDate: !_.isNil( req.body.endDate ) ? moment( req.body.endDate ).tz( 'America/New_York' ).format() : marketOperation.endDate,
 
           }, { transaction: t } )
 
-          Log({userId, userAccountId: userAccount.id, tableUpdated: 'marketOperation', action: 'update', type:'sellOperation', snapShotBeforeAction:  JSON.stringify(marketOperation), snapShotAfterAction:  JSON.stringify(updatedMarketOperation)})
+          Log( {
+            userId,
+            userAccountId: userAccount.id,
+            tableUpdated: 'marketOperation',
+            action: 'update',
+            type: 'sellOperation',
+            snapShotBeforeAction: JSON.stringify( marketOperation ),
+            snapShotAfterAction: JSON.stringify( updatedMarketOperation )
+          } )
         }
 
         return res.status( 200 ).send( marketOperation );
@@ -315,7 +366,7 @@ module.exports = {
   },
 
   async bulkUpdate(req, res) {
-    const userId = _.get(req, 'user.id', 0)
+    const userId = _.get( req, 'user.id', 0 )
     let valueFT = 0;
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body;
@@ -384,18 +435,18 @@ module.exports = {
                     assetClassId === 1
                   ) ? 0 : Number( maintenanceMargin );
 
-                  const profit = ToFixNumber(Number( amount ) - Number( initialAmount ));
+                  const profit = ToFixNumber( Number( amount ) - Number( initialAmount ) );
                   const isProfitPositive = Math.sign( profit ) >= 0;
-                  const commission = isProfitPositive ? ToFixNumber(Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) )) : 0
+                  const commission = isProfitPositive ? ToFixNumber( Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) ) : 0
                   const hold = isProfitPositive ? Number( holdStatusCommission ) : 0;
-                  const endProfit = ToFixNumber(profit - commission - hold);
+                  const endProfit = ToFixNumber( profit - commission - hold );
 
                   // Close Calculations
-                  const marginUsed = ToFixNumber(( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100);
-                  const guaranteeOperationProduct = ToFixNumber(Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit);
-                  const accountValueEndOperation = ToFixNumber(Number( userAccount.accountValue ) + Number( endProfit ));
-                  const accountGuaranteeEndOperation = ToFixNumber(Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct ));
-                  const accountMarginUsedEndOperation = ToFixNumber(Number( userAccount.marginUsed ) - Number( marginUsed ));
+                  const marginUsed = ToFixNumber( ( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100 );
+                  const guaranteeOperationProduct = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit );
+                  const accountValueEndOperation = ToFixNumber( Number( userAccount.accountValue ) + Number( endProfit ) );
+                  const accountGuaranteeEndOperation = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct ) );
+                  const accountMarginUsedEndOperation = ToFixNumber( Number( userAccount.marginUsed ) - Number( marginUsed ) );
 
                   try {
                     const updatedUserAccount = await userAccount.update( {
@@ -406,7 +457,14 @@ module.exports = {
 
                     }, { transaction: t } );
 
-                    Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'sellOperation', snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
+                    Log( {
+                      userId,
+                      userAccountId: userAccount.id,
+                      tableUpdated: 'userAccount',
+                      action: 'update',
+                      type: 'sellOperation',
+                      snapShotAfterAction: JSON.stringify( updatedUserAccount )
+                    } )
 
 
                     const updatedMarketOperation = await marketOperation.update( {
@@ -422,7 +480,15 @@ module.exports = {
 
                     }, { transaction: t } )
 
-                    Log({userId, userAccountId: userAccount.id, tableUpdated: 'marketOperation', action: 'update', type:'sellOperation', snapShotBeforeAction:  JSON.stringify(marketOperation), snapShotAfterAction:  JSON.stringify(updatedMarketOperation)})
+                    Log( {
+                      userId,
+                      userAccountId: userAccount.id,
+                      tableUpdated: 'marketOperation',
+                      action: 'update',
+                      type: 'sellOperation',
+                      snapShotBeforeAction: JSON.stringify( marketOperation ),
+                      snapShotAfterAction: JSON.stringify( updatedMarketOperation )
+                    } )
 
 
                   } catch (e) {
@@ -586,25 +652,138 @@ module.exports = {
                   }
                   break;
 
+                /**
+                 * COOPER FT | OP
+                 */
+                case 'cooper-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 12.5 * gpAmount ) * commoditiesTotal;
+                  } else {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  break;
+
+                /**
+                 * CBO FT | OP
+                 */
+                case 'cbo-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 10 * gpAmount ) * commoditiesTotal;
+                  } else {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  break;
+
+                /**
+                 * ORANGE FT | OP
+                 */
+                case 'orange-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 1.50 * gpAmount ) * commoditiesTotal;
+                  } else {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  break;
+
+
                 default:
 
+
               }
+
+
+
               /**
                * End product price update based on market
                */
-
-
               return await MarketMovement.create( {
-                gpInversion: calculatedValue + amount,
+                gpInversion: ToFixNumber( calculatedValue + amount ),
                 marketOperationId: operationID,
-                gpAmount: calculatedValue,
+                gpAmount: ToFixNumber( calculatedValue ),
                 marketPrice,
                 status: 1,
                 createdAt: moment( new Date() ).tz( 'America/New_York' ).format(),
                 updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
               }, { transaction: t } );
-
             } ) )
+            break;
+          case 'create-operation':
+            const accountIds = operationsIds;
+            result = await Promise.all( accountIds.map( async (accountId) => {
+
+                const userAccount = await UserAccount.findOne( {
+                  where: {
+                    id: accountId,
+                  },
+                }, { transaction: t } );
+
+                if (!userAccount) {
+                  throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
+                }
+
+                const snapShotAccount = JSON.stringify( userAccount );
+                try {
+
+                  const marketOperation = await MarketOperation.create( {
+                    longShort: updateValue.longShort,
+                    userAccountId: userAccount.id,
+                    brokerId: _.get( updateValue, 'broker.id', 0 ),
+                    productId: _.get( updateValue, 'product.id', 0 ),
+                    commoditiesTotal: updateValue.commoditiesTotal,
+                    commodityId: _.get( updateValue, 'commodity.id', 1 ),
+                    assetClassId: _.get( updateValue, 'assetClass.id', 1 ),
+                    buyPrice: updateValue.buyPrice,
+                    takingProfit: updateValue.takingProfit,
+                    stopLost: updateValue.stopLost,
+                    maintenanceMargin: updateValue.maintenanceMargin,
+                    amount: updateValue.amount,
+                    initialAmount: updateValue.amount,
+                    holdStatusCommission: updateValue.holdStatusCommission || 0,
+                    orderId: updateValue.orderId || 0,
+                    status: _.get( updateValue, 'status', 1 ),
+                    createdAt: moment( updateValue.createdAt || new Date() ).tz( 'America/New_York' ).format(),
+                    updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+                  }, { transaction: t } );
+
+
+                  await MarketMovement.create( {
+                    gpInversion: updateValue.amount,
+                    marketOperationId: Number( marketOperation.id ),
+                    gpAmount: 0,
+                    marketPrice: 0,
+                    status: _.get( updateValue, 'status', 1 ),
+                    createdAt: moment( updateValue.createdAt || new Date() ).tz( 'America/New_York' ).format(),
+                    updatedAt: moment( new Date() ).tz( 'America/New_York' ).format()
+                  }, { transaction: t } );
+
+                  const marginOperation = ToFixNumber( ( Number( updateValue.maintenanceMargin ) + Number( updateValue.amount ) ) * 0.1 )
+                  const guaranteeOperation = ToFixNumber( Number( userAccount.guaranteeOperation ) - ( Number( updateValue.maintenanceMargin ) + Number( updateValue.amount ) + marginOperation ) );
+
+                  const updatedUserAccount = await userAccount.update( {
+                    guaranteeOperation,
+                    marginUsed: ToFixNumber( Number( userAccount.marginUsed || 0 ) + marginOperation ), // Margen Utilizado 10%
+                    updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
+
+                  }, { transaction: t } );
+
+                  Log( {
+                    userId,
+                    userAccountId: userAccount.id,
+                    tableUpdated: 'userAccount',
+                    action: 'update',
+                    type: 'createOperation',
+                    snapShotBeforeAction: snapShotAccount,
+                    snapShotAfterAction: JSON.stringify( updatedUserAccount )
+                  } )
+
+
+                } catch (e) {
+                  throw new Error( `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${ e }` )
+                }
+              } )
+            )
+            break;
+          default:
         }
         return res.status( 200 ).send( result );
       } );

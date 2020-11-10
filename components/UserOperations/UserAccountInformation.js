@@ -1,13 +1,12 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Descriptions, Tag, Card, Statistic, Icon, Button, Modal } from 'antd';
+import { Row, Col, Descriptions, Card, Icon, Button, Modal } from 'antd';
 import _ from 'lodash';
-
+import { withNamespaces } from 'react-i18next';
 
 import { FormatCurrency, IsOperationPositive, StaticAmountBox } from '../../common/utils';
 import ReferralForm from "./ReferralForm";
 import { Investment, Market } from "./Operation";
 import { ExportUserAccountsPDF } from './Operation/shared'
-
 
 class AccountInformation extends PureComponent {
 
@@ -32,13 +31,12 @@ class AccountInformation extends PureComponent {
   }
 
   render() {
-
+    const {t} = this.props;
     const userId = _.get( this.props, 'userAccount.user.id', 0 );
     const userAccountId = _.get( this.props, 'userAccount.id' );
     const accountValue = _.get( this.props, 'userAccount.accountValue', '0.00' );
     const accountType = _.get( this.props, 'userAccount.account.associatedOperation', 1 );
     const balanceInitial = _.get( this.props, 'userAccount.balanceInitial', '0.00' );
-    const maintenanceMargin = _.get( this.props, 'userAccount.maintenanceMargin', '0.00' );
 
     const accountName = _.get( this.props, 'userAccount.account.name', '' );
     const accountPercentage = _.get( this.props, 'userAccount.account.percentage', '0' );
@@ -53,42 +51,42 @@ class AccountInformation extends PureComponent {
     return (
       <>
         <ExportUserAccountsPDF userAccount={this.props.userAccount} />
-      <Card title={ `Información de la Cuenta: ${ accountName }` } headStyle={ { backgroundColor: '#2D2D3B' } }
+      <Card title={ `${t('accountInformation')}: ${ accountName }` } headStyle={ { backgroundColor: '#2D2D3B' } }
             bodyStyle={ { backgroundColor: '#0E0E0E' } } style={ { marginBottom: 20 } }
             className="account-detail">
         <Row style={ { marginBottom: 20 } }>
           <Col>
             <Descriptions title="">
-              <Descriptions.Item label="Tipo de cuenta">{ accountName }</Descriptions.Item>
+              <Descriptions.Item label={t('accountType')}>{ accountName }</Descriptions.Item>
               {
                 _.isEqual( accountType, 1 ) ? (
-                  <Descriptions.Item label="Comisíon sobre ganancias">{ accountPercentage } %</Descriptions.Item>
+                  <Descriptions.Item label={t('profitCommission')}>{ accountPercentage } %</Descriptions.Item>
                 ) : (
-                  <Descriptions.Item label="Tipo de Interés">{ accountPercentage } %</Descriptions.Item>
+                  <Descriptions.Item label={t('interestType')}>{ accountPercentage } %</Descriptions.Item>
                 )
               }
 
               {
                 _.isEqual( accountType, 1 ) ? (
                   <Descriptions.Item
-                    label="Garantías disponibles">{ FormatCurrency.format( guaranteeOperation ) }</Descriptions.Item>
+                    label={t('availableGuarantees')}>{ FormatCurrency.format( guaranteeOperation ) }</Descriptions.Item>
 
                 ) : null
               }
 
 
               <Descriptions.Item
-                label="Garantías / Créditos">{ FormatCurrency.format( guaranteeCredits ) }</Descriptions.Item>
+                label={t('guaranteesCredits')}>{ FormatCurrency.format( guaranteeCredits ) }</Descriptions.Item>
               {
                 _.isEqual( accountType, 1 ) ? (
                   <>
                     <Descriptions.Item
-                      label="Margen utilizado 10%">{ FormatCurrency.format( marginUsed ) }</Descriptions.Item>
+                      label={`${t('marginUsed')} 10%`}>{ FormatCurrency.format( marginUsed ) }</Descriptions.Item>
 
                     <Descriptions.Item
-                      label="Comisiones por referencia">{ FormatCurrency.format( commissionByReference ) }
+                      label={t('commissionsByReference')}>{ FormatCurrency.format( commissionByReference ) }
                       <Button type="tertiary" style={ { marginLeft: 10, fontSize: 15 } } onClick={ this._onHandleShowForm }><Icon
-                        type="solution"/> Referir</Button></Descriptions.Item>
+                        type="solution"/> {t('btn referral')}</Button></Descriptions.Item>
                   </>
                 ) : null
               }
@@ -125,7 +123,7 @@ class AccountInformation extends PureComponent {
           <Col sm={ 24 } md={ 12 }>
             <Card className={ isOperationPositive ? 'positive-bg' : 'negative-bg' }>
               <StaticAmountBox
-                title="Valor de la Cuenta"
+                title={t('accountValue')}
                 value={ accountValue }
                 icon={ isOperationPositive ? <Icon type="arrow-up"/> : <Icon type="arrow-down"/> }
               />
@@ -134,7 +132,7 @@ class AccountInformation extends PureComponent {
           <Col sm={ 24 } md={ 12 }>
             <Card className="neutral-bg">
               <StaticAmountBox
-                title="Saldo Inicial"
+                title={t('initialAmount')}
                 value={ balanceInitial }
                 icon={ <Icon type="dollar"/> }
               />
@@ -164,4 +162,4 @@ class AccountInformation extends PureComponent {
   }
 }
 
-export default AccountInformation;
+export default withNamespaces()(AccountInformation);
