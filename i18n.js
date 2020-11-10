@@ -10,13 +10,13 @@ import translationPT from './locales/pt/translation.json';
 
 // the translations
 const resources = {
-  en: {
+  ['en-US']: {
     translation: translationEN
   },
-  es: {
+  ['es-US']: {
     translation: translationES
   },
-  pt: {
+  ['pt-PT']: {
     translation: translationPT
   }
 };
@@ -28,8 +28,7 @@ i18n
   .init({
     resources,
     name: 'localStorage',
-    fallbackLng: "en", // use en if detected lng is not available
-
+    fallbackLng: "es-US", // use en if detected lng is not available
     keySeparator: false, // we do not use keys in form messages.welcome
 
     interpolation: {
