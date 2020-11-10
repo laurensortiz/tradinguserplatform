@@ -7,21 +7,21 @@ const { Option } = Select;
 
 const langMenu = [
   {
-    lang: 'en',
+    lang: 'en-US',
     icon: '/static/flags/united-states.svg'
   },
   {
-    lang: 'es',
+    lang: 'es-US',
     icon: '/static/flags/spain.svg'
   },
   {
-    lang: 'pt',
+    lang: 'pt-PT',
     icon: '/static/flags/portugal.svg'
   }
 ]
 
 function LangSelector ({lng}) {
-  const [defaultLang, setDefaultLang] = useState('en')
+  const [defaultLang, setDefaultLang] = useState('es-US')
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage( lng );
