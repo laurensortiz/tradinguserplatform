@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 moment.locale( 'es' ); // Set Lang to Spanish
 
-import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon } from 'antd';
+import { Input, Button, Form, Select, DatePicker, Icon } from 'antd';
 
 import { userAccountOperations } from "../../../state/modules/userAccounts";
 import { brokerOperations } from "../../../state/modules/brokers";
@@ -70,6 +70,7 @@ class AddOrEditMarketForm extends PureComponent {
     accountGuarantee: 0,
     isOperationClosed: false,
     isBulkOperation: false,
+    isBulkOperationReady: false,
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -226,6 +227,9 @@ class AddOrEditMarketForm extends PureComponent {
 
         if (_.isEqual( this.props.actionType, 'add' )) {
           if (!_.isNil( this.props.isBulkOperation ) && this.props.isBulkOperation) {
+            this.setState( {
+              isBulkOperationReady: true
+            } )
             this.props.onRequestSaveOperation( saveState );
           } else {
             this.props.onAddNew( saveState )
@@ -332,42 +336,43 @@ class AddOrEditMarketForm extends PureComponent {
             className={ `auth-form ${ this.state.isBulkOperation ? 'is-bulk-operation-form' : '' }` }>
         {
           !this.state.isBulkOperation ? (
-            <Form.Item label="Cuenta de Usuario">
-              { getFieldDecorator( 'userAccount', {
-                initialValue: userAccountInitValue,
-                rules: [ { required: dynamicRequiredField, message: 'Por favor seleccione la cuenta de usuario ' } ],
-              } )(
-                <Select
-                  showSearch={ true }
-                  name="user"
-                  onChange={ value => this._handleChangeSelect( { name: 'userAccount', value } ) }
-                  placeholder="Cuenta de Usuario"
-                  disabled={ !isAddAction }
-                  showArrow={ isAddAction }
-                >
-                  { this._getAccountUserSelectOption( this.state.userAccounts ) }
-                </Select>
-              ) }
-            </Form.Item>
+            <>
+              <Form.Item label="Cuenta de Usuario">
+                { getFieldDecorator( 'userAccount', {
+                  initialValue: userAccountInitValue,
+                  rules: [ { required: dynamicRequiredField, message: 'Por favor seleccione la cuenta de usuario ' } ],
+                } )(
+                  <Select
+                    showSearch={ true }
+                    name="user"
+                    onChange={ value => this._handleChangeSelect( { name: 'userAccount', value } ) }
+                    placeholder="Cuenta de Usuario"
+                    disabled={ !isAddAction }
+                    showArrow={ isAddAction }
+                  >
+                    { this._getAccountUserSelectOption( this.state.userAccounts ) }
+                  </Select>
+                ) }
+              </Form.Item>
+              <Form.Item label="Corredor">
+                { getFieldDecorator( 'broker', {
+                  initialValue: brokerInitValue,
+                  rules: [ { required: true, message: 'Por favor seleccione el corredor ' } ],
+                } )(
+                  <Select
+                    showSearch={ true }
+                    name="broker"
+                    onChange={ value => this._handleChangeSelect( { name: 'broker', value } ) }
+                    placeholder="Corredor"
+                    showArrow={ isAddAction }
+                  >
+                    { this._getSelectOptions( this.state.brokers ) }
+                  </Select>
+                ) }
+              </Form.Item>
+            </>
           ) : null
         }
-
-        <Form.Item label="Corredor">
-          { getFieldDecorator( 'broker', {
-            initialValue: brokerInitValue,
-            rules: [ { required: true, message: 'Por favor seleccione el corredor ' } ],
-          } )(
-            <Select
-              showSearch={ true }
-              name="broker"
-              onChange={ value => this._handleChangeSelect( { name: 'broker', value } ) }
-              placeholder="Corredor"
-              showArrow={ isAddAction }
-            >
-              { this._getSelectOptions( this.state.brokers ) }
-            </Select>
-          ) }
-        </Form.Item>
         <Form.Item label="Producto">
           { getFieldDecorator( 'product', {
             initialValue: productInitValue,
@@ -565,13 +570,24 @@ class AddOrEditMarketForm extends PureComponent {
           ) : null
         }
         <div style={ { width: '100%', padding: 20 } }>
-          <Button type="primary" htmlType="submit" className="login-form-button" disabled={ isDisableSubmitBtn }>
-            {
-              this.state.isBulkOperation ?
-                'Confirmar Orden' :
-                _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar'
-            }
-          </Button>
+          {
+            this.state.isBulkOperation ? (
+              <Button type="primary" icon={this.state.isBulkOperationReady ? "check" : null} size="large" htmlType="submit" className={this.state.isBulkOperationReady ? 'export-excel-cta' : null}
+                      disabled={ isDisableSubmitBtn }>
+                {
+                  this.state.isBulkOperationReady ? 'Orden lista para procesar' : 'Confirmar Orden'
+                }
+              </Button>
+            ) : (
+              <Button type="primary" htmlType="submit" className="login-form-button" disabled={ isDisableSubmitBtn }>
+                {
+                  _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar'
+
+                }
+              </Button>
+            )
+          }
+
         </div>
       </Form>
 

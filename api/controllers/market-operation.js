@@ -727,7 +727,7 @@ module.exports = {
                   const marketOperation = await MarketOperation.create( {
                     longShort: updateValue.longShort,
                     userAccountId: userAccount.id,
-                    brokerId: _.get( updateValue, 'broker.id', 0 ),
+                    brokerId: userAccount.brokerId,
                     productId: _.get( updateValue, 'product.id', 0 ),
                     commoditiesTotal: updateValue.commoditiesTotal,
                     commodityId: _.get( updateValue, 'commodity.id', 1 ),
