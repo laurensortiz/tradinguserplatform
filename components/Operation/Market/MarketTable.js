@@ -22,6 +22,7 @@ import {
 import BulkUpdateSteps from './BulkUpdateSteps';
 
 import { assetClassOperations } from "../../../state/modules/assetClasses";
+import { brokerOperations } from "../../../state/modules/brokers";
 
 momentDurationFormat( moment );
 extendMoment( moment );
@@ -35,6 +36,7 @@ class MarketTable extends Component {
   state = {
     marketOperations: [],
     assetClasses: [],
+    brokers: [],
     searchText: '',
     searchedColumn: '',
     selectedRowKeys: [],
@@ -64,11 +66,18 @@ class MarketTable extends Component {
         assetClasses: nextProps.assetClasses
       } )
     }
+    if (!_.isEqual( nextProps.brokers, prevState.brokers )) {
+      _.assignIn(updatedState, {
+        brokers: nextProps.brokers
+      })
+
+    }
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
   componentDidMount() {
-    this.props.fetchGetAssetClasses()
+    this.props.fetchGetAssetClasses();
+    this.props.fetchGetBrokers();
   }
 
   _getCTA = (type, row) => {
@@ -437,6 +446,7 @@ class MarketTable extends Component {
       sortedInfo,
       filteredInfo,
       assetClasses,
+      brokers
     } = this.state;
 
     const columns = [
@@ -595,9 +605,18 @@ class MarketTable extends Component {
         title: 'Corredor',
         dataIndex: 'broker.name',
         key: 'broker.name',
-        sorter: (a, b) => Sort( a.broker.name, b.broker.name ),
+        render: text => <span key={ text }>{ text }</span>,
+        sorter: (a, b) => a.broker && b.broker ? Sort( a.broker.name, b.broker.name ) : null,
         sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'broker.name' ),
+        filters: brokers.map(({name}) => {
+          return {
+            text: name,
+            value: name
+          }
+        }),
+        filteredValue: filteredInfo['broker.name'] || null,
+        onFilter: (value, record) => record.broker ? record.broker.name.includes(value) : null,
+        ellipsis: true,
       },
       {
         title: this._handleActionTitle,
@@ -637,12 +656,14 @@ class MarketTable extends Component {
 function mapStateToProps(state) {
   return {
     assetClasses: state.assetClassesState.list,
+    brokers: state.brokersState.list,
   }
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
-    fetchGetAssetClasses: assetClassOperations.fetchGetAssetClasses
+    fetchGetAssetClasses: assetClassOperations.fetchGetAssetClasses,
+    fetchGetBrokers: brokerOperations.fetchGetBrokers,
   }, dispatch );
 
 export default connect( mapStateToProps, mapDispatchToProps )( withNamespaces()(MarketTable) );
