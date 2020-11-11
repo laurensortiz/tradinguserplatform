@@ -8,6 +8,7 @@ import { FormatCurrency, FormatStatusLang, FormatDate, IsOperationPositive } fro
 class Detail extends PureComponent {
 
   render() {
+    const {t} = this.props;
     const operationType = _.get( this.props, 'currentOperation.operationType', '' );
     const amount = _.get( this.props, 'currentOperation.amount', '0.00' );
     const initialAmount = _.get( this.props, 'currentOperation.initialAmount', '0.00' );
