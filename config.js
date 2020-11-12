@@ -41,7 +41,7 @@ module.exports = {
     port: process.env.DB_PRODUCTION_PORT,
     dialect: 'postgres',
     dialectOptions: {
-      ssl: true,
+      ssl: false,
     },
     define: {
       //prevent sequelize from pluralizing table names

@@ -15,10 +15,6 @@ const ORM = new Sequelize(
   }
 );
 
-console.log('[=====  CONFIG  =====>');
-console.log(sequelizeConfig);
-console.log('<=====  /CONFIG  =====]');
-
 ORM.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
