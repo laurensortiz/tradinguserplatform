@@ -31,12 +31,6 @@ module.exports = {
     define: {
       //prevent sequelize from pluralizing table names
       freezeTableName: true
-    },
-    pool: {
-      max: 30,
-      min: 0,
-      acquire: 60000,
-      idle: 5000
     }
   },
   production: {
@@ -52,10 +46,6 @@ module.exports = {
     define: {
       //prevent sequelize from pluralizing table names
       freezeTableName: true
-    },
-    pool: {
-      acquire: 60000,
-      idle: 5000
     }
   },
   /**
