@@ -7,6 +7,11 @@ const { Option } = Select;
 
 const BULK_UPDATE_TYPES = [
   {
+    code: 'report',
+    name: 'Generar reporte de operaciones',
+    scope: 'report'
+  },
+  {
     code: 'status',
     name: 'Estado',
     scope: 'status'

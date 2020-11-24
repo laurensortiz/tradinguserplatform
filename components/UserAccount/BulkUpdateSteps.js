@@ -10,7 +10,7 @@ import AddOperationForm from '../Operation/Market/AddOrEditMarketForm';
 const BULK_UPDATE_TYPES = [
   {
     code: 'report',
-    name: 'Generar Reporte de cuentas',
+    name: 'Generar reporte de cuentas',
     scope: 'report'
   },
   {

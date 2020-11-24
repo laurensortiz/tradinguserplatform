@@ -145,9 +145,6 @@ class Accounts extends Component {
     }
 
     if (!_.isEmpty(nextProps.userAccount) && !_.isEqual(nextProps.userAccount, prevState.selectedUserAccount )) {
-      console.log('[=====  HE  =====>');
-      console.log(nextProps.userAccount);
-      console.log('<=====  /HE  =====]');
       return {
         selectedUserAccount: nextProps.userAccount
       }

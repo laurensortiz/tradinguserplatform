@@ -380,8 +380,6 @@ module.exports = {
               /**
                * Close Operation
                */
-
-
               result = await Promise.all( operationsIds.map( async (operationID) => {
                   const marketOperation = await MarketOperation.findOne( {
                     where: {
@@ -501,9 +499,6 @@ module.exports = {
               //END SELL OPERATION
 
             } else {
-              /**
-               *
-               */
               result = await MarketOperation.update( {
                   [ updateType ]: updateValue,
                 }, { where: { id: operationsIds } },
@@ -710,8 +705,8 @@ module.exports = {
             } ) )
             break;
           case 'create-operation':
-            const accountIds = operationsIds;
-            result = await Promise.all( accountIds.map( async (accountId) => {
+            // In this case operationsIds refers to User Accounts Ids
+            result = await Promise.all( operationsIds.map( async (accountId) => {
 
                 const userAccount = await UserAccount.findOne( {
                   where: {
@@ -724,7 +719,14 @@ module.exports = {
                 }
 
                 const snapShotAccount = JSON.stringify( userAccount );
+
                 try {
+                  const lastMarketOperationEntry = await MarketOperation.findAll({
+                    limit: 1,
+                    attributes: [ 'orderId' ],
+                    order: [ [ 'id', 'DESC' ]]
+                  });
+                  const nextOrderId = ++lastMarketOperationEntry[0].orderId;
 
                   const marketOperation = await MarketOperation.create( {
                     longShort: updateValue.longShort,
@@ -741,7 +743,7 @@ module.exports = {
                     amount: updateValue.amount,
                     initialAmount: updateValue.amount,
                     holdStatusCommission: updateValue.holdStatusCommission || 0,
-                    orderId: updateValue.orderId || 0,
+                    orderId: nextOrderId || 0,
                     status: _.get( updateValue, 'status', 1 ),
                     createdAt: moment( updateValue.createdAt || new Date() ).tz( 'America/New_York' ).format(),
                     updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),

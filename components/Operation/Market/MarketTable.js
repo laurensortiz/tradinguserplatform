@@ -24,6 +24,9 @@ import BulkUpdateSteps from './BulkUpdateSteps';
 import { assetClassOperations } from "../../../state/modules/assetClasses";
 import { brokerOperations } from "../../../state/modules/brokers";
 
+import {ExportMarkerOperationReport} from '../shared';
+
+
 momentDurationFormat( moment );
 extendMoment( moment );
 moment.locale( 'es' ); // Set Lang to Spanish
@@ -227,11 +230,16 @@ class MarketTable extends Component {
   }
 
   _handleClickBulkUpdate = bulkOperation => {
-
-    this.props.onFetchBulkUpdate( {
-      ...bulkOperation,
-      operationsIds: this.state.selectedRowKeys
-    } )
+    const operationsIds = this.state.selectedRowKeys;
+    if (bulkOperation.updateScope === 'report') {
+      const selectedOperations = this.state.marketOperations.filter( operation => operationsIds.indexOf(operation.id) > -1)
+      ExportMarkerOperationReport(selectedOperations)
+    } else {
+      this.props.onFetchBulkUpdate( {
+        ...bulkOperation,
+        operationsIds
+      } )
+    }
 
   }
 
