@@ -10,7 +10,7 @@ const queries = {
         userAccountId: req.params.userAccountId,
         status: 1
       },
-      order: [ [ 'createdAt', 'ASC' ] ],
+      order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
   get: ({ req, UserAccount }) => {
@@ -22,7 +22,7 @@ const queries = {
         userAccountId: req.params.userAccountId,
         status: 1
       },
-      order: [ [ 'createdAt', 'ASC' ] ],
+      order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
 };

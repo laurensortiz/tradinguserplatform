@@ -32,6 +32,12 @@ module.exports = {
       //prevent sequelize from pluralizing table names
       freezeTableName: true
     },
+    pool: {
+      max: 30,
+      min: 0,
+      acquire: 60000,
+      idle: 5000
+    }
   },
   production: {
     username: process.env.DB_PRODUCTION_USERNAME,
@@ -47,6 +53,12 @@ module.exports = {
       //prevent sequelize from pluralizing table names
       freezeTableName: true
     },
+    pool: {
+      max: 30,
+      min: 0,
+      acquire: 60000,
+      idle: 5000
+    }
   },
   /**
    * Heroku config

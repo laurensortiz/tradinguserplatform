@@ -37,6 +37,31 @@ export function accounts(state = initialState, action) {
         isLoading: false,
         message: action.payload,
       };
+    // List One UserAccount
+    case types.ACCOUNT_REQUEST:
+      return {
+        ...state,
+        item: {},
+        isFailure: false,
+        isLoading: true,
+        isSuccess: false,
+      };
+    case types.ACCOUNT_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        isFailure: false,
+        isLoading: false,
+        item: action.payload,
+      };
+    case types.ACCOUNT_ERROR:
+      return {
+        ...state,
+        isSuccess: false,
+        isFailure: true,
+        isLoading: false,
+        message: action.payload,
+      };
     // Add Project
     case types.ACCOUNT_ADD_REQUEST:
       return {

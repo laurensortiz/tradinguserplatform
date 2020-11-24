@@ -380,6 +380,8 @@ module.exports = {
               /**
                * Close Operation
                */
+
+
               result = await Promise.all( operationsIds.map( async (operationID) => {
                   const marketOperation = await MarketOperation.findOne( {
                     where: {
@@ -496,7 +498,7 @@ module.exports = {
                   }
                 } )
               )
-
+              //END SELL OPERATION
 
             } else {
               /**

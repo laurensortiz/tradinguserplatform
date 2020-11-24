@@ -52,6 +52,21 @@ class AddOrEditUserAccountForm extends PureComponent {
   static getDerivedStateFromProps(nextProps, prevState) {
     let stateUpdated = {};
 
+    if(!_.isEmpty(nextProps.selectedAccount)) {
+      const {accountValue, guaranteeOperation,  marginUsed} = nextProps.selectedAccount;
+      if(!_.isEqual(accountValue, prevState.accountValue) ||
+        !_.isEqual(guaranteeOperation, prevState.guaranteeOperation) ||
+        !_.isEqual(marginUsed, prevState.marginUsed)
+      ) {
+        _.assign( stateUpdated, {
+          accountValue,
+          guaranteeOperation,
+          marginUsed,
+        } )
+      }
+
+    }
+
     if (!_.isEqual( nextProps.accounts, prevState.accounts )) {
       _.assign( stateUpdated, {
         accounts: nextProps.accounts

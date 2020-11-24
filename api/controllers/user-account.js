@@ -57,8 +57,8 @@ module.exports = {
   },
 
   async get(req, res) {
-    const userAccount = await UserAccount.findAll(
-      userAccountQuery.get( { req, User, Role, Account, Broker } )
+    const userAccount = await UserAccount.findOne(
+      userAccountQuery.get( { req } )
     );
 
     if (!userAccount) {

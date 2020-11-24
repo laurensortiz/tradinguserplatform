@@ -62,29 +62,15 @@ const queries = {
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  get: ({ req, User, Account, Broker }) => {
+  get: ({ req }) => {
     return {
       where: {
+        id: req.params.userAccountId || 0,
         status: 1,
       },
       attributes: {
         exclude: [ 'snapShotAccount' ],
       },
-      include: [
-        {
-          model: User,
-          as: 'user',
-        },
-        {
-          model: Account,
-          as: 'account',
-        },
-        {
-          model: Broker,
-          as: 'broker',
-          attributes: [ 'name', 'id' ],
-        },
-      ],
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },

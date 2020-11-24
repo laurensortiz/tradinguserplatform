@@ -170,32 +170,39 @@ class AddOrEditMarketForm extends PureComponent {
     const id = Number( codeIdName[ 0 ] );
     const name = codeIdName[ 1 ];
 
-    if (_.isEqual( fieldName, 'userAccount' )) {
-      const selectedUserAccount = _.find( this.state.userAccounts, { id } );
-      const { broker } = selectedUserAccount;
-      const brokerName = _.get( broker, 'name', '' );
+    switch (fieldName) {
+      case 'longShort':
+        this.setState( {
+          longShort: value
+        } )
+        break;
+      case 'userAccount':
+        const selectedUserAccount = _.find( this.state.userAccounts, { id } );
+        const { broker } = selectedUserAccount;
+        const brokerName = _.get( broker, 'name', '' );
 
-      this.setState( {
-        userAccount: {
-          id,
-          name,
-        },
-        broker,
-        brokerName,
-        amount: selectedUserAccount.accountValue,
-        accountPercentage: _.get( selectedUserAccount, 'account.percentage', 0 ),
-        accountGuarantee: _.get( selectedUserAccount, 'guaranteeOperation', 0 )
-      } )
-    } else {
-      this.setState( {
-        [ fieldName ]: {
-          id,
-          name,
-        }
-      } )
+        this.setState( {
+          userAccount: {
+            id,
+            name,
+          },
+          broker,
+          brokerName,
+          amount: selectedUserAccount.accountValue,
+          accountPercentage: _.get( selectedUserAccount, 'account.percentage', 0 ),
+          accountGuarantee: _.get( selectedUserAccount, 'guaranteeOperation', 0 )
+        } )
+        break;
+      default:
+        this.setState( {
+          [ fieldName ]: {
+            id,
+            name,
+          }
+        } )
     }
-  };
 
+  }
   _setStartDate = (date) => {
 
     this.setState( {
@@ -395,8 +402,18 @@ class AddOrEditMarketForm extends PureComponent {
             value: longShortInitValue,
             rules: [ { required: false, message: 'Por favor indique Long / Short' } ],
           } )(
-            <Input name="longShort" onChange={ this._handleChange }
-                   placeholder="Long / Short"/>
+            <Select
+              showSearch={ true }
+              name="longShort"
+              onChange={ value => this._handleChangeSelect( { name: 'longShort', value } ) }
+              placeholder="Long / Short"
+              showArrow={ isAddAction }
+            >
+              <Option key="short" value="Short">Short</Option>
+              <Option key="long" value="Long">Long</Option>
+
+            </Select>
+
           ) }
         </Form.Item>
 
