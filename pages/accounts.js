@@ -146,7 +146,10 @@ class Accounts extends Component {
 
     if (!_.isEmpty(nextProps.userAccount) && !_.isEqual(nextProps.userAccount, prevState.selectedUserAccount )) {
       return {
-        selectedUserAccount: nextProps.userAccount
+        selectedUserAccount: {
+          ...prevState.selectedUserAccount,
+          ...nextProps.userAccount,
+        }
       }
 
     }
@@ -178,7 +181,8 @@ class Accounts extends Component {
   };
 
   _onClose = () => {
-    this._handleTableOnChange()
+    this._handleTableOnChange();
+    this.props.resetAfterRequest();
     this.setState( {
       isVisibleAddOrEditUserAccount: false,
       selectedUserAccount: {}
@@ -323,6 +327,7 @@ class Accounts extends Component {
             isLoading={ this.props.isLoading }
             selectedAccount={ this.state.selectedUserAccount }
             actionType={ this.state.actionType }
+            isMovementCompleted={this.props.isMovementCompleted}
           />
           <MovementsTable
             selectedAccount={this.state.selectedUserAccount}

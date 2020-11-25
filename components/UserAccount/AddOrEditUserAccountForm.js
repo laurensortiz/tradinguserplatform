@@ -51,8 +51,10 @@ class AddOrEditUserAccountForm extends PureComponent {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let stateUpdated = {};
+    console.log(nextProps.account);
+    if(!_.isEmpty(nextProps.selectedAccount) && nextProps.isMovementCompleted) {
 
-    if(!_.isEmpty(nextProps.selectedAccount)) {
+
       const {accountValue, guaranteeOperation,  marginUsed} = nextProps.selectedAccount;
       if(!_.isEqual(accountValue, prevState.accountValue) ||
         !_.isEqual(guaranteeOperation, prevState.guaranteeOperation) ||
@@ -151,6 +153,10 @@ class AddOrEditUserAccountForm extends PureComponent {
       [ e.target.name ]: _.replace( value, ',', '' )
     } );
   };
+
+  _handleFieldsChange = field => {
+    console.log('tttttt');
+  }
 
   _handleSubmit = e => {
     e.preventDefault();
@@ -403,9 +409,10 @@ class AddOrEditUserAccountForm extends PureComponent {
 
 
 function mapStateToProps(state) {
-  const { accountsState, usersState } = state;
+  const { accountsState, usersState, userAccountsState } = state;
   return {
     accounts: accountsState.list,
+    account: userAccountsState.item,
     users: usersState.list,
     brokers: state.brokersState.list,
   }

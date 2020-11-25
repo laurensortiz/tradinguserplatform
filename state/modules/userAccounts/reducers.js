@@ -202,6 +202,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: false,
         message: '',
+        item: {},
         isHistoryReportLoading: false,
         isHistoryReportSuccess: false,
         isHistoryReportComplete: false,
