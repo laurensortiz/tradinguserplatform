@@ -518,16 +518,21 @@ class AddOrEditMarketForm extends PureComponent {
                    placeholder="Margen de Mantenimiento"/>
           ) }
         </Form.Item>
-        <Form.Item label="Número de Orden">
-          { getFieldDecorator( 'orderId', {
-            initialValue: orderIdInitValue,
-            value: orderIdInitValue,
-            rules: [ { required: false, message: 'Por favor indique el Número de orden' } ],
-          } )(
-            <Input name="orderId" onChange={ this._handleChange }
-                   placeholder="Número de Orden"/>
-          ) }
-        </Form.Item>
+
+        {
+          !_.isEqual( this.props.actionType, 'add' ) ? (
+            <Form.Item label="Número de Orden">
+              { getFieldDecorator( 'orderId', {
+                initialValue: orderIdInitValue,
+                value: orderIdInitValue,
+                rules: [ { required: false, message: 'Por favor indique el Número de orden' } ],
+              } )(
+                <Input name="orderId" onChange={ this._handleChange }
+                       placeholder="Número de Orden"/>
+              ) }
+            </Form.Item>
+          ) : null
+        }
         <Form.Item label="Comisión por HOLD">
           { getFieldDecorator( 'holdStatusCommission', {
             initialValue: holdStatusCommissionInitValue,
