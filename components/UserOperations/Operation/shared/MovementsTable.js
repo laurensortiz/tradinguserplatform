@@ -76,6 +76,14 @@ class MovementsTable extends Component {
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
+  cancel = () => {
+    this.setState( {
+      editingKey: '',
+      tempDataSource: [],
+      currentAmount: this.props.currentOperation.amount
+    } );
+  };
+
 
   handleDelete = key => {
     if (_.isString( key )) {
