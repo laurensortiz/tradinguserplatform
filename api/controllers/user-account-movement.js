@@ -29,11 +29,11 @@ module.exports = {
 
         const snapShotAccount = JSON.stringify( userAccount );
 
-        let accountValue = Number(userAccount.accountValue) || 0.00;
-        let marginUsed = Number(userAccount.marginUsed);
+        let accountValue = Number(userAccount.accountValue || 0.00) ;
+        let marginUsed = Number(userAccount.marginUsed || 0.00);
         let guaranteeOperation = Number(userAccount.guaranteeOperation);
-        const debit =  Number(req.body.debit) || 0.00;
-        const credit = Number(req.body.credit) || 0.00;
+        const debit =  Number(req.body.debit || 0.00) ;
+        const credit = Number(req.body.credit || 0.00) ;
 
         if (credit > 0) {
           accountValue = ToFixNumber(accountValue + credit);
@@ -47,7 +47,7 @@ module.exports = {
           });
         }
 
-        marginUsed = ToFixNumber((accountValue * marginUsed) / userAccount.accountValue);
+        marginUsed = ToFixNumber((accountValue * marginUsed) / userAccount.accountValue || 0);
 
         const userAccountMovement = await UserAccountMovement.create({
           userAccountId: Number(req.body.userAccountId),
@@ -154,9 +154,9 @@ module.exports = {
 
         const snapShotAccount = JSON.stringify( userAccount );
 
-        let accountValue = Number(userAccountMovement.accountValue);
-        let marginUsed = Number(userAccount.marginUsed);
-        let guaranteeOperation = Number(userAccount.guaranteeOperation);
+        let accountValue = Number(req.body.accountValue || userAccountMovement.accountValue);
+        let marginUsed = Number(userAccount.marginUsed || 0);
+        let guaranteeOperation = Number(userAccount.guaranteeOperation || 0);
         const debit =  Number(req.body.debit) || userAccountMovement.debit;
         const credit = Number(req.body.credit) || userAccountMovement.credit;
 
@@ -174,7 +174,7 @@ module.exports = {
           });
         }
 
-        marginUsed = ToFixNumber((accountValue * marginUsed) / userAccountMovement.accountValue);
+        marginUsed = ToFixNumber((accountValue * marginUsed) / userAccountMovement.accountValue || 0);
 
         const updatedUserAccountMovement = await userAccountMovement.update({
           debit,

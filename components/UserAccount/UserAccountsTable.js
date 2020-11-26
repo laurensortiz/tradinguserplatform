@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
 import _ from 'lodash';
 import Highlighter from 'react-highlight-words';
-import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu, Row, Col, Tag, Tooltip } from 'antd';
+import { Button, Icon, Input, Popconfirm, Radio, Table, Dropdown, Menu, Row, Col, Tag, Tooltip, notification } from 'antd';
 import { Sort, FormatCurrency, IsOperationPositive, DisplayTableAmount } from '../../common/utils';
 import classNames from "classnames";
 import BulkUpdateSteps from "./BulkUpdateSteps";
@@ -209,10 +209,14 @@ class UserAccountsTable extends Component {
   onSelectOperation = (selectedRowKeys) => {
     this.setState( { selectedRowKeys } )
   }
+  
+  getSelectedAccount = () => {
+    const exportData = _.isEmpty(this.state.currentDataSource) ? this.state.userAccounts : this.state.currentDataSource;
+    return _.filter(exportData, account => _.includes(this.state.selectedRowKeys, account.id))
+  }
 
   _onSelectBulkReport = () => {
-    const exportData = _.isEmpty(this.state.currentDataSource) ? this.state.userAccounts : this.state.currentDataSource;
-    const selectedAccounts = _.filter(exportData, account => _.includes(this.state.selectedRowKeys, account.id))
+    const selectedAccounts = this.getSelectedAccount()
 
     this.props.onReqeuestExportAccountReport( selectedAccounts );
   }
@@ -220,6 +224,30 @@ class UserAccountsTable extends Component {
   _handleClickBulkUpdate = bulkOperation => {
     if (bulkOperation.updateType === 'report') {
       this._onSelectBulkReport()
+    } else if (bulkOperation.updateType === 'create-operation') {
+      const operationAmount = bulkOperation.updateValue.amount;
+      const selectedAccounts = this.getSelectedAccount();
+      let invalidAccount = [];
+
+      selectedAccounts.forEach(account => {
+        if (!IsOperationPositive(account.guaranteeOperation, operationAmount)) {
+          invalidAccount.push(account.user.username)
+        }
+      })
+
+      if (!_.isEmpty(invalidAccount)) {
+        notification.error({
+          message: 'Cuentas sin fondos',
+          description:
+            `Los siguientes usuarios no cuentas con fondos suficientes para la colocación solicitada: ${invalidAccount.join(', ')}`,
+        });
+      } else {
+        this.props.onFetchBulkUpdate( {
+          ...bulkOperation,
+          operationsIds: this.state.selectedRowKeys
+        } )
+      }
+
     } else {
       this.props.onFetchBulkUpdate( {
         ...bulkOperation,

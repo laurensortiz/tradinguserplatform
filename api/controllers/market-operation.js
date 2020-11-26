@@ -17,6 +17,7 @@ import { marketOperationQuery } from '../queries';
 import moment from "moment-timezone";
 import Log from "../../common/log";
 import ToFixNumber from '../../common/to-fix-number';
+import GetHoldCommissionAmount from '../../common/get-hold-commission-amount';
 
 module.exports = {
   async create(req, res) {
@@ -33,6 +34,14 @@ module.exports = {
         if (!userAccount) {
           throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
         }
+
+        const lastMarketOperationEntry = await MarketOperation.findAll({
+          limit: 1,
+          attributes: [ 'orderId' ],
+          order: [ [ 'id', 'DESC' ]]
+        });
+
+        const orderId = Number(lastMarketOperationEntry[0].orderId) + 1;
 
         const snapShotAccount = JSON.stringify( userAccount );
 
@@ -51,12 +60,11 @@ module.exports = {
           amount: req.body.amount,
           initialAmount: req.body.amount,
           holdStatusCommission: req.body.holdStatusCommission || 0,
-          orderId: req.body.orderId || 0,
+          orderId,
           status: _.get( req, 'body.status', 1 ),
           createdAt: moment( req.body.createdAt || new Date() ).tz( 'America/New_York' ).format(),
           updatedAt: moment( new Date() ).tz( 'America/New_York' ).format(),
         }, { transaction: t } );
-
 
         await MarketMovement.create( {
           gpInversion: req.body.amount,
@@ -303,7 +311,7 @@ module.exports = {
           const profit = ToFixNumber( Number( amount ) - Number( initialAmount ) );
           const isProfitPositive = Math.sign( profit ) >= 0;
           const commission = isProfitPositive ? ToFixNumber( Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) ) : 0
-          const hold = isProfitPositive ? Number( holdStatusCommission ) : 0;
+          const hold = isProfitPositive ? GetHoldCommissionAmount(profit) : 0;
           const endProfit = ToFixNumber( profit - commission - hold );
 
           // Close Calculations
@@ -438,7 +446,7 @@ module.exports = {
                   const profit = ToFixNumber( Number( amount ) - Number( initialAmount ) );
                   const isProfitPositive = Math.sign( profit ) >= 0;
                   const commission = isProfitPositive ? ToFixNumber( Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) ) : 0
-                  const hold = isProfitPositive ? Number( holdStatusCommission ) : 0;
+                  const hold = isProfitPositive ? GetHoldCommissionAmount(profit) : 0;
                   const endProfit = ToFixNumber( profit - commission - hold );
 
                   // Close Calculations
@@ -705,8 +713,9 @@ module.exports = {
             } ) )
             break;
           case 'create-operation':
+            let nextOrderId = 0;
             // In this case operationsIds refers to User Accounts Ids
-            result = await Promise.all( operationsIds.map( async (accountId) => {
+            result = await Promise.all( operationsIds.map( async (accountId, index) => {
 
                 const userAccount = await UserAccount.findOne( {
                   where: {
@@ -726,7 +735,12 @@ module.exports = {
                     attributes: [ 'orderId' ],
                     order: [ [ 'id', 'DESC' ]]
                   });
-                  const nextOrderId = ++lastMarketOperationEntry[0].orderId;
+
+                  if ( index === 0 ) {
+                    nextOrderId = Number(lastMarketOperationEntry[0].orderId) + 1
+                  } else {
+                    nextOrderId = nextOrderId + 1;
+                  }
 
                   const marketOperation = await MarketOperation.create( {
                     longShort: updateValue.longShort,

@@ -47,13 +47,13 @@ class AddOrEditUserAccountForm extends PureComponent {
     accounts: [],
     users: [],
     brokers: [],
+    lastUpdate: "",
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let stateUpdated = {};
-    console.log(nextProps.account);
-    if(!_.isEmpty(nextProps.selectedAccount) && nextProps.isMovementCompleted) {
 
+    if(!_.isEmpty(nextProps.selectedAccount) && !_.isEqual(nextProps.selectedAccount.updatedAt.valueOf(), prevState.lastUpdate)) {
 
       const {accountValue, guaranteeOperation,  marginUsed} = nextProps.selectedAccount;
       if(!_.isEqual(accountValue, prevState.accountValue) ||
@@ -64,6 +64,7 @@ class AddOrEditUserAccountForm extends PureComponent {
           accountValue,
           guaranteeOperation,
           marginUsed,
+          lastUpdate: nextProps.selectedAccount.updatedAt.valueOf()
         } )
       }
 

@@ -508,16 +508,6 @@ class MovementsTable extends Component {
     const disableAddBtn = !_.isEqual( _.get( this.props, 'selectedAccount.status', 1 ), 1 );
     return (
       <div>
-        <Row style={ { marginBottom: 30, marginTop: 30 } }>
-          <Col sm={ 12 }>
-            { this.props.isAdmin ? (
-              <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
-                      disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn }>
-                <Icon type="bank"/> Agregar Transferencia
-              </Button>
-            ) : null }
-          </Col>
-        </Row>
         <Row>
           <Col>
             <p>
@@ -532,6 +522,17 @@ class MovementsTable extends Component {
             </p>
           </Col>
         </Row>
+        <Row style={ { marginBottom: 30, marginTop: 30 } }>
+          <Col sm={ 12 }>
+            { this.props.isAdmin ? (
+              <Button onClick={ this.handleAdd } type="primary" style={ { marginBottom: 16 } }
+                      disabled={ !_.isEmpty( this.state.tempDataSource ) || disableAddBtn }>
+                <Icon type="bank"/> Agregar Transferencia
+              </Button>
+            ) : null }
+          </Col>
+        </Row>
+
 
         <EditableProvider value={ this.props.form }>
           <Table

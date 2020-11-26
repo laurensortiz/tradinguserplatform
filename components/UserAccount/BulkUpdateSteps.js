@@ -88,7 +88,6 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
       case 'report':
         return (
           <span></span>
-
         )
       case 'price':
         return (
