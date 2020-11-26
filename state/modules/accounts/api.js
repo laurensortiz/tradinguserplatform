@@ -7,6 +7,13 @@ export const getAccounts = async () => {
   } );
 };
 
+export const getAccount = async (userAccountId) => {
+  return fetch( {
+    method: 'get',
+    url: `accounts/${userAccountId}`,
+  } );
+};
+
 export const addAccount = async (account) => {
   return fetch( {
     method: 'post',

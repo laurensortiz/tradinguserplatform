@@ -65,6 +65,30 @@ export function users(state = initialStateUsers, action) {
         isLoading: false,
         message: action.payload,
       };
+    // User Account
+    case types.USER_ACCOUNT_REQUEST:
+      return {
+        ...state,
+        isFailure: false,
+        isLoading: true,
+        isSuccess: false,
+      };
+    case types.USER_ACCOUNT_SUCCESS:
+      return {
+        ...state,
+        isSuccess: true,
+        isFailure: false,
+        isLoading: false,
+        item: action.payload,
+      };
+    case types.USER_ACCOUNT_ERROR:
+      return {
+        ...state,
+        isSuccess: false,
+        isFailure: true,
+        isLoading: false,
+        message: action.payload,
+      };
     // Add Project
     case types.USER_ACCOUNT_ADD_REQUEST:
       return {
@@ -178,6 +202,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: false,
         message: '',
+        item: {},
         isHistoryReportLoading: false,
         isHistoryReportSuccess: false,
         isHistoryReportComplete: false,

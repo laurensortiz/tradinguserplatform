@@ -10,7 +10,7 @@ import AddOperationForm from '../Operation/Market/AddOrEditMarketForm';
 const BULK_UPDATE_TYPES = [
   {
     code: 'report',
-    name: 'Generar Reporte de cuentas',
+    name: 'Generar reporte de cuentas',
     scope: 'report'
   },
   {
@@ -88,7 +88,6 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
       case 'report':
         return (
           <span></span>
-
         )
       case 'price':
         return (

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import { Button, Table, Form, Popconfirm, Icon, Select, DatePicker, Row, Col } from 'antd';
+import { Button, Table, Form, Popconfirm, Icon, Select, DatePicker, Row, Col, Alert } from 'antd';
 import _ from 'lodash';
 import uuidv1 from 'uuid/v1';
 import moment from 'moment-timezone';
@@ -12,7 +12,7 @@ import { extendMoment } from 'moment-range';
 import { EditableProvider, EditableConsumer } from './editable/editableContext';
 import EditableCell from './editable/editableCell';
 
-import { FormatCurrency, FormatDate, GetGP, getGPInversion } from '../../common/utils';
+import { FormatCurrency, FormatDate } from '../../common/utils';
 
 import { userAccountMovementOperations } from '../../state/modules/userAccountMovement';
 
@@ -49,13 +49,11 @@ class MovementsTable extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {};
 
+    if (nextProps.isCompleted && !_.isEmpty( prevState.actionType )) {
 
-
-    if(nextProps.isCompleted && !_.isEmpty(prevState.actionType)) {
-
-      const {id} = nextProps.selectedAccount;
-      nextProps.fetchGetUserAccountMovements(id);
-
+      const { id } = nextProps.selectedAccount;
+      nextProps.fetchGetUserAccountMovements( id );
+      nextProps.onFetchUserAccount( id );
       _.assignIn( updatedState, {
         actionType: '',
       } )
@@ -84,13 +82,12 @@ class MovementsTable extends Component {
     }
 
 
-
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
   componentDidMount() {
-    const {id} = this.props.selectedAccount;
-    this.props.fetchGetUserAccountMovements(id)
+    const { id } = this.props.selectedAccount;
+    this.props.fetchGetUserAccountMovements( id )
   }
 
 
@@ -121,6 +118,7 @@ class MovementsTable extends Component {
     this.setState( {
       tempDataSource: [ newMovement ],
       editingKey: newMovement.id,
+      actionType: 'add'
     } );
   };
 
@@ -331,8 +329,9 @@ class MovementsTable extends Component {
         key: 'previousAccountValue',
         render: value => FormatCurrency.format( value ),
         editable: true,
-        required: true,
-        inputType: 'number'
+        required: false,
+        inputType: 'number',
+        readOnly: this.state.actionType === 'add'
       },
       {
         title: 'Valor de la Cuenta',
@@ -340,8 +339,9 @@ class MovementsTable extends Component {
         key: 'accountValue',
         render: value => FormatCurrency.format( value ),
         editable: true,
-        required: true,
-        inputType: 'number'
+        required: false,
+        inputType: 'number',
+        readOnly: this.state.actionType === 'add'
       },
       {
         title: 'Detalle',
@@ -355,7 +355,7 @@ class MovementsTable extends Component {
         title: 'Fecha de movimiento',
         dataIndex: 'createdAt',
         key: 'createdAt',
-        render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
+        render: value => moment( value ).tz( 'America/New_York' ).format( 'DD-MM-YYYY' ),
         editable: true,
         inputType: 'date',
         required: false,
@@ -432,10 +432,10 @@ class MovementsTable extends Component {
    */
   _handleAddMovement = (newMovement) => {
     const { id: userAccountId } = this.props.selectedAccount;
-    const { debit , credit, accountValue, previousAccountValue } = newMovement;
-    this.setState({
+    const { debit, credit, accountValue, previousAccountValue } = newMovement;
+    this.setState( {
       actionType: 'add'
-    });
+    } );
     this.props.fetchAddUserAccountMovement( {
       ...newMovement,
       userAccountId,
@@ -451,9 +451,9 @@ class MovementsTable extends Component {
    */
   _handleEditMovement = (newMovement) => {
     const { debit, credit, accountValue, reference, createdAt, id, previousAccountValue } = newMovement;
-    this.setState({
+    this.setState( {
       actionType: 'edit'
-    })
+    } )
     this.props.fetchEditUserAccountMovement( {
       id,
       reference,
@@ -469,9 +469,9 @@ class MovementsTable extends Component {
    * Delete Movements
    */
   _handleDeleteMovement = (movementId) => {
-    this.setState({
+    this.setState( {
       actionType: 'delete'
-    })
+    } )
     this.props.fetchDeleteUserAccountMovement( movementId )
   };
 
@@ -498,6 +498,7 @@ class MovementsTable extends Component {
           editing: this.isEditing( record ),
           inputType: col.inputType,
           required: col.required,
+          readOnly: col.readOnly,
           onChangeInput: this._onChangeInput,
           onPressEnter: () => this.save( record.id )
         } ),
@@ -507,6 +508,20 @@ class MovementsTable extends Component {
     const disableAddBtn = !_.isEqual( _.get( this.props, 'selectedAccount.status', 1 ), 1 );
     return (
       <div>
+        <Row>
+          <Col>
+            <p>
+              <Alert
+                message="Cualquier cambio en la columna de - Débito - o - Crédito - afectará de forma automática la cuenta del cliente."
+                type="info" showIcon/>
+            </p>
+            <p>
+              <Alert
+                message="En caso de realizar alguna modificación directamente en la columna - Saldo Anterior - o - Valor de la Cuenta - el mismo debe actualizarlo de forma manual en la cuenta del cliente. "
+                type="warning" showIcon/>
+            </p>
+          </Col>
+        </Row>
         <Row style={ { marginBottom: 30, marginTop: 30 } }>
           <Col sm={ 12 }>
             { this.props.isAdmin ? (
@@ -517,6 +532,7 @@ class MovementsTable extends Component {
             ) : null }
           </Col>
         </Row>
+
 
         <EditableProvider value={ this.props.form }>
           <Table
@@ -540,7 +556,6 @@ class MovementsTable extends Component {
 }
 
 function mapStateToProps(state) {
-  const { userAccountMovementsState } = state;
   return {
     movements: state.userAccountMovementsState.list,
     isSuccess: state.userAccountMovementsState.isSuccess,
@@ -552,6 +567,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
+
     fetchGetUserAccountMovements: userAccountMovementOperations.fetchGetUserAccountMovements,
     fetchAddUserAccountMovement: userAccountMovementOperations.fetchAddUserAccountMovement,
     fetchEditUserAccountMovement: userAccountMovementOperations.fetchEditUserAccountMovement,

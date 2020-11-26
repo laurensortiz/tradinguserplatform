@@ -1,5 +1,6 @@
 import  {
   fetchGetAccounts,
+  fetchGetAccount,
   fetchAddAccount,
   fetchEditAccount,
   fetchDeleteAccount,
@@ -8,6 +9,7 @@ import  {
 
 export default {
   fetchGetAccounts,
+  fetchGetAccount,
   fetchAddAccount,
   fetchEditAccount,
   fetchDeleteAccount,

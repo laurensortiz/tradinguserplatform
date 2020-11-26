@@ -6,7 +6,12 @@ import { Button, Input, Divider, Icon, Table, Form, Popconfirm, DatePicker, Inpu
 class EditableCell extends Component {
   getInput = () => {
     if (this.props.inputType === 'number') {
-      return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
+      return <InputNumber
+        onPressEnter={this.props.onPressEnter}
+        name={this.props.dataIndex}
+        onChange={this.props.onChangeInput}
+        disabled={this.props.readOnly ?  this.props.readOnly : false}
+      />;
     } else if (this.props.inputType === 'date') {
       return <DatePicker format="DD-MM-YYYY"  />;
     } else if (this.props.inputType === 'number-mp') {

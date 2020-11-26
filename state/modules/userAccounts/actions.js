@@ -1,10 +1,11 @@
 import {
   getAllUserAccounts,
   getUserAccounts,
+  getUserAccount,
   addUserAccount,
   editUserAccount,
   deleteUserAccount,
-  getUserAccountHistoryReport, getUserAccountMarketOperationReport,
+  getUserAccountHistoryReport,
 } from './api';
 import types from './types';
 import { formatAxiosError } from "../../../common/utils";
@@ -69,6 +70,38 @@ const requestUserAccountsSuccess = (projects) => {
 const requestUserAccountsError = (error) => {
   return {
     type: types.USER_ACCOUNTS_ERROR,
+    payload: formatAxiosError(error.response)
+  }
+};
+
+//  UserAccount
+export const fetchGetUserAccount = (userAccountId) => async dispatch => {
+  dispatch( requestUserAccount() );
+  try {
+    const res = await getUserAccount(userAccountId);
+    dispatch( requestUserAccountSuccess( res.data ) )
+  } catch (e) {
+    dispatch( requestUserAccountError( e.message ) )
+  }
+
+};
+
+const requestUserAccount = () => {
+  return {
+    type: types.USER_ACCOUNT_REQUEST
+  }
+};
+
+const requestUserAccountSuccess = (userAccount) => {
+  return {
+    type: types.USER_ACCOUNT_SUCCESS,
+    payload: userAccount
+  }
+};
+
+const requestUserAccountError = (error) => {
+  return {
+    type: types.USER_ACCOUNT_ERROR,
     payload: formatAxiosError(error.response)
   }
 };
@@ -211,6 +244,7 @@ export const resetAfterRequest = () => {
 export default {
   fetchGetAllUserAccounts,
   fetchGetUserAccounts,
+  fetchGetUserAccount,
   fetchAddUserAccount,
   fetchEditUserAccount,
   fetchDeleteUserAccount,

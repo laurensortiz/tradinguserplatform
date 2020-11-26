@@ -17,7 +17,6 @@ import ExportUserAccountDetail from '../components/Operation/shared/ExportUserAc
 import MovementsTable  from "../components/UserAccount/MovementsTable";
 
 
-
 const { TabPane } = Tabs;
 
 class Accounts extends Component {
@@ -33,6 +32,8 @@ class Accounts extends Component {
   };
 
   static getDerivedStateFromProps(nextProps, prevState) {
+
+
     if (nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
       if (_.isEmpty( nextProps.historyReportData )) {
         notification.info( {
@@ -142,6 +143,16 @@ class Accounts extends Component {
 
       }
     }
+
+    if (!_.isEmpty(nextProps.userAccount) && !_.isEqual(nextProps.userAccount, prevState.selectedUserAccount )) {
+      return {
+        selectedUserAccount: {
+          ...prevState.selectedUserAccount,
+          ...nextProps.userAccount,
+        }
+      }
+
+    }
     return null;
   }
 
@@ -170,13 +181,18 @@ class Accounts extends Component {
   };
 
   _onClose = () => {
-    this._handleTableOnChange()
+    this._handleTableOnChange();
+    this.props.resetAfterRequest();
     this.setState( {
       isVisibleAddOrEditUserAccount: false,
       selectedUserAccount: {}
     } )
 
   };
+
+  _handleFetchUserAccount = accountId => {
+    this.props.fetchGetUserAccount(accountId)
+  }
 
   _handleAddNewUserAccount = (userAccount) => {
     this.props.fetchAddUserAccount( userAccount )
@@ -311,9 +327,11 @@ class Accounts extends Component {
             isLoading={ this.props.isLoading }
             selectedAccount={ this.state.selectedUserAccount }
             actionType={ this.state.actionType }
+            isMovementCompleted={this.props.isMovementCompleted}
           />
           <MovementsTable
             selectedAccount={this.state.selectedUserAccount}
+            onFetchUserAccount={this._handleFetchUserAccount}
             isAdmin={ true }
           />
         </Drawer>
@@ -325,6 +343,7 @@ class Accounts extends Component {
 function mapStateToProps(state) {
   return {
     userAccounts: state.userAccountsState.list,
+    userAccount: state.userAccountsState.item,
     isLoading: state.userAccountsState.isLoading,
     isSuccess: state.userAccountsState.isSuccess,
     isFailure: state.userAccountsState.isFailure,
@@ -333,6 +352,8 @@ function mapStateToProps(state) {
     isHistoryReportSuccess: state.userAccountsState.isHistoryReportSuccess,
     isHistoryReportComplete: state.userAccountsState.isHistoryReportComplete,
     historyReportData: state.userAccountsState.historyReportData,
+
+    isMovementCompleted: state.userAccountMovementsState.isCompleted,
 
     isBulkLoading: state.marketOperationsState.isBulkLoading,
     isBulkSuccess: state.marketOperationsState.isBulkSuccess,
@@ -344,6 +365,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
     fetchGetAllUserAccounts: userAccountOperations.fetchGetAllUserAccounts,
+    fetchGetUserAccount: userAccountOperations.fetchGetUserAccount,
     fetchAddUserAccount: userAccountOperations.fetchAddUserAccount,
     fetchEditUserAccount: userAccountOperations.fetchEditUserAccount,
     fetchDeleteUserAccount: userAccountOperations.fetchDeleteUserAccount,

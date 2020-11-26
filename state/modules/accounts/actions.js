@@ -1,4 +1,4 @@
-import { getAccounts, addAccount, editAccount, deleteAccount } from './api';
+import { getAccounts, getAccount, addAccount, editAccount, deleteAccount } from './api';
 import types from './types';
 import { formatAxiosError } from "../../../common/utils";
 
@@ -30,6 +30,38 @@ const requestAccountsSuccess = (products) => {
 const requestAccountsError = (error) => {
   return {
     type: types.ACCOUNTS_ERROR,
+    payload: formatAxiosError(error.response)
+  }
+};
+
+// List One Account
+export const fetchGetAccount = () => async dispatch => {
+  dispatch( requestAccount() );
+  try {
+    const res = await getAccount();
+    dispatch( requestAccountSuccess( res.data ) )
+  } catch (e) {
+    dispatch( requestAccountError( e.message ) )
+  }
+
+};
+
+const requestAccount = () => {
+  return {
+    type: types.ACCOUNT_REQUEST
+  }
+};
+
+const requestAccountSuccess = (account) => {
+  return {
+    type: types.ACCOUNT_SUCCESS,
+    payload: account
+  }
+};
+
+const requestAccountError = (error) => {
+  return {
+    type: types.ACCOUNT_ERROR,
     payload: formatAxiosError(error.response)
   }
 };
@@ -139,6 +171,7 @@ export const resetAfterRequest = () => {
 
 export default {
   fetchGetAccounts,
+  fetchGetAccount,
   fetchAddAccount,
   fetchEditAccount,
   fetchDeleteAccount,
