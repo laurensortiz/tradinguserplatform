@@ -24,8 +24,7 @@ const getHoldCommissionAmount = (operationAmount) => {
       break;
 
     case (amount > 20000 && amount <=30000):
-      console.log('innn');
-      holdAmount = 550
+      holdAmount = 1000
       break;
 
     case (amount > 30000 && amount <=50000):
