@@ -30,7 +30,6 @@ module.exports = {
         const snapShotAccount = JSON.stringify( userAccount );
 
         let accountValue = Number(userAccount.accountValue || 0.00) ;
-        let marginUsed = Number(userAccount.marginUsed || 0.00);
         let guaranteeOperation = Number(userAccount.guaranteeOperation);
         const debit =  Number(req.body.debit || 0.00) ;
         const credit = Number(req.body.credit || 0.00) ;
@@ -46,8 +45,6 @@ module.exports = {
             message: 'Movimiento inválido',
           });
         }
-
-        marginUsed = ToFixNumber((accountValue * marginUsed) / userAccount.accountValue || 0);
 
         const userAccountMovement = await UserAccountMovement.create({
           userAccountId: Number(req.body.userAccountId),
@@ -65,7 +62,6 @@ module.exports = {
           accountValue,
           guaranteeOperation,
           updatedAt: moment(new Date()).tz('America/New_York').format(),
-          marginUsed,
         }, { transaction: t });
 
         Log({userId, userAccountId: req.body.userAccountId, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
@@ -155,7 +151,6 @@ module.exports = {
         const snapShotAccount = JSON.stringify( userAccount );
 
         let accountValue = Number(req.body.accountValue || userAccountMovement.accountValue);
-        let marginUsed = Number(userAccount.marginUsed || 0);
         let guaranteeOperation = Number(userAccount.guaranteeOperation || 0);
         const debit =  Number(req.body.debit) || userAccountMovement.debit;
         const credit = Number(req.body.credit) || userAccountMovement.credit;
@@ -174,8 +169,6 @@ module.exports = {
           });
         }
 
-        marginUsed = ToFixNumber((accountValue * marginUsed) / userAccountMovement.accountValue || 0);
-
         const updatedUserAccountMovement = await userAccountMovement.update({
           debit,
           credit,
@@ -191,7 +184,6 @@ module.exports = {
           accountValue,
           guaranteeOperation,
           updatedAt: moment(new Date()).tz('America/New_York').format(),
-          marginUsed,
         }, { transaction: t });
 
         Log({userId, userAccountId: userAccountMovement.userAccountId, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
@@ -240,20 +232,15 @@ module.exports = {
         const snapShotAccount = JSON.stringify( userAccount );
 
         let accountValue = Number(userAccount.accountValue);
-        let marginUsed = Number(userAccount.marginUsed);
         let guaranteeOperation = Number(userAccount.guaranteeOperation);
 
         accountValue = ToFixNumber((accountValue - Number(userAccountMovement.credit)) + Number(userAccountMovement.debit));
         guaranteeOperation = ToFixNumber((guaranteeOperation - Number(userAccountMovement.credit)) + Number(userAccountMovement.debit))
 
-        marginUsed = ToFixNumber((accountValue * marginUsed) / userAccount.accountValue);
-
-
         const updatedUserAccount = await userAccount.update({
           accountValue,
           guaranteeOperation,
           updatedAt: moment(new Date()).tz('America/New_York').format(),
-          marginUsed,
         }, { transaction: t });
 
         await userAccountMovement.destroy();
