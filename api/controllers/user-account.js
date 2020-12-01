@@ -118,6 +118,8 @@ module.exports = {
       });
     }
 
+    const userAccountSnapShot = JSON.stringify( userAccount );
+
     const updatedUserAccount = await userAccount.update({
       userId: _.get(req, 'body.user.id', userAccount.userId),
       accountId: _.get(req, 'body.account.id', userAccount.accountId),
@@ -135,7 +137,7 @@ module.exports = {
 
     });
 
-    Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  JSON.stringify(userAccount), snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
+    Log({userId, userAccountId: userAccount.id, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  userAccountSnapShot, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
 
     return res.status(200).send(updatedUserAccount);
   },

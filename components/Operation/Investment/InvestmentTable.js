@@ -45,6 +45,7 @@ class InvestmentTable extends Component {
           <Button type="secondary" onClick={ () => this.props.onDetail( row.id ) }><Icon type="hdd" /><span>Detalle</span></Button>
           {this.props.isAdmin ? (
             <>
+              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
               <Popconfirm
                 okText="Si"
                 title="Está seguro ?"
@@ -53,7 +54,6 @@ class InvestmentTable extends Component {
               >
                 <Button type="danger"><Icon type="delete"/><span>Eliminar</span></Button>
               </Popconfirm>
-              <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
             </>
           ): null}
 

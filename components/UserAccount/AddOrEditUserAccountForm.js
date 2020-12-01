@@ -399,7 +399,7 @@ class AddOrEditUserAccountForm extends PureComponent {
         </Row>
         <Form.Item>
           <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
-            { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar' }
+            { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Actualizar' }
           </Button>
         </Form.Item>
       </Form>

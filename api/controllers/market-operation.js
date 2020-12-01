@@ -249,6 +249,8 @@ module.exports = {
         } );
       }
 
+      const marketOperationSnapShot = JSON.stringify( marketOperation );
+
       if (marketOperation.status === 4 && _.isNil( req.body.endDate )) {
         return res.status( 401 ).send( {
           message: 'Esta operación ya se encuentra cerrada. Sólo es permitido cambiar la fecha de cierre',
@@ -298,6 +300,7 @@ module.exports = {
 
           const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
           const { percentage } = marketOperation.userAccount.account;
+          const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12;
 
           const maintenanceMarginAmount = (
             assetClassId === 8 ||
@@ -306,14 +309,15 @@ module.exports = {
             assetClassId === 4 ||
             assetClassId === 3 ||
             assetClassId === 1
-          ) ? 0 : Number( maintenanceMargin );
+          ) ? 0 : Number( maintenanceMargin )
+          
+         
 
           const profit = ToFixNumber( Number( amount ) - Number( initialAmount ) );
           const isProfitPositive = Math.sign( profit ) >= 0;
           const commission = isProfitPositive ? ToFixNumber( Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) ) : 0
-          const hold = isProfitPositive ? GetHoldCommissionAmount(profit) : 0;
+          const hold = isProfitPositive && !isBrokerGuarantee ? GetHoldCommissionAmount(profit) : 0;
           const endProfit = ToFixNumber( profit - commission - hold );
-
           // Close Calculations
           const marginUsed = ToFixNumber( ( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100 );
           const guaranteeOperationProduct = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit );
@@ -356,7 +360,7 @@ module.exports = {
             tableUpdated: 'marketOperation',
             action: 'update',
             type: 'sellOperation',
-            snapShotBeforeAction: JSON.stringify( marketOperation ),
+            snapShotBeforeAction: marketOperationSnapShot,
             snapShotAfterAction: JSON.stringify( updatedMarketOperation )
           } )
         }
@@ -417,6 +421,8 @@ module.exports = {
                     throw new Error( 'Ocurrió un error al momento de buscar la operación' )
                   }
 
+                  const marketOperationSnapShot = JSON.stringify( marketOperation );
+
                   if (marketOperation.status === 4) {
                     throw new Error( 'Una o más operaciones seleccionas ya se encuentran cerradas' )
                   }
@@ -433,6 +439,7 @@ module.exports = {
 
                   const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
                   const { percentage } = marketOperation.userAccount.account;
+                  const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12;
 
                   const maintenanceMarginAmount = (
                     assetClassId === 8 ||
@@ -446,7 +453,7 @@ module.exports = {
                   const profit = ToFixNumber( Number( amount ) - Number( initialAmount ) );
                   const isProfitPositive = Math.sign( profit ) >= 0;
                   const commission = isProfitPositive ? ToFixNumber( Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) ) : 0
-                  const hold = isProfitPositive ? GetHoldCommissionAmount(profit) : 0;
+                  const hold = isProfitPositive && !isBrokerGuarantee ? GetHoldCommissionAmount(profit) : 0;
                   const endProfit = ToFixNumber( profit - commission - hold );
 
                   // Close Calculations
@@ -494,7 +501,7 @@ module.exports = {
                       tableUpdated: 'marketOperation',
                       action: 'update',
                       type: 'sellOperation',
-                      snapShotBeforeAction: JSON.stringify( marketOperation ),
+                      snapShotBeforeAction: marketOperationSnapShot,
                       snapShotAfterAction: JSON.stringify( updatedMarketOperation )
                     } )
 
