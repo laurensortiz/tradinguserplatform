@@ -296,6 +296,23 @@ class AddOrEditUserAccountForm extends PureComponent {
               ) }
             </Form.Item>
           </Col>
+          {_.isEqual(associatedOperation, 1) ? (
+            <Col xs={24} sm={8}>
+              <Form.Item label="Garantías disponibles">
+                { getFieldDecorator( 'guaranteeOperation', {
+                  initialValue: guaranteeOperationInitValue,
+                  rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
+                    {
+                      validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                    }
+                  ],
+                } )(
+                  <Input name="guaranteeOperation" onChange={ this._handleChange }
+                         placeholder="Garantías disponibles para operar"/>
+                ) }
+              </Form.Item>
+            </Col>
+          ) : null}
           <Col xs={24} sm={8}>
             <Form.Item label="Garantía/Créditos">
               { getFieldDecorator( 'guaranteeCredits', {
@@ -310,26 +327,6 @@ class AddOrEditUserAccountForm extends PureComponent {
               ) }
             </Form.Item>
           </Col>
-
-            {_.isEqual(associatedOperation, 1) ? (
-              <Col xs={24} sm={8}>
-              <Form.Item label="Garantías disponibles">
-                { getFieldDecorator( 'guaranteeOperation', {
-                  initialValue: guaranteeOperationInitValue,
-                  rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
-                    {
-                      validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                    }
-                  ],
-                } )(
-                  <Input name="guaranteeOperation" onChange={ this._handleChange }
-                         placeholder="Garantías disponibles para operar"/>
-                ) }
-              </Form.Item>
-              </Col>
-            ) : null}
-
-
 
             {_.isEqual(associatedOperation, 1) ? (
               <Col xs={ 24 } sm={ 8 }>
