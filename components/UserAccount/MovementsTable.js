@@ -334,7 +334,7 @@ class MovementsTable extends Component {
         readOnly: this.state.actionType === 'add'
       },
       {
-        title: 'Valor de la Cuenta',
+        title: this.props.isProfitMonth ? 'Saldo Actual' : 'Valor de la Cuenta',
         dataIndex: 'accountValue',
         key: 'accountValue',
         render: value => FormatCurrency.format( value ),
