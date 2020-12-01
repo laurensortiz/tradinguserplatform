@@ -51,9 +51,18 @@ class MarketTable extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
     if (!_.isEqual( nextProps.marketOperations, prevState.marketOperations )) {
+      const data = _.orderBy(nextProps.marketOperations, ['guaranteeOperationValueEndOperation', 'asc'])
+      const sortedData = data.sort((a, b) => {
+        let start = a.endDate;
+        let end = b.endDate;
+        if (_.isNil( start )) start = '00-00-0000';
+        if (_.isNil( end )) end = '00-00-0000';
+
+        return moment( start ).unix() - moment( end ).unix()
+      });
 
       _.assignIn( updatedState, {
-        marketOperations: nextProps.marketOperations
+        marketOperations: sortedData
       } )
     }
     if (!_.isEqual( nextProps.assetClasses, prevState.assetClasses )) {
@@ -63,6 +72,7 @@ class MarketTable extends Component {
     }
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
+
 
   componentDidMount() {
     this.props.fetchGetAssetClasses()
@@ -508,6 +518,26 @@ class MarketTable extends Component {
         },
         ...this._getColumnDateProps(
           'updatedAt',
+          minDatesInTimes,
+          maxDatesInTimes,
+        )
+      },
+      {
+        title: t('endDate'),
+        dataIndex: 'endDate',
+        key: 'endDate',
+        render: value => value ? moment(value).tz('America/New_York').format('DD-MM-YYYY') : '',
+        editable: true,
+        inputType: 'date',
+        required: false,
+        rowKey: d => {
+          return FormatDate( d.endDate )
+        },
+        sorter: (a, b) => {
+          return this._sortDates( a.endDate, b.endDate );
+        },
+        ...this._getColumnDateProps(
+          'endDate',
           minDatesInTimes,
           maxDatesInTimes,
         )

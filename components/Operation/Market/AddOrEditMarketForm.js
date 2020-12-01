@@ -603,7 +603,7 @@ class AddOrEditMarketForm extends PureComponent {
             ) : (
               <Button type="primary" htmlType="submit" className="login-form-button" disabled={ isDisableSubmitBtn }>
                 {
-                  _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Editar'
+                  _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Actualizar'
 
                 }
               </Button>

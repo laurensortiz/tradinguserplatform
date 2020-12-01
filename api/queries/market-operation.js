@@ -49,7 +49,11 @@ const queries = {
         'stopLost',
         'orderId',
         'createdAt',
-        'updatedAt'],
+        'updatedAt',
+        'endDate',
+        'guaranteeOperationValueEndOperation',
+        'holdStatusCommissionEndOperation'
+      ],
       include: [
         {
           model: UserAccount,
@@ -85,7 +89,7 @@ const queries = {
           attributes: ['name']
         },
       ],
-      order: [ [ 'createdAt', 'DESC' ] ],
+      order: [ [ 'createdAt', 'DESC' ] , [ 'endDate', 'DESC' ] ],
     };
   },
   listAdmin: ({ req,sequelize, UserAccount, User, Product, Broker, AssetClass, Account, Commodity }) => {
@@ -106,7 +110,9 @@ const queries = {
         'stopLost',
         'orderId',
         'createdAt',
-        'updatedAt'],
+        'updatedAt',
+        'holdStatusCommissionEndOperation'
+      ],
       include: [
         {
           model: UserAccount,
@@ -275,7 +281,9 @@ const queries = {
         'stopLost',
         'orderId',
         'createdAt',
-        'updatedAt'],
+        'updatedAt',
+        'holdStatusCommissionEndOperation'
+      ],
       include: [
         {
           model: UserAccount,
