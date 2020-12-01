@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { UserAccount, UserAccountMovement, ORM } from '../models';
+import { UserAccount, UserAccountMovement, ORM, Account } from '../models';
 import { userAccountMovementQuery, userQuery } from '../queries';
 import moment from "moment-timezone";
 import ToFixNumber from '../../common/to-fix-number';
@@ -19,6 +19,13 @@ module.exports = {
           attributes: {
             exclude: [ 'snapShotAccount' ],
           },
+          include: [
+            {
+              model: Account,
+              as: 'account',
+              attributes: [ 'associatedOperation' ],
+            },
+          ]
         });
 
         if (!userAccount) {
@@ -29,10 +36,13 @@ module.exports = {
 
         const snapShotAccount = JSON.stringify( userAccount );
 
+
+
         let accountValue = Number(userAccount.accountValue || 0.00) ;
         let guaranteeOperation = Number(userAccount.guaranteeOperation);
         const debit =  Number(req.body.debit || 0.00) ;
         const credit = Number(req.body.credit || 0.00) ;
+
 
         if (credit > 0) {
           accountValue = ToFixNumber(accountValue + credit);
@@ -46,6 +56,10 @@ module.exports = {
           });
         }
 
+        const isFirstMovement = req.body.isFirstMovement ? {
+          balanceInitial: accountValue
+        } : null;
+
         const userAccountMovement = await UserAccountMovement.create({
           userAccountId: Number(req.body.userAccountId),
           debit,
@@ -58,14 +72,16 @@ module.exports = {
           updatedAt: moment(new Date()).tz('America/New_York').format()
         }, { transaction: t } );
 
-        const updatedUserAccount = await userAccount.update({
-          accountValue,
-          guaranteeOperation,
-          updatedAt: moment(new Date()).tz('America/New_York').format(),
-        }, { transaction: t });
+        if (userAccount.account.associatedOperation !== 2) {
+          const updatedUserAccount = await userAccount.update({
+            accountValue,
+            guaranteeOperation,
+            updatedAt: moment(new Date()).tz('America/New_York').format(),
+            ...isFirstMovement
+          }, { transaction: t });
+          Log({userId, userAccountId: req.body.userAccountId, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
 
-        Log({userId, userAccountId: req.body.userAccountId, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
-
+        }
 
         return res.status(200).send(userAccountMovement);
       })
@@ -140,6 +156,13 @@ module.exports = {
           attributes: {
             exclude: [ 'snapShotAccount' ],
           },
+          include: [
+            {
+              model: Account,
+              as: 'account',
+              attributes: [ 'associatedOperation' ],
+            },
+          ]
         });
 
         if (!userAccount) {
@@ -180,14 +203,15 @@ module.exports = {
           updatedAt: new Date(),
         }, { transaction: t } );
 
-        const updatedUserAccount = await userAccount.update({
-          accountValue,
-          guaranteeOperation,
-          updatedAt: moment(new Date()).tz('America/New_York').format(),
-        }, { transaction: t });
+        if (userAccount.account.associatedOperation !== 2) {
+          const updatedUserAccount = await userAccount.update({
+            accountValue,
+            guaranteeOperation,
+            updatedAt: moment(new Date()).tz('America/New_York').format(),
+          }, { transaction: t });
+          Log({userId, userAccountId: req.body.userAccountId, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
 
-        Log({userId, userAccountId: userAccountMovement.userAccountId, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
-
+        }
 
         return res.status(200).send(updatedUserAccountMovement);
       })

@@ -443,6 +443,7 @@ class MovementsTable extends Component {
       credit: parseFloat( credit || 0.00 ).toFixed( 2 ),
       accountValue: parseFloat( accountValue || 0.00 ).toFixed( 2 ),
       previousAccountValue: parseFloat( previousAccountValue || 0.00 ).toFixed( 2 ),
+      isFirstMovement: this.state.count === 0
     } )
   };
 
