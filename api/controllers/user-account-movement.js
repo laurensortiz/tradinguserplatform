@@ -36,24 +36,26 @@ module.exports = {
 
         const snapShotAccount = JSON.stringify( userAccount );
 
-
-
-        let accountValue = Number(userAccount.accountValue || 0.00) ;
+        let accountValue = Number(req.body.accountValue || 0.00) ;
         let guaranteeOperation = Number(userAccount.guaranteeOperation);
         const debit =  Number(req.body.debit || 0.00) ;
         const credit = Number(req.body.credit || 0.00) ;
+        let previousAccountValue = Number(req.body.previousAccountValue || 0.00) ;
 
-
-        if (credit > 0) {
-          accountValue = ToFixNumber(accountValue + credit);
-          guaranteeOperation = ToFixNumber(guaranteeOperation + credit)
-        } else if (debit > 0 ) {
-          accountValue = ToFixNumber(accountValue - debit);
-          guaranteeOperation = ToFixNumber(guaranteeOperation - debit)
-        } else {
-          return res.status(404).send({
-            message: 'Movimiento inválido',
-          });
+        if (userAccount.account.associatedOperation !== 2) {
+          previousAccountValue = userAccount.accountValue;
+          accountValue = Number(userAccount.accountValue || 0.00) ;
+          if (credit > 0) {
+            accountValue = ToFixNumber( accountValue + credit );
+            guaranteeOperation = ToFixNumber( guaranteeOperation + credit )
+          } else if (debit > 0) {
+            accountValue = ToFixNumber( accountValue - debit );
+            guaranteeOperation = ToFixNumber( guaranteeOperation - debit )
+          } else {
+            return res.status( 404 ).send( {
+              message: 'Movimiento inválido',
+            } );
+          }
         }
 
         const isFirstMovement = req.body.isFirstMovement ? {
@@ -65,7 +67,7 @@ module.exports = {
           debit,
           credit,
           accountValue,
-          previousAccountValue: userAccount.accountValue,
+          previousAccountValue,
           reference: req.body.reference || '',
           status: _.get(req, 'body.status', 1),
           createdAt: moment(req.body.createdAt || new Date()).tz('America/New_York').format(),
@@ -178,18 +180,19 @@ module.exports = {
         const debit =  Number(req.body.debit) || userAccountMovement.debit;
         const credit = Number(req.body.credit) || userAccountMovement.credit;
 
-        if (credit > 0) {
-          accountValue = ToFixNumber((accountValue - Number(userAccountMovement.credit)) + credit);
-          guaranteeOperation = ToFixNumber((guaranteeOperation - Number(userAccountMovement.credit)) + credit)
-        } else if (debit > 0 ) {
-          
-          accountValue = ToFixNumber((accountValue + Number(userAccountMovement.debit)) - debit);
-          guaranteeOperation = ToFixNumber((guaranteeOperation + Number(userAccountMovement.debit)) - debit);
+        if (userAccount.account.associatedOperation !== 2) {
 
-        } else {
-          return res.status(404).send({
-            message: 'Movimiento inválido',
-          });
+          if (credit > 0) {
+            accountValue = ToFixNumber( accountValue + credit );
+            guaranteeOperation = ToFixNumber( guaranteeOperation + credit )
+          } else if (debit > 0) {
+            accountValue = ToFixNumber( accountValue - debit );
+            guaranteeOperation = ToFixNumber( guaranteeOperation - debit )
+          } else {
+            return res.status( 404 ).send( {
+              message: 'Movimiento inválido',
+            } );
+          }
         }
 
         const updatedUserAccountMovement = await userAccountMovement.update({

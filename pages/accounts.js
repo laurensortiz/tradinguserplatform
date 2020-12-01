@@ -332,6 +332,7 @@ class Accounts extends Component {
           <MovementsTable
             selectedAccount={this.state.selectedUserAccount}
             onFetchUserAccount={this._handleFetchUserAccount}
+            isProfitMonth={ this.state.associatedOperation === 2}
             isAdmin={ true }
           />
         </Drawer>
