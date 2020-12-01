@@ -55,7 +55,7 @@ class AddOrEditUserAccountForm extends PureComponent {
 
     if(!_.isEmpty(nextProps.selectedAccount) && !_.isEqual(nextProps.selectedAccount.updatedAt.valueOf(), prevState.lastUpdate)) {
 
-      const {accountValue, guaranteeOperation,  marginUsed} = nextProps.selectedAccount;
+      const {accountValue, guaranteeOperation,  marginUsed, balanceInitial} = nextProps.selectedAccount;
       if(!_.isEqual(accountValue, prevState.accountValue) ||
         !_.isEqual(guaranteeOperation, prevState.guaranteeOperation) ||
         !_.isEqual(marginUsed, prevState.marginUsed)
@@ -64,6 +64,7 @@ class AddOrEditUserAccountForm extends PureComponent {
           accountValue,
           guaranteeOperation,
           marginUsed,
+          balanceInitial,
           lastUpdate: nextProps.selectedAccount.updatedAt.valueOf()
         } )
       }
@@ -280,8 +281,7 @@ class AddOrEditUserAccountForm extends PureComponent {
               ) }
             </Form.Item>
           </Col>
-        </Row>
-        <Row gutter={10}>
+
           <Col xs={24} sm={8}>
             <Form.Item label="Valor de la Cuenta">
               { getFieldDecorator( 'accountValue', {
@@ -297,23 +297,6 @@ class AddOrEditUserAccountForm extends PureComponent {
             </Form.Item>
           </Col>
           <Col xs={24} sm={8}>
-            {_.isEqual(associatedOperation, 1) ? (
-              <Form.Item label="Garantías disponibles">
-                { getFieldDecorator( 'guaranteeOperation', {
-                  initialValue: guaranteeOperationInitValue,
-                  rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
-                    {
-                      validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                    }
-                  ],
-                } )(
-                  <Input name="guaranteeOperation" onChange={ this._handleChange }
-                         placeholder="Garantías disponibles para operar"/>
-                ) }
-              </Form.Item>
-            ) : null}
-          </Col>
-          <Col xs={24} sm={8}>
             <Form.Item label="Garantía/Créditos">
               { getFieldDecorator( 'guaranteeCredits', {
                 initialValue: guaranteeCreditsInitValue,
@@ -327,39 +310,61 @@ class AddOrEditUserAccountForm extends PureComponent {
               ) }
             </Form.Item>
           </Col>
-        </Row>
-        <Row gutter={10}>
-          <Col xs={24} sm={8}>
+
             {_.isEqual(associatedOperation, 1) ? (
-              <Form.Item label="Margen Utilizado 10%">
-                { getFieldDecorator( 'marginUsed', {
-                  initialValue: marginUsedInitValue,
-                  value: marginUsedInitValue,
-                  rules: [ { required: false, message: 'Por favor indique el margen utilizado' } ],
-                } )(
-                  <Input name="marginUsed" onChange={ this._handleChange }
-                         placeholder="Margen Utilizado"/>
-                ) }
-              </Form.Item>
-            ) : null}
-          </Col>
-          <Col xs={24} sm={8}>
-            {_.isEqual(associatedOperation, 1) ? (
-              <Form.Item label="Comisiones por referencia">
-                { getFieldDecorator( 'commissionByReference', {
-                  initialValue: commissionByReference,
+              <Col xs={24} sm={8}>
+              <Form.Item label="Garantías disponibles">
+                { getFieldDecorator( 'guaranteeOperation', {
+                  initialValue: guaranteeOperationInitValue,
                   rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
                     {
                       validator: (rule, amount) => AmountFormatValidation( rule, amount )
                     }
                   ],
                 } )(
-                  <Input name="commissionByReference" onChange={ this._handleChange }
-                         placeholder="Comisiones por referencia"/>
+                  <Input name="guaranteeOperation" onChange={ this._handleChange }
+                         placeholder="Garantías disponibles para operar"/>
                 ) }
               </Form.Item>
+              </Col>
             ) : null}
-          </Col>
+
+
+
+            {_.isEqual(associatedOperation, 1) ? (
+              <Col xs={ 24 } sm={ 8 }>
+                <Form.Item label="Margen Utilizado 10%">
+                  { getFieldDecorator( 'marginUsed', {
+                    initialValue: marginUsedInitValue,
+                    value: marginUsedInitValue,
+                    rules: [ { required: false, message: 'Por favor indique el margen utilizado' } ],
+                  } )(
+                    <Input name="marginUsed" onChange={ this._handleChange }
+                           placeholder="Margen Utilizado"/>
+                  ) }
+                </Form.Item>
+              </Col>
+            ) : null}
+
+
+            {_.isEqual(associatedOperation, 1) ? (
+              <Col xs={ 24 } sm={ 8 }>
+                <Form.Item label="Comisiones por referencia">
+                  { getFieldDecorator( 'commissionByReference', {
+                    initialValue: commissionByReference,
+                    rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
+                      {
+                        validator: (rule, amount) => AmountFormatValidation( rule, amount )
+                      }
+                    ],
+                  } )(
+                    <Input name="commissionByReference" onChange={ this._handleChange }
+                           placeholder="Comisiones por referencia"/>
+                  ) }
+                </Form.Item>
+              </Col>
+            ) : null}
+
           <Col xs={24} sm={8}>
             <Form.Item label="Saldo Inicial">
               { getFieldDecorator( 'balanceInitial', {
@@ -374,8 +379,7 @@ class AddOrEditUserAccountForm extends PureComponent {
               ) }
             </Form.Item>
           </Col>
-        </Row>
-        <Row gutter={10}>
+
           <Col xs={24} sm={8}>
             <Form.Item label="Saldo Final">
               { getFieldDecorator( 'balanceFinal', {
@@ -397,6 +401,7 @@ class AddOrEditUserAccountForm extends PureComponent {
 
           </Col>
         </Row>
+
         <Form.Item>
           <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
             { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Actualizar' }
