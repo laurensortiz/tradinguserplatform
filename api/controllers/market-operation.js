@@ -392,125 +392,126 @@ module.exports = {
               /**
                * Close Operation
                */
-              result = await Promise.all( operationsIds.map( async (operationID) => {
-                  const marketOperation = await MarketOperation.findOne( {
-                    where: {
-                      id: operationID,
-                    },
-                    include: [
-                      {
-                        model: UserAccount,
-                        as: 'userAccount',
-                        attributes: {
-                          exclude: [ 'snapShotAccount' ],
+              for (const operationID of operationsIds) {
+                const marketOperation = await MarketOperation.findOne( {
+                  where: {
+                    id: operationID,
+                  },
+                  include: [
+                    {
+                      model: UserAccount,
+                      as: 'userAccount',
+                      attributes: {
+                        exclude: [ 'snapShotAccount' ],
+                      },
+                      include: [
+                        {
+                          model: Account,
+                          as: 'account',
+                          attributes: [ 'name', 'percentage', 'associatedOperation' ]
                         },
-                        include: [
-                          {
-                            model: Account,
-                            as: 'account',
-                            attributes: [ 'name', 'percentage', 'associatedOperation' ]
-                          },
 
-                        ],
-                      }
-                    ],
-                    silence: true
+                      ],
+                    }
+                  ],
+                  silence: true
+                }, { transaction: t } );
+
+                if (!marketOperation) {
+                  throw new Error( 'Ocurrió un error al momento de buscar la operación' )
+                }
+
+                const marketOperationSnapShot = JSON.stringify( marketOperation );
+
+                if (marketOperation.status === 4) {
+                  throw new Error( 'Una o más operaciones seleccionas ya se encuentran cerradas' )
+                }
+
+                const userAccount = await UserAccount.findOne( {
+                  where: {
+                    id: marketOperation.userAccountId,
+                  },
+                } );
+
+                if (!userAccount) {
+                  throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
+                }
+
+                const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
+                const { percentage } = marketOperation.userAccount.account;
+                const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12;
+
+                const maintenanceMarginAmount = (
+                  assetClassId === 8 ||
+                  assetClassId === 7 ||
+                  assetClassId === 5 ||
+                  assetClassId === 4 ||
+                  assetClassId === 3 ||
+                  assetClassId === 1
+                ) ? 0 : Number( maintenanceMargin );
+
+                const profit = ToFixNumber( Number( amount ) - Number( initialAmount ) );
+                const isProfitPositive = Math.sign( profit ) >= 0;
+                const commission = isProfitPositive ? ToFixNumber( Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) ) : 0
+                const hold = isProfitPositive && !isBrokerGuarantee ? GetHoldCommissionAmount(profit) : 0;
+                const endProfit = ToFixNumber( profit - commission - hold );
+
+                // Close Calculations
+                const marginUsed = ToFixNumber( ( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100 );
+                const guaranteeOperationProduct = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit );
+                const accountValueEndOperation = ToFixNumber( Number( userAccount.accountValue ) + Number( endProfit ) );
+                const accountGuaranteeEndOperation = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct ) );
+                const accountMarginUsedEndOperation = ToFixNumber( Number( userAccount.marginUsed ) - Number( marginUsed ) );
+
+                try {
+                  const updatedUserAccount = await userAccount.update( {
+                    accountValue: accountValueEndOperation, // Valor de la Cuenta
+                    guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
+                    marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
+                    updatedAt: new Date(),
+
                   }, { transaction: t } );
 
-                  if (!marketOperation) {
-                    throw new Error( 'Ocurrió un error al momento de buscar la operación' )
-                  }
-
-                  const marketOperationSnapShot = JSON.stringify( marketOperation );
-
-                  if (marketOperation.status === 4) {
-                    throw new Error( 'Una o más operaciones seleccionas ya se encuentran cerradas' )
-                  }
-
-                  const userAccount = await UserAccount.findOne( {
-                    where: {
-                      id: marketOperation.userAccountId,
-                    },
-                  } );
-
-                  if (!userAccount) {
-                    throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
-                  }
-
-                  const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
-                  const { percentage } = marketOperation.userAccount.account;
-                  const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12;
-
-                  const maintenanceMarginAmount = (
-                    assetClassId === 8 ||
-                    assetClassId === 7 ||
-                    assetClassId === 5 ||
-                    assetClassId === 4 ||
-                    assetClassId === 3 ||
-                    assetClassId === 1
-                  ) ? 0 : Number( maintenanceMargin );
-
-                  const profit = ToFixNumber( Number( amount ) - Number( initialAmount ) );
-                  const isProfitPositive = Math.sign( profit ) >= 0;
-                  const commission = isProfitPositive ? ToFixNumber( Number( ( ( profit * Number( percentage ) ) / 100 ).toFixed( 2 ) ) ) : 0
-                  const hold = isProfitPositive && !isBrokerGuarantee ? GetHoldCommissionAmount(profit) : 0;
-                  const endProfit = ToFixNumber( profit - commission - hold );
-
-                  // Close Calculations
-                  const marginUsed = ToFixNumber( ( ( Number( initialAmount ) + Number( maintenanceMarginAmount ) ) * 10 ) / 100 );
-                  const guaranteeOperationProduct = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( initialAmount ) + Number( maintenanceMarginAmount ) + Number( marginUsed ) + endProfit );
-                  const accountValueEndOperation = ToFixNumber( Number( userAccount.accountValue ) + Number( endProfit ) );
-                  const accountGuaranteeEndOperation = ToFixNumber( Number( userAccount.guaranteeOperation ) + Number( guaranteeOperationProduct ) );
-                  const accountMarginUsedEndOperation = ToFixNumber( Number( userAccount.marginUsed ) - Number( marginUsed ) );
-
-                  try {
-                    const updatedUserAccount = await userAccount.update( {
-                      accountValue: accountValueEndOperation, // Valor de la Cuenta
-                      guaranteeOperation: guaranteeOperationProduct, // Garantías diponibles
-                      marginUsed: accountMarginUsedEndOperation, // Margen Utilizado 10%
-                      updatedAt: new Date(),
-
-                    }, { transaction: t } );
-
-                    Log( {
-                      userId,
-                      userAccountId: userAccount.id,
-                      tableUpdated: 'userAccount',
-                      action: 'update',
-                      type: 'sellOperation',
-                      snapShotAfterAction: JSON.stringify( updatedUserAccount )
-                    } )
+                  Log( {
+                    userId,
+                    userAccountId: userAccount.id,
+                    tableUpdated: 'userAccount',
+                    action: 'update',
+                    type: 'sellOperation',
+                    snapShotAfterAction: JSON.stringify( updatedUserAccount )
+                  } )
 
 
-                    const updatedMarketOperation = await marketOperation.update( {
-                      profitBrut: profit,
-                      profitNet: endProfit,
-                      accountValueEndOperation: accountValueEndOperation,
-                      guaranteeValueEndOperation: accountGuaranteeEndOperation,
-                      commissionValueEndOperation: commission,
-                      guaranteeOperationValueEndOperation: guaranteeOperationProduct,
-                      holdStatusCommissionEndOperation: hold,
-                      endDate: moment( new Date() ).tz( 'America/New_York' ).format(),
-                      status: 4
+                  const updatedMarketOperation = await marketOperation.update( {
+                    profitBrut: profit,
+                    profitNet: endProfit,
+                    accountValueEndOperation: accountValueEndOperation,
+                    guaranteeValueEndOperation: accountGuaranteeEndOperation,
+                    commissionValueEndOperation: commission,
+                    guaranteeOperationValueEndOperation: guaranteeOperationProduct,
+                    holdStatusCommissionEndOperation: hold,
+                    endDate: moment( new Date() ).tz( 'America/New_York' ).format(),
+                    status: 4
 
-                    }, { transaction: t } )
+                  }, { transaction: t } )
 
-                    Log( {
-                      userId,
-                      userAccountId: userAccount.id,
-                      tableUpdated: 'marketOperation',
-                      action: 'update',
-                      type: 'sellOperation',
-                      snapShotBeforeAction: marketOperationSnapShot,
-                      snapShotAfterAction: JSON.stringify( updatedMarketOperation )
-                    } )
+                  Log( {
+                    userId,
+                    userAccountId: userAccount.id,
+                    tableUpdated: 'marketOperation',
+                    action: 'update',
+                    type: 'sellOperation',
+                    snapShotBeforeAction: marketOperationSnapShot,
+                    snapShotAfterAction: JSON.stringify( updatedMarketOperation )
+                  } )
 
 
-                  } catch (e) {
-                    throw new Error( `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${ e }` )
-                  }
-                } )
-              )
+                } catch (e) {
+                  throw new Error( `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${ e }` )
+                }
+              }
+
+              result = 'All operations has been sold'
               //END SELL OPERATION
 
             } else {
@@ -700,7 +701,6 @@ module.exports = {
 
                 default:
 
-
               }
 
 
@@ -810,7 +810,7 @@ module.exports = {
             break;
           default:
         }
-        return res.status( 200 ).send( result );
+        return res.status( 200 ).send( 'Completed' );
       } );
     } catch (error) {
       return res.status( 400 ).send( {
