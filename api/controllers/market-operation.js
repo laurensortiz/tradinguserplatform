@@ -472,13 +472,15 @@ module.exports = {
 
                   }, { transaction: t } );
 
+                  const updatedUserAccountSnapShot = JSON.stringify( updatedUserAccount )
+
                   Log( {
                     userId,
                     userAccountId: userAccount.id,
                     tableUpdated: 'userAccount',
                     action: 'update',
                     type: 'sellOperation',
-                    snapShotAfterAction: JSON.stringify( updatedUserAccount )
+                    snapShotAfterAction: updatedUserAccountSnapShot.replace('\\', '')
                   } )
 
 
