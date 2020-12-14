@@ -392,6 +392,7 @@ module.exports = {
               /**
                * Close Operation
                */
+              let pivotUserAccountTable = []
               for (const operationID of operationsIds) {
                 const marketOperation = await MarketOperation.findOne( {
                   where: {
@@ -427,7 +428,9 @@ module.exports = {
                   throw new Error( 'Una o más operaciones seleccionas ya se encuentran cerradas' )
                 }
 
-                const userAccount = await UserAccount.findOne( {
+                const userAccountIndex = _.findIndex(pivotUserAccountTable, {id: marketOperation.userAccountId})
+
+                const userAccount = userAccountIndex >= 0 ? pivotUserAccountTable[userAccountIndex] : await UserAccount.findOne( {
                   where: {
                     id: marketOperation.userAccountId,
                   },
@@ -472,6 +475,13 @@ module.exports = {
 
                   }, { transaction: t } );
 
+                  // Validate pivot table
+                  if (userAccountIndex >= 0) {
+                    pivotUserAccountTable[userAccountIndex] = updatedUserAccount
+                  } else {
+                    pivotUserAccountTable.push(updatedUserAccount)
+                  }
+
                   const updatedUserAccountSnapShot = JSON.stringify( updatedUserAccount )
 
                   Log( {
@@ -512,7 +522,7 @@ module.exports = {
                   throw new Error( `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${ e }` )
                 }
               }
-
+              pivotUserAccountTable = []
               result = 'All operations has been sold'
               //END SELL OPERATION
 
