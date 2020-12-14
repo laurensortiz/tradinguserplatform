@@ -23,6 +23,7 @@ import BulkUpdateSteps from './BulkUpdateSteps';
 
 import { assetClassOperations } from "../../../state/modules/assetClasses";
 import { brokerOperations } from "../../../state/modules/brokers";
+import { productOperations } from "../../../state/modules/products";
 
 import {ExportMarkerOperationReport} from '../shared';
 
@@ -40,6 +41,7 @@ class MarketTable extends Component {
     marketOperations: [],
     assetClasses: [],
     brokers: [],
+    products: [],
     searchText: '',
     searchedColumn: '',
     selectedRowKeys: [],
@@ -73,14 +75,22 @@ class MarketTable extends Component {
       _.assignIn(updatedState, {
         brokers: nextProps.brokers
       })
-
     }
+    if (nextProps.products.length !== prevState.products.length) {
+      const products = _.orderBy(nextProps.products, (({name}) => _.trim(name)))
+
+      _.assignIn(updatedState, {
+        products
+      })
+    }
+    
     return !_.isEmpty( updatedState ) ? updatedState : null;
   }
 
   componentDidMount() {
     this.props.fetchGetAssetClasses();
     this.props.fetchGetBrokers();
+    this.props.fetchGetProducts();
   }
 
   _getCTA = (type, row) => {
@@ -454,7 +464,8 @@ class MarketTable extends Component {
       sortedInfo,
       filteredInfo,
       assetClasses,
-      brokers
+      brokers,
+      products
     } = this.state;
 
     const columns = [
@@ -487,10 +498,18 @@ class MarketTable extends Component {
         title: 'Producto',
         dataIndex: 'product.name',
         key: 'product.name',
-        render: text => <span key={ `${ text.code }-${ text.name }` }>{ `${ text.code }-${ text.name }` }</span>,
+        render: text => <span key={ `${ text }` }>{ `${ text }` }</span>,
         sorter: (a, b) => Sort( a.product.name, b.product.name ),
         sortDirections: [ 'descend', 'ascend' ],
-        ...this.getColumnSearchProps( 'product.name' ),
+        filters: products.map(({name, code}) => {
+          return {
+            text: `${name}-${code}`,
+            value: name
+          }
+        }),
+        filteredValue: filteredInfo['product.name'] || null,
+        onFilter: (value, record) => record.product ? record.product.name.includes(value) : null,
+        ellipsis: true,
       },
       {
         title: 'Derivado',
@@ -665,11 +684,13 @@ function mapStateToProps(state) {
   return {
     assetClasses: state.assetClassesState.list,
     brokers: state.brokersState.list,
+    products: state.productsState.list
   }
 }
 
 const mapDispatchToProps = dispatch =>
   bindActionCreators( {
+    fetchGetProducts: productOperations.fetchGetProducts,
     fetchGetAssetClasses: assetClassOperations.fetchGetAssetClasses,
     fetchGetBrokers: brokerOperations.fetchGetBrokers,
   }, dispatch );
