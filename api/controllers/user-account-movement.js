@@ -175,19 +175,22 @@ module.exports = {
 
         const snapShotAccount = JSON.stringify( userAccount );
 
-        let accountValue = Number(req.body.accountValue || userAccountMovement.accountValue);
+        let accountValue = Number(userAccount.accountValue || 0);
         let guaranteeOperation = Number(userAccount.guaranteeOperation || 0);
-        const debit =  Number(req.body.debit) || userAccountMovement.debit;
-        const credit = Number(req.body.credit) || userAccountMovement.credit;
+        const debit =  Number(req.body.debit) || 0;
+        const credit = Number(req.body.credit) || 0;
+        const isDebitOrCreditChange  = Number(req.body.debit) !== Number(userAccountMovement.debit) ||
+          Number(req.body.credit) !== Number(userAccountMovement.credit);
 
-        if (userAccount.account.associatedOperation !== 2) {
+        if (userAccount.account.associatedOperation !== 2 && isDebitOrCreditChange) {
 
           if (credit > 0) {
-            accountValue = ToFixNumber( accountValue + credit );
-            guaranteeOperation = ToFixNumber( guaranteeOperation + credit )
+            accountValue = Number( ( accountValue - Number(userAccountMovement.credit || 0) ) + credit );
+            guaranteeOperation = Number( (guaranteeOperation - Number(userAccountMovement.credit || 0) ) + credit )
           } else if (debit > 0) {
-            accountValue = ToFixNumber( accountValue - debit );
-            guaranteeOperation = ToFixNumber( guaranteeOperation - debit )
+            accountValue = Number( (accountValue + Number(userAccountMovement.debit || 0) ) - debit );
+            guaranteeOperation = Number( (guaranteeOperation + Number(userAccountMovement.debit || 0) ) - debit )
+
           } else {
             return res.status( 404 ).send( {
               message: 'Movimiento inválido',
@@ -198,7 +201,7 @@ module.exports = {
         const updatedUserAccountMovement = await userAccountMovement.update({
           debit,
           credit,
-          accountValue: accountValue,
+          accountValue: isDebitOrCreditChange ? userAccountMovement.accountValue : req.body.accountValue,
           reference: req.body.reference || userAccountMovement.reference,
           previousAccountValue: req.body.previousAccountValue || userAccountMovement.previousAccountValue,
           status: _.get(req, 'body.status', 1),
@@ -206,18 +209,20 @@ module.exports = {
           updatedAt: new Date(),
         }, { transaction: t } );
 
-        if (userAccount.account.associatedOperation !== 2) {
+        if (userAccount.account.associatedOperation !== 2 && isDebitOrCreditChange) {
           const updatedUserAccount = await userAccount.update({
             accountValue,
             guaranteeOperation,
             updatedAt: moment(new Date()).tz('America/New_York').format(),
           }, { transaction: t });
-          Log({userId, userAccountId: req.body.userAccountId, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
+
+          Log({userId, userAccountId: userAccountMovement.userAccountId, tableUpdated: 'userAccount', action: 'update', type:'update', snapShotBeforeAction:  snapShotAccount, snapShotAfterAction:  JSON.stringify(updatedUserAccount)})
 
         }
 
-        return res.status(200).send(updatedUserAccountMovement);
+
       })
+      return res.status(200).send('updated');
     } catch (e) {
       return res.status(500).send(e);
     }
