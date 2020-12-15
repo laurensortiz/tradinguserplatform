@@ -58,7 +58,7 @@ module.exports = {
           }
         }
 
-        const isFirstMovement = req.body.isFirstMovement ? {
+        const isFirstMovement = req.body.isFirstMovement && parseInt(previousAccountValue) === 0 ? {
           balanceInitial: accountValue
         } : null;
 
