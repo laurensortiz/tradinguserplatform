@@ -2,16 +2,21 @@ import _ from 'lodash';
 import { MarketOperation, UserAccount, User, Account, MarketMovement } from '../models';
 import { marketMovementQuery, userQuery } from '../queries';
 import moment from "moment-timezone";
+import ToFixNumber from '../../common/to-fix-number';
 
 
 module.exports = {
   async create(req, res) {
     try {
+      const gpInversion = req.body.gpInversion === '' || req.body.gpInversion === 'NaN' ? 0 : req.body.gpInversion;
+      const gpAmount = req.body.gpAmount === '' || req.body.gpAmount === 'NaN' ? 0 : req.body.gpAmount;
+      const marketPrice = req.body.marketPrice === '' || req.body.marketPrice === 'NaN'  ? 0 : req.body.marketPrice;
+
       const marketMovement = await MarketMovement.create({
-        gpInversion: req.body.gpInversion === '' || req.body.gpInversion === 'NaN' ? 0 : req.body.gpInversion,
+        gpInversion: Number((`${gpInversion}`).replace( /\,/g, '' )),
+        gpAmount: Number((`${gpAmount}`).replace( /\,/g, '' )),
+        marketPrice: Number((`${marketPrice}`).replace( /\,/g, '' )),
         marketOperationId: Number(req.body.marketOperationId),
-        gpAmount: req.body.gpAmount === '' || req.body.gpAmount === 'NaN' ? 0 : req.body.gpAmount,
-        marketPrice: req.body.marketPrice === '' || req.body.marketPrice === 'NaN' ? 0 : req.body.marketPrice || 0,
         status: _.get(req, 'body.status', 1),
         createdAt: moment(req.body.createdAt).tz('America/New_York').format() || moment(new Date()).tz('America/New_York').format(),
         updatedAt: moment(new Date()).tz('America/New_York').format()
@@ -78,11 +83,14 @@ module.exports = {
       });
     }
 
+    const gpInversion = req.body.gpInversion === '' || req.body.gpInversion === 'NaN' ? 0 : req.body.gpInversion || marketMovement.gpInversion;
+    const gpAmount = req.body.gpAmount === '' || req.body.gpAmount === 'NaN' ? 0 : req.body.gpAmount || marketMovement.gpAmount;
+    const marketPrice = req.body.marketPrice === '' || req.body.marketPrice === 'NaN'  ? 0 : req.body.marketPrice || marketMovement.marketPrice;
 
     const updatedMarketMovement = await marketMovement.update({
-      gpInversion: req.body.gpInversion === '' || req.body.gpInversion === 'NaN' ? 0 : req.body.gpInversion || marketMovement.gpInversion,
-      gpAmount: req.body.gpAmount === '' || req.body.gpAmount === 'NaN' ? 0 : req.body.gpAmount || marketMovement.gpAmount,
-      marketPrice: req.body.marketPrice === '' || req.body.marketPrice === 'NaN'  ? 0 : req.body.marketPrice || marketMovement.marketPrice,
+      gpInversion: Number((`${gpInversion}`).replace( /\,/g, '' )),
+      gpAmount: Number((`${gpAmount}`).replace( /\,/g, '' )),
+      marketPrice: Number((`${marketPrice}`).replace( /\,/g, '' )),
       status: _.get(req, 'body.status', 1),
       createdAt: req.body.createdAt || marketMovement.createdAt,
       updatedAt: new Date(),
