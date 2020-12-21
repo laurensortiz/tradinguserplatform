@@ -561,7 +561,7 @@ module.exports = {
                * Define base information
                */
               const gpAmount = Number( ( _.get( updateValue, 'gpAmount', 0 ) ).replace( /\,/g, '' ) );
-              const marketPrice = Number( _.get( updateValue, 'marketPrice', 0 ) );
+              const marketPrice = Number( (_.get( updateValue, 'marketPrice', 0 ) ).replace( /\,/g, '' ) );
               const commoditiesTotal = Number( marketOperation.commoditiesTotal );
               const amount = Number( marketOperation.amount );
               let calculatedValue = 0;
