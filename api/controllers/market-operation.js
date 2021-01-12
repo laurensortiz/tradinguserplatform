@@ -710,6 +710,17 @@ module.exports = {
                   }
                   break;
 
+                /**
+                 * NATURAL FT
+                 */
+                case 'natural-FT':
+                  if (marketOperation.assetClassId === 2) {
+                    calculatedValue = ( 1000 * gpAmount ) * commoditiesTotal; // 1 FT = $1000
+                  } else {
+                    throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
+                  }
+                  break;
+
 
                 default:
 

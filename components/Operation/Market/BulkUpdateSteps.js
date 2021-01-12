@@ -85,6 +85,11 @@ const BULK_UPDATE_TYPES = [
     code: 'orange-FT-OP',
     name: 'Orange',
     scope: 'price',
+  },
+  {
+    code: 'natural-FT',
+    name: 'Natural',
+    scope: 'price',
   }
 ];
 
