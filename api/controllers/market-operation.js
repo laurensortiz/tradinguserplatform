@@ -297,7 +297,7 @@ module.exports = {
           if (!userAccount) {
             throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
           }
-
+          const accountValueBeforeEndOperation = `${userAccount.accountValue}`
           const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
           const { percentage } = marketOperation.userAccount.account;
           const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12;
@@ -347,6 +347,7 @@ module.exports = {
             profitNet: endProfit,
             accountValueEndOperation: accountValueEndOperation,
             guaranteeValueEndOperation: accountGuaranteeEndOperation,
+            accountValueBeforeEndOperation,
             commissionValueEndOperation: commission,
             guaranteeOperationValueEndOperation: guaranteeOperationProduct,
             holdStatusCommissionEndOperation: hold,
@@ -439,7 +440,7 @@ module.exports = {
                 if (!userAccount) {
                   throw new Error( 'Ocurrió un error al momento de buscar la cuenta del usuario' )
                 }
-
+                const accountValueBeforeEndOperation = `${userAccount.accountValue}`
                 const { initialAmount, amount, holdStatusCommission, maintenanceMargin, assetClassId } = marketOperation;
                 const { percentage } = marketOperation.userAccount.account;
                 const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12;
@@ -499,6 +500,7 @@ module.exports = {
                     profitNet: endProfit,
                     accountValueEndOperation: accountValueEndOperation,
                     guaranteeValueEndOperation: accountGuaranteeEndOperation,
+                    accountValueBeforeEndOperation,
                     commissionValueEndOperation: commission,
                     guaranteeOperationValueEndOperation: guaranteeOperationProduct,
                     holdStatusCommissionEndOperation: hold,
@@ -534,6 +536,22 @@ module.exports = {
               );
             }
 
+            return res.status( 200 ).send( result );
+
+          case 'stopLost':
+            result = await MarketOperation.update( {
+                stopLost: updateValue,
+              }, { where: { id: operationsIds } },
+              { transaction: t }
+            );
+            return res.status( 200 ).send( result );
+
+          case 'takingProfit':
+            result = await MarketOperation.update( {
+                takingProfit: updateValue,
+              }, { where: { id: operationsIds } },
+              { transaction: t }
+            );
             return res.status( 200 ).send( result );
 
           case 'price':

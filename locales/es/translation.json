@@ -74,6 +74,7 @@
   "movementGP": "Movimiento (G/P)",
   "order": "Orden",
   "broker": "Corredor",
+  "accountValueBeforeEndOperation": "Valor de la cuenta pre venta",
   "closeAmount": "Saldo de cierre",
   "guarantees": "Garantias",
   "commission": "Comisión",

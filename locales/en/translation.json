@@ -74,6 +74,7 @@
   "movementGP": "Movement (G/P)",
   "order": "Order",
   "broker": "Broker",
+  "accountValueBeforeEndOperation": "Account value before sell",
   "closeAmount": "End Amount",
   "guarantees": "Guarantees",
   "commission": "Commission",
