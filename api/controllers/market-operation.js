@@ -682,7 +682,7 @@ module.exports = {
                  */
                 case 'cooper-FT-OP':
                   if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                    calculatedValue = ( 125 * gpAmount ) * commoditiesTotal;
+                    calculatedValue = ( 1250 * gpAmount ) * commoditiesTotal;
                   } else {
                     throw new Error( 'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión' )
                   }
