@@ -47,6 +47,10 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,
     },
+    accountValueBeforeEndOperation: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
     commissionValueEndOperation: {
       type: DataTypes.DECIMAL(10,2),
       allowNull: true,

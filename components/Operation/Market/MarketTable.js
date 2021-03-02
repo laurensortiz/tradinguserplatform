@@ -161,11 +161,11 @@ class MarketTable extends Component {
       <Icon type="filter" theme="filled" style={ { color: filtered ? '#1890ff' : undefined } }/>
     ),
     onFilter: (value, record) => {
-
+      const valueFormatted = (value.toLowerCase()).replace(',', '')
       return _.get( record, dataIndex )
         .toString()
         .toLowerCase()
-        .includes( value.toLowerCase() )
+        .includes( valueFormatted )
     },
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
@@ -555,6 +555,7 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps( 'userAccount.user.lastName' ),
       },
       {
+        ...this.getColumnSearchProps( 'amount' ),
         title: 'Saldo Actual',
         key: 'amount',
         render: data => <span
@@ -562,6 +563,7 @@ class MarketTable extends Component {
           key={ data.amount }>{ DisplayTableAmount( data.amount ) }</span>,
         sorter: (a, b) => Sort( a.amount, b.amount ),
         sortDirections: [ 'descend', 'ascend' ],
+
       },
       {
         title: 'Inversión',
@@ -578,6 +580,7 @@ class MarketTable extends Component {
         render: maintenanceMargin => <span key={ maintenanceMargin }>{ DisplayTableAmount( maintenanceMargin ) }</span>,
         sorter: (a, b) => Sort( a.maintenanceMargin, b.maintenanceMargin ),
         sortDirections: [ 'descend', 'ascend' ],
+        ...this.getColumnSearchProps( 'maintenanceMargin' ),
       },
       {
         title: 'Taking Profit',

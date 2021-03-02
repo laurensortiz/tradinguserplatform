@@ -17,6 +17,16 @@ const BULK_UPDATE_TYPES = [
     scope: 'status'
   },
   {
+    code: 'stopLost',
+    name: 'Stop Loss',
+    scope: 'stopLost'
+  },
+  {
+    code: 'takingProfit',
+    name: 'Taking Profit',
+    scope: 'takingProfit'
+  },
+  {
     code: 'stocks',
     name: 'Stocks',
     scope: 'price',
@@ -138,7 +148,7 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
     } )
   }
 
-  const _handleRadioInputChange = ({ target }) => {
+  const _handleSingleInputChange = ({ target }) => {
     setUpdateValue(target.value)
   }
 
@@ -159,13 +169,31 @@ function BulkUpdateSteps({ selectedElements, onClickUpdate, isProcessComplete, i
     switch (updateScope) {
       case 'status':
         return (
-          <Radio.Group name="status" onChange={ _handleRadioInputChange } >
+          <Radio.Group name="status" onChange={ _handleSingleInputChange } >
             <Radio value={ 1 }><Tag color="#039B01">Activo</Tag></Radio>
             <Radio value={ 2 }><Tag color="#D63930">Market Close</Tag></Radio>
             <Radio value={ 3 }><Tag color="#E2A11A">On Hold</Tag></Radio>
             <Radio value={ 4 }><Tag color="#414241">Vendido</Tag></Radio>
           </Radio.Group>
 
+        )
+      case 'stopLost':
+        return (
+          <>
+            <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="%"
+                   style={ { width: 200 } }
+                   name="stopLost" onChange={ _handleSingleInputChange }
+                   placeholder="Stop Loss"/>
+          </>
+        )
+      case 'takingProfit':
+        return (
+          <>
+            <Input size="large" className={ `m-r-20 ${ behaviorClass }` } addonBefore="Price $"
+                   style={ { width: 200 } }
+                   name="takingProfit" onChange={ _handleSingleInputChange }
+                   placeholder="Taking Profit"/>
+          </>
         )
       case 'price':
         return (

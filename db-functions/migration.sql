@@ -1980,3 +1980,12 @@ CREATE TABLE public."Log" (
 /*
 * End Changes Oct 26, 2020
 */
+
+/*
+* Start Changes Mar 01, 2021
+*/
+ALTER TABLE public."MarketOperation" ADD "accountValueBeforeEndOperation" numeric(10,2) NULL;
+
+/*
+* End Changes Mar 01, 2021
+*/
