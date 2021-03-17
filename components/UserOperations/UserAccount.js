@@ -43,6 +43,7 @@ class UserAccount extends PureComponent {
           isWireTransferRequestLoading={ this.props.isWireTransferRequestLoading }
           isWireTransferRequestCompleted={ this.props.isWireTransferRequestCompleted }
           isWireTransferRequestSuccess={ this.props.isWireTransferRequestSuccess }
+          isWireTransferRequestAddCompleted={ this.props.isWireTransferRequestAddCompleted}
 
           key={account.id}
         /> )

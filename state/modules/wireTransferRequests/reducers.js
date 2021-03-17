@@ -1,4 +1,3 @@
-import { combineReducers } from "redux";
 import types from "./types";
 
 // Get All Users
@@ -8,6 +7,7 @@ const initialState = {
   isCompleted: false,
   isLoading: false,
   isSuccess: false,
+  isAddCompleted: false,
   message: '',
 };
 
@@ -77,7 +77,7 @@ export function settings(state = initialState, action) {
         isSuccess: true,
         isCompleted: true,
         isLoading: false,
-        list: action.payload,
+        item: action.payload,
       };
     case types.WIRE_TRANSFER_REQUESTS_USER_ACCOUNT_ERROR:
       return {
@@ -92,6 +92,7 @@ export function settings(state = initialState, action) {
       return {
         ...state,
         isSuccess: false,
+        isAddCompleted: false,
         isCompleted: false,
         isLoading: true,
       };
@@ -100,8 +101,8 @@ export function settings(state = initialState, action) {
         ...state,
         isSuccess: true,
         isCompleted: true,
+        isAddCompleted: true,
         isLoading: false,
-        jobTitle: action.payload,
         message: 'Referral Incluido con éxito',
       };
     case types.WIRE_TRANSFER_REQUEST_ADD_ERROR:
@@ -109,6 +110,7 @@ export function settings(state = initialState, action) {
         ...state,
         isSuccess: false,
         isCompleted: true,
+        isAddCompleted: true,
         isLoading: false,
         message: action.payload,
       };
@@ -127,7 +129,7 @@ export function settings(state = initialState, action) {
         isCompleted: true,
         isLoading: false,
         jobTitle: action.payload,
-        message: 'Referral Incluido con éxito',
+        message: 'Solicitud Incluido con éxito',
       };
     case types.WIRE_TRANSFER_REQUEST_EDIT_ERROR:
       return {

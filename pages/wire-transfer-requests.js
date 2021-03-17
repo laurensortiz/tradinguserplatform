@@ -18,7 +18,7 @@ const { TabPane } = Tabs;
 class WireTransferRequests extends Component {
   state = {
     isVisibleAddOrEditWireTransferRequest: false,
-    actionType: 'add',
+    actionType: 'edit',
     selectedWireTransferRequest: {},
     wireTransferRequests: [],
     status: 1
@@ -54,7 +54,7 @@ class WireTransferRequests extends Component {
       notification.success( {
         message,
         onClose: () => {
-          prevState.actionType = 'add'; // default value
+          prevState.actionType = 'edit'; // default value
           nextProps.fetchGetWireTransferRequests( {
             status: prevState.status
           } );
@@ -185,7 +185,7 @@ class WireTransferRequests extends Component {
           </Col>
         </Row>
         <Drawer
-          title="Detalle del WireTransferRequest Ticket"
+          title="Detalle del WireTransferRequest Request"
           width="80%"
           onClose={ this._onClose }
           visible={ this.state.isVisibleAddOrEditWireTransferRequest }

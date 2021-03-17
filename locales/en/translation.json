@@ -22,6 +22,7 @@
   "actionMessage ticketCreated": "Referral Ticket has been created",
   "actionMessage noOperationFound": "No Trades found for this account",
   "actionMessage downloadingHistoryReport": "Downloading Account History Report",
+  "actionMessage wireTransferCreated": "Wire Transfer Request has been created",
 
   "sharedAccount": "Shared Account",
   "allOperations": "All Operations",

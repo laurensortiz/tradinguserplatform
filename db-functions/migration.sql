@@ -2022,7 +2022,7 @@ create TABLE public."WireTransferRequest" (
   "accountWithdrawalRequest" varchar(255) NULL,
   "userAccountId" varchar(255) NULL,
   "username" varchar(255) NULL,
-
+"notes" varchar(500) NULL,
   status int4 NOT NULL,
   "createdAt" timestamptz NOT NULL,
   "updatedAt" timestamptz NOT NULL,
@@ -2030,7 +2030,7 @@ create TABLE public."WireTransferRequest" (
   CONSTRAINT "WireTransferRequest_pkey" PRIMARY KEY (id)
 );
 
-alter table public."WireTransferRequest" add "notes" varchar(500) NULL;
+--alter table public."WireTransferRequest" add "notes" varchar(500) NULL;
 
 /*
 * End Changes Mar 16, 2021

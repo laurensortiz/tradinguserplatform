@@ -20,10 +20,10 @@ const requestWireTransferRequests = () => {
   }
 };
 
-const requestWireTransferRequestsSuccess = (referral) => {
+const requestWireTransferRequestsSuccess = (wireTransferRequest) => {
   return {
     type: types.WIRE_TRANSFER_REQUESTS_SUCCESS,
-    payload: referral
+    payload: wireTransferRequest
   }
 };
 
@@ -35,13 +35,10 @@ const requestWireTransferRequestsError = (error) => {
 };
 
 // WireTransferRequest
-export const fetchGetWireTransferRequest = (referralId) => async dispatch => {
+export const fetchGetWireTransferRequest = (wireTransferRequestId) => async dispatch => {
   dispatch( requestWireTransferRequest() );
   try {
-    const res = await getWireTransferRequest(referralId);
-    console.log('[=====  res  =====>');
-    console.log(res);
-    console.log('<=====  /res  =====]');
+    const res = await getWireTransferRequest(wireTransferRequestId);
     dispatch( requestWireTransferRequestSuccess( res.data ) )
   } catch (e) {
     dispatch( requestWireTransferRequestError( e.message ) )
@@ -55,10 +52,10 @@ const requestWireTransferRequest = () => {
   }
 };
 
-const requestWireTransferRequestSuccess = (referral) => {
+const requestWireTransferRequestSuccess = (wireTransferRequest) => {
   return {
     type: types.WIRE_TRANSFER_REQUEST_SUCCESS,
-    payload: referral
+    payload: wireTransferRequest
   }
 };
 
@@ -69,10 +66,10 @@ const requestWireTransferRequestError = (error) => {
   }
 };
 
-export const fetchGetUserAccountWireTransferRequests = () => async dispatch => {
+export const fetchGetUserAccountWireTransferRequests = (userAccountId) => async dispatch => {
   dispatch( requestUserAccountWireTransferRequests() );
   try {
-    const res = await getUserAccountWireTransferRequests();
+    const res = await getUserAccountWireTransferRequests(userAccountId);
     dispatch( requestUserAccountWireTransferRequestsSuccess( res.data ) )
   } catch (e) {
     dispatch( requestUserAccountWireTransferRequestsError( e.message ) )
@@ -86,10 +83,10 @@ const requestUserAccountWireTransferRequests = () => {
   }
 };
 
-const requestUserAccountWireTransferRequestsSuccess = (referral) => {
+const requestUserAccountWireTransferRequestsSuccess = (wireTransferRequest) => {
   return {
     type: types.WIRE_TRANSFER_REQUESTS_USER_ACCOUNT_SUCCESS,
-    payload: referral
+    payload: wireTransferRequest
   }
 };
 

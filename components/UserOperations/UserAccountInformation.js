@@ -9,34 +9,80 @@ import ReferralForm from './ReferralForm'
 import WireTransferRequestForm from './WireTransferRequestForm'
 import { Investment, Market } from './Operation'
 import { ExportUserAccountsPDF } from './Operation/shared'
+import { bindActionCreators } from "redux";
+import { wireTransferRequestOperations } from "../../state/modules/wireTransferRequests";
+import { connect } from "react-redux";
 
 const INITIAL_HOLD_TIME_REQUEST = 6 // months 
+
+const getTotalMonthsFromDate = (date) => {
+  const userStartDate = new moment(date)
+  const today = new moment()
+  return (moment.duration(today.diff(userStartDate))).months()
+}
 
 class AccountInformation extends PureComponent {
   state = {
     isReferralFormVisible: false,
     isWireTransferRequestFormVisible: false,
-    isUserWireTransferAvailable: false
+    isUserWireTransferAvailable: false,
+    lastWireTransferRequestDate: null,
+    isRequestingLastRequest: false,
+    isWireTransferRequestAddCompleted: false,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
+    let updatedState = {}
     if (nextProps.isReferralCompleted && nextProps.isReferralSuccess) {
-      return {
+      _.assignIn(updatedState, {
         isReferralFormVisible: false,
-      }
+      })
     }
+
+    if (nextProps.isWireTransferRequestAddCompleted && !prevState.isWireTransferRequestAddCompleted) {
+      _.assignIn(updatedState, {
+        isWireTransferRequestFormVisible: false,
+        isUserWireTransferAvailable: false,
+      })
+    }
+
+
 
     if (nextProps.userAccount && !prevState.isUserWireTransferAvailable) {
-      const userStartDate = new moment(nextProps.userAccount.user.startDate)
-      const today = new moment()
-      const getTotalMonths = (moment.duration(today.diff(userStartDate))).months()
+  
+      const getTotalMonths = getTotalMonthsFromDate(nextProps.userAccount.user.startDate)
 
-      return {
+      _.assignIn(updatedState, {
         isUserWireTransferAvailable: getTotalMonths > INITIAL_HOLD_TIME_REQUEST,
+      })
+
+    }
+
+    if (nextProps.userAccount && !prevState.isRequestingLastRequest) {
+      nextProps.fetchGetUserAccountWireTransferRequests(nextProps.userAccount.id)
+      _.assignIn(updatedState, {
+        isRequestingLastRequest: true
+      })
+      return {
+        isRequestingLastRequest: true
       }
     }
 
-    return null
+    if (Object.keys(nextProps.lastWireTransferRequest).length > 0 && !prevState.lastWireTransferRequestDate) {
+      const {createdAt} = nextProps.lastWireTransferRequest[0]
+
+      const getTotalMonths = getTotalMonthsFromDate(createdAt)
+
+      _.assignIn(updatedState, {
+        isUserWireTransferAvailable: getTotalMonths > 0,
+        lastWireTransferRequestDate: createdAt,
+        isWireTransferRequestFormVisible: false
+      })
+    }
+    
+    
+    
+    return Object.keys(updatedState).length > 0 ? updatedState : null
   }
 
   _onHandleShowForm = () => {
@@ -52,8 +98,8 @@ class AccountInformation extends PureComponent {
   }
 
   _getHeaderCard = () => {
-    const wireTransferBtn = <Button onClick={this._onHandleShowWireTransferForm} disabled={!this.state.isUserWireTransferAvailable}><Icon type="dollar"  /> Wire Transfer Request</Button>
-    const disableText = 'No ha cumplido con el tiempo requerido para realizar solicitud de dinero.'
+    const wireTransferBtn = <Button onClick={this._onHandleShowWireTransferForm} disabled={!this.state.isUserWireTransferAvailable || this.props.isWireTransferRequestAddCompleted }><Icon type="dollar"  /> Wire Transfer Request</Button>
+    const disableText = 'No ha cumplido con el tiempo requerido para realizar la solicitud de dinero.'
     return this.state.isUserWireTransferAvailable ? (
       wireTransferBtn
     ) : (
@@ -63,6 +109,7 @@ class AccountInformation extends PureComponent {
     )
 
   }
+  
 
   render() {
     const { t } = this.props
@@ -81,6 +128,7 @@ class AccountInformation extends PureComponent {
     const commissionByReference = _.get( this.props, 'userAccount.commissionByReference', '0.00' )
 
     const isOperationPositive = IsOperationPositive( accountValue, balanceInitial )
+
 
     return (
       <>
@@ -209,4 +257,26 @@ class AccountInformation extends PureComponent {
   }
 }
 
-export default withNamespaces()( AccountInformation )
+function mapStateToProps(state) {
+  return {
+    lastWireTransferRequest: state.wireTransferRequestsState.item,
+    isWireTransferRequestLoading: state.wireTransferRequestsState.isLoading,
+    isWireTransferRequestSuccess: state.wireTransferRequestsState.isSuccess,
+    wireTransferRequestMessage: state.wireTransferRequestsState.message,
+    isWireTransferRequestCompleted: state.wireTransferRequestsState.isCompleted,
+    
+  }
+}
+
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      fetchGetUserAccountWireTransferRequests: wireTransferRequestOperations.fetchGetUserAccountWireTransferRequests,
+      resetWireTransferRequestAfterRequest: wireTransferRequestOperations.resetAfterRequest,
+
+    },
+    dispatch
+  )
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(withNamespaces()( AccountInformation ))

@@ -180,7 +180,7 @@ module.exports = app => {
   // WireTransferRequest
   app.post( '/api/wire-transfer-request', wireTransferRequest.list );
   app.get( '/api/wire-transfer-request/:wireTransferRequestId', wireTransferRequest.get );
-  app.get( '/api/wire-transfer-request/user-account/:username', wireTransferRequest.getByUserName );
+  app.get( '/api/wire-transfer-request/user-account/:userAccountId', wireTransferRequest.getByUserAccountId );
   app.post( '/api/wire-transfer-request/create', wireTransferRequest.create );
   app.put( '/api/wire-transfer-request/:wireTransferRequestId', wireTransferRequest.update );
   app.delete( '/api/wire-transfer-request/:wireTransferRequestId', wireTransferRequest.delete );

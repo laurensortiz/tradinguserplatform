@@ -23,10 +23,10 @@ export const addWireTransferRequest = async (wireTransferRequest) => {
   } );
 };
 
-export const getUserAccountWireTransferRequests = async (userAccount) => {
+export const getUserAccountWireTransferRequests = async (userAccountId) => {
   return fetch( {
     method: 'get',
-    url: `wire-transfer-request/user-account/${ userAccount.id }`,
+    url: `wire-transfer-request/user-account/${ userAccountId }`,
   } );
 };
 

@@ -1,5 +1,6 @@
 import { WireTransferRequest, UserAccount, User } from '../models';
 import { wireTransferRequestQuery } from '../queries';
+import moment from "moment-timezone";
 
 module.exports = {
   async create(req, res) {
@@ -32,8 +33,8 @@ module.exports = {
         username: req.body.username,
         status: 1,
         userAccountId: req.body.userAccountId,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: moment(new Date()).tz('America/New_York').format(),
+        updatedAt: moment(new Date()).tz('America/New_York').format()
       });
 
       return res.status(200).send(wireTransferRequest);
@@ -69,9 +70,9 @@ module.exports = {
     return res.status(200).send(wireTransferRequest);
   },
 
-  async getByUserName(req, res) {
+  async getByUserAccountId(req, res) {
     const wireTransferRequest = await WireTransferRequest.findAll(
-      wireTransferRequestQuery.listByUsername({ req})
+      wireTransferRequestQuery.listByUserAccountId({req})
     );
 
     if (!wireTransferRequest) {
@@ -121,7 +122,7 @@ module.exports = {
       notes: req.body.notes || wireTransferRequest.notes,
       status: req.body.status,
       updatedAt: new Date(),
-      closeAt: req.body.closeAt || wireTransferRequest.closeAt,
+      closedAt: req.body.status === 4 ?  moment(new Date()).tz('America/New_York').format() : wireTransferRequest.closedAt,
 
     });
 

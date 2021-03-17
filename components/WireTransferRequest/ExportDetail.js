@@ -3,28 +3,39 @@ import _ from 'lodash';
 import XLSX from 'xlsx';
 import FileSaver from 'file-saver';
 import { FormatCurrency, FormatDate, FormatStatus } from '../../common/utils';
+import { Divider } from "antd";
+import React from "react";
 
 moment.locale( 'es' ); // Set Lang to Spanish
 
 const EXCEL_HEADER_MARKET = [
   'ID',
-  'Nombre',
-  'Apellido',
-  'Email',
-  'Teléfono',
-  'País',
-  'Ciudad',
-  'Ocupación',
-  'Monto de Inversión',
-  'Compra de Broker Guarantee',
-  'Código de Broker Guarantee',
-  'Cantidad',
-  'IB Colaborador',
-  'Descripción del cliente referido',
-  'Creado por el Usuario',
+  'Estado',
+  'Usuario',
+  'Moneda',
+  'Cuenta RCM',
+  'Método de transferencia',
+  'Cuenta para retiro de fondos',
+  'Monto USD',
+  'Cobro de Comisiones USD',
+  'Detalle de las referencias que generaron comisiones',
+  'Número de Cuenta (Beneficiario)',
+  'Nombre (Beneficiario)',
+  'Apellido (Beneficiario)',
+  'Dirección (Beneficiario)',
+  'Nombre del Banco (Banco Beneficiario)',
+  'Swift (Banco Beneficiario)',
+  'Dirección (Banco Beneficiario)',
+  'Nombre del Banco (Banco Intermediario)',
+  'Swift (Banco Intermediario)',
+  'Dirección (Banco Intermediario)',
+  'Cuenta entre bancos',
   'Fecha de Creación',
-  'Fecha de Actualización'
+  'Fecha de Actualización',
+  'Fecha de Cancelación'
 ];
+
+
 
 const addCommentToCell = (context, column, comment) => {
   if (!context[ column ].c) context[ column ].c = [];
@@ -35,7 +46,7 @@ const addCommentToCell = (context, column, comment) => {
 
 const getExportFileName = (orgId) => {
   const time = moment().format();
-  return `referral_tickets_${ time }.xlsx`
+  return `wire_transfer_request_${ time }.xlsx`
 };
 
 const _formatData = (data) => {
@@ -44,22 +55,29 @@ const _formatData = (data) => {
 
     return {
       'ID': account.id,
-      'Nombre': account.firstName,
-      'Apellido': account.lastName,
-      'Email': account.email,
-      'Teléfono': account.phoneNumber,
-      'País': account.country,
-      'Ciudad': account.city,
-      'Ocupación': account.jobTitle,
-      'Monto de Inversión': FormatCurrency.format( account.initialAmount ),
-      'Compra de Broker Guarantee': account.hasBrokerGuarantee === 1 ? 'Sí' : 'No',
-      'Código de Broker Guarantee': account.brokerGuaranteeCode,
-      'Cantidad': account.quantity,
-      'IB Colaborador': account.collaboratorIB,
-      'Descripción del cliente referido': account.description,
-      'Creado por el Usuario': _.get(account, 'username', ' - '),
+      'Estado': account.status ? 'Activo' : 'Cancelado',
+      'Usuario': account.username,
+      'Moneda': account.currencyType,
+      'Cuenta RCM': account.accountRCM,
+      'Método de transferencia': account.transferMethod,
+      'Cuenta para retiro de fondos': account.accountWithdrawalRequest,
+      'Monto USD': FormatCurrency.format( account.amount ),
+      'Cobro de Comisiones USD': FormatCurrency.format( account.commissionsCharge ),
+      'Detalle de las referencias que generaron comisiones': account.commissionsReferenceDetail,
+      'Número de Cuenta (Beneficiario)': account.beneficiaryPersonAccountNumber,
+      'Nombre (Beneficiario)': account.beneficiaryPersonFirstName,
+      'Apellido (Beneficiario)': account.beneficiaryPersonLastName,
+      'Dirección (Beneficiario)': account.beneficiaryPersonAddress,
+      'Nombre del Banco (Banco Beneficiario)': account.beneficiaryBankName,
+      'Swift (Banco Beneficiario)': account.beneficiaryBankSwift,
+      'Dirección (Banco Beneficiario)': account.beneficiaryBankAddress,
+      'Nombre del Banco (Banco Intermediario)': account.intermediaryBankName,
+      'Swift (Banco Intermediario)': account.intermediaryBankSwift,
+      'Dirección (Banco Intermediario)': account.intermediaryBankAddress,
+      'Cuenta entre bancos': account.intermediaryBankAccountInterBank,
       'Fecha de Creación': FormatDate(account.createdAt),
-      'Fecha de Actualización': FormatDate(account.updatedAt)
+      'Fecha de Actualización': FormatDate(account.updatedAt),
+      'Fecha de Cancelación': FormatDate(account.closedAt)
     }
 
   } )
@@ -70,7 +88,7 @@ const _formatData = (data) => {
 const _getAccountTemplateMarket = (data) => {
 
   return [
-    [ 'Reporte de Referral Ticket' ],
+    [ 'Reporte de Wire Transfer Request' ],
     [ '' ],
 
   ]
@@ -112,7 +130,7 @@ function exportDetail(exportData) {
   const displayTemplate = _getAccountTemplateMarket( _.first(exportData) );
 
   XLSX.utils.sheet_add_aoa( ws, displayTemplate, { origin: 'A1' } );
-  XLSX.utils.book_append_sheet( wb, ws, "Cuentas de Clientes" );
+  XLSX.utils.book_append_sheet( wb, ws, "Wire Transfer Request" );
   const wopts = { bookType: 'xlsx', bookSST: false, type: 'array' };
   const html = XLSX.utils.sheet_to_html( ws );
 

@@ -22,6 +22,7 @@
   "actionMessage ticketCreated": "Referral Ticket criado",
   "actionMessage noOperationFound": "Nenhuma negociação encontrada para esta conta",
   "actionMessage downloadingHistoryReport": "Baixando relatório do histórico da conta",
+  "actionMessage wireTransferCreated": "Wire Transfer Request criado",
 
   "sharedAccount": "Shared Account",
   "allOperations": "Todas as Operações",

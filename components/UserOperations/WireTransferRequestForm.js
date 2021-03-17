@@ -32,6 +32,7 @@ class WireTransferRequestForm extends PureComponent {
     accountWithdrawalRequest: '',
     confirmDirty: false,
     isInvalid: true,
+    disabledSubmitBtn: false
   }
 
 
@@ -50,11 +51,14 @@ class WireTransferRequestForm extends PureComponent {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const saveState = _.omit(this.state, ['confirmDirty', 'isValid'])
-        const { accountId, user } = this.props.userAccount
+        const saveState = _.omit(this.state, ['confirmDirty', 'isValid', 'disabledSubmitBtn'])
+        const { id, user } = this.props.userAccount
+        this.setState({
+          disabledSubmitBtn: true
+        })
         this.props.onWireTransferRequest({
           ...saveState,
-          userAccountId: accountId,
+          userAccountId: id,
           username: user.username,
         })
       }
@@ -90,7 +94,7 @@ class WireTransferRequestForm extends PureComponent {
       }
 
       if (( parseFloat( amountAvailable ) - parseFloat( value ) ) < 0) {
-        reject( "No cuenta con dinero disponible en la cuenta para realizar ese monto" );
+        reject( "No cuenta con dinero disponible en la cuenta para solicitar este monto" );
       }
 
       if (( parseFloat( guaranteeOperation ) - parseFloat( value ) ) < 1000) {
@@ -100,7 +104,29 @@ class WireTransferRequestForm extends PureComponent {
         resolve();
       }
 
+    } );
+  };
 
+  handleCommission = (rule, value, callback) => {
+    const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
+
+    const {commissionByReference} = this.props.userAccount;
+
+
+    return new Promise( (resolve, reject) => {
+      if (!_.isEmpty( value ) && !regex.test( value )) {
+        reject( "Formato inválido del monto" );  // reject with error message
+      }
+
+      if (parseFloat( value ) == 0) {
+        reject( "La opereración debe ser mayor a 0" );
+      }
+
+      if (( parseFloat( commissionByReference || 0 ) - parseFloat( value ) ) < 0) {
+        reject( "No cuenta con dinero en comisiones disponible en la cuenta para solicitar este monto" );  // reject with error message
+      } else {
+        resolve();
+      }
 
     } );
   };
@@ -109,8 +135,13 @@ class WireTransferRequestForm extends PureComponent {
   render() {
     
     const { t } = this.props
-    const { getFieldDecorator } = this.props.form
+    const { getFieldDecorator, resetFields } = this.props.form
     const { user } = this.props.userAccount
+
+    if (!this.state.commissionsCharge) {
+      resetFields(['commissionsCharge'])
+    }
+
 
     return (
       <Draggable handle=".handle">
@@ -180,6 +211,7 @@ class WireTransferRequestForm extends PureComponent {
                   onChange={ value => this._handleChangeSelect( { name: 'accountWithdrawalRequest', value } ) }>
                   <Option value="OTC">OTC</Option>
                   <Option value="ProfitMonth">ProfitMonth</Option>
+                  <Option value="Comisiones">Comisiones</Option>
                 </Select>
               )}
             </Form.Item>
@@ -221,12 +253,12 @@ class WireTransferRequestForm extends PureComponent {
               {getFieldDecorator('commissionsCharge', {
                 rules: [
                   {
-                    required: false,
+                    required: !!this.state.commissionsCharge,
                     message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
                   },
                   {
-                    validator: (rule, commissionsCharge) => AmountFormatValidation(rule, commissionsCharge),
-                  },
+                    validator: this.handleCommission
+                  }
                 ],
               })(
                 <div>
@@ -492,7 +524,7 @@ class WireTransferRequestForm extends PureComponent {
                 htmlType="submit"
                 size="large"
                 className="login-form-button"
-                disabled={this.props.isWireTransferRequestLoading}
+                disabled={this.props.isWireTransferRequestLoading || this.state.disabledSubmitBtn}
                 loading={this.props.isWireTransferRequestLoading}
               >
                 {t('btn wireTransferRequest')}

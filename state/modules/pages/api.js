@@ -23,9 +23,6 @@ export const addPage = async (page) => {
 };
 
 export const editPage = async (page) => {
-  console.log('[=====  PAGES  =====>');
-  console.log(page);
-  console.log('<=====  /PAGES  =====]');
   return fetch({
     method: 'put',
     url: `pages/${page.id}`,

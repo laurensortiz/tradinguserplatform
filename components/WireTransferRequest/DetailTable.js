@@ -36,6 +36,7 @@ class DetailTable extends Component {
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
     if (!_.isEqual( nextProps.wireTransferRequests, prevState.wireTransferRequests )) {
+
       _.assignIn(updatedState, {
         wireTransferRequests: nextProps.wireTransferRequests
       })
@@ -88,7 +89,7 @@ class DetailTable extends Component {
           >
             <Icon type="file-excel"/> <span>Exportar</span>
           </Button>
-          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="edit"/><span>Editar</span></Button>
+          <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="hdd"/><span>Detalle</span></Button>
           <Popconfirm
             okText="Si"
             title="Está seguro ?"
@@ -233,7 +234,7 @@ class DetailTable extends Component {
       <Col sm={ 12 }>
         <Radio.Group defaultValue={ 1 } buttonStyle="solid" onChange={ this.props.onTabChange }>
           <Radio.Button value={ 1 }>Activos</Radio.Button>
-          <Radio.Button value={ 4 }>Resueltos</Radio.Button>
+          <Radio.Button value={ 4 }>Cancelado</Radio.Button>
           <Radio.Button value={ 0 }>Eliminados</Radio.Button>
         </Radio.Group>
       </Col>
@@ -496,7 +497,7 @@ class DetailTable extends Component {
         title: 'Fecha de Cierre',
         dataIndex: 'closedAt',
         key: 'closedAt',
-        render: value => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
+        render: value => value ? moment(value).tz('America/New_York').format('DD-MM-YYYY') : " - ",
         editable: true,
         inputType: 'date',
         required: false,

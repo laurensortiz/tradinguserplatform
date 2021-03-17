@@ -14,7 +14,6 @@ import { wireTransferRequestOperations } from '../state/modules/wireTransferRequ
 
 import UserAccount from '../components/UserOperations/UserAccount'
 import ExportHistoryReport from '../components/UserOperations/Operation/shared/ExportUserAccountHistory'
-import UserAccountInformation from "../components/UserOperations/UserAccountInformation";
 
 class UserOperations extends Component {
   state = {
@@ -27,6 +26,7 @@ class UserOperations extends Component {
     operations: {},
     hasMarketOperations: false,
     hasInvestmentOperations: false,
+
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -50,6 +50,22 @@ class UserOperations extends Component {
       })
     }
 
+    // WireTransfer
+
+    if (nextProps.isWireTransferRequestAddCompleted && nextProps.isWireTransferRequestSuccess) {
+      message.destroy()
+      message.success(nextProps.t('actionMessage wireTransferCreated'), 3, () => {
+        nextProps.resetWireTransferRequestAfterRequest()
+      })
+    }
+
+    // if (nextProps.isWireTransferRequestAddCompleted && !nextProps.isWireTransferRequestSuccess) {
+    //   message.destroy()
+    //   message.error(nextProps.referralMessage, 6, () => {
+    //     nextProps.resetWireTransferRequestAfterRequest()
+    //   })
+    // }
+    // -- end
     if (nextProps.isHistoryReportSuccess && nextProps.isHistoryReportComplete) {
       if (_.isEmpty(nextProps.historyReportData)) {
         notification.info({
@@ -128,6 +144,7 @@ class UserOperations extends Component {
           isWireTransferRequestLoading={ this.props.isWireTransferRequestLoading }
           isWireTransferRequestCompleted={ this.props.isWireTransferRequestCompleted }
           isWireTransferRequestSuccess={ this.props.isWireTransferRequestSuccess }
+          isWireTransferRequestAddCompleted={ this.props.isWireTransferRequestAddCompleted }
 
           isLoading={false}
         />
@@ -154,6 +171,7 @@ function mapStateToProps(state) {
     isWireTransferRequestSuccess: state.wireTransferRequestsState.isSuccess,
     wireTransferRequestMessage: state.wireTransferRequestsState.message,
     isWireTransferRequestCompleted: state.wireTransferRequestsState.isCompleted,
+    isWireTransferRequestAddCompleted: state.wireTransferRequestsState.isAddCompleted,
 
     isHistoryReportLoading: state.userAccountsState.isHistoryReportLoading,
     isHistoryReportSuccess: state.userAccountsState.isHistoryReportSuccess,
@@ -169,6 +187,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchGetUserAccountHistoryReport: userAccountOperations.fetchGetUserAccountHistoryReport,
 
       fetchAddWireTransferRequest: wireTransferRequestOperations.fetchAddWireTransferRequest,
+      resetWireTransferRequestAfterRequest: wireTransferRequestOperations.resetAfterRequest,
 
       fetchAddReferral: referralOperations.fetchAddReferral,
       fetchGetReferrals: referralOperations.fetchGetReferrals,

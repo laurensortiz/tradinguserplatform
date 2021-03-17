@@ -4,7 +4,7 @@ const queries = {
     const status = Number(get(req, 'body.status', 1));
     return {
       where: {
-        status: 1,
+        status,
       },
       order: [ [ 'id', 'DESC' ] ],
     };
@@ -14,11 +14,11 @@ const queries = {
       order: [ [ 'id', 'DESC' ] ],
     };
   },
-  listByUsername: ({ req }) => {
-    const username = get(req, 'body.username', '');
+  listByUserAccountId: ({ req }) => {
+    const userAccountId = get(req, 'params.userAccountId', '');
     return {
       where: {
-        username,
+        userAccountId,
       },
       limit: 1,
       order: [ [ 'createdAt', 'DESC' ]],
