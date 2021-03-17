@@ -22,17 +22,19 @@ const langMenu = [
 
 function LangSelector ({lng}) {
   const [defaultLang, setDefaultLang] = useState('es-US')
+  const currentLang = lng === 'es' ? 'es-US' : lng
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage( lng );
   }
 
   useEffect(() => {
-    if (defaultLang !== lng) {
-      setDefaultLang(lng)
+
+    if (defaultLang !== currentLang) {
+      setDefaultLang(currentLang)
     }
 
-  }, [lng])
+  }, [currentLang])
 
   return (
     <Select

@@ -12,6 +12,7 @@
   "btn clean": "Clean",
   "btn syncData": "Sync Data",
   "btn sendReference": "Send Reference",
+  "btn wireTransferRequest": "Send Request",
 
   "title marketOperations": "Market Operations OTC",
   "title investmentOperations": "Investment Operations",
@@ -112,6 +113,12 @@
   "Collaborator": "Collaborator",
   "referredClientDescription": "Referred client description",
 
-  "selectFilterType": "Select filter type"
+  "selectFilterType": "Select filter type",
+
+  "account": "Account",
+  "amount": "Amount",
+  "amountNote": "Enter the amount to request in American Dollars",
+  "commissionsCharge": "Commissions Charge",
+  "commissionsReferenceDetail": "Detail of references that generated commissions"
 
 }

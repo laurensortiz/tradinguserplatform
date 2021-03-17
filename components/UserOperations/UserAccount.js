@@ -34,9 +34,17 @@ class UserAccount extends PureComponent {
           userAccount={ account }
           onRequestStandardOperationsReport={ this.props.onRequestStandardOperationsReport }
           onAddReferral={ this.props.onAddReferral }
+          onWireTransferRequest={this.props.onWireTransferRequest}
+
           isReferralLoading={ this.props.isReferralLoading }
           isReferralCompleted={ this.props.isReferralCompleted }
           isReferralSuccess={ this.props.isReferralSuccess }
+
+          isWireTransferRequestLoading={ this.props.isWireTransferRequestLoading }
+          isWireTransferRequestCompleted={ this.props.isWireTransferRequestCompleted }
+          isWireTransferRequestSuccess={ this.props.isWireTransferRequestSuccess }
+
+          key={account.id}
         /> )
     }
   };

@@ -15,3 +15,4 @@ export { default as assetClassQuery } from './asset-class';
 export { default as pageQuery } from './page';
 export { default as settingQuery } from './setting';
 export { default as referralQuery } from './referral';
+export { default as wireTransferRequestQuery } from './wire-transfer-request';

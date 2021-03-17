@@ -15,3 +15,4 @@ export { default as assetClassesState } from './assetClasses';
 export { default as pagesState } from './pages';
 export { default as settingsState } from './settings';
 export { default as referralsState } from './referrals';
+export { default as wireTransferRequestsState } from './wireTransferRequests';

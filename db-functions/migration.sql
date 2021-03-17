@@ -3,7 +3,7 @@
 
 -- DROP TABLE public."Account";
 
-CREATE TABLE public."Account" (
+create TABLE public."Account" (
 	id serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	percentage numeric(10,2) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE public."Account" (
 	CONSTRAINT "Account_pkey" PRIMARY KEY (id)
 );
 
-INSERT INTO public."Account" (id,"name",percentage,status,"createdAt","updatedAt","associatedOperation") VALUES
+insert into public."Account" (id,"name",percentage,status,"createdAt","updatedAt","associatedOperation") VALUES
 (2,'Classic',15.00,1,'2019-12-04 11:51:34.023','2019-12-04 11:51:34.023',1)
 ,(3,'Gold',10.00,1,'2019-12-04 11:51:34.023','2019-12-04 11:51:34.023',1)
 ,(4,'Profit Month 5%',5.00,1,'2020-01-03 18:23:24.990','2020-02-03 17:37:29.090',2)
@@ -32,7 +32,7 @@ INSERT INTO public."Account" (id,"name",percentage,status,"createdAt","updatedAt
 
 -- DROP TABLE public."AssetClass";
 
-CREATE TABLE public."AssetClass" (
+create TABLE public."AssetClass" (
 	id serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	status int4 NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE public."AssetClass" (
 	CONSTRAINT "AssetClass_pkey" PRIMARY KEY (id)
 );
 
-INSERT INTO public."AssetClass" (id,"name",status,"createdAt","updatedAt") VALUES
+insert into public."AssetClass" (id,"name",status,"createdAt","updatedAt") VALUES
 (1,'CO',1,'2020-03-07 23:47:18.320','2020-03-07 23:47:18.321')
 ,(3,'Bo',1,'2020-03-07 23:46:07.362','2020-03-07 23:47:32.074')
 ,(6,'CFD',1,'2020-03-07 23:48:58.978','2020-03-07 23:48:58.978')
@@ -54,7 +54,7 @@ INSERT INTO public."AssetClass" (id,"name",status,"createdAt","updatedAt") VALUE
 ,(4,'EQO',1,'2020-03-07 23:48:33.365','2020-03-16 16:24:03.812')
 ,(2,'FT',1,'2020-03-07 23:47:28.670','2020-03-16 16:24:14.781')
 ;
-INSERT INTO public."AssetClass" (id,"name",status,"createdAt","updatedAt") VALUES
+insert into public."AssetClass" (id,"name",status,"createdAt","updatedAt") VALUES
 (12,'CFDs Barrels',1,'2020-03-21 13:42:21.539','2020-03-21 13:42:29.949')
 ,(11,'CFDs Ounces',1,'2020-03-21 13:41:59.665','2020-03-21 13:43:21.949')
 ;
@@ -65,7 +65,7 @@ INSERT INTO public."AssetClass" (id,"name",status,"createdAt","updatedAt") VALUE
 
 -- DROP TABLE public."Broker";
 
-CREATE TABLE public."Broker" (
+create TABLE public."Broker" (
 	id serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	status int4 NOT NULL,
@@ -75,7 +75,7 @@ CREATE TABLE public."Broker" (
 	CONSTRAINT "Broker_pkey" PRIMARY KEY (id)
 );
 
-INSERT INTO public."Broker" (id,"name",status,"createdAt","updatedAt") VALUES
+insert into public."Broker" (id,"name",status,"createdAt","updatedAt") VALUES
 (2,'Alessandro L.',1,'2020-02-27 08:52:12.351','2020-02-27 08:52:12.351')
 ,(3,'Andres Valerio',1,'2020-02-27 08:52:27.866','2020-02-27 08:52:27.866')
 ,(4,'Vladimir Roca',1,'2020-03-16 16:21:40.697','2020-03-16 16:21:40.698')
@@ -93,7 +93,7 @@ INSERT INTO public."Broker" (id,"name",status,"createdAt","updatedAt") VALUES
 
 -- DROP TABLE public."Commodity";
 
-CREATE TABLE public."Commodity" (
+create TABLE public."Commodity" (
 	id serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	status int4 NOT NULL,
@@ -103,7 +103,7 @@ CREATE TABLE public."Commodity" (
 	CONSTRAINT "Commodity_pkey" PRIMARY KEY (id)
 );
 
-INSERT INTO public."Commodity" (id,"name",status,"createdAt","updatedAt") VALUES
+insert into public."Commodity" (id,"name",status,"createdAt","updatedAt") VALUES
 (1,'Stocks',1,'2020-02-24 20:56:08.846','2020-02-24 20:56:08.846')
 ,(2,'Commodities',1,'2020-02-24 20:56:08.846','2020-03-16 16:24:40.801')
 ,(4,'Forex',1,'2020-03-16 16:24:50.756','2020-03-16 16:24:50.756')
@@ -116,7 +116,7 @@ INSERT INTO public."Commodity" (id,"name",status,"createdAt","updatedAt") VALUES
 
 -- DROP TABLE public."InvestmentMovement";
 
-CREATE TABLE public."InvestmentMovement" (
+create TABLE public."InvestmentMovement" (
 	id serial NOT NULL,
 	"investmentOperationId" int4 NOT NULL,
 	"gpInversion" numeric(10,2) NULL,
@@ -127,9 +127,9 @@ CREATE TABLE public."InvestmentMovement" (
 	CONSTRAINT "InvestmentMovement_pkey" PRIMARY KEY (id)
 );
 
-ALTER TABLE public."InvestmentMovement" ADD CONSTRAINT "InvestmentMovement_investmentOperationId_fkey" FOREIGN KEY ("investmentOperationId") REFERENCES "InvestmentOperation"(id);
+alter table public."InvestmentMovement" add CONSTRAINT "InvestmentMovement_investmentOperationId_fkey" FOREIGN KEY ("investmentOperationId") REFERENCES "InvestmentOperation"(id);
 
-INSERT INTO public."InvestmentMovement" (id,"investmentOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
+insert into public."InvestmentMovement" (id,"investmentOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
 (1,1,20000.00,0.00,1,'2020-03-17 18:04:56.801','2020-03-17 18:04:56.801')
 ,(2,1,20150.00,150.00,1,'2020-03-17 18:06:43.404','2020-03-17 18:07:22.104')
 ,(3,1,20300.00,150.00,1,'2020-03-17 18:08:12.516','2020-03-17 18:08:14.735')
@@ -141,7 +141,7 @@ INSERT INTO public."InvestmentMovement" (id,"investmentOperationId","gpInversion
 ,(9,2,20750.00,250.00,1,'2020-03-17 20:18:07.935','2020-03-17 20:18:09.263')
 ,(10,2,21000.00,250.00,1,'2020-03-17 20:18:14.639','2020-03-17 20:18:14.714')
 ;
-INSERT INTO public."InvestmentMovement" (id,"investmentOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
+insert into public."InvestmentMovement" (id,"investmentOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
 (11,2,21262.50,262.50,1,'2020-03-17 20:19:55.228','2020-03-17 20:20:15.855')
 ,(14,3,56062.50,6062.50,1,'2020-03-24 15:37:39.405','2020-03-24 15:38:19.181')
 ,(15,3,56062.50,6062.50,1,'2020-03-24 15:37:39.405','2020-03-24 15:38:23.043')
@@ -153,7 +153,7 @@ INSERT INTO public."InvestmentMovement" (id,"investmentOperationId","gpInversion
 ,(21,6,6722.79,181.10,1,'2020-03-25 16:31:25.578','2020-03-25 16:32:01.502')
 ,(22,7,6312.48,0.00,1,'2020-03-25 17:51:00.319','2020-03-25 17:51:00.319')
 ;
-INSERT INTO public."InvestmentMovement" (id,"investmentOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
+insert into public."InvestmentMovement" (id,"investmentOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
 (23,7,6365.26,52.78,1,'2020-03-25 17:51:08.884','2020-03-25 17:51:20.885')
 ,(24,4,56500.00,437.50,1,'2020-03-25 18:59:34.532','2020-03-25 18:59:59.261')
 ;
@@ -164,7 +164,7 @@ INSERT INTO public."InvestmentMovement" (id,"investmentOperationId","gpInversion
 
 -- DROP TABLE public."InvestmentOperation";
 
-CREATE TABLE public."InvestmentOperation" (
+create TABLE public."InvestmentOperation" (
 	id serial NOT NULL,
 	"operationType" varchar(255) NULL,
 	"userAccountId" int4 NOT NULL,
@@ -178,9 +178,9 @@ CREATE TABLE public."InvestmentOperation" (
 	CONSTRAINT "InvestmentOperation_pkey" PRIMARY KEY (id)
 );
 
-ALTER TABLE public."InvestmentOperation" ADD CONSTRAINT "InvestmentOperation_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
+alter table public."InvestmentOperation" add CONSTRAINT "InvestmentOperation_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
 
-INSERT INTO public."InvestmentOperation" (id,"operationType","userAccountId",amount,"initialAmount",status,"startDate","endDate","createdAt","updatedAt") VALUES
+insert into public."InvestmentOperation" (id,"operationType","userAccountId",amount,"initialAmount",status,"startDate","endDate","createdAt","updatedAt") VALUES
 (1,'Multiactivo',3,20600.00,20600.00,0,'2020-03-17 18:04:44.000','1969-12-31 18:00:00.001','2020-03-17 18:04:56.792','2020-03-17 19:59:08.449')
 ,(3,'Multiactivos',8,68187.50,50000.00,0,'2020-01-09 16:30:56.000','2021-01-09 16:31:04.000','2020-03-24 15:31:16.432','2020-03-24 15:39:09.975')
 ,(2,'Multiactivos',4,21262.50,20000.00,0,'2020-03-17 20:16:16.000','2021-03-17 20:16:21.000','2020-03-17 20:16:29.309','2020-03-24 15:49:24.369')
@@ -197,7 +197,7 @@ INSERT INTO public."InvestmentOperation" (id,"operationType","userAccountId",amo
 
 -- DROP TABLE public."MarketMovement";
 
-CREATE TABLE public."MarketMovement" (
+create TABLE public."MarketMovement" (
 	id serial NOT NULL,
 	"marketOperationId" int4 NOT NULL,
 	"gpInversion" numeric(10,2) NULL,
@@ -208,11 +208,11 @@ CREATE TABLE public."MarketMovement" (
 	CONSTRAINT "MarketMovement_pkey" PRIMARY KEY (id)
 );
 
-ALTER TABLE public."MarketMovement" ADD CONSTRAINT "MarketMovement_marketOperationId_fkey" FOREIGN KEY ("marketOperationId") REFERENCES "MarketOperation"(id);
+alter table public."MarketMovement" add CONSTRAINT "MarketMovement_marketOperationId_fkey" FOREIGN KEY ("marketOperationId") REFERENCES "MarketOperation"(id);
 
-ALTER TABLE public."MarketMovement" ADD "marketPrice" numeric(10,2) NULL;
+alter table public."MarketMovement" add "marketPrice" numeric(10,2) NULL;
 
-INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
+insert into public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
 (1,1,2000.00,0.00,1,'2020-03-16 16:59:05.000','2020-03-16 16:59:08.530')
 ,(2,1,2030.00,30.00,1,'2020-03-16 17:03:27.978','2020-03-16 17:03:40.056')
 ,(3,1,2000.00,-30.00,1,'2020-03-16 17:04:37.111','2020-03-16 17:04:42.817')
@@ -224,7 +224,7 @@ INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmo
 ,(9,2,640.00,-150.00,1,'2020-03-16 18:39:06.161','2020-03-16 18:39:26.578')
 ,(10,2,540.00,-100.00,1,'2020-03-16 18:44:05.382','2020-03-16 18:45:11.156')
 ;
-INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
+insert into public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
 (11,2,-1460.00,-2000.00,1,'2020-03-16 18:45:26.482','2020-03-16 18:45:38.438')
 ,(12,2,-6460.00,-5000.00,1,'2020-03-16 18:45:47.671','2020-03-16 18:45:52.466')
 ,(13,3,5000.00,0.00,3,'2020-03-16 18:48:29.000','2020-03-16 18:48:31.584')
@@ -236,7 +236,7 @@ INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmo
 ,(19,7,10192.20,600.00,1,'2020-03-17 17:29:12.499','2020-03-17 17:29:35.371')
 ,(20,7,5192.20,-5000.00,1,'2020-03-17 17:39:04.988','2020-03-17 17:39:45.818')
 ;
-INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
+insert into public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
 (21,8,9592.20,0.00,1,'2020-03-17 17:46:37.000','2020-03-17 17:46:38.383')
 ,(22,8,10192.20,600.00,1,'2020-03-17 17:47:56.418','2020-03-17 17:48:21.956')
 ,(23,8,5192.20,-5000.00,1,'2020-03-17 17:50:22.530','2020-03-17 17:51:22.712')
@@ -248,7 +248,7 @@ INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmo
 ,(29,9,1050.00,0.00,1,'2020-03-18 20:07:49.412','2020-03-20 20:04:19.287')
 ,(30,9,3050.00,1000.00,1,'2020-03-21 00:50:05.717','2020-03-21 00:51:00.376')
 ;
-INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
+insert into public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmount",status,"createdAt","updatedAt") VALUES
 (31,9,2000.00,-1050.00,1,'2020-03-21 00:51:46.653','2020-03-21 00:51:58.187')
 ,(32,9,3100.00,1100.00,1,'2020-03-21 00:52:09.500','2020-03-21 00:52:20.807')
 ,(45,10,3456.20,525.00,1,'2020-03-21 13:52:27.178','2020-03-21 13:53:25.828')
@@ -268,7 +268,7 @@ INSERT INTO public."MarketMovement" (id,"marketOperationId","gpInversion","gpAmo
 
 -- DROP TABLE public."MarketOperation";
 
-CREATE TABLE public."MarketOperation" (
+create TABLE public."MarketOperation" (
 	id serial NOT NULL,
 	"longShort" varchar(255) NULL,
 	"commoditiesTotal" varchar(255) NULL,
@@ -292,14 +292,14 @@ CREATE TABLE public."MarketOperation" (
 	CONSTRAINT "MarketOperation_pkey" PRIMARY KEY (id)
 );
 
-ALTER TABLE public."MarketOperation" ADD CONSTRAINT "MarketOperation_assetClassId_fkey" FOREIGN KEY ("assetClassId") REFERENCES "AssetClass"(id);
-ALTER TABLE public."MarketOperation" ADD CONSTRAINT "MarketOperation_brokerId_fkey" FOREIGN KEY ("brokerId") REFERENCES "Broker"(id);
-ALTER TABLE public."MarketOperation" ADD CONSTRAINT "MarketOperation_commodityId_fkey" FOREIGN KEY ("commodityId") REFERENCES "Commodity"(id);
-ALTER TABLE public."MarketOperation" ADD CONSTRAINT "MarketOperation_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"(id);
-ALTER TABLE public."MarketOperation" ADD CONSTRAINT "MarketOperation_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
+alter table public."MarketOperation" add CONSTRAINT "MarketOperation_assetClassId_fkey" FOREIGN KEY ("assetClassId") REFERENCES "AssetClass"(id);
+alter table public."MarketOperation" add CONSTRAINT "MarketOperation_brokerId_fkey" FOREIGN KEY ("brokerId") REFERENCES "Broker"(id);
+alter table public."MarketOperation" add CONSTRAINT "MarketOperation_commodityId_fkey" FOREIGN KEY ("commodityId") REFERENCES "Commodity"(id);
+alter table public."MarketOperation" add CONSTRAINT "MarketOperation_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"(id);
+alter table public."MarketOperation" add CONSTRAINT "MarketOperation_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
 
 
-INSERT INTO public."MarketOperation" (id,"longShort","commoditiesTotal","buyPrice","initialAmount","takingProfit","stopLost","maintenanceMargin","orderId","userAccountId","productId","brokerId","commodityId","assetClassId",amount,status,"endDate","createdAt","updatedAt",behavior) VALUES
+insert into public."MarketOperation" (id,"longShort","commoditiesTotal","buyPrice","initialAmount","takingProfit","stopLost","maintenanceMargin","orderId","userAccountId","productId","brokerId","commodityId","assetClassId",amount,status,"endDate","createdAt","updatedAt",behavior) VALUES
 (21,'Long','8',1660.00,48400.00,1700.00,'35',44000.00,54879587,87,84,9,2,2,48400.00,0,NULL,'2020-03-11 17:13:10.000','2020-03-25 17:16:14.040',1)
 ,(19,'Long','8',1660.00,48400.00,1700.00,'35%',44000.00,54879587,87,84,9,2,2,54400.00,1,NULL,'2020-03-11 17:13:10.000','2020-03-25 17:13:31.053',1)
 ,(25,'Long','3600',29.30,105480.00,84.30,'25%',0.00,65784521,87,5,9,1,5,97668.00,1,NULL,'2020-02-26 17:24:28.000','2020-03-25 17:24:37.535',2)
@@ -311,7 +311,7 @@ INSERT INTO public."MarketOperation" (id,"longShort","commoditiesTotal","buyPric
 ,(4,'Long ','250',375.00,5000.00,380.00,'20%',4500.00,800754,2,6,6,1,6,5000.00,0,NULL,'2020-03-16 18:57:18.000','2020-03-16 18:59:09.035',0)
 ,(5,'Long ','250',375.00,5000.00,380.00,'20%',4500.00,800754,2,6,6,1,6,4600.00,0,NULL,'2020-03-16 19:02:04.000','2020-03-17 17:20:13.303',2)
 ;
-INSERT INTO public."MarketOperation" (id,"longShort","commoditiesTotal","buyPrice","initialAmount","takingProfit","stopLost","maintenanceMargin","orderId","userAccountId","productId","brokerId","commodityId","assetClassId",amount,status,"endDate","createdAt","updatedAt",behavior) VALUES
+insert into public."MarketOperation" (id,"longShort","commoditiesTotal","buyPrice","initialAmount","takingProfit","stopLost","maintenanceMargin","orderId","userAccountId","productId","brokerId","commodityId","assetClassId",amount,status,"endDate","createdAt","updatedAt",behavior) VALUES
 (6,'Long ','250',313.00,9592.20,380.00,'20%',4796.10,800754,2,6,6,1,6,9592.20,0,NULL,'2020-03-17 17:23:41.000','2020-03-17 17:25:03.185',0)
 ,(12,'Long ','35',1665.00,2931.20,1720.00,'15%',1465.40,54689885,6,84,7,2,6,2931.20,0,NULL,'2020-02-24 14:36:55.000','2020-03-21 13:40:36.461',1)
 ,(15,'Long ','35',1665.00,2931.20,1720.00,'15%',1465.40,54689885,6,84,7,2,6,2931.20,0,NULL,'2020-02-24 14:36:55.000','2020-03-21 13:40:42.246',1)
@@ -323,7 +323,7 @@ INSERT INTO public."MarketOperation" (id,"longShort","commoditiesTotal","buyPric
 ,(16,'Short','2600',31.00,8070.00,28.50,'10%',4035.00,41445796,7,61,2,2,12,11060.00,1,NULL,'2020-03-12 11:31:45.000','2020-03-24 11:31:51.806',1)
 ,(17,'Long ','1',15.78,6050.00,17.20,'20%',5500.00,48751562,7,85,2,2,2,4840.00,1,NULL,'2020-03-12 11:37:02.000','2020-03-24 11:37:08.218',2)
 ;
-INSERT INTO public."MarketOperation" (id,"longShort","commoditiesTotal","buyPrice","initialAmount","takingProfit","stopLost","maintenanceMargin","orderId","userAccountId","productId","brokerId","commodityId","assetClassId",amount,status,"endDate","createdAt","updatedAt",behavior) VALUES
+insert into public."MarketOperation" (id,"longShort","commoditiesTotal","buyPrice","initialAmount","takingProfit","stopLost","maintenanceMargin","orderId","userAccountId","productId","brokerId","commodityId","assetClassId",amount,status,"endDate","createdAt","updatedAt",behavior) VALUES
 (9,'Long ','20',421.00,2150.00,450.00,'20%',1720.00,800754,2,4,1,1,1,3100.00,0,NULL,'2020-03-17 20:03:01.000','2020-03-24 17:54:03.327',1)
 ,(8,'Long ','150',313.50,9592.20,380.00,'20%',4796.10,800754,2,6,6,1,1,10192.20,0,NULL,'2020-03-17 17:46:37.000','2020-03-17 20:00:43.216',1)
 ,(18,'Long ','25',1600.00,2008.50,1720.00,'20%',1004.19,65985201,9,84,4,2,11,4008.50,3,NULL,'2020-02-18 18:53:32.000','2020-03-24 18:19:31.210',1)
@@ -340,7 +340,7 @@ INSERT INTO public."MarketOperation" (id,"longShort","commoditiesTotal","buyPric
 
 -- DROP TABLE public."Page";
 
-CREATE TABLE public."Page" (
+create TABLE public."Page" (
 	id serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"content" text NOT NULL,
@@ -351,7 +351,7 @@ CREATE TABLE public."Page" (
 	CONSTRAINT "Page_pkey" PRIMARY KEY (id)
 );
 
-INSERT INTO public."Page" (id,"name","content",status,"createdAt","updatedAt") VALUES
+insert into public."Page" (id,"name","content",status,"createdAt","updatedAt") VALUES
 (2,'Calendario Económico','<h3 style="text-align: center; color:#000">Calendario económico muestra los próximos eventos económicos, anuncios y noticias.</h3>
 &nbsp;
 
@@ -678,7 +678,7 @@ INSERT INTO public."Page" (id,"name","content",status,"createdAt","updatedAt") V
 
 -- DROP TABLE public."Product";
 
-CREATE TABLE public."Product" (
+create TABLE public."Product" (
 	id serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	code varchar(255) NOT NULL,
@@ -689,7 +689,7 @@ CREATE TABLE public."Product" (
 	CONSTRAINT "Product_pkey" PRIMARY KEY (id)
 );
 
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (1,'American Airlines Group Inc.','AAL',1,'2020-02-22 11:43:19.959','2020-02-22 11:43:19.959')
 ,(2,'Aaon Inc.','AAON',1,'2020-02-22 11:43:19.959','2020-02-22 11:43:19.959')
 ,(3,'Apple Inc.','AAPL',1,'2020-02-22 11:43:19.959','2020-02-22 11:43:19.959')
@@ -701,7 +701,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(9,'Crude Oil WTI','Crude Oil WTI May ''20 (CLK20)',0,'2020-03-21 11:55:33.900','2020-03-21 11:57:38.417')
 ,(8,'Gold','Gold Apr ''20 (GCJ20)',0,'2020-03-21 11:54:46.925','2020-03-21 11:57:42.476')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (11,'Facebook Inc','FB	 ',1,'2020-03-21 11:58:12.380','2020-03-21 11:58:12.380')
 ,(12,'Alphabet Cl A','GOOGL	 ',1,'2020-03-21 11:58:44.677','2020-03-21 11:58:44.677')
 ,(13,'Adv Micro Devices','AMD',1,'2020-03-21 11:59:25.217','2020-03-21 11:59:25.217')
@@ -713,7 +713,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(19,'Bank of America Corp',' BAC	 ',1,'2020-03-21 12:10:56.470','2020-03-21 12:10:56.470')
 ,(20,'Walt Disney Company','DIS	 ',1,'2020-03-21 12:11:20.735','2020-03-21 12:11:20.735')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (21,'Visa Inc',' V	 ',1,'2020-03-21 12:11:48.802','2020-03-21 12:11:48.802')
 ,(22,'Berkshire Hathaway Cl B',' BRK.B	 ',1,'2020-03-21 12:12:13.084','2020-03-21 12:12:13.085')
 ,(23,'Gilead Sciences Inc',' GILD	 ',1,'2020-03-21 12:12:54.072','2020-03-21 12:12:54.072')
@@ -725,7 +725,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(29,'Mastercard Inc','MA	 ',1,'2020-03-21 12:16:30.112','2020-03-21 12:16:30.112')
 ,(30,'Adobe Systems Inc','ADBE	 ',1,'2020-03-21 12:17:14.646','2020-03-21 12:17:14.646')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (31,'Wal-Mart Stores',' WMT	 ',1,'2020-03-21 12:17:51.488','2020-03-21 12:17:51.488')
 ,(32,'Procter & Gamble Company',' PG	 ',1,'2020-03-21 12:18:41.652','2020-03-21 12:18:41.652')
 ,(33,'Coca-Cola Company',' KO	 ',1,'2020-03-21 12:19:13.858','2020-03-21 12:19:13.858')
@@ -737,7 +737,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(39,' McDonald''s Corp',' MCD	',1,'2020-03-21 12:23:39.105','2020-03-21 12:23:39.105')
 ,(40,'Salesforce.com Inc','CRM	 ',1,'2020-03-21 12:24:10.572','2020-03-21 12:24:10.572')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (41,' Cisco Systems Inc',' CSCO	',1,'2020-03-21 12:25:26.380','2020-03-21 12:25:26.380')
 ,(42,'Starbucks Corp',' SBUX	 ',1,'2020-03-21 12:26:02.288','2020-03-21 12:26:02.288')
 ,(43,'Uber Technologies Inc','UBER	 ',1,'2020-03-21 12:26:25.636','2020-03-21 12:26:25.637')
@@ -749,7 +749,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(49,'Qualcomm Inc','QCOM	 ',1,'2020-03-21 12:29:47.589','2020-03-21 12:29:47.589')
 ,(50,'International Business Machines',' IBM	 ',1,'2020-03-21 12:30:55.010','2020-03-21 12:30:55.010')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (51,' U.S. Dollar Index','DXY00	',1,'2020-03-21 12:35:01.642','2020-03-21 12:35:01.642')
 ,(52,'Euro Fx/U.S. Dollar','EURUSD	 ',1,'2020-03-21 12:35:29.170','2020-03-21 12:35:29.170')
 ,(53,' U.S. Dollar/Canadian Dollar','USDCAD	',1,'2020-03-21 12:35:52.897','2020-03-21 12:35:52.897')
@@ -761,7 +761,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(59,'Bitcoin Futures CME','BTC',1,'2020-03-21 12:40:01.947','2020-03-21 12:40:01.947')
 ,(60,'NYSE Bitcoin','NYXBT',1,'2020-03-21 12:40:54.682','2020-03-21 12:40:54.682')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (61,'Crude Oil WTI (May ''20)',' CLK20	 ',1,'2020-03-21 12:43:05.807','2020-03-21 12:43:05.807')
 ,(62,'ULSD NY Harbor (May ''20)',' HOK20	 ',1,'2020-03-21 12:43:40.165','2020-03-21 12:43:40.165')
 ,(63,'Gasoline RBOB (May ''20)',' RBK20	 ',1,'2020-03-21 12:44:07.733','2020-03-21 12:44:07.733')
@@ -773,7 +773,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(69,'Soybean Meal (May ''20)',' ZMK20	 ',1,'2020-03-21 12:48:47.657','2020-03-21 12:48:47.658')
 ,(70,'Soybean Oil (May ''20)','ZLK20	 ',1,'2020-03-21 12:49:14.251','2020-03-21 12:49:14.251')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (71,'Wheat (May ''20)','ZWK20	 ',1,'2020-03-21 12:49:54.226','2020-03-21 12:49:54.227')
 ,(72,'Hard Red Wheat (May ''20)',' KEK20	 ',1,'2020-03-21 12:50:14.664','2020-03-21 12:50:14.664')
 ,(73,'Spring Wheat (May ''20)','MWK20	 ',1,'2020-03-21 12:50:38.609','2020-03-21 12:50:38.609')
@@ -785,7 +785,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(79,' Coffee (May ''20)',' KCK20	',1,'2020-03-21 12:53:17.900','2020-03-21 12:53:17.900')
 ,(80,'Sugar #11 (May ''20)','SBK20	 ',1,'2020-03-21 12:53:38.189','2020-03-21 12:53:38.189')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (81,' Cocoa (May ''20)','CCK20	',1,'2020-03-21 12:54:12.509','2020-03-21 12:54:12.509')
 ,(82,'Lumber (May ''20)','LSK20	 ',1,'2020-03-21 12:54:34.386','2020-03-21 12:54:34.386')
 ,(83,'Sugar #16 (May ''20)',' SDK20	 ',1,'2020-03-21 12:55:02.061','2020-03-21 12:55:02.062')
@@ -797,7 +797,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 ,(89,'Dow Jones Industrial Average',' DJI',0,'2020-03-21 13:03:58.700','2020-03-21 13:06:12.653')
 ,(90,'E-Mini Nasdaq 100 Index Jun 2020','NASDAQ 100 FT',1,'2020-03-21 13:16:05.613','2020-03-21 13:16:05.613')
 ;
-INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
+insert into public."Product" (id,"name",code,status,"createdAt","updatedAt") VALUES
 (91,'S&P 500 VIX Apr ''20 (VIJ20)','S&P 500 VIX',1,'2020-03-21 13:17:17.789','2020-03-21 13:17:17.789')
 ,(92,'CBOE Volatility Index (VIX)','CBOE VIX',1,'2020-03-21 13:18:25.895','2020-03-21 13:18:25.895')
 ;
@@ -809,7 +809,7 @@ INSERT INTO public."Product" (id,"name",code,status,"createdAt","updatedAt") VAL
 
 -- DROP TABLE public."Role";
 
-CREATE TABLE public."Role" (
+create TABLE public."Role" (
 	id serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	status int4 NOT NULL,
@@ -819,7 +819,7 @@ CREATE TABLE public."Role" (
 	CONSTRAINT "Role_pkey" PRIMARY KEY (id)
 );
 
-INSERT INTO public."Role" (id,"name",status,"createdAt","updatedAt") VALUES
+insert into public."Role" (id,"name",status,"createdAt","updatedAt") VALUES
 (1,'Administrador',1,'2020-02-22 11:43:19.643','2020-02-22 11:43:19.643')
 ,(2,'Regular',1,'2020-02-22 11:43:19.643','2020-02-22 11:43:19.643')
 ;
@@ -830,7 +830,7 @@ INSERT INTO public."Role" (id,"name",status,"createdAt","updatedAt") VALUES
 
 -- DROP TABLE public."User";
 
-CREATE TABLE public."Referral" (
+create TABLE public."Referral" (
 	id serial NOT NULL,
  	"firstName" varchar(255) NULL,
  	"lastName" varchar(255) NULL,
@@ -854,9 +854,9 @@ CREATE TABLE public."Referral" (
 	CONSTRAINT "Referral_pkey" PRIMARY KEY (id)
 );
 
-ALTER TABLE public."User" ADD CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"(id);
+alter table public."User" add CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role"(id);
 
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (3,'demo-001','','','','','$2b$10$2kToiMCD6tUOE6kXfsdmKe8ciBrHzUVKePNWFwsYF5oemsf6AP1fO','$2b$10$2kToiMCD6tUOE6kXfsdmKe','',NULL,NULL,2,1,'2020-02-27 22:40:35.628','2020-02-27 22:40:35.628')
 ,(5,'admin','Admin','Admin','122223333','admin@mailinator.com','$2b$10$2kToiMCD6tUOE6kXfsdmKexIRzDI4BSCOSGLRbM5Re1pHePMTMz4K','$2b$10$2kToiMCD6tUOE6kXfsdmKe','22334455',NULL,'2019-12-04 11:52:03.785',1,1,'2019-12-04 11:52:03.785','2020-03-02 19:31:23.778')
 ,(1,'laurens','Laurens','OB','122334455','laurens.ortiz@gmail.com','$2b$10$o53Iq7saTMsBtdhWy8JEtuiueTrofZ7vvSspMGCV5c0pwjSfpLLzO','$2b$10$o53Iq7saTMsBtdhWy8JEtu','89222731',NULL,'2020-02-24 22:32:51.000',2,0,'2020-02-24 22:33:03.179','2020-03-15 23:31:51.815')
@@ -868,7 +868,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(4,'admin-001','','','','','$2b$10$2kToiMCD6tUOE6kXfsdmKexIRzDI4BSCOSGLRbM5Re1pHePMTMz4K','$2b$10$2kToiMCD6tUOE6kXfsdmKe','',NULL,NULL,1,0,'2020-02-27 22:43:13.325','2020-03-21 10:40:21.825')
 ,(10,'ksandig2020','Karla','Sandi','','kharlitha04@gmail.com','$2b$10$fZl5Mtn7FTb6nfXpQ3lWn.j4qFMEIpDXAz03EUo0bqRi8CwNl6gCK','$2b$10$fZl5Mtn7FTb6nfXpQ3lWn.','',NULL,'2020-03-21 10:44:11.000',1,1,'2020-03-21 10:44:34.681','2020-03-21 10:44:34.681')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (11,'plurivaega180781261','Abdon Plutarco ','Rivadeneira Egas','800761-PLURIVEGAS','abdonrivegas@hotmail.com','$2b$10$fZl5Mtn7FTb6nfXpQ3lWn.8Gz6gE.fKPNJfBjSexBCr107DLaifJu','$2b$10$fZl5Mtn7FTb6nfXpQ3lWn.','+593998003279',NULL,'2020-02-03 12:20:01.000',2,1,'2020-03-21 11:20:41.626','2020-03-21 11:20:41.626')
 ,(9,'cmorrales80095','Jennifer','Corrales','','jennifer02@gmail.com','$2b$10$74ReZrYruV7p/noAS8pXa.lym6xJjpADwdAjHg7fFJktrFX2jxwLK','$2b$10$74ReZrYruV7p/noAS8pXa.','88888888',NULL,'2020-03-16 16:27:29.000',2,0,'2020-03-16 16:27:39.277','2020-03-23 18:20:47.415')
 ,(13,'toshiaki180781090','Toshiaki Ruben ','Kono Ywasaki','800590-RYWASAKI','toshi.ruben@hotmail.com','$2b$10$OgaSP2TtrmmDp/4JXNBAzuAnmKKc6t.0e0gMLB4BBLYITFN6Rtj5C','$2b$10$OgaSP2TtrmmDp/4JXNBAzu','+595 983 698096',NULL,'2019-07-22 18:25:52.000',2,1,'2020-03-23 18:26:14.704','2020-03-23 18:26:14.704')
@@ -880,7 +880,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(18,'alexaher180781124','Alexandra Del Rocio ','Hernandez Benalcazar','800625-ALEXAH','alexahernandez27@yahoo.es','$2b$10$U4bdVK5xh1rtfehjmJ3AaeoeFZPleh77Bqg9rVBqwabjglMCVneMC','$2b$10$U4bdVK5xh1rtfehjmJ3Aae','',NULL,'2019-09-17 21:24:40.000',2,1,'2020-03-23 21:25:46.631','2020-03-23 21:25:46.631')
 ,(19,'kimberly','Kimberly','Almendares','','','$2b$10$ZToBVAPWHdPCxQf.XaFFnOMj7AxGNkhPpj/tBSkbHWB08MjU0LpY.','$2b$10$ZToBVAPWHdPCxQf.XaFFnO','',NULL,NULL,1,1,'2020-03-24 15:07:58.128','2020-03-24 15:07:58.128')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (20,'jgalbe180781119','Alicia Breatriz ','Jimenez Guerron','800619-ALJIGUE','alicitabjm@hotmail.es','$2b$10$ZToBVAPWHdPCxQf.XaFFnOaiBP6pbHJGWnHZgtwn8wqFKDQua1TVi','$2b$10$ZToBVAPWHdPCxQf.XaFFnO','',NULL,'2019-09-11 15:15:14.000',2,1,'2020-03-24 15:15:44.581','2020-03-24 15:15:44.581')
 ,(21,'aquintero1807810154','Alvaro Javier ','Quintero Jurado','800552-QUINTERO','alvaroqjurado_1311@hotmail.com','$2b$10$YEgQRvYdrTfsCPnD.vSYxOkMFyFjh.Avbw31MP1g.v1u5yBLc9wAK','$2b$10$YEgQRvYdrTfsCPnD.vSYxO','',NULL,'2019-05-23 16:05:13.000',2,1,'2020-03-24 15:49:41.356','2020-03-24 16:05:23.720')
 ,(22,'ana80781087','Ana Lucia ','Alvarez Gordon','800476-ANA','analualvarez@hotmail.com','$2b$10$YEgQRvYdrTfsCPnD.vSYxOVyR5m.GS.c.w7Pav8FkJUO4ScevXL4O','$2b$10$YEgQRvYdrTfsCPnD.vSYxO','',NULL,'2018-08-07 16:07:20.000',2,1,'2020-03-24 16:08:13.463','2020-03-24 16:08:13.463')
@@ -892,7 +892,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(29,'caeropc180781104','Carlos ','Caero Pezo','800604-CAEROC','carloscaero1947@gmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2./lVuJnotr0h/N0t2UKl/p6iHZOZANZ.','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-08-22 08:45:16.000',2,1,'2020-03-25 08:46:52.819','2020-03-25 08:46:52.819')
 ,(30,'caguachamin807810146','Carlos Ivan ','Guachamin Cabezas','800544-CARLOSGC','comisariatodeloslentes@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2./VGikh1n.w/FZaKznRsERo85jNYDhZ.','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-05-02 08:53:54.000',2,1,'2020-03-25 08:55:45.342','2020-03-25 08:55:45.342')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (31,'cmdaste807810101','Carlos Mauricio ','Daste Delgado','800493-CMD','mauricio_daste@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.EHVtC8PzDzKz8e5LOD8cAxOPheiHevO','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2018-09-18 08:59:38.000',2,1,'2020-03-25 08:59:46.856','2020-03-25 08:59:46.856')
 ,(32,'ccmc80781099','Cecilia Monica ','Cortez Broncano','800491-CCM','monicyb@yahoo.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.gdyHvKRt43KxFjb0gToDfugcc.umYgC','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2018-09-14 09:17:08.000',2,1,'2020-03-25 09:18:09.813','2020-03-25 09:18:09.813')
 ,(33,'solizce180781102','Cecilia ','Soliz Fuentes','800602-CSOLIZ','ce.soliz.73@gmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.JEC8QJAeKcS57FlhGm6zEJ/j2WhN9Vm','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-08-14 09:21:14.000',2,1,'2020-03-25 09:22:19.970','2020-03-25 09:22:19.970')
@@ -904,7 +904,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(39,'maria','Maria ','Badilla','','','$2b$10$2jC5gjGh7.JH5FK2t/6g2.gkAHnm4wUraP0SIbzVkiC7PAUXFWa8K','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,NULL,1,1,'2020-03-25 09:45:29.435','2020-03-25 09:45:29.435')
 ,(40,'danielmt807810144','Daniel Jhony ','Mendoza Tapia','800542-DMENDOZA','mendozatapiadaniel@gmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.WDeOhfme7sVOASVOawZD036/QMkFEKq','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-05-01 09:44:45.000',2,1,'2020-03-25 09:46:14.266','2020-03-25 09:46:14.266')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (41,'davidaparra180781111','David ','Amores Parra','800611-DAMORES','d_amores9977@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.ofpqLoqHMOvyuD3VZVOTab87.s7/r8q','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-08-30 00:00:00.000',2,1,'2020-03-25 09:52:39.312','2020-03-25 09:52:39.312')
 ,(42,'daparedes1807810150','David Fabian ','Paredes Achupallas','800548-PAREDES','achuparedes@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.HcZi8/D1aVAv.biK8hJ1ElGf1kqU3l2','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-05-09 09:54:29.000',2,1,'2020-03-25 09:54:40.890','2020-03-25 09:54:40.890')
 ,(43,'dv18078994','Davis ','Morocho','800465-DM','dabism96@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.C.UDVaNGt6BEdsaP8kfFIeScI6rk2R2','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2018-08-08 09:57:30.000',2,1,'2020-03-25 09:58:51.240','2020-03-25 09:58:51.240')
@@ -916,7 +916,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(49,'eddymunoa180781144','Eddy Adan ','Muñoz Quicano','800644-MUNOAQ','eddymunoaquicano@gmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.R6TBvRvGJdlST9GK6YkNNh1Pe0fNJiG','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-10-17 10:20:33.000',2,1,'2020-03-25 10:21:33.325','2020-03-25 10:21:33.325')
 ,(50,'edvalla180781087','Edgar Erasmo ','Valladares Alvarez','800587-EDGARVA','edgarvalladares13@yahoo.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.j17qfiUYUeRFtr0qWXXQ1Vw/rAaE9Dq','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-07-12 10:24:52.000',2,1,'2020-03-25 10:25:54.974','2020-03-25 10:25:54.974')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (51,'educaba180781145','Eduardo Cesar ','Caballero Gallardo','800645-EDUCAB','educabaga_18@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.7ra5Mqea/FW/gV4OMM4QV553yvu2Mqi','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-10-17 10:42:04.000',2,1,'2020-03-25 10:43:03.934','2020-03-25 10:43:03.934')
 ,(52,'eduarpilla807810106','Eduardo Enrique ','Pillajo Caza','800500-EDUPICA','edupi2000@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.OIgNAK8XOlSeS7eblrX2fSIoV01nE5q','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2018-10-29 10:51:12.000',2,1,'2020-03-25 10:52:57.536','2020-03-25 10:52:57.536')
 ,(54,'eduvas8078989','Eduardo ','Vazquez','800589-EV','eduvastri@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.u70Sq4u9GKBezKVPSFv6exyTdVqb4OO','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2018-08-09 00:00:00.000',2,1,'2020-03-25 11:22:44.937','2020-03-25 11:22:44.937')
@@ -928,7 +928,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(59,'fgalves180781137','Fabian ','Guillen Alves','800638-FALVES','fabian.galves@hotmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.roUlkMuHzTQ/PVG.o6T3YrDBkMNUVFu','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-10-02 11:54:33.000',2,1,'2020-03-25 11:55:47.791','2020-03-25 11:55:47.791')
 ,(60,'vacanielfr180781121','Fabio Reynaldo ','Vacaniel Alarcon','800621FABIOVA','fabiovacanielalarcon@gmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.mUibUefXdI7.fwrJNkjFwRouGf/d2wS','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-09-13 00:00:00.000',2,1,'2020-03-25 11:58:53.981','2020-03-25 11:58:53.981')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (61,'fnavarrete1807810153','Fanny ','Navarrete Guerron','800551-FANAVARRETE','navarretefanny299@gmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.VSiDZ5Bg.nMj0o04ceHcW9X8CqpIgEe','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-05-16 12:02:38.000',2,1,'2020-03-25 12:03:39.819','2020-03-25 12:03:39.819')
 ,(62,'fragomezta807810126','Francisco ','Gomez de la torre Andrade','800521-FRANGTOAN','franciscog81@gmail.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.CsYjHpmTA54d9PPGAz9OdE36Nevg8Ny','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2019-03-22 12:10:04.000',2,1,'2020-03-25 12:13:03.462','2020-03-25 12:14:27.934')
 ,(63,'franjami807810107','Francisco Javier ','Gonzalez Mieles','800501-FRANMI','ecuinvestgrp@outlook.com','$2b$10$2jC5gjGh7.JH5FK2t/6g2.idhX0ybr1IaWAP5wb9Kvf5oe/jX3dZm','$2b$10$2jC5gjGh7.JH5FK2t/6g2.','',NULL,'2018-11-03 12:17:44.000',2,1,'2020-03-25 12:18:27.564','2020-03-25 12:18:27.564')
@@ -940,7 +940,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(69,'gms8078990','German ','Sanabria','800582-GS','germansanabriamolina@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.WxCAAeRKHRcngf6xZWPg32sr21Ju5pS','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2018-08-25 14:01:29.000',2,1,'2020-03-25 14:03:03.466','2020-03-25 14:03:03.466')
 ,(94,'jennifer','Jennifer','Ramirez','','','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.hPtASwC.PdN8xw5rA8bb49uOcJtD25e','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,NULL,1,1,'2020-03-25 16:10:33.557','2020-03-25 16:10:33.557')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (70,'gersonm18018179','Gerson ','Montaño Patty','800577-GMPATTY','gersonmp2012@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.wK9W.fmMKYBq6EKuzMChWd9g0Oodvii','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-06-28 14:05:08.000',2,1,'2020-03-25 14:06:03.583','2020-03-25 14:08:46.086')
 ,(71,'giovana1807810175','Giovana ','Quispe Cuizara','800573-GQUISPE','giovanaqc1@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.plxP7Z2.A4v26OXfhLcHKwLQYoX42xi','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-06-25 00:00:00.000',2,1,'2020-03-25 14:14:44.633','2020-03-25 14:14:44.633')
 ,(72,'gdenisse180781139','Gisela Denisse ','Becerra Farfan','800639-GIFARFAN','gisellabecerrafarfan@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.28UY49hHAbfqHnGMJeEQ/LfJHM1SDPq','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-10-04 14:45:47.000',2,1,'2020-03-25 14:46:01.739','2020-03-25 14:46:01.739')
@@ -952,7 +952,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(78,'inariasp180781103','Ingrid Maria Anayda ','Arias Pareja','800603-IARIAS','ingridmariasp@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.vdaPbxeCOkh5yu0y4DE9kOfeKCbCJ82','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-08-14 15:13:05.000',2,1,'2020-03-25 15:14:05.228','2020-03-25 15:14:05.228')
 ,(79,'javierza180781095','Javier Francisco ','Fernandez Zapico ','800595-FFZAPICO','frajaferza@yahoo.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.3yQ4PPxuUIOaTEJwHPH7kGtVIFlX4xq','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-07-29 15:16:11.000',2,1,'2020-03-25 15:17:35.069','2020-03-25 15:17:35.069')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (80,'jenquispw180781152','Jenny Rosmery ','Quispe Oblitas','800652-OBLIQUIS','jennyqobol@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.GGcmvritdmRn5LW/lilCI2jNSTUz0F6','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-11-01 15:19:50.000',2,1,'2020-03-25 15:20:46.797','2020-03-25 15:20:46.797')
 ,(81,'garjh180781120','Jesus Hernan ','García Castillo ','800620-JESUSG','jesus_h_garcia@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.YOaJQXvfrKBk5mimpm0.28sAHywVLOC','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-09-12 15:23:00.000',2,1,'2020-03-25 15:25:46.058','2020-03-25 15:25:46.058')
 ,(82,'callaojesus180781117','Jesus Reynaldo ','Callao Rosales','800617-JRCALLAO','info@gktelbolivia.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.Lcmebpgwu5LP3au6Oo991f4SGYANqxm','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-09-09 00:00:00.000',2,1,'2020-03-25 15:27:43.611','2020-03-25 15:27:43.611')
@@ -964,7 +964,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(88,'jre180781085','Jose Ruben ','Enriquez Pabon ','800474-JRE','jre.enriquez@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.YZy1xAKkIKlu6nMa0HFYiNzVZ8O10pm','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2018-08-11 00:00:00.000',2,1,'2020-03-25 15:53:47.887','2020-03-25 15:53:47.887')
 ,(89,'josearitas807810127','Jose Saul ','Arita Salvador','800523-JOSARITAS','sas@coddep.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.ipxAKXQiUqDAws9IxLHnx1Bu2iB3G06','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-03-26 00:00:00.000',2,1,'2020-03-25 15:56:15.823','2020-03-25 15:56:15.823')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (90,'jcfernandez1807810152','Juan Carlos','Larrosa Fernandez','800550-JCLARROSA','juanlarrosa0105@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.Qta4GGgsFNQIDAH42EVQko7DvnYSby6','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-05-14 00:00:00.000',2,1,'2020-03-25 15:59:36.968','2020-03-25 15:59:36.968')
 ,(91,'jmc180781035','Julia Marlene ','Carrera Zanafria','800470-JC','julimcarrez@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.mbRx01SnVW5jP0f04XoOJjtCdw.SAZe','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2018-08-11 00:00:00.000',2,1,'2020-03-25 16:02:40.149','2020-03-25 16:02:40.149')
 ,(92,'aguilera180781108','Julio Cesar ','Aguilera Camacho','800608-JAGUILERA','julio_c_aguilera@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.il6ZxXBiVtNkxUJeOgRaKDXtqMxXVOa','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-08-27 00:00:00.000',2,1,'2020-03-25 16:05:23.783','2020-03-25 16:05:23.783')
@@ -976,7 +976,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(99,'allumiguano1807810158','Luis Alberto ','Llumiguano','800556-LLUMIGUANOG','luisbetoll7@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.k7v2xRh1YXv0bZFAqpmilG00lURiGzq','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-05-31 00:00:00.000',2,1,'2020-03-25 16:25:32.079','2020-03-25 16:25:32.079')
 ,(100,'luasalazarp807810125','Luis Alberto ','Salazar Pillajo','800520-LUASAPILLAJO','lasp1757@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.LqtnpNbyWpHZwAUJK7scaFWCxbH7Iz6','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2020-01-03 16:27:31.000',2,1,'2020-03-25 16:28:34.602','2020-03-25 16:28:34.602')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (101,'lfmartinez1807810181','Luis Felipe ','Martinez Llivicura','800579-LUISFM','economia_099@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.8PDdsfQ.qLSKAGbf5q8CWUZ/kvDMc9u','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-07-02 00:00:00.000',2,1,'2020-03-25 16:32:22.250','2020-03-25 16:32:22.250')
 ,(102,'luisfmv180781142','Luis Francisco ','Martinez Villalba','800642-MARVILLA','pacomavi07@yahoo.es','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.kEIxe.lrzz4brQME1Hu.Gw372oWeNq6','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,NULL,2,1,'2020-03-25 16:34:51.343','2020-03-25 16:34:51.343')
 ,(103,'luispadi80781097','Luis Marcelino ','Patiño Diaz','800597-LPATINO','pochitohmetro@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.LkbZ0uYEyN1hPI0CfY7UPGeyoYz3d8K','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-08-07 00:00:00.000',2,1,'2020-03-25 16:38:09.732','2020-03-25 16:38:09.732')
@@ -988,7 +988,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(110,'gaibormm180781147','Marco David ','Gaibor Melo','800647-GAIBORM','dr.marcogaibor@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.QT4U7o4nOcSzQKdUMQX/yk26Pwjo75e','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-10-21 00:00:00.000',2,1,'2020-03-25 16:59:12.464','2020-03-25 16:59:12.464')
 ,(114,'mariapico180781128','Maria Berthilia ','Pico Alvear','800629-PICOMB','berthipico@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.72H3v8UQ9apiIR8rDwLCp2dlK77VU9K','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-09-23 00:00:00.000',2,1,'2020-03-25 17:07:23.795','2020-03-25 17:07:23.795')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (115,'mapi80789900','Maria Elene ','Pinaya','800591-MP','mariaelenapinaya@yahoo.es','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.1f7oPm5hYaqOAzgQtijfORnqoO5OIra','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2018-08-14 00:00:00.000',2,1,'2020-03-25 17:09:05.812','2020-03-25 17:09:05.812')
 ,(116,'mariapeg180781113','Maria Gabriela ','Peña Guevara','800613-PEMARIA','gabyimport@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.KGfALvJwaAs2A4Leh./ZQgjfFWQuPNm','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2018-08-14 00:00:00.000',2,1,'2020-03-25 17:13:26.317','2020-03-25 17:13:26.317')
 ,(117,'maritrianas807810118','Maria Isabel ','Triana Suarez','800527-MISABELTRI','maistri29@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ./xHospx.XCwfhT1D6JGKCrLrdzSzkIu','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-04-04 00:00:00.000',2,1,'2020-03-25 17:15:55.130','2020-03-25 17:15:55.130')
@@ -1000,7 +1000,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(123,'nfranruiz807810124','Nahun Francisco ','Ruiz Serrano','800519-NARUIZSERRA','ruizlesly05@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.it0EoRhJ9nbCDzsnujp1EwT32OLqBkC','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-03-20 00:00:00.000',2,1,'2020-03-25 17:37:58.654','2020-03-25 17:37:58.654')
 ,(124,'nancycha180781126','Nancy ','Chavez de Gutierrez','800627-NANGUT','nancychavezgutierrez77@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.aTCDFjJzfveWznnDwVpJ5WLEkC206iu','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-09-20 00:00:00.000',2,1,'2020-03-25 17:40:01.792','2020-03-25 17:40:01.792')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (125,'natharosero807810130','Nathaly Rocio ','Rosero Nicolalde','800528-NAROSERONI','na_thy_r@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.jRWJsUg8TX3wWkX8hfNGICG6/8PKGkm','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-04-08 00:00:00.000',2,1,'2020-03-25 17:42:48.608','2020-03-25 17:42:48.608')
 ,(126,'neruizse807810117','Nelson A.','Ruiz Serrano','800512-NRSERRA','nelars67@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.alyVXp0BMM4ieUah1dyZreY2plWyuVW','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-02-13 00:00:00.000',2,1,'2020-03-25 17:46:34.816','2020-03-25 17:46:34.816')
 ,(127,'nijudithca807810135','Ninoska Judith ','Caero Adrian','800533-NJCAEROA','ninoskajudithcaero@gmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.IiuG0On9oWZYx4xTbOyjcfOXXdilWaa','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-04-17 00:00:00.000',2,1,'2020-03-25 17:48:43.796','2020-03-25 17:48:43.796')
@@ -1012,7 +1012,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(133,'pedror1807810172','Pedro Eduardo ','Rosero','800570-PROSERO','na_thy_r@hotmail.com','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.Dp.vLdbaxkRDRkAztPKl6pEpf0pmq06','$2b$10$MZ/.NPWc2v.km/VrmS5GQ.','',NULL,'2019-06-24 00:00:00.000',2,1,'2020-03-25 18:05:45.128','2020-03-25 18:05:45.128')
 ,(134,'rafavela807810120','Rafael ','Velazo ','800515-RAFAVELA','rafavela@outlook.com','$2b$10$nkwnFUO46Po/lSEQAPhvre4LCfDZxOY09B0Bvj0amephNDtLJo0cy','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-03-05 00:00:00.000',2,1,'2020-03-26 08:03:45.189','2020-03-26 08:03:45.189')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (135,'rs180781020','Rodrigo ','Roca Serrano','800467-RR','rodroca@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvre/mfjR.0wTapGUXKhbzXWW9NNWc.Zlkm','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2018-08-22 00:00:00.000',2,1,'2020-03-26 08:06:20.341','2020-03-26 08:06:20.341')
 ,(136,'roferf80781094','Roly ','Fernandez Flores','800486-RLY','rolyfern92@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreYM2dQYerrDBCAcQsa7UjhySTbcOdBwm','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2018-08-22 00:00:00.000',2,1,'2020-03-26 08:08:13.213','2020-03-26 08:08:13.213')
 ,(137,'rwcf807810100','Romulo William ','Chipantiza Fernandez','800492-FERC','ferchiza1969@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvre6jGPY3l1A.JN1ZFvjPnT45Ln1UYpG/O','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2018-09-14 00:00:00.000',2,1,'2020-03-26 08:12:49.007','2020-03-26 08:12:49.007')
@@ -1024,7 +1024,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(143,'vacalvarez180781141','Santiago Jose ','Vaca Alvarez','800641-VACASANT','santilobo1080@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreTVN7T77S.4XeOH/vmZ5VzpkVp8QJWTi','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-10-09 00:00:00.000',2,1,'2020-03-26 08:26:14.433','2020-03-26 08:26:14.433')
 ,(144,'sc18078993','Sonia Guadalupe ','Carrera Guadalupe','800461-SCQ','soniacarrera@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreNTM4aXKUZ1EWd8vzVkV29/iDyJYI42.','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2018-08-25 00:00:00.000',2,1,'2020-03-26 08:28:17.901','2020-03-26 08:28:17.901')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (145,'sc18078992','Sonia Guadalupe ','Carrera Guadalupe','800461-SC','sonia_carre@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreNTM4aXKUZ1EWd8vzVkV29/iDyJYI42.','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2018-08-25 00:00:00.000',2,1,'2020-03-26 08:29:59.079','2020-03-26 08:29:59.079')
 ,(146,'ssanabria180781140','Sonia Noelia ','Sanabria Recalde','800640-SNOELIASA','soniarecalde83@yahoo.com','$2b$10$nkwnFUO46Po/lSEQAPhvre5av1xZILek5GH/6jQ.pYz2Uqww1W4e.','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-10-04 00:00:00.000',2,1,'2020-03-26 08:31:28.894','2020-03-26 08:31:28.894')
 ,(147,'smz180781075','Susana Marlene ','Zanafria Cardenas','800471-SZ','susan.zanafria@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvredLuL01cQbEiXLBfAQ1diGe/TJQix9kW','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2018-05-25 00:00:00.000',2,1,'2020-03-26 08:33:20.735','2020-03-26 08:33:20.735')
@@ -1036,7 +1036,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(153,'monica','Monica','Medina','','','$2b$10$nkwnFUO46Po/lSEQAPhvreAvWz9rA5Hnwph/RdHJUFqsBopx5sx5y','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,NULL,1,1,'2020-03-26 08:50:16.174','2020-03-26 08:50:16.174')
 ,(154,'patricia','Patricia','','','','$2b$10$nkwnFUO46Po/lSEQAPhvreAvWz9rA5Hnwph/RdHJUFqsBopx5sx5y','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,NULL,1,1,'2020-03-26 08:51:05.402','2020-03-26 08:51:05.402')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (155,'joczanafria180781155','Jorge Luis ','Carrera Zanafria','800655-JOCARREZA','jlcarreraz@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreX08qaxiMkF0vWfjXPB7XMSD1U3ZbO6G','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-07 00:00:00.000',2,1,'2020-03-26 08:53:17.340','2020-03-26 08:53:17.340')
 ,(156,'vargasange180781157','Angelica Maria ','Vargas Gomez','800657-ANGEVG','anmavago14@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvrelB0S5vQELKG/qQGa2Jvqgvo5v1BYvlm','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-11 00:00:00.000',2,1,'2020-03-26 08:58:03.609','2020-03-26 08:58:03.609')
 ,(157,'manueles180781159','Nelson ','Manueles Teruel','800659-TERUELM','nelson.teruel84@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreXswgfbWSsdfBV8ieGXM0wTwnaUxmvVq','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-13 00:00:00.000',2,1,'2020-03-26 09:01:22.746','2020-03-26 09:01:22.746')
@@ -1048,7 +1048,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(163,'sugumu180781165','Susana del Carmen ','Guerra Muñoz','800665-SANMUGUE','susanadelcarmengm@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreo4riVPiQ2OwYdip3Cqf9Lag00q/QusS','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-14 00:00:00.000',2,1,'2020-03-26 09:42:24.287','2020-03-26 09:42:24.287')
 ,(164,'josealca180781166','Jose Alberto ','Caceres Casalegno','800667-JOSEALBE','josealberto12caceres@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreApx5hllflYSdiToFc1t/DrVVwhplGf6','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-14 00:00:00.000',2,1,'2020-03-26 09:44:32.108','2020-03-26 09:44:32.108')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (165,'ruthmac180781167','Ruth Marlene ','Mamani Cruz','800668-RUTHMC','ruthy_k_l@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreU3XJcPrs5r3OU.ZmJLS5MXWmf/8H6EK','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-14 00:00:00.000',2,1,'2020-03-26 09:46:51.961','2020-03-26 09:46:51.961')
 ,(166,'lorenasm180771168','Lorena del Rocio ','Sanchez Medina','800668-SANCHEZM','san.lore@yahoo.com','$2b$10$nkwnFUO46Po/lSEQAPhvreBtLedNIRKFNZfnfXZaS0LqYx3o67yHe','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-15 00:00:00.000',2,1,'2020-03-26 09:49:19.485','2020-03-26 09:49:19.485')
 ,(167,'paultroya180771169','Paul Dennys ','Troya Nicolalde','800669-TROYANIC','pauldtn7769@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreuLQQyQV.7.lprMFd.ivN5xM5siMaiwy','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-18 00:00:00.000',2,1,'2020-03-26 09:50:59.626','2020-03-26 09:50:59.626')
@@ -1060,7 +1060,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(173,'prietolau180771175','Laura María ','Prieto Romero','800675-LAUPRIETO','lauracamilar389@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvrenVB7jld677ZBDSR6l03Ssru9DRAK.ma','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-25 00:00:00.000',2,1,'2020-03-26 10:06:52.582','2020-03-26 10:06:52.582')
 ,(174,'geratrujillo180771176','Gerardo Ernesto ','Trujillo Romero','800676-GERARDOT','neosebastian@outlook.com','$2b$10$nkwnFUO46Po/lSEQAPhvred3HQM1LeNUqY3LWYUsotHuny7iP.QPe','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-25 00:00:00.000',2,1,'2020-03-26 10:10:05.873','2020-03-26 10:10:05.873')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (175,'victormiral180771177','Victor Anival ','Miralda Rubi','800677-ANIVICTOR','annibalmiranda17@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreYjoEEhpkXybk2jzT4Fhx9cIqEZKVBUm','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-25 00:00:00.000',2,1,'2020-03-26 10:12:41.645','2020-03-26 10:12:41.645')
 ,(176,'arecopablo180771178','Pablo Joaquin ','Areco','800678-PABLOJA','pabloareco1119@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvret3QD5LllIcnZy0PR6Zk1PiwpQX0u1n6','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-11-27 00:00:00.000',2,1,'2020-03-26 10:16:21.968','2020-03-26 10:16:21.968')
 ,(177,'tamayop180781180','Pablo Lenin ','Tamayo Moreno','800680-PABTAM','ptamayo@alphaside.com','$2b$10$nkwnFUO46Po/lSEQAPhvre9nyhxQo1UpLsh25zzszBaHyp9xDo8cy','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-04 00:00:00.000',2,1,'2020-03-26 10:21:39.039','2020-03-26 10:21:39.039')
@@ -1072,7 +1072,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(183,'aleidammr1801187','Aleida Mercedes ','Martín Renals','800687-ALEMARTIN','aleidamare@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvrepo2aWJJ8KPQoTxOnXlk02o3jO2T0ozi','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-09 00:00:00.000',2,1,'2020-03-26 10:40:25.057','2020-03-26 10:40:25.057')
 ,(184,'suarezmarle180781191','Marlene del Pilar ','Suarez Paez','800691-MSUAREZ','marlesuarez@yahoo.es','$2b$10$nkwnFUO46Po/lSEQAPhvrewAM5q/pBuD.uAcOEBlkglP3fSzR2fU2','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-11 00:00:00.000',2,1,'2020-03-26 10:43:59.611','2020-03-26 10:43:59.611')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (185,'catacelin180781192','Germania Catalina ','Celin Aguilar','800692-GCELINA','cattycelin@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvre94AOOldNLeL3y9pAwoAKUylhPhaPwRu','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-11 00:00:00.000',2,1,'2020-03-26 10:46:26.843','2020-03-26 10:46:26.843')
 ,(186,'anghelgg180781194','Anghel Julieth ','Gomez Gaitan','800694-GOMEZGA','anghelgomez95@outlook.com','$2b$10$nkwnFUO46Po/lSEQAPhvre.jg37av9jCSCh4Vzl74Z.zsJ/rBu7Ga','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-11 00:00:00.000',2,1,'2020-03-26 10:48:51.877','2020-03-26 10:48:51.877')
 ,(187,'giuseppelc180781195','Giuseppe ','Liberati Cahue','800695-LIBERATICG','giuseppeliberati@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreSH5pql5uY4HNVpRYWfzrnM8UBYI..iK','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-11 00:00:00.000',2,1,'2020-03-26 10:50:46.513','2020-03-26 10:50:46.513')
@@ -1084,7 +1084,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 ,(194,'fmercapare180781206','Fernando ','Mercado Paredes','800706-FEPAREDES','fernandomp79@hotmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreSbD89x1uJj1JwGp7tuFNf785Oy/iyKq','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-25 00:00:00.000',2,1,'2020-03-26 11:10:23.241','2020-03-26 11:10:23.241')
 ,(195,'palaciosoj180781207','Jeanette ','Palacios Oporto ','800707-JOPORTA','jeanettpalacios74@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvreROFUknEMYBuWs7p9McHzi7Dy2TyF/BG','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-26 00:00:00.000',2,1,'2020-03-26 11:12:04.549','2020-03-26 11:12:04.549')
 ;
-INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
+insert into public."User" (id,username,"firstName","lastName","userID",email,"password",salt,"phoneNumber","endDate","startDate","roleId",status,"createdAt","updatedAt") VALUES
 (196,'lualberch180781208','Luis Alberto ','Choque Mamani','800708-LCHOQUEM','luiscmcash@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvrePFXxSKurFEGNPtIHa0me8coHd2rHNWe','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-27 00:00:00.000',2,1,'2020-03-26 11:13:29.442','2020-03-26 11:13:29.442')
 ,(197,'mjortusol180781209','Mariel Jimena ','Ortuño Soliz','800709-MJIMESOLIZ','arq.marielsoliz@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvrePFgh2dNlhD8A7DKOC6xH9eSTKmhDdEy','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-31 00:00:00.000',2,1,'2020-03-26 11:15:07.615','2020-03-26 11:15:07.615')
 ,(193,'sierramc180781205','Maria Cristina ','Sierra Jacome','800705-MARIACSJ','mcsierraj@gmail.com','$2b$10$nkwnFUO46Po/lSEQAPhvrelAcSGUMq1tCnBb1kX5UVPIMh1GLke7a','$2b$10$nkwnFUO46Po/lSEQAPhvre','',NULL,'2019-12-20 00:00:00.000',2,0,'2020-03-26 11:07:35.321','2020-03-26 11:17:55.384')
@@ -1097,7 +1097,7 @@ INSERT INTO public."User" (id,username,"firstName","lastName","userID",email,"pa
 
 -- DROP TABLE public."UserAccount";
 
-CREATE TABLE public."UserAccount" (
+create TABLE public."UserAccount" (
 	id serial NOT NULL,
 	"userId" int4 NOT NULL,
 	"accountId" int4 NOT NULL,
@@ -1113,10 +1113,10 @@ CREATE TABLE public."UserAccount" (
 	CONSTRAINT "UserAccount_pkey" PRIMARY KEY (id)
 );
 
-ALTER TABLE public."UserAccount" ADD CONSTRAINT "UserAccount_accountId_fkey" FOREIGN KEY ("accountId") REFERENCES "Account"(id);
-ALTER TABLE public."UserAccount" ADD CONSTRAINT "UserAccount_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"(id);
+alter table public."UserAccount" add CONSTRAINT "UserAccount_accountId_fkey" FOREIGN KEY ("accountId") REFERENCES "Account"(id);
+alter table public."UserAccount" add CONSTRAINT "UserAccount_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"(id);
 
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (1,3,3,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-15 23:37:28.273','2020-03-15 23:37:28.275')
 ,(40,57,2,26769.20,26769.20,0.00,26769.20,0.00,0.00,1,'2020-03-25 11:45:49.772','2020-03-25 11:45:49.773')
 ,(19,28,3,344787.30,344787.30,0.00,344787.30,0.00,0.00,0,'2020-03-25 10:23:45.304','2020-03-25 11:48:09.486')
@@ -1128,7 +1128,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(46,64,2,7817.15,7817.15,0.00,7817.15,0.00,0.00,1,'2020-03-25 12:29:45.572','2020-03-25 12:29:45.573')
 ,(47,65,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 12:45:35.381','2020-03-25 12:45:35.382')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (48,66,1,2532.80,2532.80,0.00,2532.80,0.00,0.00,1,'2020-03-25 12:46:26.345','2020-03-25 12:46:26.357')
 ,(49,68,2,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 14:04:52.898','2020-03-25 14:04:52.899')
 ,(50,69,3,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 14:06:09.331','2020-03-25 14:06:09.331')
@@ -1140,7 +1140,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(56,75,1,1708.36,1708.36,0.00,1708.36,0.00,0.00,1,'2020-03-25 15:04:47.440','2020-03-25 15:04:47.440')
 ,(57,77,1,2831.80,2831.80,0.00,2831.80,0.00,0.00,1,'2020-03-25 15:12:31.517','2020-03-25 15:12:31.518')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (58,78,1,1590.36,1590.36,0.00,1590.36,0.00,0.00,1,'2020-03-25 15:16:36.609','2020-03-25 15:16:36.609')
 ,(59,79,1,4104.51,4104.51,0.00,4104.51,0.00,0.00,1,'2020-03-25 15:19:40.762','2020-03-25 15:19:40.762')
 ,(60,80,2,15835.68,15835.68,0.00,15835.68,0.00,0.00,1,'2020-03-25 15:21:50.100','2020-03-25 15:21:50.100')
@@ -1152,7 +1152,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(66,88,1,2802.98,2802.98,0.00,2802.98,0.00,0.00,1,'2020-03-25 15:56:32.313','2020-03-25 15:56:32.313')
 ,(67,89,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 15:57:54.372','2020-03-25 15:57:54.373')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (68,90,1,2967.43,2967.43,0.00,2967.43,0.00,0.00,1,'2020-03-25 16:01:12.989','2020-03-25 16:01:12.989')
 ,(3,9,5,20600.00,0.00,0.00,20000.00,27200.00,0.00,0,'2020-03-17 18:03:49.557','2020-03-17 19:58:38.274')
 ,(69,91,2,29795.05,29795.05,0.00,29795.05,0.00,0.00,1,'2020-03-25 16:05:17.863','2020-03-25 16:05:17.863')
@@ -1164,7 +1164,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(72,95,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 16:13:35.355','2020-03-25 16:13:35.355')
 ,(73,96,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 16:15:25.892','2020-03-25 16:15:25.892')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (6,12,2,5000.00,603.40,5000.00,5000.00,0.00,0.00,1,'2020-03-21 11:53:01.014','2020-03-21 13:51:40.546')
 ,(7,13,2,26041.43,2386.43,0.00,26041.43,0.00,0.00,1,'2020-03-24 11:28:11.319','2020-03-24 11:28:11.327')
 ,(8,13,5,50000.00,0.00,0.00,50000.00,0.00,0.00,1,'2020-03-24 12:48:19.588','2020-03-24 12:48:19.588')
@@ -1176,7 +1176,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(2,9,2,18900.00,18900.00,0.00,20000.00,0.00,0.00,0,'2020-03-16 16:29:56.498','2020-03-25 16:16:57.999')
 ,(14,22,2,12631.52,12631.52,0.00,12631.52,0.00,0.00,1,'2020-03-25 10:14:47.867','2020-03-25 10:14:47.868')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (15,23,1,1863.52,1863.52,0.00,1863.52,0.00,0.00,1,'2020-03-25 10:17:14.038','2020-03-25 10:17:14.038')
 ,(16,24,2,12346.00,12346.00,0.00,12346.00,0.00,0.00,1,'2020-03-25 10:18:47.730','2020-03-25 10:18:47.730')
 ,(17,25,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 10:20:16.605','2020-03-25 10:20:16.605')
@@ -1188,7 +1188,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(24,33,1,3178.36,3178.36,0.00,3178.36,0.00,0.00,1,'2020-03-25 10:34:23.988','2020-03-25 10:34:23.988')
 ,(26,35,2,12718.61,12718.61,0.00,12718.61,0.00,0.00,1,'2020-03-25 10:36:17.519','2020-03-25 10:36:17.520')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (27,36,1,4373.73,4373.73,0.00,4373.73,0.00,0.00,0,'2020-03-25 10:38:30.661','2020-03-25 11:06:28.575')
 ,(25,34,2,36464.29,36464.29,0.00,36464.29,0.00,0.00,0,'2020-03-25 10:35:19.976','2020-03-25 11:06:50.938')
 ,(28,37,2,38740.00,38740.00,0.00,38740.00,0.00,0.00,1,'2020-03-25 11:09:48.313','2020-03-25 11:09:48.313')
@@ -1200,7 +1200,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(34,47,2,12744.43,12744.43,0.00,12744.43,0.00,0.00,1,'2020-03-25 11:21:21.029','2020-03-25 11:21:21.029')
 ,(35,49,2,6577.18,6577.18,0.00,6577.18,0.00,0.00,1,'2020-03-25 11:23:13.634','2020-03-25 11:23:13.634')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (36,50,2,18636.14,18636.14,0.00,18636.14,0.00,0.00,1,'2020-03-25 11:24:00.518','2020-03-25 11:24:00.518')
 ,(37,52,1,254.93,254.93,0.00,254.93,0.00,0.00,1,'2020-03-25 11:25:30.679','2020-03-25 11:25:30.680')
 ,(38,54,2,10991.82,10991.82,0.00,10991.82,0.00,0.00,1,'2020-03-25 11:28:44.985','2020-03-25 11:28:44.986')
@@ -1212,7 +1212,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(79,101,1,2604.43,2604.43,0.00,2604.43,0.00,0.00,1,'2020-03-25 16:35:16.668','2020-03-25 16:35:16.669')
 ,(80,102,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 16:36:15.457','2020-03-25 16:36:15.457')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (81,103,2,8004.14,8004.14,0.00,8004.14,0.00,0.00,1,'2020-03-25 16:41:25.479','2020-03-25 16:41:25.480')
 ,(82,105,1,2746.26,2746.26,0.00,2746.26,0.00,0.00,1,'2020-03-25 16:45:06.021','2020-03-25 16:45:06.021')
 ,(83,106,2,17243.65,17243.65,0.00,17243.65,0.00,0.00,1,'2020-03-25 16:50:11.023','2020-03-25 16:50:11.024')
@@ -1224,7 +1224,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(89,115,2,5598.05,5598.05,0.00,5598.05,0.00,0.00,1,'2020-03-25 17:14:19.370','2020-03-25 17:14:19.370')
 ,(90,116,2,9509.56,9509.56,0.00,9509.56,0.00,0.00,1,'2020-03-25 17:17:05.820','2020-03-25 17:17:05.821')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (91,118,2,5759.43,5759.43,0.00,5759.43,0.00,0.00,1,'2020-03-25 17:21:17.682','2020-03-25 17:21:17.683')
 ,(92,120,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 17:27:30.725','2020-03-25 17:27:30.726')
 ,(93,121,1,4274.99,4274.99,0.00,4274.99,0.00,0.00,1,'2020-03-25 17:31:32.963','2020-03-25 17:31:32.963')
@@ -1236,7 +1236,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(97,124,2,11142.86,11142.86,0.00,11142.86,0.00,0.00,1,'2020-03-25 17:43:36.499','2020-03-25 17:45:28.601')
 ,(100,126,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 17:47:46.218','2020-03-25 17:47:46.219')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (101,127,2,6073.81,1408.81,0.00,3110.00,4587.32,0.00,1,'2020-03-25 17:52:14.582','2020-03-25 17:52:14.582')
 ,(102,128,2,10614.34,10614.34,0.00,10614.34,0.00,0.00,1,'2020-03-25 17:53:24.881','2020-03-25 17:53:24.882')
 ,(103,129,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-25 17:58:36.209','2020-03-25 17:58:36.212')
@@ -1248,7 +1248,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(109,135,3,139179.39,139179.39,0.00,139179.39,0.00,0.00,1,'2020-03-26 08:10:30.510','2020-03-26 08:10:30.510')
 ,(110,136,2,6468.58,6468.58,0.00,6468.58,0.00,0.00,1,'2020-03-26 08:11:59.704','2020-03-26 08:11:59.704')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (111,137,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 08:16:11.228','2020-03-26 08:16:11.229')
 ,(112,138,2,21487.78,17007.19,0.00,2990.44,16180.99,0.00,1,'2020-03-26 08:18:02.195','2020-03-26 08:18:02.196')
 ,(113,139,2,15604.06,6994.06,0.00,4510.00,2227.50,0.00,1,'2020-03-26 08:19:36.403','2020-03-26 08:19:36.403')
@@ -1260,7 +1260,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(119,145,2,26532.36,26532.36,0.00,26532.36,0.00,0.00,1,'2020-03-26 08:34:16.262','2020-03-26 08:34:16.262')
 ,(120,147,3,54419.10,54419.10,0.00,54419.10,0.00,0.00,1,'2020-03-26 08:38:28.855','2020-03-26 08:38:28.856')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (121,148,1,2452.21,2452.21,0.00,2452.21,0.00,0.00,1,'2020-03-26 08:39:46.190','2020-03-26 08:39:46.190')
 ,(122,149,2,24335.72,24335.72,0.00,24335.72,0.00,0.00,1,'2020-03-26 08:41:18.089','2020-03-26 08:41:18.091')
 ,(123,150,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 08:42:52.368','2020-03-26 08:42:52.368')
@@ -1272,7 +1272,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(129,158,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 09:04:13.594','2020-03-26 09:04:13.598')
 ,(130,159,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 09:06:27.120','2020-03-26 09:06:27.121')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (131,160,2,4589.00,4589.00,0.00,4589.00,0.00,0.00,1,'2020-03-26 09:09:09.716','2020-03-26 09:09:09.716')
 ,(132,34,2,36464.29,3776.29,0.00,36464.29,0.00,0.00,1,'2020-03-26 09:19:42.860','2020-03-26 09:19:42.862')
 ,(133,161,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 09:28:57.983','2020-03-26 09:28:57.984')
@@ -1284,7 +1284,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(139,165,1,1549.93,285.75,0.00,1264.18,794.02,0.00,1,'2020-03-26 09:48:35.669','2020-03-26 09:48:35.669')
 ,(140,166,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 09:57:35.899','2020-03-26 09:57:35.899')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (141,167,1,4513.27,4513.27,0.00,4513.27,0.00,0.00,1,'2020-03-26 09:59:50.468','2020-03-26 09:59:50.468')
 ,(142,168,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 10:00:37.808','2020-03-26 10:00:37.810')
 ,(143,169,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 10:01:33.342','2020-03-26 10:01:33.342')
@@ -1296,7 +1296,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(149,175,2,8102.67,1062.68,0.00,4726.26,4936.93,0.00,1,'2020-03-26 10:14:36.770','2020-03-26 10:14:36.771')
 ,(150,176,1,3552.99,3552.99,0.00,3552.99,0.00,0.00,1,'2020-03-26 10:18:17.322','2020-03-26 10:18:17.322')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (151,177,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 10:22:56.902','2020-03-26 10:22:56.902')
 ,(152,178,1,2972.23,2972.23,0.00,2972.23,0.00,0.00,1,'2020-03-26 10:36:14.370','2020-03-26 10:36:14.371')
 ,(153,179,2,5249.32,5249.32,0.00,5249.32,0.00,0.00,1,'2020-03-26 10:37:09.080','2020-03-26 10:37:09.080')
@@ -1308,7 +1308,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 ,(159,185,1,3932.70,3932.70,0.00,3932.70,0.00,0.00,1,'2020-03-26 10:47:37.458','2020-03-26 10:47:37.458')
 ,(160,186,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 10:50:16.645','2020-03-26 10:50:16.646')
 ;
-INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
+insert into public."UserAccount" (id,"userId","accountId","accountValue","guaranteeOperation","guaranteeCredits","balanceInitial","balanceFinal","maintenanceMargin",status,"createdAt","updatedAt") VALUES
 (161,187,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 10:51:29.169','2020-03-26 10:51:29.170')
 ,(162,187,1,0.00,0.00,0.00,0.00,0.00,0.00,1,'2020-03-26 10:53:15.599','2020-03-26 10:53:15.599')
 ,(163,189,2,4651.68,4651.68,0.00,4651.68,0.00,0.00,1,'2020-03-26 10:56:03.146','2020-03-26 10:56:03.147')
@@ -1323,7 +1323,7 @@ INSERT INTO public."UserAccount" (id,"userId","accountId","accountValue","guaran
 
 /*FUNCTIONS*/
 
-CREATE OR REPLACE FUNCTION public."investmentMovement_after_insert"()
+create or replace function public."investmentMovement_after_insert"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1331,22 +1331,22 @@ AS $function$
 declare
 consolidado numeric(10,2);
     begin
-	    consolidado := (Select "amount"
-						From "InvestmentOperation"
-                        Where id = new."investmentOperationId");
+	    consolidado := (select "amount"
+						from "InvestmentOperation"
+                        where id = new."investmentOperationId");
 
-	UPDATE "InvestmentOperation"
-    SET "amount" = consolidado + NEW."gpAmount"
-   	Where id = new."investmentOperationId";
+	update "InvestmentOperation"
+    set "amount" = consolidado + NEW."gpAmount"
+   	where id = new."investmentOperationId";
 
-        RETURN NEW;
-    END;
+        return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."investmentMovement_after_update"()
+create or replace function public."investmentMovement_after_update"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1357,27 +1357,27 @@ currentBehavior integer;
 newAmount numeric(10,2);
 
     begin
-	    consolidado := (Select "amount"
-						From "InvestmentOperation"
-                        Where id = old."investmentOperationId");
+	    consolidado := (select "amount"
+						from "InvestmentOperation"
+                        where id = old."investmentOperationId");
 
 	newAmount := consolidado - old."gpAmount" + new."gpAmount";
 
 
 
-	UPDATE "InvestmentOperation"
-    SET "amount" = newAmount
- 	Where id = old."investmentOperationId";
+	update "InvestmentOperation"
+    set "amount" = newAmount
+ 	where id = old."investmentOperationId";
 
 
-    RETURN NEW;
-    END;
+    return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."investmentOperation_after_insert"()
+create or replace function public."investmentOperation_after_insert"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1385,18 +1385,18 @@ AS $function$
 declare
 garatias numeric(10,2);
     begin
-	    garatias := (Select "guaranteeOperation"
-						From "UserAccount"
-                        Where id = new."userAccountId");
+	    garatias := (select "guaranteeOperation"
+						from "UserAccount"
+                        where id = new."userAccountId");
 
-        RETURN NEW;
-    END;
+        return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."investmentOperation_after_update"()
+create or replace function public."investmentOperation_after_update"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1406,24 +1406,24 @@ garatias numeric(10,2);
 totalOperationAmount numeric(10,2);
 
     begin
-	    garatias := (Select "guaranteeOperation"
-						From "UserAccount"
-                        Where id = new."userAccountId");
+	    garatias := (select "guaranteeOperation"
+						from "UserAccount"
+                        where id = new."userAccountId");
 
-        totalOperationAmount := (Select sum("amount")
-						From "InvestmentOperation"
-                        Where "userAccountId" = new."userAccountId");
+        totalOperationAmount := (select sum("amount")
+						from "InvestmentOperation"
+                        where "userAccountId" = new."userAccountId");
 
 
 
-        RETURN NEW;
-    END;
+        return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."marketMovement_after_detele"()
+create or replace function public."marketMovement_after_detele"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1434,27 +1434,27 @@ currentBehavior integer;
 newAmount numeric(10,2);
 
     begin
-	    consolidado := (Select "amount"
-						From "MarketOperation"
-                        Where id = old."marketOperationId");
+	    consolidado := (select "amount"
+						from "MarketOperation"
+                        where id = old."marketOperationId");
 
 	newAmount := consolidado - old."gpAmount";
 
 
 
-	UPDATE "MarketOperation"
-    SET "amount" = newAmount
- 	Where id = old."marketOperationId";
+	update "MarketOperation"
+    set "amount" = newAmount
+ 	where id = old."marketOperationId";
 
 
-    RETURN NEW;
-    END;
+    return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."marketMovement_after_insert"()
+create or replace function public."marketMovement_after_insert"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1465,35 +1465,35 @@ currentBehavior integer;
 newAmount numeric(10,2);
 
     begin
-	    consolidado := (Select "amount"
-						From "MarketOperation"
-                        Where id = new."marketOperationId");
+	    consolidado := (select "amount"
+						from "MarketOperation"
+                        where id = new."marketOperationId");
 
 	newAmount := consolidado + NEW."gpAmount";
 
 
-	IF (newAmount = consolidado) then
+	if (newAmount = consolidado) then
 		currentBehavior := 0;
-    ELSIF (newAmount > consolidado) then
+    elsif (newAmount > consolidado) then
         currentBehavior := 1;
-   	ELSIF (newAmount < consolidado) then
+   	elsif (newAmount < consolidado) then
         currentBehavior := 2;
-   END IF;
+   end if;
 
-	UPDATE "MarketOperation"
-    SET "amount" = newAmount,
+	update "MarketOperation"
+    set "amount" = newAmount,
     	"behavior" = currentBehavior
- 	Where id = new."marketOperationId";
+ 	where id = new."marketOperationId";
 
 
-    RETURN NEW;
-    END;
+    return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."marketMovement_after_update"()
+create or replace function public."marketMovement_after_update"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1504,27 +1504,27 @@ currentBehavior integer;
 newAmount numeric(10,2);
 
     begin
-	    consolidado := (Select "amount"
-						From "MarketOperation"
-                        Where id = old."marketOperationId");
+	    consolidado := (select "amount"
+						from "MarketOperation"
+                        where id = old."marketOperationId");
 
 	newAmount := consolidado - old."gpAmount" + new."gpAmount";
 
 
 
-	UPDATE "MarketOperation"
-    SET "amount" = newAmount
- 	Where id = old."marketOperationId";
+	update "MarketOperation"
+    set "amount" = newAmount
+ 	where id = old."marketOperationId";
 
 
-    RETURN NEW;
-    END;
+    return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."marketOperation_after_insert"()
+create or replace function public."marketOperation_after_insert"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1532,23 +1532,23 @@ AS $function$
 declare
 garatias numeric(10,2);
     begin
-	    garatias := (Select "guaranteeOperation"
-						From "UserAccount"
-                        Where id = new."userAccountId");
+	    garatias := (select "guaranteeOperation"
+						from "UserAccount"
+                        where id = new."userAccountId");
 /*
 	UPDATE "UserAccount"
     SET "guaranteeOperation" = (garatias - NEW."initialAmount" - new."maintenanceMargin")
    	WHERE id = new."userAccountId";
 
 	   */
-        RETURN NEW;
-    END;
+        return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."marketOperation_after_update"()
+create or replace function public."marketOperation_after_update"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1561,18 +1561,18 @@ operationAmount numeric(10,2);
 
 
     begin
-	    garatias := (Select "guaranteeOperation"
-						From "UserAccount"
-                        Where id = new."userAccountId");
+	    garatias := (select "guaranteeOperation"
+						from "UserAccount"
+                        where id = new."userAccountId");
 
-   		currentAccountAmount := (Select "accountValue"
-						From "UserAccount"
-                        Where id = new."userAccountId");
+   		currentAccountAmount := (select "accountValue"
+						from "UserAccount"
+                        where id = new."userAccountId");
 
 
-                       totalOperationAmount := (Select sum("gpAmount")
-						From "MarketMovement"
-                        Where "marketOperationId" = new."id");
+                       totalOperationAmount := (select sum("gpAmount")
+						from "MarketMovement"
+                        where "marketOperationId" = new."id");
 
 	/*
                        UPDATE "UserAccount"
@@ -1580,14 +1580,14 @@ operationAmount numeric(10,2);
    	WHERE id = new."userAccountId";
   */
 
-        RETURN NEW;
-    END;
+        return NEW;
+    end;
 $function$
 ;
 
 /*=======*/
 
-CREATE OR REPLACE FUNCTION public."userAccount_after_update"()
+create or replace function public."userAccount_after_update"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1615,8 +1615,8 @@ diffNewOldAmount numeric(10,2);
     SET "guaranteeOperation" = diffNewOldAmount + currentGuarantee where id = old.id;
  	end if;
 */
-        RETURN NEW;
-    END;
+        return NEW;
+    end;
 $function$
 ;
 
@@ -1736,7 +1736,7 @@ ALTER TABLE public."MarketOperation" ADD "holdStatusCommission" numeric(10,2) DE
 
 -- DROP TABLE public."Commodity";
 
-CREATE TABLE public."Setting" (
+create TABLE public."Setting" (
 	id serial NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"value" varchar(255) NOT NULL,
@@ -1751,7 +1751,7 @@ INSERT INTO public."Setting" (id,"name","value", "status","createdAt","updatedAt
 (1,'holdStatusPrice',"2",1,'2020-08-14 20:56:08.846','2020-08-14 20:56:08.846')
 ;
 
-CREATE OR REPLACE FUNCTION public."marketOperation_before_update"()
+create or replace function public."marketOperation_before_update"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1764,13 +1764,13 @@ updatedHoldCommission numeric(10,2);
 
 begin
 
-	holdStatusPrice := (Select "value"
-						From public."Setting"
-                        Where id = 1);
+	holdStatusPrice := (select "value"
+						from public."Setting"
+                        where id = 1);
 
 
 
-	IF (new.status = 3) then
+	if (new.status = 3) then
 	NEW."holdStatusCount" := old."holdStatusCount" + 1;
 	NEW."holdStatusCommission" := holdStatusPrice * NEW."holdStatusCount";
   NEW."updatedAt" := NOW();
@@ -1834,7 +1834,7 @@ ALTER TABLE public."User" ADD "lastName4" varchar(255) DEFAULT '';
 
 ALTER TABLE public."UserAccount" ADD "brokerId" int4;
 
-CREATE OR REPLACE FUNCTION public."marketOperation_before_update"()
+create or replace function public."marketOperation_before_update"()
  RETURNS trigger
  LANGUAGE plpgsql
 AS $function$
@@ -1862,7 +1862,7 @@ begin
 
 
 
-	IF (new.status = 3) then
+	if (new.status = 3) then
 	NEW."holdStatusCount" := old."holdStatusCount" + 1;
 	NEW."holdStatusCommission" := holdStatusPrice * NEW."holdStatusCount";
 	NEW."updatedAt" := NOW();
@@ -1889,7 +1889,7 @@ $function$
 
 -- DROP TABLE public."Referral";
 
-CREATE TABLE public."Referral" (
+create TABLE public."Referral" (
 	id serial NOT NULL,
 	"firstName" varchar(255) NULL,
 	"lastName" varchar(255) NULL,
@@ -1928,7 +1928,7 @@ CREATE TABLE public."Referral" (
 
 -- DROP TABLE public."MarketMovement";
 
-CREATE TABLE public."UserAccountMovement" (
+create TABLE public."UserAccountMovement" (
 	id serial NOT NULL,
 	"userAccountId" int4 NOT NULL,
 	"debit" numeric(10,2) NULL,
@@ -1942,7 +1942,7 @@ CREATE TABLE public."UserAccountMovement" (
 	CONSTRAINT "UserAccountMovement_pkey" PRIMARY KEY (id)
 );
 
-ALTER TABLE public."UserAccountMovement" ADD CONSTRAINT "UserAccountMovement_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
+alter table public."UserAccountMovement" add CONSTRAINT "UserAccountMovement_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
 
 
 /*
@@ -1952,18 +1952,18 @@ ALTER TABLE public."UserAccountMovement" ADD CONSTRAINT "UserAccountMovement_use
 /*
 * Start Changes Oct 5, 2020
 */
-ALTER TABLE public."UserAccountMovement" ADD "previousAccountValue" numeric(10,2) DEFAULT 0;
+alter table public."UserAccountMovement" add "previousAccountValue" numeric(10,2) DEFAULT 0;
 
 /*
 * End Changes Oct 5, 2020
 */
 
-ALTER TABLE public."Referral" ADD "username" varchar(255) DEFAULT '';
+alter table public."Referral" add "username" varchar(255) DEFAULT '';
 
 /*
 * Start Changes Oct 26, 2020
 */
-CREATE TABLE public."Log" (
+create TABLE public."Log" (
 	id serial NOT NULL,
 	"userId" int4 NOT NULL,
 	"tableUpdated" varchar(255) NULL,
@@ -1984,8 +1984,54 @@ CREATE TABLE public."Log" (
 /*
 * Start Changes Mar 01, 2021
 */
-ALTER TABLE public."MarketOperation" ADD "accountValueBeforeEndOperation" numeric(10,2) NULL;
+alter table public."MarketOperation" add "accountValueBeforeEndOperation" numeric(10,2) NULL;
 
 /*
 * End Changes Mar 01, 2021
+*/
+
+
+/*
+* Start Changes Mar 16, 2021
+*/
+-- Drop table
+
+-- DROP TABLE public."WireTransferRequest";
+
+create TABLE public."WireTransferRequest" (
+  id serial NOT NULL,
+  "currencyType" varchar(255) NULL,
+  "accountRCM" varchar(255) NULL,
+  "amount" numeric(10,2) NULL,
+  "commissionsCharge" numeric(10,2) NULL,
+
+  "commissionsReferenceDetail" varchar(255) NULL,
+  "beneficiaryPersonAccountNumber" varchar(255) NULL,
+  "beneficiaryPersonFirstName" varchar(255) NULL,
+  "beneficiaryPersonLastName" varchar(255) NULL,
+  "beneficiaryPersonAddress" varchar(255) NULL,
+
+  "beneficiaryBankName" varchar(255) NULL,
+  "beneficiaryBankSwift" varchar(255) NULL,
+  "beneficiaryBankAddress" varchar(255) NULL,
+  "intermediaryBankName" varchar(255) NULL,
+  "intermediaryBankSwift" varchar(255) NULL,
+  "intermediaryBankAddress" varchar(255) NULL,
+  "intermediaryBankAccountInterBank" varchar(255) NULL,
+  "transferMethod" varchar(255) NULL,
+  "accountWithdrawalRequest" varchar(255) NULL,
+  "userAccountId" varchar(255) NULL,
+  "username" varchar(255) NULL,
+
+  status int4 NOT NULL,
+  "createdAt" timestamptz NOT NULL,
+  "updatedAt" timestamptz NOT NULL,
+  "closedAt" timestamptz NULL,
+  CONSTRAINT "WireTransferRequest_pkey" PRIMARY KEY (id)
+);
+
+alter table public."WireTransferRequest" add "notes" varchar(500) NULL;
+
+/*
+* End Changes Mar 16, 2021
 */

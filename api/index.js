@@ -16,6 +16,7 @@ import {
   page,
   setting,
   referral,
+  wireTransferRequest,
 } from './controllers';
 
 const authMiddleware = (req, res, next) => {
@@ -175,5 +176,13 @@ module.exports = app => {
   app.post( '/api/referral/create', referral.create );
   app.put( '/api/referral/:referralId', referral.update );
   app.delete( '/api/referral/:referralId', referral.delete );
+
+  // WireTransferRequest
+  app.post( '/api/wire-transfer-request', wireTransferRequest.list );
+  app.get( '/api/wire-transfer-request/:wireTransferRequestId', wireTransferRequest.get );
+  app.get( '/api/wire-transfer-request/user-account/:username', wireTransferRequest.getByUserName );
+  app.post( '/api/wire-transfer-request/create', wireTransferRequest.create );
+  app.put( '/api/wire-transfer-request/:wireTransferRequestId', wireTransferRequest.update );
+  app.delete( '/api/wire-transfer-request/:wireTransferRequestId', wireTransferRequest.delete );
 
 };

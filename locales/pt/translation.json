@@ -12,6 +12,7 @@
   "btn clean": "Limpiar",
   "btn syncData": "Sincronizar Dados",
   "btn sendReference": "Enviar Referência",
+  "btn wireTransferRequest": "Enviar Solicitação",
 
   "title marketOperations": "Operações do mercado de ações OTC",
   "title investmentOperations": "Operações de fundos de juros",
@@ -112,6 +113,12 @@
   "Collaborator": "Colaborador",
   "referredClientDescription": "Descrição do cliente referido",
 
-  "selectFilterType": "Selecione o tipo de filtro"
+  "selectFilterType": "Selecione o tipo de filtro",
+
+  "account": "Cobrar",
+  "amount": "Quantia",
+  "amountNote": "Insira o valor a ser solicitado em dólares americanos",
+  "commissionsCharge": "Cobrança de Comissões",
+  "commissionsReferenceDetail": "Detalhe das referências que geraram comissões"
 
 }
