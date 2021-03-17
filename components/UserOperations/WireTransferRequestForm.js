@@ -97,7 +97,7 @@ class WireTransferRequestForm extends PureComponent {
         reject( "No cuenta con dinero disponible en la cuenta para solicitar este monto" );
       }
 
-      if (( parseFloat( guaranteeOperation ) - parseFloat( value ) ) < 1000) {
+      if (( parseFloat( guaranteeOperation ) - parseFloat( value ) ) < 0) {
         reject( "No cuenta con garantías disponibles para poder realizar la solicitud de dinero. Favor contactar a su corredor " );  // reject with error message
       } else {
         console.log('ok');
