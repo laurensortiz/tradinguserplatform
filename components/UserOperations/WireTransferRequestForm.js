@@ -211,7 +211,6 @@ class WireTransferRequestForm extends PureComponent {
                   onChange={ value => this._handleChangeSelect( { name: 'accountWithdrawalRequest', value } ) }>
                   <Option value="OTC">OTC</Option>
                   <Option value="ProfitMonth">ProfitMonth</Option>
-                  <Option value="Comisiones">Comisiones</Option>
                 </Select>
               )}
             </Form.Item>
