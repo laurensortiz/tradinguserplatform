@@ -51,6 +51,10 @@ class AccountInformation extends PureComponent {
     if (nextProps.userAccount && !prevState.isUserWireTransferAvailable) {
   
       const getTotalMonths = getTotalMonthsFromDate(nextProps.userAccount.user.startDate)
+      console.log('[=====  DATES  =====>');
+      console.log(nextProps.userAccount.user.startDate);
+      console.log(getTotalMonths);
+      console.log('<=====  /DATES  =====]');
 
       _.assignIn(updatedState, {
         isUserWireTransferAvailable: getTotalMonths > INITIAL_HOLD_TIME_REQUEST,
@@ -98,6 +102,10 @@ class AccountInformation extends PureComponent {
   }
 
   _getHeaderCard = () => {
+    console.log('[=====  test  =====>');
+    console.log(this.state.isUserWireTransferAvailable);
+    console.log(this.props.isWireTransferRequestAddCompleted);
+    console.log('<=====  /test  =====]');
     const wireTransferBtn = <Button onClick={this._onHandleShowWireTransferForm} disabled={!this.state.isUserWireTransferAvailable || this.props.isWireTransferRequestAddCompleted }><Icon type="dollar"  /> Wire Transfer Request</Button>
     const disableText = 'No ha cumplido con el tiempo requerido para realizar la solicitud de dinero.'
     return this.state.isUserWireTransferAvailable ? (
