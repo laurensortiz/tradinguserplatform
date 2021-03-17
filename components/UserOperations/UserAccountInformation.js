@@ -18,7 +18,7 @@ const INITIAL_HOLD_TIME_REQUEST = 6 // months
 const getTotalMonthsFromDate = (date) => {
   const userStartDate = new moment(date)
   const today = new moment()
-  return (moment.duration(today.diff(userStartDate))).months()
+  return parseInt((moment.duration(today.diff(userStartDate))).asMonths())
 }
 
 class AccountInformation extends PureComponent {
