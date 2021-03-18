@@ -542,7 +542,10 @@ module.exports = {
                 } = marketOperation;
                 const { percentage } = marketOperation.userAccount.account;
                 const isBrokerGuarantee =
-                  userAccount.accountId === 10 || userAccount.accountId === 12;
+                  userAccount.accountId === 10 ||
+                  userAccount.accountId === 12 ||
+                  userAccount.accountId === 18 ||
+                  userAccount.accountId === 17;
 
                 const maintenanceMarginAmount =
                   assetClassId === 8 ||
