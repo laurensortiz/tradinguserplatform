@@ -60,6 +60,14 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    guaranteeOperationNet: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
+    wireTransferAmount: {
+      type: DataTypes.DECIMAL(10,2),
+      allowNull: true,
+    },
   });
   UserAccount.associate = models => {
 

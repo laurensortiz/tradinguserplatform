@@ -4,13 +4,14 @@ import _ from 'lodash'
 import { AmountFormatValidation } from '../../common/utils'
 import Draggable from 'react-draggable'
 import { withNamespaces } from 'react-i18next'
-import moment from 'moment';
+import moment from 'moment'
 
 const { TextArea } = Input
 const { Option } = Select
 
-class WireTransferRequestForm extends PureComponent {
+const NO_MONEY_ERROR_MESSAGE = 'Su solicitud sobrepasa lo permitido por el exchange'
 
+class WireTransferRequestForm extends PureComponent {
   state = {
     currencyType: '',
     accountRCM: '',
@@ -23,19 +24,19 @@ class WireTransferRequestForm extends PureComponent {
     beneficiaryPersonAddress: '',
     beneficiaryBankName: '',
     beneficiaryBankSwift: '',
+    beneficiaryBankABA: '',
     beneficiaryBankAddress: '',
     intermediaryBankName: '',
     intermediaryBankSwift: '',
+    intermediaryBankABA: '',
     intermediaryBankAddress: '',
     intermediaryBankAccountInterBank: '',
     transferMethod: '',
     accountWithdrawalRequest: '',
     confirmDirty: false,
     isInvalid: true,
-    disabledSubmitBtn: false
+    disabledSubmitBtn: false,
   }
-
-
 
   _handleChange = (e) => {
     let value = ''
@@ -52,96 +53,114 @@ class WireTransferRequestForm extends PureComponent {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const saveState = _.omit(this.state, ['confirmDirty', 'isValid', 'disabledSubmitBtn'])
-        const { id, user } = this.props.userAccount
+        const { id, user, guaranteeOperation, account } = this.props.userAccount
+        const accountWithdrawalRequest =
+          account.associatedOperation === 2
+            ? `ProfitMonth - ${account.name}`
+            : `OTC - ${account.name}`
+
         this.setState({
-          disabledSubmitBtn: true
+          disabledSubmitBtn: true,
         })
         this.props.onWireTransferRequest({
           ...saveState,
+          accountWithdrawalRequest,
           userAccountId: id,
           username: user.username,
+          guaranteeOperationNet:
+            Number(guaranteeOperation) -
+            (Number(this.state.amount) + Number(this.state.commissionsCharge)),
         })
       }
     })
   }
 
   _handleChangeSelect = (event) => {
-    const { value, name } = event;
+    const { value, name } = event
 
-    this.setState( {
-      [ name ]: value
-    } )
-  };
+    this.setState({
+      [name]: value,
+    })
+  }
 
   handleInversion = (rule, value, callback) => {
-    const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
-    const userStartedDay = this.props.userAccount.user.startDate;
+    const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
+    const userStartedDay = this.props.userAccount.user.startDate
+    const { associatedOperation, percentage } = this.props.userAccount.account
+    const isOTCAccount = associatedOperation === 1
 
-    const {accountValue, guaranteeOperation} = this.props.userAccount;
+    const { accountValue, guaranteeOperation } = this.props.userAccount
 
-    const is10percent = moment(userStartedDay).isBefore('2020-12-15', 'day');
+    const is10percent = moment(userStartedDay).isBefore('2020-12-15', 'day')
 
-    const percentage = is10percent ? 10 : 7.5
-    const amountAvailable = (accountValue/100)*percentage
+    let percentageFromAccount
 
-    return new Promise( (resolve, reject) => {
-      if (!_.isEmpty( value ) && !regex.test( value )) {
-        reject( "Formato inválido del monto" );  // reject with error message
+    if (isOTCAccount) {
+      percentageFromAccount = is10percent ? 10 : 7.5
+    } else {
+      percentageFromAccount = percentage
+    }
+
+    const amountAvailable = (accountValue / 100) * percentageFromAccount
+
+    return new Promise((resolve, reject) => {
+      if (!_.isEmpty(value) && !regex.test(value)) {
+        reject('Formato inválido del monto') // reject with error message
       }
 
-      if (parseFloat( value ) == 0) {
-        reject( "La opereración debe ser mayor a 0" );
+      if (parseFloat(value) == 0) {
+        reject('El monto solicitado debe ser mayor a 0')
       }
 
-      if (( parseFloat( amountAvailable ) - parseFloat( value ) ) < 0) {
-        reject( "No cuenta con dinero disponible en la cuenta para solicitar este monto" );
+      // Next validation only applies to OTC accounts
+      if (isOTCAccount) {
+        if (parseFloat(guaranteeOperation) - parseFloat(value) < 0) {
+          reject(NO_MONEY_ERROR_MESSAGE)
+        }
       }
 
-      if (( parseFloat( guaranteeOperation ) - parseFloat( value ) ) < 0) {
-        reject( "No cuenta con garantías disponibles para poder realizar la solicitud de dinero. Favor contactar a su corredor " );  // reject with error message
+      if (parseFloat(amountAvailable) - parseFloat(value) < 0) {
+        reject(NO_MONEY_ERROR_MESSAGE) // reject with error message
       } else {
-        console.log('ok');
-        resolve();
+        resolve()
       }
-
-    } );
-  };
+    })
+  }
 
   handleCommission = (rule, value, callback) => {
-    const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
+    const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
 
-    const {commissionByReference} = this.props.userAccount;
+    const { commissionByReference } = this.props.userAccount
 
-
-    return new Promise( (resolve, reject) => {
-      if (!_.isEmpty( value ) && !regex.test( value )) {
-        reject( "Formato inválido del monto" );  // reject with error message
+    return new Promise((resolve, reject) => {
+      if (!_.isEmpty(value) && !regex.test(value)) {
+        reject('Formato inválido del monto') // reject with error message
       }
 
-      if (parseFloat( value ) == 0) {
-        reject( "La opereración debe ser mayor a 0" );
+      if (parseFloat(value) == 0) {
+        reject('La opereración debe ser mayor a 0')
       }
 
-      if (( parseFloat( commissionByReference || 0 ) - parseFloat( value ) ) < 0) {
-        reject( "No cuenta con dinero en comisiones disponible en la cuenta para solicitar este monto" );  // reject with error message
+      if (parseFloat(commissionByReference || 0) - parseFloat(value) < 0) {
+        reject(NO_MONEY_ERROR_MESSAGE) // reject with error message
       } else {
-        resolve();
+        resolve()
       }
-
-    } );
-  };
-
+    })
+  }
 
   render() {
-    
     const { t } = this.props
     const { getFieldDecorator, resetFields } = this.props.form
-    const { user } = this.props.userAccount
+    const { user, account } = this.props.userAccount
+    const isOTCAccount = account.associatedOperation === 1
+    const currentAccountType = isOTCAccount
+      ? `OTC - ${account.name}`
+      : `ProfitMonth - ${account.name}`
 
     if (!this.state.commissionsCharge) {
       resetFields(['commissionsCharge'])
     }
-
 
     return (
       <Draggable handle=".handle">
@@ -163,7 +182,6 @@ class WireTransferRequestForm extends PureComponent {
           </div>
 
           <Form onSubmit={this._handleSubmit} className="auth-form">
-
             <Form.Item label="Seleccione la moneda de transferencia">
               {getFieldDecorator('currencyType', {
                 rules: [
@@ -174,7 +192,8 @@ class WireTransferRequestForm extends PureComponent {
                 ],
               })(
                 <Select
-                  onChange={ value => this._handleChangeSelect( { name: 'currencyType', value } ) }>
+                  onChange={(value) => this._handleChangeSelect({ name: 'currencyType', value })}
+                >
                   <Option value="USD">USD</Option>
                   <Option value="EUR">EUR</Option>
                   <Option value="GBP">GBP</Option>
@@ -191,15 +210,16 @@ class WireTransferRequestForm extends PureComponent {
                 ],
               })(
                 <Select
-                  onChange={ value => this._handleChangeSelect( { name: 'transferMethod', value } ) }>
-
+                  onChange={(value) => this._handleChangeSelect({ name: 'transferMethod', value })}
+                >
                   <Option value="Banco">Banco</Option>
                   <Option value="MoneyGram">MoneyGram</Option>
                 </Select>
               )}
             </Form.Item>
-            <Form.Item label="Seleccionar la cuenta para retiro de fondos">
+            <Form.Item label="La cuenta para retiro de fondos">
               {getFieldDecorator('accountWithdrawalRequest', {
+                initialValue: currentAccountType,
                 rules: [
                   {
                     required: true,
@@ -207,11 +227,19 @@ class WireTransferRequestForm extends PureComponent {
                   },
                 ],
               })(
-                <Select
-                  onChange={ value => this._handleChangeSelect( { name: 'accountWithdrawalRequest', value } ) }>
-                  <Option value="OTC">OTC</Option>
-                  <Option value="ProfitMonth">ProfitMonth</Option>
-                </Select>
+                // <Select
+                //   onChange={ value => this._handleChangeSelect( { name: 'accountWithdrawalRequest', value } ) }
+                //   disabled
+                // >
+                //   <Option value="OTC">OTC</Option>
+                //   <Option value="ProfitMonth">ProfitMonth</Option>
+                // </Select>
+                <Input
+                  disabled
+                  placeholder={`La cuenta para retiro de fondos`}
+                  name="accountWithdrawalRequest"
+                  onChange={this._handleChange}
+                />
               )}
             </Form.Item>
             <Form.Item label={`RCM ${t('account')}`}>
@@ -232,44 +260,46 @@ class WireTransferRequestForm extends PureComponent {
             </Form.Item>
             <Form.Item label={`${t('amount')} USD`}>
               {getFieldDecorator('amount', {
-                rules: [ { required: true, message: 'Por favor indique el monto' },
-                  {
-                    validator: this.handleInversion
-                  } ],
-              })(
-                <div>
-                <Input
-                  name="amount"
-                  onChange={this._handleChange}
-                  placeholder={`${t('amountNote')} $`}
-                />
-                </div>
-
-              )}
-
-            </Form.Item>
-            <Form.Item label={`${t('commissionsCharge')} USD`}>
-              {getFieldDecorator('commissionsCharge', {
                 rules: [
+                  { required: true, message: 'Por favor indique el monto' },
                   {
-                    required: !!this.state.commissionsCharge,
-                    message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
+                    validator: this.handleInversion,
                   },
-                  {
-                    validator: this.handleCommission
-                  }
                 ],
               })(
                 <div>
                   <Input
-                    name="commissionsCharge"
+                    name="amount"
                     onChange={this._handleChange}
-                    placeholder={`${t('commissionsCharge')} $`}
+                    placeholder={`${t('amountNote')} $`}
                   />
                 </div>
               )}
-
             </Form.Item>
+            {isOTCAccount && (
+              <Form.Item label={`${t('commissionsCharge')} USD`}>
+                {getFieldDecorator('commissionsCharge', {
+                  rules: [
+                    {
+                      required: !!this.state.commissionsCharge,
+                      message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
+                    },
+                    {
+                      validator: this.handleCommission,
+                    },
+                  ],
+                })(
+                  <div>
+                    <Input
+                      name="commissionsCharge"
+                      onChange={this._handleChange}
+                      placeholder={`${t('commissionsCharge')} $`}
+                    />
+                  </div>
+                )}
+              </Form.Item>
+            )}
+
             <Form.Item label={`${t('commissionsReferenceDetail')}`}>
               {getFieldDecorator('commissionsReferenceDetail', {
                 rules: [
@@ -280,14 +310,14 @@ class WireTransferRequestForm extends PureComponent {
                 ],
               })(
                 <div>
-                  <TextArea rows={4}
+                  <TextArea
+                    rows={4}
                     name="commissionsReferenceDetail"
                     onChange={this._handleChange}
                     placeholder={`${t('commissionsReferenceDetail')}`}
                   />
                 </div>
               )}
-
             </Form.Item>
             <Divider orientation="left">Detalles de Cuenta ( Beneficiario)</Divider>
             <p>Detalles de la cuenta a la que quiere transferir</p>
@@ -349,14 +379,14 @@ class WireTransferRequestForm extends PureComponent {
                 ],
               })(
                 <div>
-                  <TextArea rows={4}
-                            name="beneficiaryPersonAddress"
-                            onChange={this._handleChange}
-                            placeholder={`Dirección`}
+                  <TextArea
+                    rows={4}
+                    name="beneficiaryPersonAddress"
+                    onChange={this._handleChange}
+                    placeholder={`Dirección`}
                   />
                 </div>
               )}
-
             </Form.Item>
             <Divider orientation="left">Banco Beneficiario</Divider>
             <p>Información del banco que recibe los fondos</p>
@@ -380,7 +410,7 @@ class WireTransferRequestForm extends PureComponent {
               {getFieldDecorator('beneficiaryBankSwift', {
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: `${t('requiredFieldMessage')} Swift}`,
                   },
                 ],
@@ -388,6 +418,22 @@ class WireTransferRequestForm extends PureComponent {
                 <Input
                   placeholder={`Swift`}
                   name="beneficiaryBankSwift"
+                  onChange={this._handleChange}
+                />
+              )}
+            </Form.Item>
+            <Form.Item label={`ABA`}>
+              {getFieldDecorator('beneficiaryBankABA', {
+                rules: [
+                  {
+                    required: false,
+                    message: `${t('requiredFieldMessage')} ABA}`,
+                  },
+                ],
+              })(
+                <Input
+                  placeholder={`ABA`}
+                  name="beneficiaryBankABA"
                   onChange={this._handleChange}
                 />
               )}
@@ -402,10 +448,11 @@ class WireTransferRequestForm extends PureComponent {
                 ],
               })(
                 <div>
-                  <TextArea rows={4}
-                            name="beneficiaryBankAddress"
-                            onChange={this._handleChange}
-                            placeholder={`Dirección`}
+                  <TextArea
+                    rows={4}
+                    name="beneficiaryBankAddress"
+                    onChange={this._handleChange}
+                    placeholder={`Dirección`}
                   />
                 </div>
               )}
@@ -444,6 +491,22 @@ class WireTransferRequestForm extends PureComponent {
                 />
               )}
             </Form.Item>
+            <Form.Item label={`ABA`}>
+              {getFieldDecorator('intermediaryBankABA', {
+                rules: [
+                  {
+                    required: false,
+                    message: `${t('requiredFieldMessage')} ABA}`,
+                  },
+                ],
+              })(
+                <Input
+                  placeholder={`ABA`}
+                  name="intermediaryBankABA"
+                  onChange={this._handleChange}
+                />
+              )}
+            </Form.Item>
             <Form.Item label={`Dirección`}>
               {getFieldDecorator('intermediaryBankAddress', {
                 rules: [
@@ -454,10 +517,11 @@ class WireTransferRequestForm extends PureComponent {
                 ],
               })(
                 <div>
-                  <TextArea rows={4}
-                            name="intermediaryBankAddress"
-                            onChange={this._handleChange}
-                            placeholder={`Dirección`}
+                  <TextArea
+                    rows={4}
+                    name="intermediaryBankAddress"
+                    onChange={this._handleChange}
+                    placeholder={`Dirección`}
                   />
                 </div>
               )}
@@ -487,7 +551,7 @@ class WireTransferRequestForm extends PureComponent {
             <Alert
               message="Acepto (amos) y reconozco (reconocemos) que es posible que un banco corresponsal u otra entidad financiera que intervenga en la transferencia/giro por mi (nosotros) solicitando o requerido, sea de mi pais o del exterior, pueda rechazar la transferencia/giro y/o retener, bloquear, penalizar y/o congelar los fondos objeto de la solicitud en cumplimiento de las normas que le sean aplicables (lavado de activos AML, OFAC, ONU, etc) y exonero (exoneramos) de responsabilidad a Royal Capital como Broker y a los bancos que se utilicen para las transferencias respectivas, en los maximos terminos adminitidos por la ley aplicable, por cualquier perjuicio que dichas acciones puedan ocacionarme (ocacionarnos). "
               type="warning"
-              style={{margin: '10px 0 30px', textAlign: 'justify' }}
+              style={{ margin: '10px 0 30px', textAlign: 'justify' }}
             />
             <Form.Item label="Entiendo lo anteriormente mencionado sobre los periodos de retiro">
               {getFieldDecorator('acceptsWithdrawalRequest', {
@@ -514,7 +578,6 @@ class WireTransferRequestForm extends PureComponent {
                 />
               )}
             </Form.Item>
-
 
             <Form.Item>
               <Button

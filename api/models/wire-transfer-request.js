@@ -46,6 +46,10 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    beneficiaryBankABA: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     beneficiaryBankAddress: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -55,6 +59,10 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
     },
     intermediaryBankSwift: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    intermediaryBankABA: {
       type: DataTypes.STRING,
       allowNull: true,
     },
