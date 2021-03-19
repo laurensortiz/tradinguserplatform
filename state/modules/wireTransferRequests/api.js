@@ -1,46 +1,46 @@
-import fetch from '../../../common/fetch';
+import fetch from '../../../common/fetch'
 
 export const getWireTransferRequests = async (requestData) => {
-  return fetch( {
+  return fetch({
     method: 'post',
     url: 'wire-transfer-request',
     data: requestData,
-  } );
-};
+  })
+}
 
 export const getWireTransferRequest = async (wireTransferRequestId) => {
-  return fetch( {
+  return fetch({
     method: 'get',
     url: `wire-transfer-request/${wireTransferRequestId}`,
-  } );
-};
+  })
+}
 
 export const addWireTransferRequest = async (wireTransferRequest) => {
-  return fetch( {
+  return fetch({
     method: 'post',
     url: 'wire-transfer-request/create',
-    data: wireTransferRequest
-  } );
-};
+    data: wireTransferRequest,
+  })
+}
 
-export const getUserAccountWireTransferRequests = async (userAccountId) => {
-  return fetch( {
+export const getUserAccountWireTransferRequests = async (userAccountId, associatedOperation) => {
+  return fetch({
     method: 'get',
-    url: `wire-transfer-request/user-account/${ userAccountId }`,
-  } );
-};
+    url: `wire-transfer-request/user-account/${userAccountId}/${associatedOperation}`,
+  })
+}
 
 export const editWireTransferRequest = async (wireTransferRequest) => {
-  return fetch( {
+  return fetch({
     method: 'put',
-    url: `wire-transfer-request/${ wireTransferRequest.id }`,
-    data: wireTransferRequest
-  } );
-};
+    url: `wire-transfer-request/${wireTransferRequest.id}`,
+    data: wireTransferRequest,
+  })
+}
 
 export const deleteWireTransferRequest = async (wireTransferRequestId) => {
-  return fetch( {
+  return fetch({
     method: 'delete',
-    url: `wire-transfer-request/${ wireTransferRequestId }`,
-  } );
-};
+    url: `wire-transfer-request/${wireTransferRequestId}`,
+  })
+}

@@ -1,16 +1,18 @@
-import React, { PureComponent } from 'react';
-import { bindActionCreators } from "redux";
-import { connect } from 'react-redux';
-import moment from 'moment';
-import _ from 'lodash';
+import React, { PureComponent } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import moment from 'moment'
+import _ from 'lodash'
 
-moment.locale( 'es' ); // Set Lang to Spanish
+moment.locale('es') // Set Lang to Spanish
 
-import { Input, Row, Col, Button, Form, Tag, DatePicker, Icon, Switch, Upload, Select, Divider } from 'antd';
+import { Input, Row, Col, Button, Form, DatePicker, Icon, Select, Divider } from 'antd'
 
-import { AmountFormatValidation } from '../../common/utils';
+import { AmountFormatValidation } from '../../common/utils'
+import { accountOperations } from '../../state/modules/accounts'
+import { userOperations } from '../../state/modules/users'
 
-const { TextArea } = Input;
+const { TextArea } = Input
 const { Option } = Select
 
 class AddOrEditForm extends PureComponent {
@@ -36,118 +38,250 @@ class AddOrEditForm extends PureComponent {
 
     transferMethod: '',
     accountWithdrawalRequest: '',
-    createdAt: '',
-    updatedAt: '',
-    closedAt: '',
+    createdAt: null,
+    updatedAt: null,
+    closedAt: null,
     confirmDirty: false,
     isInvalid: true,
     username: '',
     status: 1,
-    isLoaded: false
-  };
+    isLoaded: false,
+    accounts: [],
+    users: [],
+  }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {
-      ...prevState
-    };
-    if (!_.isEmpty( nextProps.selectedWireTransferRequest ) && !prevState.isLoaded) {
-      _.assignIn( updatedState, {
-        ...nextProps.selectedWireTransferRequest,
-        isLoaded: true
-      } )
-
+      ...prevState,
     }
-    return !_.isEmpty( updatedState ) ? updatedState : null;
+
+    if (!_.isEqual(nextProps.accounts, prevState.accounts)) {
+      _.assign(updatedState, {
+        accounts: nextProps.accounts,
+      })
+    }
+    if (!_.isEqual(nextProps.users, prevState.users)) {
+      _.assign(updatedState, {
+        users: _.filter(nextProps.users, { roleId: 2, status: 1 }),
+      })
+    }
+
+    if (!_.isEmpty(nextProps.selectedWireTransferRequest) && !prevState.isLoaded) {
+      _.assignIn(updatedState, {
+        ...nextProps.selectedWireTransferRequest,
+        isLoaded: true,
+      })
+    }
+
+    return !_.isEmpty(updatedState) ? updatedState : null
   }
 
-  _handleChange = e => {
-    let value = '';
-    if (e.target.type === 'checkbox') {
-      value = e.target.checked ? 1 : 0;
-    } else {
-      value = e.target.value;
+  componentDidMount() {
+    if (_.isEmpty(this.state.accounts)) {
+      this.props.fetchGetAccounts()
     }
-    this.setState( { [ e.target.name ]: value } );
-  };
+    if (_.isEmpty(this.state.users)) {
+      this.props.fetchGetUsers()
+    }
+  }
 
+  _getAccountSelectOption = (options) => {
+    return _.map(options, ({ id, name, associatedOperation }) => (
+      <Option key={`${id}_${name}_${associatedOperation}`}>{name}</Option>
+    ))
+  }
 
-  _handleSubmit = e => {
-    e.preventDefault();
-    this.props.form.validateFields( (err, values) => {
+  _getUserSelectOption = (options) => {
+    return _.map(options, ({ id, username }) => (
+      <Option key={`${id}_${username}`}>{username}</Option>
+    ))
+  }
+
+  _handleChange = (e) => {
+    let value = ''
+    if (e.target.type === 'checkbox') {
+      value = e.target.checked ? 1 : 0
+    } else {
+      value = e.target.value
+    }
+    this.setState({ [e.target.name]: value })
+  }
+
+  _handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
       if (!err) {
-        const saveState = _.omit( this.state, [ 'confirmDirty', 'isInvalid' ] );
-        if (_.isEqual( this.props.actionType, 'add' )) {
-          this.props.onAddNew( saveState )
+        const saveState = _.omit(this.state, ['confirmDirty', 'isInvalid', 'accounts', 'users'])
+        if (_.isEqual(this.props.actionType, 'add')) {
+          this.props.onAddNew({
+            ...saveState,
+            guaranteeOperationNet:
+              Number(guaranteeOperation) -
+              (Number(this.state.amount) + Number(this.state.commissionsCharge)),
+          })
         } else {
-          this.props.onEdit( saveState )
+          this.props.onEdit(saveState)
         }
       }
-    } );
-
-  };
+    })
+  }
 
   _handleChangeSelect = (event) => {
-    const { value, name } = event;
+    const { value, name } = event
 
-    this.setState( {
-      [ name ]: value
-    } )
-  };
+    this.setState({
+      [name]: value,
+    })
+  }
 
+  _handleCustomChangeSelect = (event) => {
+    const { value } = event
+    const fieldName = event.name
+    const codeIdName = value.split('_')
+
+    const id = Number(codeIdName[0])
+    const name = codeIdName[1]
+
+    if (_.isEqual(fieldName, 'user')) {
+      this.setState({
+        username: name,
+      })
+    } else if (_.isEqual(fieldName, 'accountWithdrawalRequest')) {
+      this.setState({
+        accountWithdrawalRequest: name,
+        associatedOperation: Number(codeIdName[2] || 1),
+      })
+    } else {
+      this.setState({
+        [fieldName]: value,
+      })
+    }
+  }
+
+  _setCreatedDate = (date) => {
+    this.setState({
+      createdAt: moment.tz(date, 'America/New_York').format(),
+    })
+  }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const isAddAction = _.isEqual( this.props.actionType, 'add' );
+    const { getFieldDecorator } = this.props.form
+    const isAddAction = _.isEqual(this.props.actionType, 'add')
 
     // Default values for edit action
-    const statusInitValue = !_.isNil( this.state.status ) ? this.state.status : undefined;
+    const statusInitValue = !_.isNil(this.state.status) ? this.state.status : undefined
 
-    const usernameInitValue = !_.isEmpty( this.state.username ) ? this.state.username : undefined;
-    const currencyTypeInitValue = !_.isEmpty( this.state.currencyType ) ? this.state.currencyType : undefined;
-    const accountRCMInitValue = !_.isEmpty( this.state.accountRCM ) ? this.state.accountRCM : undefined;
-    const transferMethodInitValue = !_.isEmpty( this.state.transferMethod ) ? this.state.transferMethod : undefined;
-    const accountWithdrawalRequestInitValue = !_.isEmpty( this.state.accountWithdrawalRequest ) ? this.state.accountWithdrawalRequest : undefined;
+    const usernameInitValue = !_.isEmpty(this.state.username) ? this.state.username : undefined
+    const currencyTypeInitValue = !_.isEmpty(this.state.currencyType)
+      ? this.state.currencyType
+      : undefined
+    const accountRCMInitValue = !_.isEmpty(this.state.accountRCM)
+      ? this.state.accountRCM
+      : undefined
+    const transferMethodInitValue = !_.isEmpty(this.state.transferMethod)
+      ? this.state.transferMethod
+      : undefined
+    const accountWithdrawalRequestInitValue = !_.isEmpty(this.state.accountWithdrawalRequest)
+      ? this.state.accountWithdrawalRequest
+      : undefined
 
-    const amountInitValue = this.state.amount ? this.state.amount : undefined;
-    const commissionsChargeInitValue = this.state.commissionsCharge ? this.state.commissionsCharge : undefined;
-    const commissionsReferenceDetailInitValue = !_.isEmpty( this.state.commissionsReferenceDetail ) ? this.state.commissionsReferenceDetail : undefined;
-    const beneficiaryPersonAccountNumberInitValue = !_.isEmpty( this.state.beneficiaryPersonAccountNumber ) ? this.state.beneficiaryPersonAccountNumber : undefined;
-    const beneficiaryPersonFirstNameInitValue = !_.isEmpty( this.state.beneficiaryPersonFirstName ) ? this.state.beneficiaryPersonFirstName : undefined;
-    const beneficiaryPersonLastNameInitValue = !_.isEmpty( this.state.beneficiaryPersonLastName ) ? this.state.beneficiaryPersonLastName : undefined;
-    const notesInitValue = !_.isEmpty( this.state.notes ) ? this.state.notes : undefined;
+    const amountInitValue = this.state.amount ? this.state.amount : undefined
+    const commissionsChargeInitValue = this.state.commissionsCharge
+      ? this.state.commissionsCharge
+      : undefined
+    const commissionsReferenceDetailInitValue = !_.isEmpty(this.state.commissionsReferenceDetail)
+      ? this.state.commissionsReferenceDetail
+      : undefined
+    const beneficiaryPersonAccountNumberInitValue = !_.isEmpty(
+      this.state.beneficiaryPersonAccountNumber
+    )
+      ? this.state.beneficiaryPersonAccountNumber
+      : undefined
+    const beneficiaryPersonFirstNameInitValue = !_.isEmpty(this.state.beneficiaryPersonFirstName)
+      ? this.state.beneficiaryPersonFirstName
+      : undefined
+    const beneficiaryPersonLastNameInitValue = !_.isEmpty(this.state.beneficiaryPersonLastName)
+      ? this.state.beneficiaryPersonLastName
+      : undefined
+    const notesInitValue = !_.isEmpty(this.state.notes) ? this.state.notes : undefined
 
-    const beneficiaryPersonAddressInitValue = !_.isEmpty( this.state.beneficiaryPersonAddress ) ? this.state.beneficiaryPersonAddress : undefined;
-    const beneficiaryBankNameInitValue = !_.isEmpty( this.state.beneficiaryBankName ) ? this.state.beneficiaryBankName : undefined;
-    const beneficiaryBankSwiftInitValue = !_.isEmpty( this.state.beneficiaryBankSwift ) ? this.state.beneficiaryBankSwift : undefined;
-    const beneficiaryBankABAInitValue = !_.isEmpty( this.state.beneficiaryBankABA ) ? this.state.beneficiaryBankABA : undefined;
-    const beneficiaryBankAddressInitValue = !_.isEmpty( this.state.beneficiaryBankAddress ) ? this.state.beneficiaryBankAddress : undefined;
+    const beneficiaryPersonAddressInitValue = !_.isEmpty(this.state.beneficiaryPersonAddress)
+      ? this.state.beneficiaryPersonAddress
+      : undefined
+    const beneficiaryBankNameInitValue = !_.isEmpty(this.state.beneficiaryBankName)
+      ? this.state.beneficiaryBankName
+      : undefined
+    const beneficiaryBankSwiftInitValue = !_.isEmpty(this.state.beneficiaryBankSwift)
+      ? this.state.beneficiaryBankSwift
+      : undefined
+    const beneficiaryBankABAInitValue = !_.isEmpty(this.state.beneficiaryBankABA)
+      ? this.state.beneficiaryBankABA
+      : undefined
+    const beneficiaryBankAddressInitValue = !_.isEmpty(this.state.beneficiaryBankAddress)
+      ? this.state.beneficiaryBankAddress
+      : undefined
 
-    const intermediaryBankNameInitValue = !_.isEmpty( this.state.intermediaryBankName ) ? this.state.intermediaryBankName : undefined;
-    const intermediaryBankSwiftInitValue = !_.isEmpty( this.state.intermediaryBankSwift ) ? this.state.intermediaryBankSwift : undefined;
-    const intermediaryBankABAInitValue = !_.isEmpty( this.state.intermediaryBankABA ) ? this.state.intermediaryBankABA : undefined;
+    const intermediaryBankNameInitValue = !_.isEmpty(this.state.intermediaryBankName)
+      ? this.state.intermediaryBankName
+      : undefined
+    const intermediaryBankSwiftInitValue = !_.isEmpty(this.state.intermediaryBankSwift)
+      ? this.state.intermediaryBankSwift
+      : undefined
+    const intermediaryBankABAInitValue = !_.isEmpty(this.state.intermediaryBankABA)
+      ? this.state.intermediaryBankABA
+      : undefined
 
-    const intermediaryBankAddressInitValue = !_.isEmpty( this.state.intermediaryBankAddress ) ? this.state.intermediaryBankAddress : undefined;
-    const intermediaryBankAccountInterBankInitValue = !_.isEmpty( this.state.intermediaryBankAccountInterBank ) ? this.state.intermediaryBankAccountInterBank : undefined;
+    const intermediaryBankAddressInitValue = !_.isEmpty(this.state.intermediaryBankAddress)
+      ? this.state.intermediaryBankAddress
+      : undefined
+    const intermediaryBankAccountInterBankInitValue = !_.isEmpty(
+      this.state.intermediaryBankAccountInterBank
+    )
+      ? this.state.intermediaryBankAccountInterBank
+      : undefined
 
+    const createdDateInitValue = !_.isNull(this.state.createdAt)
+      ? moment.tz(this.state.createdAt, 'America/New_York')
+      : undefined
 
     return (
-      <Form onSubmit={ this._handleSubmit } className="auth-form">
-        <Row gutter={ 16 }>
-          <Col xs={ 24 } sm={ 12 }>
-            <Form.Item label="Usuario">
-              { getFieldDecorator( 'username', {
-                initialValue: usernameInitValue,
-                rules: [
-                  {
-                    required: false,
-                  },
-                ],
-              } )( <Input placeholder="Usuario" name="username" readOnly/> ) }
-            </Form.Item>
+      <Form onSubmit={this._handleSubmit} className="auth-form">
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
+            {this.props.actionType === 'add' ? (
+              <Form.Item label="Usuario">
+                {getFieldDecorator('user', {
+                  rules: [{ required: true, message: 'Por favor ingrese el Usuario' }],
+                })(
+                  <Select
+                    showSearch={true}
+                    name="user"
+                    onChange={(value) =>
+                      this._handleCustomChangeSelect({ name: 'username', value })
+                    }
+                    placeholder="Usuario"
+                    showArrow
+                  >
+                    {this._getUserSelectOption(this.state.users)}
+                  </Select>
+                )}
+              </Form.Item>
+            ) : (
+              <Form.Item label="Usuario">
+                {getFieldDecorator('username', {
+                  initialValue: usernameInitValue,
+                  rules: [
+                    {
+                      required: false,
+                    },
+                  ],
+                })(<Input placeholder="Usuario" name="username" readOnly />)}
+              </Form.Item>
+            )}
           </Col>
-          <Col xs={ 24 } sm={ 12 }>
+          <Col xs={24} sm={12}>
             <Form.Item label="Seleccione la moneda de transferencia">
-              { getFieldDecorator( 'currencyType', {
+              {getFieldDecorator('currencyType', {
                 rules: [
                   {
                     required: true,
@@ -155,35 +289,43 @@ class AddOrEditForm extends PureComponent {
                   },
                 ],
                 initialValue: currencyTypeInitValue,
-              } )(
+              })(
                 <Select
-                  onChange={ value => this._handleChangeSelect( { name: 'currencyType', value } ) }>
+                  onChange={(value) => this._handleChangeSelect({ name: 'currencyType', value })}
+                >
                   <Option value="USD">USD</Option>
                   <Option value="EUR">EUR</Option>
                   <Option value="GBP">GBP</Option>
                 </Select>
-              ) }
+              )}
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={ 16 }>
-          <Col xs={ 24 } sm={ 12 }>
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
             <Form.Item label="Cuenta RCM">
-              { getFieldDecorator( 'accountRCM', {
+              {getFieldDecorator('accountRCM', {
                 initialValue: accountRCMInitValue,
-                rules: [ {
-                  required: true,
-                  message: 'Por favor ingrese la cuenta RCM',
-                } ],
-              } )(
-                <Input name="accountRCM" type="accountRCM" onChange={ this._handleChange }
-                       prefix={ <Icon type="bank" style={ { color: 'rgba(0,0,0,.25)' } }/> } placeholder="Cuenta"/>
-              ) }
+                rules: [
+                  {
+                    required: true,
+                    message: 'Por favor ingrese la cuenta RCM',
+                  },
+                ],
+              })(
+                <Input
+                  name="accountRCM"
+                  type="accountRCM"
+                  onChange={this._handleChange}
+                  prefix={<Icon type="bank" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  placeholder="Cuenta"
+                />
+              )}
             </Form.Item>
           </Col>
-          <Col xs={ 24 } sm={ 12 }>
+          <Col xs={24} sm={12}>
             <Form.Item label="Método de transferencia">
-              { getFieldDecorator( 'transferMethod', {
+              {getFieldDecorator('transferMethod', {
                 initialValue: transferMethodInitValue,
                 rules: [
                   {
@@ -191,45 +333,59 @@ class AddOrEditForm extends PureComponent {
                     message: `Requerido Método de transferencia`,
                   },
                 ],
-              } )(
+              })(
                 <Select
-                  onChange={ value => this._handleChangeSelect( { name: 'transferMethod', value } ) }>
-
+                  onChange={(value) => this._handleChangeSelect({ name: 'transferMethod', value })}
+                >
                   <Option value="Banco">Banco</Option>
-                  <Option value="MoneyGram">MoneyGram</Option>
+                  <Option value="Remesa">Remesa</Option>
                 </Select>
-              ) }
+              )}
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={ 16 }>
-          <Col xs={ 24 } sm={ 12 }>
-            <Form.Item label="Cuenta para retiro de fondos">
-              { getFieldDecorator( 'accountWithdrawalRequest', {
-                initialValue: accountWithdrawalRequestInitValue,
-                rules: [
-                  {
-                    required: false,
-                  },
-                ],
-              } )(
-                // <Select
-                //   onChange={ value => this._handleChangeSelect( { name: 'accountWithdrawalRequest', value } ) }>
-                //   <Option value="OTC">OTC</Option>
-                //   <Option value="ProfitMonth">ProfitMonth</Option>
-                //   <Option value="Comisiones">Comisiones</Option>
-                // </Select>
-                <Input
-                  name="accountWithdrawalRequest"
-                  onChange={ this._handleChange }
-                  placeholder={ `Cuenta para retiro de fondos` }
-                />
-              ) }
-            </Form.Item>
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
+            {this.props.actionType === 'add' ? (
+              <Form.Item label="Cuenta para retiro de fondos">
+                {getFieldDecorator('accountWithdrawalRequest', {
+                  rules: [{ required: true, message: 'Por favor indique el tipo de Cuenta' }],
+                })(
+                  <Select
+                    showSearch={true}
+                    name="user"
+                    onChange={(value) =>
+                      this._handleCustomChangeSelect({ name: 'accountWithdrawalRequest', value })
+                    }
+                    placeholder="Cuenta para retiro de fondos"
+                    showArrow
+                  >
+                    {this._getAccountSelectOption(this.state.accounts)}
+                  </Select>
+                )}
+              </Form.Item>
+            ) : (
+              <Form.Item label="Cuenta para retiro de fondos">
+                {getFieldDecorator('accountWithdrawalRequest', {
+                  initialValue: accountWithdrawalRequestInitValue,
+                  rules: [
+                    {
+                      required: false,
+                    },
+                  ],
+                })(
+                  <Input
+                    name="accountWithdrawalRequest"
+                    onChange={this._handleChange}
+                    placeholder={`Cuenta para retiro de fondos`}
+                  />
+                )}
+              </Form.Item>
+            )}
           </Col>
-          <Col xs={ 24 } sm={ 12 }>
-            <Form.Item label={ `Monto USD` }>
-              { getFieldDecorator( 'amount', {
+          <Col xs={24} sm={12}>
+            <Form.Item label={`Monto USD`}>
+              {getFieldDecorator('amount', {
                 initialValue: amountInitValue,
                 value: amountInitValue,
                 rules: [
@@ -237,79 +393,85 @@ class AddOrEditForm extends PureComponent {
                     required: false,
                   },
                   {
-                    validator: (rule, commissionsCharge) => AmountFormatValidation( rule, commissionsCharge ),
+                    validator: (rule, commissionsCharge) =>
+                      AmountFormatValidation(rule, commissionsCharge),
                   },
                 ],
-              } )(
-                <Input
-                  name="amount"
-                  onChange={ this._handleChange }
-                  placeholder={ `Monto USD` }
-                />
-              ) }
-
+              })(<Input name="amount" onChange={this._handleChange} placeholder={`Monto USD`} />)}
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={ 16 }>
-          <Col xs={ 24 } sm={ 12 }>
-            <Form.Item label={ `Cobro de Comisiones USD` }>
-              { getFieldDecorator( 'commissionsCharge', {
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
+            <Form.Item label={`Cobro de Comisiones USD`}>
+              {getFieldDecorator('commissionsCharge', {
                 initialValue: commissionsChargeInitValue,
                 rules: [
                   {
                     required: false,
                   },
                   {
-                    validator: (rule, commissionsCharge) => AmountFormatValidation( rule, commissionsCharge ),
+                    validator: (rule, commissionsCharge) =>
+                      AmountFormatValidation(rule, commissionsCharge),
                   },
                 ],
-              } )(
+              })(
                 <Input
                   name="commissionsCharge"
-                  onChange={ this._handleChange }
-                  placeholder={ `Cobro de Comisiones USD` }
+                  onChange={this._handleChange}
+                  placeholder={`Cobro de Comisiones USD`}
                 />
-              ) }
-
+              )}
             </Form.Item>
           </Col>
-          <Col xs={ 24 } sm={ 12 }>
+          <Col xs={24} sm={12}>
             <Form.Item label="Detalle de las referencias que generaron comisiones">
-              { getFieldDecorator( 'description', {
+              {getFieldDecorator('description', {
                 initialValue: commissionsReferenceDetailInitValue,
                 rules: [
                   {
                     required: false,
                   },
                 ],
-              } )( <TextArea rows={ 3 } placeholder="Detalle de las referencias que generaron comisiones"
-                             name="commissionsReferenceDetail"
-                             onChange={ this._handleChange }/> ) }
+              })(
+                <TextArea
+                  rows={3}
+                  placeholder="Detalle de las referencias que generaron comisiones"
+                  name="commissionsReferenceDetail"
+                  onChange={this._handleChange}
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
 
-        <Divider orientation="left">Detalles de Cuenta ( Beneficiario)</Divider>
+        <Divider orientation="left">Detalles de Cuenta (Beneficiario)</Divider>
 
-        <Row gutter={ 16 }>
-          <Col xs={ 24 } sm={ 12 }><Form.Item label="Número de Cuenta">
-            { getFieldDecorator( 'beneficiaryPersonAccountNumber', {
-              initialValue: beneficiaryPersonAccountNumberInitValue,
-              rules: [
-                {
-                  required: true,
-                  message: 'Por favor ingrese Número de Cuenta',
-                },
-              ],
-            } )( <Input placeholder="Número de Cuenta" name="beneficiaryPersonAccountNumber"
-                        onChange={ this._handleChange }/> ) }
-          </Form.Item></Col>
-          <Col xs={ 24 } sm={ 12 }>
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
+            <Form.Item label="Número de Cuenta">
+              {getFieldDecorator('beneficiaryPersonAccountNumber', {
+                initialValue: beneficiaryPersonAccountNumberInitValue,
+                rules: [
+                  {
+                    required: true,
+                    message: 'Por favor ingrese Número de Cuenta',
+                  },
+                ],
+              })(
+                <Input
+                  placeholder="Número de Cuenta"
+                  name="beneficiaryPersonAccountNumber"
+                  onChange={this._handleChange}
+                />
+              )}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
             <React.Fragment>
-              <Col xs={ 24 } sm={ 12 }>
+              <Col xs={24} sm={12}>
                 <Form.Item label="Nombre">
-                  { getFieldDecorator( 'beneficiaryPersonFirstName', {
+                  {getFieldDecorator('beneficiaryPersonFirstName', {
                     initialValue: beneficiaryPersonFirstNameInitValue,
                     rules: [
                       {
@@ -317,13 +479,18 @@ class AddOrEditForm extends PureComponent {
                         message: 'Por favor ingrese Nombre',
                       },
                     ],
-                  } )( <Input placeholder="Nombre" name="beneficiaryPersonFirstName"
-                              onChange={ this._handleChange }/> ) }
+                  })(
+                    <Input
+                      placeholder="Nombre"
+                      name="beneficiaryPersonFirstName"
+                      onChange={this._handleChange}
+                    />
+                  )}
                 </Form.Item>
               </Col>
-              <Col xs={ 24 } sm={ 12 }>
+              <Col xs={24} sm={12}>
                 <Form.Item label="Apellido">
-                  { getFieldDecorator( 'beneficiaryPersonLastName', {
+                  {getFieldDecorator('beneficiaryPersonLastName', {
                     initialValue: beneficiaryPersonLastNameInitValue,
                     rules: [
                       {
@@ -331,17 +498,22 @@ class AddOrEditForm extends PureComponent {
                         message: 'Por favor ingrese Apellido',
                       },
                     ],
-                  } )( <Input placeholder="Apellido" name="beneficiaryPersonLastName"
-                              onChange={ this._handleChange }/> ) }
+                  })(
+                    <Input
+                      placeholder="Apellido"
+                      name="beneficiaryPersonLastName"
+                      onChange={this._handleChange}
+                    />
+                  )}
                 </Form.Item>
               </Col>
             </React.Fragment>
           </Col>
         </Row>
-        <Row gutter={ 16 }>
+        <Row gutter={16}>
           <Col>
-            <Form.Item label={ `Dirección` }>
-              { getFieldDecorator( 'beneficiaryPersonAddress', {
+            <Form.Item label={`Dirección`}>
+              {getFieldDecorator('beneficiaryPersonAddress', {
                 initialValue: beneficiaryPersonAddressInitValue,
                 rules: [
                   {
@@ -349,24 +521,23 @@ class AddOrEditForm extends PureComponent {
                     message: `Requerido Dirección`,
                   },
                 ],
-              } )(
-                <TextArea rows={ 4 }
-                          name="beneficiaryPersonAddress"
-                          onChange={ this._handleChange }
-                          placeholder={ `Dirección` }
+              })(
+                <TextArea
+                  rows={4}
+                  name="beneficiaryPersonAddress"
+                  onChange={this._handleChange}
+                  placeholder={`Dirección`}
                 />
-              ) }
-
+              )}
             </Form.Item>
           </Col>
         </Row>
 
-
         <Divider orientation="left">Banco Beneficiario</Divider>
         <Row>
-          <Col xs={ 24 } sm={ 24 }>
+          <Col xs={24} sm={24}>
             <Form.Item label="Nombre del Banco">
-              { getFieldDecorator( 'beneficiaryBankName', {
+              {getFieldDecorator('beneficiaryBankName', {
                 initialValue: beneficiaryBankNameInitValue,
                 rules: [
                   {
@@ -374,14 +545,19 @@ class AddOrEditForm extends PureComponent {
                     message: 'Por favor ingrese su Nombre del Banco',
                   },
                 ],
-              } )( <Input placeholder="Nombre del Banco" name="beneficiaryBankName"
-                          onChange={ this._handleChange }/> ) }
+              })(
+                <Input
+                  placeholder="Nombre del Banco"
+                  name="beneficiaryBankName"
+                  onChange={this._handleChange}
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={ 16 }>
+        <Row gutter={16}>
           <Form.Item label="Swift">
-            { getFieldDecorator( 'beneficiaryBankSwift', {
+            {getFieldDecorator('beneficiaryBankSwift', {
               initialValue: beneficiaryBankSwiftInitValue,
               rules: [
                 {
@@ -389,13 +565,18 @@ class AddOrEditForm extends PureComponent {
                   message: 'Por favor ingrese Swift',
                 },
               ],
-            } )( <Input placeholder="Swift" name="beneficiaryBankSwift"
-                        onChange={ this._handleChange }/> ) }
+            })(
+              <Input
+                placeholder="Swift"
+                name="beneficiaryBankSwift"
+                onChange={this._handleChange}
+              />
+            )}
           </Form.Item>
         </Row>
-        <Row gutter={ 16 }>
+        <Row gutter={16}>
           <Form.Item label="ABA">
-            { getFieldDecorator( 'beneficiaryBankABA', {
+            {getFieldDecorator('beneficiaryBankABA', {
               initialValue: beneficiaryBankABAInitValue,
               rules: [
                 {
@@ -403,14 +584,13 @@ class AddOrEditForm extends PureComponent {
                   message: 'Por favor ingrese ABA',
                 },
               ],
-            } )( <Input placeholder="ABA" name="beneficiaryBankABA"
-                        onChange={ this._handleChange }/> ) }
+            })(<Input placeholder="ABA" name="beneficiaryBankABA" onChange={this._handleChange} />)}
           </Form.Item>
         </Row>
-        <Row gutter={ 16 }>
+        <Row gutter={16}>
           <Col>
-            <Form.Item label={ `Dirección` }>
-              { getFieldDecorator( 'beneficiaryBankAddress', {
+            <Form.Item label={`Dirección`}>
+              {getFieldDecorator('beneficiaryBankAddress', {
                 initialValue: beneficiaryBankAddressInitValue,
                 rules: [
                   {
@@ -418,37 +598,41 @@ class AddOrEditForm extends PureComponent {
                     message: `Requerida Dirección`,
                   },
                 ],
-              } )(
-                <TextArea rows={ 4 }
-                          name="beneficiaryBankAddress"
-                          onChange={ this._handleChange }
-                          placeholder={ `Dirección` }
+              })(
+                <TextArea
+                  rows={4}
+                  name="beneficiaryBankAddress"
+                  onChange={this._handleChange}
+                  placeholder={`Dirección`}
                 />
-              ) }
-
+              )}
             </Form.Item>
           </Col>
         </Row>
 
-
         <Divider orientation="left">Banco Intermediario</Divider>
         <Row>
-          <Col xs={ 24 } sm={ 24 }>
+          <Col xs={24} sm={24}>
             <Form.Item label="Nombre del Banco">
-              { getFieldDecorator( 'intermediaryBankName', {
+              {getFieldDecorator('intermediaryBankName', {
                 initialValue: intermediaryBankNameInitValue,
                 rules: [
                   {
                     required: false,
                   },
                 ],
-              } )( <Input placeholder="Nombre del Banco" name="intermediaryBankName"
-                          onChange={ this._handleChange }/> ) }
+              })(
+                <Input
+                  placeholder="Nombre del Banco"
+                  name="intermediaryBankName"
+                  onChange={this._handleChange}
+                />
+              )}
             </Form.Item>
           </Col>
-          <Col xs={ 24 } sm={ 24 }>
+          <Col xs={24} sm={24}>
             <Form.Item label="Swift">
-              { getFieldDecorator( 'intermediaryBankSwift', {
+              {getFieldDecorator('intermediaryBankSwift', {
                 initialValue: intermediaryBankSwiftInitValue,
                 rules: [
                   {
@@ -456,13 +640,18 @@ class AddOrEditForm extends PureComponent {
                     message: 'Por favor ingrese Swift',
                   },
                 ],
-              } )( <Input placeholder="Swift" name="intermediaryBankSwift"
-                          onChange={ this._handleChange }/> ) }
+              })(
+                <Input
+                  placeholder="Swift"
+                  name="intermediaryBankSwift"
+                  onChange={this._handleChange}
+                />
+              )}
             </Form.Item>
           </Col>
-          <Col xs={ 24 } sm={ 24 }>
+          <Col xs={24} sm={24}>
             <Form.Item label="ABA">
-              { getFieldDecorator( 'intermediaryBankABA', {
+              {getFieldDecorator('intermediaryBankABA', {
                 initialValue: intermediaryBankABAInitValue,
                 rules: [
                   {
@@ -470,15 +659,16 @@ class AddOrEditForm extends PureComponent {
                     message: 'Por favor ingrese ABA',
                   },
                 ],
-              } )( <Input placeholder="ABA" name="intermediaryBankABA"
-                          onChange={ this._handleChange }/> ) }
+              })(
+                <Input placeholder="ABA" name="intermediaryBankABA" onChange={this._handleChange} />
+              )}
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={ 16 }>
-          <Col xs={ 24 } sm={ 24 }>
-            <Form.Item label={ `Dirección` }>
-              { getFieldDecorator( 'intermediaryBankAddress', {
+        <Row gutter={16}>
+          <Col xs={24} sm={24}>
+            <Form.Item label={`Dirección`}>
+              {getFieldDecorator('intermediaryBankAddress', {
                 initialValue: intermediaryBankAddressInitValue,
                 rules: [
                   {
@@ -486,64 +676,72 @@ class AddOrEditForm extends PureComponent {
                     message: `Requerida Dirección`,
                   },
                 ],
-              } )(
+              })(
                 <Input
                   name="intermediaryBankAddress"
-                  onChange={ this._handleChange }
-                  placeholder={ `Dirección` }
+                  onChange={this._handleChange}
+                  placeholder={`Dirección`}
                 />
-              ) }
-
+              )}
             </Form.Item>
           </Col>
-          <Col xs={ 24 } sm={ 24 }>
+          <Col xs={24} sm={24}>
             <Form.Item label="Cuenta entre bancos">
-              { getFieldDecorator( 'intermediaryBankAccountInterBank', {
+              {getFieldDecorator('intermediaryBankAccountInterBank', {
                 initialValue: intermediaryBankAccountInterBankInitValue,
                 rules: [
                   {
                     required: false,
                   },
                 ],
-              } )( <Input placeholder="Nombre del Banco" name="intermediaryBankAccountInterBank"
-                          onChange={ this._handleChange }/> ) }
+              })(
+                <Input
+                  placeholder="Nombre del Banco"
+                  name="intermediaryBankAccountInterBank"
+                  onChange={this._handleChange}
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={ 16 }>
+        <Row gutter={16}></Row>
 
-        </Row>
-
-
-        <Row>
-          <Col xs={ 24 } sm={ 12 }></Col>
-          <Col xs={ 24 } sm={ 12 }></Col>
-        </Row>
-
-
-        <hr/>
-        <Row>
-          <Col>
+        <hr />
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
             <Form.Item label="Estado">
-              { getFieldDecorator( 'status', {
+              {getFieldDecorator('status', {
                 initialValue: statusInitValue,
-                rules: [ { required: true, message: 'Por favor indique el estado' } ],
-              } )(
+                rules: [{ required: true, message: 'Por favor indique el estado' }],
+              })(
                 <Select
                   name="status"
-                  onChange={ value => this._handleChangeSelect( { name: 'status', value } ) }
+                  onChange={(value) => this._handleChangeSelect({ name: 'status', value })}
                   placeholder="Estado"
-                  showArrow={ isAddAction }
+                  showArrow
                 >
-                  <Option value={ 1 }>Activo</Option>
-                  <Option value={ 4 }>Cancelado</Option>
+                  <Option value={1}>Activo</Option>
+                  <Option value={4}>Cancelado</Option>
                 </Select>
-              ) }
+              )}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item label="Fecha de Creación">
+              {getFieldDecorator('createdAt', {
+                initialValue: createdDateInitValue,
+              })(
+                <DatePicker
+                  onChange={this._setCreatedDate}
+                  defaultPickerValue={createdDateInitValue}
+                  placeholder="Fecha de Creación"
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
         <Form.Item label="Notas Administrativas">
-          { getFieldDecorator( 'notes', {
+          {getFieldDecorator('notes', {
             initialValue: notesInitValue,
             rules: [
               {
@@ -551,29 +749,42 @@ class AddOrEditForm extends PureComponent {
                 message: 'Por favor ingrese su nota',
               },
             ],
-          } )( <TextArea rows={ 8 } placeholder="" name="notes"
-                         onChange={ this._handleChange }/> ) }
+          })(<TextArea rows={8} placeholder="" name="notes" onChange={this._handleChange} />)}
         </Form.Item>
         <Form.Item>
-          <Button style={ { width: '100%' } } type="primary" htmlType="submit" size="large"
-                  className="login-form-button">
+          <Button
+            style={{ width: '100%' }}
+            type="primary"
+            htmlType="submit"
+            size="large"
+            className="login-form-button"
+          >
             Guardar Actualización
           </Button>
         </Form.Item>
       </Form>
-
-    );
+    )
   }
 }
 
-
 function mapStateToProps(state) {
-  const { accountsState, usersState } = state;
-  return {}
+  const { accountsState, usersState } = state
+  return {
+    accounts: accountsState.list,
+    users: usersState.list,
+  }
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators( {}, dispatch );
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      fetchGetAccounts: accountOperations.fetchGetAccounts,
+      fetchGetUsers: userOperations.fetchGetUsers,
+    },
+    dispatch
+  )
 
-
-export default connect( mapStateToProps, mapDispatchToProps )( Form.create( { name: 'register' } )( AddOrEditForm ) );
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Form.create({ name: 'register' })(AddOrEditForm))

@@ -34,7 +34,10 @@ module.exports = {
           username: req.body.username,
           status: 1,
           userAccountId: req.body.userAccountId,
-          createdAt: moment(new Date()).tz('America/New_York').format(),
+          associatedOperation: req.body.associatedOperation,
+          createdAt: req.body.createdAt
+            ? moment(new Date(req.body.createdAt)).tz('America/New_York').format()
+            : moment(new Date()).tz('America/New_York').format(),
           updatedAt: moment(new Date()).tz('America/New_York').format(),
         })
 
@@ -62,6 +65,7 @@ module.exports = {
         return res.status(200).send(wireTransferRequest)
       })
     } catch (err) {
+      console.error(err)
       return res.status(500).send(err)
     }
   },
@@ -164,6 +168,8 @@ module.exports = {
               req.body.accountWithdrawalRequest || wireTransferRequest.accountWithdrawalRequest,
             userAccountId: req.body.userAccountId || wireTransferRequest.userAccountId,
             notes: req.body.notes || wireTransferRequest.notes,
+            associatedOperation:
+              req.body.associatedOperation | wireTransferRequest.associatedOperation,
             status: req.body.status,
             updatedAt: new Date(),
             closedAt:

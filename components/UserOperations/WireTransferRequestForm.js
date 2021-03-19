@@ -67,6 +67,7 @@ class WireTransferRequestForm extends PureComponent {
           accountWithdrawalRequest,
           userAccountId: id,
           username: user.username,
+          associatedOperation: account.associatedOperation,
           guaranteeOperationNet:
             Number(guaranteeOperation) -
             (Number(this.state.amount) + Number(this.state.commissionsCharge)),
@@ -213,7 +214,7 @@ class WireTransferRequestForm extends PureComponent {
                   onChange={(value) => this._handleChangeSelect({ name: 'transferMethod', value })}
                 >
                   <Option value="Banco">Banco</Option>
-                  <Option value="MoneyGram">MoneyGram</Option>
+                  <Option value="Remesa">Remesa</Option>
                 </Select>
               )}
             </Form.Item>
@@ -227,13 +228,6 @@ class WireTransferRequestForm extends PureComponent {
                   },
                 ],
               })(
-                // <Select
-                //   onChange={ value => this._handleChangeSelect( { name: 'accountWithdrawalRequest', value } ) }
-                //   disabled
-                // >
-                //   <Option value="OTC">OTC</Option>
-                //   <Option value="ProfitMonth">ProfitMonth</Option>
-                // </Select>
                 <Input
                   disabled
                   placeholder={`La cuenta para retiro de fondos`}

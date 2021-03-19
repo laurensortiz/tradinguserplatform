@@ -1,21 +1,20 @@
-import React, { PureComponent } from 'react';
-import { bindActionCreators } from "redux";
-import { connect } from 'react-redux';
-import moment from 'moment';
-import _ from 'lodash';
+import React, { PureComponent } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import moment from 'moment'
+import _ from 'lodash'
 
-moment.locale( 'es' ); // Set Lang to Spanish
+moment.locale('es') // Set Lang to Spanish
 
-import { Input, Button, Form, Select, Row, Col} from 'antd';
+import { Input, Button, Form, Select, Row, Col } from 'antd'
 
-import { accountOperations } from '../../state/modules/accounts';
-import { userOperations } from '../../state/modules/users';
-import { brokerOperations } from "../../state/modules/brokers";
+import { accountOperations } from '../../state/modules/accounts'
+import { userOperations } from '../../state/modules/users'
+import { brokerOperations } from '../../state/modules/brokers'
 
-import { AmountFormatValidation } from '../../common/utils';
+import { AmountFormatValidation } from '../../common/utils'
 
-
-const { Option } = Select;
+const { Option } = Select
 
 class AddOrEditUserAccountForm extends PureComponent {
   state = {
@@ -28,11 +27,11 @@ class AddOrEditUserAccountForm extends PureComponent {
     marginUsed: 0,
     user: {
       id: null,
-      username: ''
+      username: '',
     },
     broker: {
       id: null,
-      name: ''
+      name: '',
     },
     account: {
       id: null,
@@ -47,372 +46,424 @@ class AddOrEditUserAccountForm extends PureComponent {
     accounts: [],
     users: [],
     brokers: [],
-    lastUpdate: "",
-  };
+    lastUpdate: '',
+  }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    let stateUpdated = {};
+    let stateUpdated = {}
 
-    if(!_.isEmpty(nextProps.selectedAccount) && !_.isEqual(nextProps.selectedAccount.updatedAt.valueOf(), prevState.lastUpdate)) {
-
-      const {accountValue, guaranteeOperation,  marginUsed, balanceInitial} = nextProps.selectedAccount;
-      if(!_.isEqual(accountValue, prevState.accountValue) ||
+    if (
+      !_.isEmpty(nextProps.selectedAccount) &&
+      !_.isEqual(nextProps.selectedAccount.updatedAt.valueOf(), prevState.lastUpdate)
+    ) {
+      const {
+        accountValue,
+        guaranteeOperation,
+        marginUsed,
+        balanceInitial,
+      } = nextProps.selectedAccount
+      if (
+        !_.isEqual(accountValue, prevState.accountValue) ||
         !_.isEqual(guaranteeOperation, prevState.guaranteeOperation) ||
         !_.isEqual(marginUsed, prevState.marginUsed)
       ) {
-        _.assign( stateUpdated, {
+        _.assign(stateUpdated, {
           accountValue,
           guaranteeOperation,
           marginUsed,
           balanceInitial,
-          lastUpdate: nextProps.selectedAccount.updatedAt.valueOf()
-        } )
+          lastUpdate: nextProps.selectedAccount.updatedAt.valueOf(),
+        })
       }
-
     }
 
-    if (!_.isEqual( nextProps.accounts, prevState.accounts )) {
-      _.assign( stateUpdated, {
-        accounts: nextProps.accounts
-      } )
+    if (!_.isEqual(nextProps.accounts, prevState.accounts)) {
+      _.assign(stateUpdated, {
+        accounts: nextProps.accounts,
+      })
     }
-    if (!_.isEqual( nextProps.users, prevState.users )) {
-      _.assign( stateUpdated, {
-        users: _.filter( nextProps.users, { roleId: 2, status: 1 } ),
-      } )
-    }
-
-    if (!_.isEqual( nextProps.brokers, prevState.brokers )) {
-      _.assign( stateUpdated, {
-        brokers: nextProps.brokers
-      } )
+    if (!_.isEqual(nextProps.users, prevState.users)) {
+      _.assign(stateUpdated, {
+        users: _.filter(nextProps.users, { roleId: 2, status: 1 }),
+      })
     }
 
-    return !_.isEmpty( stateUpdated ) ? stateUpdated : null;
+    if (!_.isEqual(nextProps.brokers, prevState.brokers)) {
+      _.assign(stateUpdated, {
+        brokers: nextProps.brokers,
+      })
+    }
+
+    return !_.isEmpty(stateUpdated) ? stateUpdated : null
   }
 
-
   componentDidMount() {
-    if (_.isEmpty( this.state.accounts )) {
-      this.props.fetchGetAccounts();
+    if (_.isEmpty(this.state.accounts)) {
+      this.props.fetchGetAccounts()
     }
-    if (_.isEmpty( this.state.users )) {
-      this.props.fetchGetUsers();
+    if (_.isEmpty(this.state.users)) {
+      this.props.fetchGetUsers()
     }
-    if (_.isEmpty( this.state.brokers )) {
-      this.props.fetchGetBrokers();
+    if (_.isEmpty(this.state.brokers)) {
+      this.props.fetchGetBrokers()
     }
 
-    if (!_.isEmpty( this.props.selectedAccount )) {
-      const { selectedAccount } = this.props;
-      const brokerName = _.get(selectedAccount, 'broker.name', '');
+    if (!_.isEmpty(this.props.selectedAccount)) {
+      const { selectedAccount } = this.props
+      const brokerName = _.get(selectedAccount, 'broker.name', '')
 
-      this.setState( {
+      this.setState({
         ...this.state,
         ...selectedAccount,
-        brokerName
-      } )
+        brokerName,
+      })
     }
   }
 
   _handleChangeSelect = (event) => {
-    const { value } = event;
-    const fieldName = event.name;
-    const codeIdName = value.split( '_' );
+    const { value } = event
+    const fieldName = event.name
+    const codeIdName = value.split('_')
 
-    const id = Number( codeIdName[ 0 ] );
-    const name = codeIdName[ 1 ];
+    const id = Number(codeIdName[0])
+    const name = codeIdName[1]
 
-    if (_.isEqual( fieldName, 'user' )) {
-      const selectedUser = _.find( this.state.users, { id } );
-      this.setState( {
+    if (_.isEqual(fieldName, 'user')) {
+      const selectedUser = _.find(this.state.users, { id })
+      this.setState({
         user: {
           id,
           username: name,
         },
-      } )
-    } else if (_.isEqual( fieldName, 'account' )) {
-      this.setState( {
+      })
+    } else if (_.isEqual(fieldName, 'account')) {
+      this.setState({
         account: {
           id,
           name,
-          associatedOperation: Number(codeIdName[2] || 1)
+          associatedOperation: Number(codeIdName[2] || 1),
         },
-      } )
+      })
     } else {
-      this.setState( {
-        [ fieldName ]: {
+      this.setState({
+        [fieldName]: {
           id,
           name,
-        }
-      } )
+        },
+      })
     }
-  };
-
-  _handleChange = e => {
-    const value = _.isEmpty(e.target.value) ? '0.00' : e.target.value
-    this.setState( {
-      [ e.target.name ]: _.replace( value, ',', '' )
-    } );
-  };
-
-  _handleFieldsChange = field => {
-    console.log('tttttt');
   }
 
-  _handleSubmit = e => {
-    e.preventDefault();
-    this.props.form.validateFields( (err, values) => {
-      if (!err) {
-        const saveState = _.omit(this.state, ['accounts', 'users', 'brokers']);
+  _handleChange = (e) => {
+    const value = _.isEmpty(e.target.value) ? '0.00' : e.target.value
+    this.setState({
+      [e.target.name]: _.replace(value, ',', ''),
+    })
+  }
 
-        if (_.isEqual( this.props.actionType, 'add' )) {
-          this.props.onAddNew( saveState )
+  _handleFieldsChange = (field) => {
+    console.log('tttttt')
+  }
+
+  _handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        const saveState = _.omit(this.state, ['accounts', 'users', 'brokers'])
+
+        if (_.isEqual(this.props.actionType, 'add')) {
+          this.props.onAddNew(saveState)
         } else {
-          this.props.onEdit( saveState )
+          this.props.onEdit(saveState)
         }
       }
-    } );
-
-  };
-
-  _getSelectOption = options => {
-    return _.map( options, ({ id, name }) => <Option key={ `${ id }_${ name }` }>{ name }</Option> )
-  };
-
-  _getAccountSelectOption = options => {
-    return _.map( options, ({ id, name, associatedOperation }) => <Option
-      key={ `${ id }_${ name }_${ associatedOperation }` }>{ name }</Option> )
-  };
-
-  _getSelectOptions = options => {
-    return _.map(options, (option) => {
-      return (
-        <Option key={`${ option.id }_${option.name}`}>{option.name}</Option>
-      )
     })
-  };
+  }
 
-  _getUserSelectOption = options => {
-    return _.map( options, ({ id, username }) => <Option key={ `${ id }_${ username }` }>{ username }</Option> )
-  };
+  _getSelectOption = (options) => {
+    return _.map(options, ({ id, name }) => <Option key={`${id}_${name}`}>{name}</Option>)
+  }
 
+  _getSelectOptions = (options) => {
+    return _.map(options, (option) => {
+      return <Option key={`${option.id}_${option.name}`}>{option.name}</Option>
+    })
+  }
+
+  _getAccountSelectOption = (options) => {
+    return _.map(options, ({ id, name, associatedOperation }) => (
+      <Option key={`${id}_${name}_${associatedOperation}`}>{name}</Option>
+    ))
+  }
+
+  _getUserSelectOption = (options) => {
+    return _.map(options, ({ id, username }) => (
+      <Option key={`${id}_${username}`}>{username}</Option>
+    ))
+  }
 
   _handleConfirmBlur = (e) => {
-    const value = e.target.value;
-    this.setState( { confirmDirty: this.state.confirmDirty || !!value } );
-  };
+    const value = e.target.value
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value })
+  }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const isAddAction = _.isEqual( this.props.actionType, 'add' );
-    const associatedOperation =  _.get(this.state, 'account.associatedOperation', 1);
-
+    const { getFieldDecorator } = this.props.form
+    const isAddAction = _.isEqual(this.props.actionType, 'add')
+    const associatedOperation = _.get(this.state, 'account.associatedOperation', 1)
 
     // Default values for edit action
-    const accountInitValue = !_.isEmpty( this.state.account.name ) ? this.state.account.name : undefined;
-    const userInitValue = !_.isEmpty( this.state.user.username ) ? this.state.user.username : undefined;
-    const accountValueInitValue = !_.isEmpty( this.state.accountValue ) ? this.state.accountValue : undefined;
-    const guaranteeOperationInitValue = !_.isEmpty( this.state.guaranteeOperation ) ? this.state.guaranteeOperation : undefined;
-    const guaranteeCreditsInitValue = !_.isEmpty( this.state.guaranteeCredits ) ? this.state.guaranteeCredits : undefined;
-    const balanceInitialInitValue = !_.isEmpty( this.state.balanceInitial ) ? this.state.balanceInitial : undefined;
-    const balanceFinalInitValue = !_.isEmpty( this.state.balanceFinal ) ? this.state.balanceFinal : undefined;
-    const maintenanceMarginInitValue = !_.isEmpty( this.state.maintenanceMargin ) ? this.state.maintenanceMargin : undefined;
-    const marginUsedInitValue = !_.isEmpty( this.state.marginUsed ) ? this.state.marginUsed : undefined;
-    const commissionByReference = !_.isEmpty( this.state.commissionByReference ) ? this.state.commissionByReference : undefined;
-    const brokerInitValue = !_.isEmpty( this.state.brokerName ) ? this.state.brokerName : undefined;
-
+    const accountInitValue = !_.isEmpty(this.state.account.name)
+      ? this.state.account.name
+      : undefined
+    const userInitValue = !_.isEmpty(this.state.user.username)
+      ? this.state.user.username
+      : undefined
+    const accountValueInitValue = !_.isEmpty(this.state.accountValue)
+      ? this.state.accountValue
+      : undefined
+    const guaranteeOperationInitValue = !_.isEmpty(this.state.guaranteeOperation)
+      ? this.state.guaranteeOperation
+      : undefined
+    const guaranteeCreditsInitValue = !_.isEmpty(this.state.guaranteeCredits)
+      ? this.state.guaranteeCredits
+      : undefined
+    const balanceInitialInitValue = !_.isEmpty(this.state.balanceInitial)
+      ? this.state.balanceInitial
+      : undefined
+    const balanceFinalInitValue = !_.isEmpty(this.state.balanceFinal)
+      ? this.state.balanceFinal
+      : undefined
+    const maintenanceMarginInitValue = !_.isEmpty(this.state.maintenanceMargin)
+      ? this.state.maintenanceMargin
+      : undefined
+    const marginUsedInitValue = !_.isEmpty(this.state.marginUsed)
+      ? this.state.marginUsed
+      : undefined
+    const commissionByReference = !_.isEmpty(this.state.commissionByReference)
+      ? this.state.commissionByReference
+      : undefined
+    const brokerInitValue = !_.isEmpty(this.state.brokerName) ? this.state.brokerName : undefined
 
     return (
-      <Form onSubmit={ this._handleSubmit } className="auth-form">
+      <Form onSubmit={this._handleSubmit} className="auth-form">
         <Row gutter={10}>
           <Col xs={24} sm={8}>
             <Form.Item label="Usuario">
-              { getFieldDecorator( 'user', {
+              {getFieldDecorator('user', {
                 initialValue: userInitValue,
-                rules: [ { required: true, message: 'Por favor ingrese el Usuario' } ],
-              } )(
+                rules: [{ required: true, message: 'Por favor ingrese el Usuario' }],
+              })(
                 <Select
-                  showSearch={ true }
+                  showSearch={true}
                   name="user"
-                  onChange={ value => this._handleChangeSelect( { name: 'user', value } ) }
+                  onChange={(value) => this._handleChangeSelect({ name: 'user', value })}
                   placeholder="Usuario"
-                  disabled={ !isAddAction }
-                  showArrow={ isAddAction }
+                  disabled={!isAddAction}
+                  showArrow={isAddAction}
                 >
-                  { this._getUserSelectOption( this.state.users ) }
+                  {this._getUserSelectOption(this.state.users)}
                 </Select>
-              ) }
+              )}
             </Form.Item>
           </Col>
           <Col xs={24} sm={8}>
             <Form.Item label="Cuenta">
-              { getFieldDecorator( 'account', {
+              {getFieldDecorator('account', {
                 initialValue: accountInitValue,
-                rules: [ { required: true, message: 'Por favor indique el tipo de Cuenta' } ],
-              } )(
+                rules: [{ required: true, message: 'Por favor indique el tipo de Cuenta' }],
+              })(
                 <Select
-                  showSearch={ true }
+                  showSearch={true}
                   name="user"
-                  onChange={ value => this._handleChangeSelect( { name: 'account', value } ) }
+                  onChange={(value) => this._handleChangeSelect({ name: 'account', value })}
                   placeholder="Cuenta"
-                  showArrow={ isAddAction }
+                  showArrow={isAddAction}
                 >
-                  { this._getAccountSelectOption( this.state.accounts ) }
+                  {this._getAccountSelectOption(this.state.accounts)}
                 </Select>
-              ) }
+              )}
             </Form.Item>
           </Col>
           <Col xs={24} sm={8}>
             <Form.Item label="Corredor">
-              { getFieldDecorator( 'broker', {
+              {getFieldDecorator('broker', {
                 initialValue: brokerInitValue,
-                rules: [ { required: true, message: 'Por favor seleccione el corredor ' } ],
-              } )(
+                rules: [{ required: true, message: 'Por favor seleccione el corredor ' }],
+              })(
                 <Select
-                  showSearch={ true }
+                  showSearch={true}
                   name="broker"
-                  onChange={ value => this._handleChangeSelect( { name: 'broker', value } ) }
+                  onChange={(value) => this._handleChangeSelect({ name: 'broker', value })}
                   placeholder="Corredor"
-                  showArrow={ isAddAction }
+                  showArrow={isAddAction}
                 >
-                  { this._getSelectOptions( this.state.brokers ) }
+                  {this._getSelectOptions(this.state.brokers)}
                 </Select>
-              ) }
+              )}
             </Form.Item>
           </Col>
 
           <Col xs={24} sm={8}>
             <Form.Item label="Valor de la Cuenta">
-              { getFieldDecorator( 'accountValue', {
+              {getFieldDecorator('accountValue', {
                 initialValue: accountValueInitValue,
-                rules: [ { required: false, message: 'Por favor indique el valor de la cuenta' },
+                rules: [
+                  { required: false, message: 'Por favor indique el valor de la cuenta' },
                   {
-                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                  }
+                    validator: (rule, amount) => AmountFormatValidation(rule, amount),
+                  },
                 ],
-              } )(
-                <Input name="accountValue" onChange={ this._handleChange } placeholder="Valor de la Cuenta"/>
-              ) }
+              })(
+                <Input
+                  name="accountValue"
+                  onChange={this._handleChange}
+                  placeholder="Valor de la Cuenta"
+                />
+              )}
             </Form.Item>
           </Col>
           {_.isEqual(associatedOperation, 1) ? (
             <Col xs={24} sm={8}>
               <Form.Item label="Garantías disponibles">
-                { getFieldDecorator( 'guaranteeOperation', {
+                {getFieldDecorator('guaranteeOperation', {
                   initialValue: guaranteeOperationInitValue,
-                  rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
+                  rules: [
+                    { required: false, message: 'Por favor indique las garatías disponibles' },
                     {
-                      validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                    }
+                      validator: (rule, amount) => AmountFormatValidation(rule, amount),
+                    },
                   ],
-                } )(
-                  <Input name="guaranteeOperation" onChange={ this._handleChange }
-                         placeholder="Garantías disponibles para operar"/>
-                ) }
+                })(
+                  <Input
+                    name="guaranteeOperation"
+                    onChange={this._handleChange}
+                    placeholder="Garantías disponibles para operar"
+                  />
+                )}
               </Form.Item>
             </Col>
           ) : null}
           <Col xs={24} sm={8}>
             <Form.Item label="Garantía/Créditos">
-              { getFieldDecorator( 'guaranteeCredits', {
+              {getFieldDecorator('guaranteeCredits', {
                 initialValue: guaranteeCreditsInitValue,
-                rules: [ { required: false, message: 'Por favor ingrese Garantía / Créditos' },
+                rules: [
+                  { required: false, message: 'Por favor ingrese Garantía / Créditos' },
                   {
-                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                  }
+                    validator: (rule, amount) => AmountFormatValidation(rule, amount),
+                  },
                 ],
-              } )(
-                <Input name="guaranteeCredits" onChange={ this._handleChange } placeholder="Garantía/Créditos"/>
-              ) }
+              })(
+                <Input
+                  name="guaranteeCredits"
+                  onChange={this._handleChange}
+                  placeholder="Garantía/Créditos"
+                />
+              )}
             </Form.Item>
           </Col>
 
-            {_.isEqual(associatedOperation, 1) ? (
-              <Col xs={ 24 } sm={ 8 }>
-                <Form.Item label="Margen Utilizado 10%">
-                  { getFieldDecorator( 'marginUsed', {
-                    initialValue: marginUsedInitValue,
-                    value: marginUsedInitValue,
-                    rules: [ { required: false, message: 'Por favor indique el margen utilizado' } ],
-                  } )(
-                    <Input name="marginUsed" onChange={ this._handleChange }
-                           placeholder="Margen Utilizado"/>
-                  ) }
-                </Form.Item>
-              </Col>
-            ) : null}
+          {_.isEqual(associatedOperation, 1) ? (
+            <Col xs={24} sm={8}>
+              <Form.Item label="Margen Utilizado 10%">
+                {getFieldDecorator('marginUsed', {
+                  initialValue: marginUsedInitValue,
+                  value: marginUsedInitValue,
+                  rules: [{ required: false, message: 'Por favor indique el margen utilizado' }],
+                })(
+                  <Input
+                    name="marginUsed"
+                    onChange={this._handleChange}
+                    placeholder="Margen Utilizado"
+                  />
+                )}
+              </Form.Item>
+            </Col>
+          ) : null}
 
-
-            {_.isEqual(associatedOperation, 1) ? (
-              <Col xs={ 24 } sm={ 8 }>
-                <Form.Item label="Comisiones por referencia">
-                  { getFieldDecorator( 'commissionByReference', {
-                    initialValue: commissionByReference,
-                    rules: [ { required: false, message: 'Por favor indique las garatías disponibles' },
-                      {
-                        validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                      }
-                    ],
-                  } )(
-                    <Input name="commissionByReference" onChange={ this._handleChange }
-                           placeholder="Comisiones por referencia"/>
-                  ) }
-                </Form.Item>
-              </Col>
-            ) : null}
+          {_.isEqual(associatedOperation, 1) ? (
+            <Col xs={24} sm={8}>
+              <Form.Item label="Comisiones por referencia">
+                {getFieldDecorator('commissionByReference', {
+                  initialValue: commissionByReference,
+                  rules: [
+                    { required: false, message: 'Por favor indique las garatías disponibles' },
+                    {
+                      validator: (rule, amount) => AmountFormatValidation(rule, amount),
+                    },
+                  ],
+                })(
+                  <Input
+                    name="commissionByReference"
+                    onChange={this._handleChange}
+                    placeholder="Comisiones por referencia"
+                  />
+                )}
+              </Form.Item>
+            </Col>
+          ) : null}
 
           <Col xs={24} sm={8}>
             <Form.Item label="Saldo Inicial">
-              { getFieldDecorator( 'balanceInitial', {
+              {getFieldDecorator('balanceInitial', {
                 initialValue: balanceInitialInitValue,
-                rules: [ { required: false, message: 'Por favor ingrese el saldo inicial' },
+                rules: [
+                  { required: false, message: 'Por favor ingrese el saldo inicial' },
                   {
-                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                  }
+                    validator: (rule, amount) => AmountFormatValidation(rule, amount),
+                  },
                 ],
-              } )(
-                <Input name="balanceInitial" onChange={ this._handleChange } placeholder="Saldo Inicial"/>
-              ) }
+              })(
+                <Input
+                  name="balanceInitial"
+                  onChange={this._handleChange}
+                  placeholder="Saldo Inicial"
+                />
+              )}
             </Form.Item>
           </Col>
 
           <Col xs={24} sm={8}>
             <Form.Item label="Saldo Final">
-              { getFieldDecorator( 'balanceFinal', {
+              {getFieldDecorator('balanceFinal', {
                 initialValue: balanceFinalInitValue,
-                rules: [ { required: false, message: 'Por favor ingrese el saldo final' },
+                rules: [
+                  { required: false, message: 'Por favor ingrese el saldo final' },
                   {
-                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                  }
+                    validator: (rule, amount) => AmountFormatValidation(rule, amount),
+                  },
                 ],
-              } )(
-                <Input name="balanceFinal" onChange={ this._handleChange } placeholder="Saldo Final"/>
-              ) }
+              })(
+                <Input
+                  name="balanceFinal"
+                  onChange={this._handleChange}
+                  placeholder="Saldo Final"
+                />
+              )}
             </Form.Item>
           </Col>
-          <Col xs={24} sm={8}>
-
-          </Col>
-          <Col xs={24} sm={8}>
-
-          </Col>
+          <Col xs={24} sm={8}></Col>
+          <Col xs={24} sm={8}></Col>
         </Row>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit" className="login-form-button" disabled={ this.props.isLoading }>
-            { _.isEqual( this.props.actionType, 'add' ) ? 'Agregar' : 'Actualizar' }
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+            disabled={this.props.isLoading}
+          >
+            {_.isEqual(this.props.actionType, 'add') ? 'Agregar' : 'Actualizar'}
           </Button>
         </Form.Item>
       </Form>
-
-    );
+    )
   }
 }
 
-
 function mapStateToProps(state) {
-  const { accountsState, usersState, userAccountsState } = state;
+  const { accountsState, usersState, userAccountsState } = state
   return {
     accounts: accountsState.list,
     account: userAccountsState.item,
@@ -421,12 +472,17 @@ function mapStateToProps(state) {
   }
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators( {
-    fetchGetBrokers: brokerOperations.fetchGetBrokers,
-    fetchGetAccounts: accountOperations.fetchGetAccounts,
-    fetchGetUsers: userOperations.fetchGetUsers,
-  }, dispatch );
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators(
+    {
+      fetchGetBrokers: brokerOperations.fetchGetBrokers,
+      fetchGetAccounts: accountOperations.fetchGetAccounts,
+      fetchGetUsers: userOperations.fetchGetUsers,
+    },
+    dispatch
+  )
 
-
-export default connect( mapStateToProps, mapDispatchToProps )( Form.create( { name: 'register' } )( AddOrEditUserAccountForm ) );
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Form.create({ name: 'register' })(AddOrEditUserAccountForm))

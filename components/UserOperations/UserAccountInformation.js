@@ -31,6 +31,7 @@ class AccountInformation extends PureComponent {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
+
     if (nextProps.isReferralCompleted && nextProps.isReferralSuccess) {
       _.assignIn(updatedState, {
         isReferralFormVisible: false,
@@ -57,7 +58,10 @@ class AccountInformation extends PureComponent {
     }
 
     if (nextProps.userAccount && !prevState.isRequestingLastRequest) {
-      nextProps.fetchGetUserAccountWireTransferRequests(nextProps.userAccount.id)
+      nextProps.fetchGetUserAccountWireTransferRequests(
+        nextProps.userAccount.id,
+        nextProps.userAccount.account.associatedOperation
+      )
       _.assignIn(updatedState, {
         isRequestingLastRequest: true,
       })
@@ -65,6 +69,9 @@ class AccountInformation extends PureComponent {
         isRequestingLastRequest: true,
       }
     }
+    console.log('[=====  here  =====>')
+    console.log(nextProps.lastWireTransferRequest)
+    console.log('<=====  /here  =====]')
 
     if (
       Object.keys(nextProps.lastWireTransferRequest).length > 0 &&
