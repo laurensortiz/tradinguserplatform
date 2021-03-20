@@ -11,9 +11,12 @@ import { Input, Row, Col, Button, Form, DatePicker, Icon, Select, Divider } from
 import { AmountFormatValidation } from '../../common/utils'
 import { accountOperations } from '../../state/modules/accounts'
 import { userOperations } from '../../state/modules/users'
+import { userAccountOperations } from '../../state/modules/userAccounts'
 
 const { TextArea } = Input
 const { Option } = Select
+
+const NO_MONEY_ERROR_MESSAGE = 'Su solicitud sobrepasa lo permitido por el exchange'
 
 class AddOrEditForm extends PureComponent {
   state = {
@@ -47,7 +50,8 @@ class AddOrEditForm extends PureComponent {
     status: 1,
     isLoaded: false,
     accounts: [],
-    users: [],
+    currentUserAccountList: [],
+    userAccount: {},
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -77,17 +81,20 @@ class AddOrEditForm extends PureComponent {
   }
 
   componentDidMount() {
-    if (_.isEmpty(this.state.accounts)) {
-      this.props.fetchGetAccounts()
+    if (_.isEmpty(this.state.userAccounts)) {
+      this.props.fetchGetAllUserAccounts({
+        associatedOperation: -1,
+      })
     }
+
     if (_.isEmpty(this.state.users)) {
       this.props.fetchGetUsers()
     }
   }
 
   _getAccountSelectOption = (options) => {
-    return _.map(options, ({ id, name, associatedOperation }) => (
-      <Option key={`${id}_${name}_${associatedOperation}`}>{name}</Option>
+    return _.map(options, ({ id, account }) => (
+      <Option key={`${id}_${account.name}_${account.associatedOperation}`}>{account.name}</Option>
     ))
   }
 
@@ -112,9 +119,11 @@ class AddOrEditForm extends PureComponent {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const saveState = _.omit(this.state, ['confirmDirty', 'isInvalid', 'accounts', 'users'])
+        const { id, user, guaranteeOperation, account } = this.state.userAccount
         if (_.isEqual(this.props.actionType, 'add')) {
           this.props.onAddNew({
             ...saveState,
+            userAccountId: id,
             guaranteeOperationNet:
               Number(guaranteeOperation) -
               (Number(this.state.amount) + Number(this.state.commissionsCharge)),
@@ -142,14 +151,18 @@ class AddOrEditForm extends PureComponent {
     const id = Number(codeIdName[0])
     const name = codeIdName[1]
 
-    if (_.isEqual(fieldName, 'user')) {
+    if (_.isEqual(fieldName, 'username')) {
+      const currentUserAccountList = this.state.accounts.filter(({ userId }) => userId === id)
       this.setState({
         username: name,
+        currentUserAccountList,
       })
     } else if (_.isEqual(fieldName, 'accountWithdrawalRequest')) {
+      const userAccount = this.state.accounts.find((account) => account.id === id)
       this.setState({
         accountWithdrawalRequest: name,
         associatedOperation: Number(codeIdName[2] || 1),
+        userAccount,
       })
     } else {
       this.setState({
@@ -164,9 +177,77 @@ class AddOrEditForm extends PureComponent {
     })
   }
 
+  handleInversion = (rule, value, callback) => {
+    const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
+    const userStartedDay = this.state.userAccount.user.startDate
+    const { associatedOperation, percentage } = this.state.userAccount.account
+    const isOTCAccount = associatedOperation === 1
+
+    const { accountValue, guaranteeOperation } = this.state.userAccount
+
+    const is10percent = moment(userStartedDay).isBefore('2020-12-15', 'day')
+
+    let percentageFromAccount
+
+    if (isOTCAccount) {
+      percentageFromAccount = is10percent ? 10 : 7.5
+    } else {
+      percentageFromAccount = percentage
+    }
+
+    const amountAvailable = (accountValue / 100) * percentageFromAccount
+
+    return new Promise((resolve, reject) => {
+      if (!_.isEmpty(value) && !regex.test(value)) {
+        reject('Formato inválido del monto') // reject with error message
+      }
+
+      if (parseFloat(value) == 0) {
+        reject('El monto solicitado debe ser mayor a 0')
+      }
+
+      // Next validation only applies to OTC accounts
+      if (isOTCAccount) {
+        if (parseFloat(guaranteeOperation) - parseFloat(value) < 0) {
+          reject(NO_MONEY_ERROR_MESSAGE)
+        }
+      }
+
+      if (parseFloat(amountAvailable) - parseFloat(value) < 0) {
+        reject(NO_MONEY_ERROR_MESSAGE) // reject with error message
+      } else {
+        resolve()
+      }
+    })
+  }
+
+  handleCommission = (rule, value, callback) => {
+    const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
+
+    const { commissionByReference } = this.state.userAccount
+
+    return new Promise((resolve, reject) => {
+      if (!_.isEmpty(value) && !regex.test(value)) {
+        reject('Formato inválido del monto') // reject with error message
+      }
+
+      if (parseFloat(value) == 0) {
+        reject('La opereración debe ser mayor a 0')
+      }
+
+      if (parseFloat(commissionByReference || 0) - parseFloat(value) < 0) {
+        reject(NO_MONEY_ERROR_MESSAGE) // reject with error message
+      } else {
+        resolve()
+      }
+    })
+  }
+
   render() {
-    const { getFieldDecorator } = this.props.form
-    const isAddAction = _.isEqual(this.props.actionType, 'add')
+    const { getFieldDecorator, resetFields } = this.props.form
+    if (!this.state.commissionsCharge) {
+      resetFields(['commissionsCharge'])
+    }
 
     // Default values for edit action
     const statusInitValue = !_.isNil(this.state.status) ? this.state.status : undefined
@@ -360,7 +441,7 @@ class AddOrEditForm extends PureComponent {
                     placeholder="Cuenta para retiro de fondos"
                     showArrow
                   >
-                    {this._getAccountSelectOption(this.state.accounts)}
+                    {this._getAccountSelectOption(this.state.currentUserAccountList)}
                   </Select>
                 )}
               </Form.Item>
@@ -389,12 +470,9 @@ class AddOrEditForm extends PureComponent {
                 initialValue: amountInitValue,
                 value: amountInitValue,
                 rules: [
+                  { required: true, message: 'Por favor indique el monto' },
                   {
-                    required: false,
-                  },
-                  {
-                    validator: (rule, commissionsCharge) =>
-                      AmountFormatValidation(rule, commissionsCharge),
+                    validator: this.handleInversion,
                   },
                 ],
               })(<Input name="amount" onChange={this._handleChange} placeholder={`Monto USD`} />)}
@@ -408,11 +486,11 @@ class AddOrEditForm extends PureComponent {
                 initialValue: commissionsChargeInitValue,
                 rules: [
                   {
-                    required: false,
+                    required: !!this.state.commissionsCharge,
+                    message: `Campo requerido`,
                   },
                   {
-                    validator: (rule, commissionsCharge) =>
-                      AmountFormatValidation(rule, commissionsCharge),
+                    validator: this.handleCommission,
                   },
                 ],
               })(
@@ -768,9 +846,9 @@ class AddOrEditForm extends PureComponent {
 }
 
 function mapStateToProps(state) {
-  const { accountsState, usersState } = state
+  const { userAccountsState, usersState } = state
   return {
-    accounts: accountsState.list,
+    accounts: userAccountsState.list,
     users: usersState.list,
   }
 }
@@ -778,6 +856,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
+      fetchGetAllUserAccounts: userAccountOperations.fetchGetAllUserAccounts,
       fetchGetAccounts: accountOperations.fetchGetAccounts,
       fetchGetUsers: userOperations.fetchGetUsers,
     },

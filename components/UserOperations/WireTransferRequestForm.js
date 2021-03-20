@@ -159,7 +159,7 @@ class WireTransferRequestForm extends PureComponent {
       ? `OTC - ${account.name}`
       : `ProfitMonth - ${account.name}`
 
-    if (!this.state.commissionsCharge) {
+    if (!this.state.commissionsCharge || this.state.commissionsCharge <= 0) {
       resetFields(['commissionsCharge'])
     }
 
@@ -275,7 +275,7 @@ class WireTransferRequestForm extends PureComponent {
                 {getFieldDecorator('commissionsCharge', {
                   rules: [
                     {
-                      required: !!this.state.commissionsCharge,
+                      required: !!this.state.commissionsCharge && this.state.commissionsCharge > 0,
                       message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
                     },
                     {
