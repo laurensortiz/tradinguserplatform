@@ -132,8 +132,7 @@ class AddOrEditForm extends PureComponent {
       'users',
       'userAccount',
     ])
-
-    console.log(saveState)
+    
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const { id, guaranteeOperation } = this.state.userAccount
@@ -197,6 +196,7 @@ class AddOrEditForm extends PureComponent {
 
   handleInversion = (rule, value, callback) => {
     const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
+
     const userStartedDay = this.state.userAccount.user.startDate
     const { associatedOperation, percentage } = this.state.userAccount.account
     const isOTCAccount = associatedOperation === 1
@@ -216,6 +216,9 @@ class AddOrEditForm extends PureComponent {
     const amountAvailable = (accountValue / 100) * percentageFromAccount
 
     return new Promise((resolve, reject) => {
+      if(!Object.keys(this.state.userAccount).length) {
+        resolve()
+      }
       if (!_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
       }
