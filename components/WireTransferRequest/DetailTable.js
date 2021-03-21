@@ -9,6 +9,7 @@ import classNames from "classnames";
 import momentDurationFormat from 'moment-duration-format';
 import moment from "moment-timezone";
 import { extendMoment } from 'moment-range';
+import ExportWireTransferPDF from './ExportWireTransferPDF'
 
 const FORMAT_DATE = 'DD-MM-YYYY';
 const { Option } = Select;
@@ -80,15 +81,16 @@ class DetailTable extends Component {
     } else {
       return (
         <div className="cta-container">
-          <Button
-            type="primary"
-            onClick={() => this._handleExportHistory(row.id)}
-            data-testid="export-button"
-            className="export-excel-cta"
-            style={ { float: 'right' } }
-          >
-            <Icon type="file-excel"/> <span>Exportar</span>
-          </Button>
+          <ExportWireTransferPDF wireTransfer={row} />
+          {/*<Button*/}
+          {/*  type="primary"*/}
+          {/*  onClick={() => this._handleExportHistory(row.id)}*/}
+          {/*  data-testid="export-button"*/}
+          {/*  className="export-excel-cta"*/}
+          {/*  style={ { float: 'right' } }*/}
+          {/*>*/}
+          {/*  <Icon type="file-excel"/> <span>Exportar</span>*/}
+          {/*</Button>*/}
           <Button type="secondary" onClick={ () => this.props.onEdit( row.id ) }><Icon type="hdd"/><span>Detalle</span></Button>
           <Popconfirm
             okText="Si"

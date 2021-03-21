@@ -72,12 +72,12 @@ const requestWireTransferRequestError = (error) => {
 }
 
 export const fetchGetUserAccountWireTransferRequests = (
-  userAccountId,
+  username,
   associatedOperation
 ) => async (dispatch) => {
   dispatch(requestUserAccountWireTransferRequests())
   try {
-    const res = await getUserAccountWireTransferRequests(userAccountId, associatedOperation)
+    const res = await getUserAccountWireTransferRequests(username, associatedOperation)
     dispatch(requestUserAccountWireTransferRequestsSuccess(res.data))
   } catch (e) {
     dispatch(requestUserAccountWireTransferRequestsError(e.message))
@@ -91,9 +91,12 @@ const requestUserAccountWireTransferRequests = () => {
 }
 
 const requestUserAccountWireTransferRequestsSuccess = (wireTransferRequest) => {
+  console.log('[=====  HEYYY  =====>');
+  console.log(wireTransferRequest[0]);
+  console.log('<=====  /HEYYY  =====]');
   return {
     type: types.WIRE_TRANSFER_REQUESTS_USER_ACCOUNT_SUCCESS,
-    payload: wireTransferRequest,
+    payload: wireTransferRequest[0],
   }
 }
 

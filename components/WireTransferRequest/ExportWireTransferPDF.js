@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { Row, Col, Button, Descriptions, Tag, Icon } from 'antd';
 import _ from 'lodash';
-import { FormatCurrency, FormatDate, FormatStatus } from '../../../../common/utils';
+import { FormatCurrency, FormatDate, FormatStatus } from '../../common/utils';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 
@@ -23,93 +23,142 @@ class Export extends PureComponent {
 
   _getExportFileName = () => {
     const time = moment().format();
-    return `${ this.props.t('fileName accountReport')}_${time}.pdf`
+    const { wireTransfer: wt } = this.props;
+    return `${wt.beneficiaryPersonFirstName}-${wt.beneficiaryPersonLastName}-${wt.currencyType}-${wt.transferMethod}-${time}.pdf`
   };
 
   _downloadFile = () => {
-    const { userAccount } = this.props;
+    const { wireTransfer: wt } = this.props;
 
-
-    const { username, firstName, lastName } = userAccount.user;
-    const movements = userAccount.userAccountMovement || [];
-    const sortedData = movements.sort( (a, b) => {
-      let start = a.createdAt;
-      let end = b.createdAt;
-      if (_.isNil( start )) start = '00-00-0000';
-      if (_.isNil( end )) end = '00-00-0000';
-
-      return moment( start ).unix() - moment( end ).unix()
-    } );
-
-    const AccountMovements = _.reduce( sortedData, (result, movement) => {
-      const debit = {
-        text: FormatCurrency.format( movement.debit ),
-        color: '#ba382a',
-        alignment: 'left',
-      };
-      const credit = {
-        text: FormatCurrency.format( movement.credit ),
-        color: '#046d11',
-        alignment: 'left',
-      };
-      const previousAccountValue = {
-        text: FormatCurrency.format( movement.previousAccountValue ),
-        alignment: 'left',
-      }
-      const accountValue = {
-        text: FormatCurrency.format( movement.accountValue ),
-        alignment: 'left',
-      };
-      const reference = {
-        text: movement.reference,
-        alignment: 'left',
-      };
-
-      const createdAt = {
-        text: FormatDate( movement.createdAt ),
-        alignment: 'left',
-      };
-
-
-      result.push( [ debit, credit, previousAccountValue,accountValue, reference, createdAt ] );
-
-      return result
-
-    }, [] );
-
-    const bodyDetail = userAccount.account.associatedOperation === 1 ? (
-      [ {
-        text: `${this.props.t('availableGuarantees')}:`,
-        bold: true
-      },
-        { text: `${ FormatCurrency.format( userAccount.guaranteeOperation ) }` },
+    const bodyTransferMethod = wt.transferMethod === 'Banco' ? (
+      [
+        { text: '', margin: [ 0, 5 ] },
         {
-        text: `${this.props.t('marginUsed')} 10%:`,
-        bold: true,
-      },
-        { text: `${ FormatCurrency.format( userAccount.marginUsed ) }` },
+          layout: 'noBorders',
+          table: {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
+            headerRows: 1,
+            widths: [ '100%' ],
+
+            body: [
+              [ {
+                fontSize: 16,
+                text: `Banco Beneficiario`,
+                bold: true,
+                alignment: 'left',
+                margin: [ 0, 5, 0, 5 ]
+              } ],
+            ]
+          },
+
+        },
+        { text: '', margin: [ 0, 5 ] },
         {
-        text: `${this.props.t('commissionsByReference')}:`,
-        bold: true,
-      },
-        { text: `${ FormatCurrency.format( userAccount.commissionByReference || 0 ) }` } ]
-    ) : (
-      [ {
-        text: `${this.props.t('guaranteesCredits')}:`,
-        bold: true
-      },
-        { text: `${ FormatCurrency.format( userAccount.guaranteeCredits ) }` },
+          layout: 'noBorders',
+          table: {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
+            headerRows: 0,
+            margin: [ 0, 25 ],
+            widths: [ '50%', '50%' ],
+            body: [
+              [ {
+                text: `Nombre:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.beneficiaryBankName }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Swift:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.beneficiaryBankSwift }`, fontSize: 13, },
+              ],
+              [ {
+                text: `ABA:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.beneficiaryBankABA }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Dirección:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.beneficiaryBankAddress }`, fontSize: 13, },
+              ],
+            ]
+          },
+        },
+        { text: '', margin: [ 0, 5 ] },
         {
-        text: ``,
-        bold: true,
-      },
-        { text: `` },
+          layout: 'noBorders',
+          table: {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
+            headerRows: 1,
+            widths: [ '100%' ],
+
+            body: [
+              [ {
+                fontSize: 16,
+                text: `Banco Intermediario`,
+                bold: true,
+                alignment: 'left',
+                margin: [ 0, 5, 0, 5 ]
+              } ],
+            ]
+          },
+
+        },
+        { text: '', margin: [ 0, 5 ] },
         {
-        text: ``,
-        bold: true,
-      },
-        {  } ]
-    )
+          layout: 'noBorders',
+          table: {
+            // headers are automatically repeated if the table spans over multiple pages
+            // you can declare how many rows should be treated as headers
+            headerRows: 0,
+            margin: [ 0, 25 ],
+            widths: [ '50%', '50%' ],
+            body: [
+              [ {
+                text: `Nombre:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.intermediaryBankName }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Swift:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.intermediaryBankSwift }`, fontSize: 13, },
+              ],
+              [ {
+                text: `ABA:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.intermediaryBankABA }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Dirección:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.intermediaryBankAddress }`, fontSize: 13, },
+              ],
+            ]
+          },
+        },
+      ]
+
+    ) : []
 
     const docDefinition = {
       pageSize: 'LETTER',
@@ -195,125 +244,73 @@ class Export extends PureComponent {
             body: [
               [ {
                 fontSize: 18,
-                text: `${(this.props.t('accountStatement')).toUpperCase()}`,
+                text: wt.transferMethod === 'Banco' ? 'Wire Transfer Request' : 'Transfer by International Remittance',
                 bold: true,
                 alignment: 'left',
-                margin: [ 0, 15, 0, 10 ]
-              }, { text: `${this.props.t('dateReport')}`, alignment: 'right', bold: true, margin: [ 0, 15, 0, 0 ] } ],
+                margin: [ 0, 15, 0, 5 ]
+              }, { text: `Fecha`, alignment: 'right', bold: true, margin: [ 0, 15, 0, 0 ] } ],
               [ {
-                text: `${ firstName } ${ lastName }`,
+                text: `${ wt.beneficiaryPersonFirstName } ${ wt.beneficiaryPersonLastName }`,
                 alignment: 'left',
                 bold: true,
                 fontSize: 15,
               }, { text: moment().format( 'DD/MM/YYYY' ), alignment: 'right' } ],
-              [ { text: `${ username }`, alignment: 'left', bold: true, }, {} ],
             ]
           },
 
         },
 
-        { text: '', margin: [ 0, 10 ] },
-        {
-          layout: 'noBorders',
-          table: {
-            // headers are automatically repeated if the table spans over multiple pages
-            // you can declare how many rows should be treated as headers
-            headerRows: 1,
-            widths: [ '100%' ],
-
-            body: [
-              [ {
-                fontSize: 16,
-                text: `${this.props.t('summary')}`,
-                bold: true,
-                alignment: 'center',
-                fillColor: '#10253f', color: '#fff',
-                margin: [ 0, 5 ]
-              } ]
-            ]
-          },
-
-        },
-        { text: '', margin: [ 0, 10 ] },
+        { text: '', margin: [ 0, 15 ] },
         {
           layout: 'noBorders',
           table: {
             // headers are automatically repeated if the table spans over multiple pages
             // you can declare how many rows should be treated as headers
             headerRows: 0,
-            margin: [ 0, 50 ],
-            widths: [ '22%', '11%', '22%', '11%', '22%', '11%' ],
+            margin: [ 0, 25 ],
+            widths: [ '50%', '50%' ],
             body: [
               [ {
-                text: `${ this.props.t( 'accountType' ) }:`,
+                text: `Moneda:`,
                 bold: true,
-
+                fontSize: 13,
               },
-                { text: `${ userAccount.account.name }` },
-                {
-                text: `${ this.props.t( 'profitCommission' ) }:`,
-                bold: true
-              },
-                { text: `${ userAccount.account.percentage }%` },
-                {
-                text: `${ this.props.t( 'availableGuarantees' ) }:`,
-                bold: true
-              },
-                { text: `${ FormatCurrency.format( userAccount.guaranteeOperation ) }` }
+                { text: `${ wt.currencyType }`, fontSize: 13, },
                 ],
-              bodyDetail
+              [ {
+                text: `RCM Cuenta:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.accountRCM }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Monto USD:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ FormatCurrency.format(wt.amount) }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Cobro de Comisiones USD:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ FormatCurrency.format(wt.commissionsCharge) }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Detalle de las referencias que generaron comisiones:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.commissionsReferenceDetail }`, fontSize: 13, },
+              ],
+             // bodyDetail
 
             ]
           },
         },
-        { text: '', margin: [ 0, 10 ] },
-        {
-          layout: 'noBorders',
-          table: {
-            // headers are automatically repeated if the table spans over multiple pages
-            // you can declare how many rows should be treated as headers
-            headerRows: 1,
-            widths: [ '48%', '2%', '48%' ],
-            body: [
-              [
-                {
-                  fontSize: 12,
-                  text: `${ this.props.t( 'accountValue' ) }`,
-                  bold: true,
-                  alignment: 'left',
-                  margin: [ 15, 15, 15, 5 ],
-                  fillColor: '#547f26',
-                  color: '#fff',
-                },
-                {},
-                {
-                  text: `${ this.props.t( 'initialAmount' ) }`, alignment: 'left', margin: [ 15, 15, 15, 5 ], fillColor: '#004079',
-                  color: '#fff', fontSize: 12, bold: true,
-                }
-              ],
-              [
-                {
-                  text: `${ FormatCurrency.format( userAccount.accountValue ) }`,
-                  margin: [ 15, 0, 15, 15 ],
-                  fillColor: '#547f26',
-                  color: '#fff',
-                  fontSize: 12,
-                },
-                {},
-                {
-                  text: `${ FormatCurrency.format( userAccount.balanceInitial ) }`,
-                  margin: [ 15, 0, 15, 15 ],
-                  fillColor: '#004079',
-                  color: '#fff',
-                  fontSize: 12,
-                },
-              ],
-            ]
-          },
-
-        },
-
-        { text: '', margin: [ 0, 30, 0, 10 ] },
+        { text: '', margin: [ 0, 5 ] },
         {
           layout: 'noBorders',
           table: {
@@ -325,39 +322,50 @@ class Export extends PureComponent {
             body: [
               [ {
                 fontSize: 16,
-                text: `${ this.props.t( 'transactions' ) }`,
+                text: `${wt.transferMethod === 'Banco' ? 'Detalles de Cuenta ( Beneficiario)' : 'Detalles del Beneficiario'}`,
                 bold: true,
-                alignment: 'center',
-                fillColor: '#10253f', color: '#fff',
-                margin: [ 0, 5 ]
-              } ]
+                alignment: 'left',
+                margin: [ 0, 5, 0, 5 ]
+              } ],
             ]
           },
 
         },
-        { text: '', margin: [ 0, 10 ] },
+        { text: '', margin: [ 0, 5 ] },
         {
           layout: 'noBorders',
           table: {
             // headers are automatically repeated if the table spans over multiple pages
             // you can declare how many rows should be treated as headers
-            headerRows: 1,
-            widths: [ '16%', '16%','16%', '16%', '16%', '16%' ],
-
+            headerRows: 0,
+            margin: [ 0, 25 ],
+            widths: [ '50%', '50%' ],
             body: [
-              [ { text: `${ this.props.t( 'debit' ) }`, alignment: 'left', bold: true }, {
-                text: `${ this.props.t( 'credit' ) }`,
-                alignment: 'left',
-                bold: true
-              }, { text: `${ this.props.t( 'previewsAmount' ) }`, alignment: 'left', bold: true },{ text: `${ this.props.t( 'accountValue' ) }`, alignment: 'left', bold: true }, {
-                text: `${ this.props.t( 'detail' ) }`,
-                alignment: 'left',
-                bold: true
-              }, { text: `${ this.props.t( 'date' ) }`, alignment: 'left', bold: true } ],
-              ...AccountMovements
-            ],
+              [ {
+                text: `Número de Cuenta:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.beneficiaryPersonAccountNumber }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Nombre:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.beneficiaryPersonFirstName } ${ wt.beneficiaryPersonLastName }`, fontSize: 13, },
+              ],
+              [ {
+                text: `Dirección:`,
+                bold: true,
+                fontSize: 13,
+              },
+                { text: `${ wt.beneficiaryPersonAddress }`, fontSize: 13, },
+              ],
+            ]
           },
         },
+        ...bodyTransferMethod
       ],
       styles: {
         header: {
@@ -382,21 +390,16 @@ class Export extends PureComponent {
   };
 
   render() {
-    const accountName = _.get(this.props, 'userAccount.account.name', '')
     return (
       <>
-        <Row>
-          <Col>
-            <Button
-              type="primary"
-              onClick={ () => this._downloadFile(  ) }
-              className="export-pdf-cta"
-              style={ { float: 'right', marginBottom: 10 } }
-            >
-              <Icon type="file-pdf"/> {`${this.props.t('btn exportAccountInformation')} ${accountName} (PDF)`}
-            </Button>
-          </Col>
-        </Row>
+        <Button
+          type="primary"
+          onClick={ () => this._downloadFile(  ) }
+          className="export-pdf-cta"
+          style={ { float: 'right', marginBottom: 10 } }
+        >
+          <Icon type="file-pdf"/><span>Solicitud</span>
+        </Button>
       </>
     );
   }

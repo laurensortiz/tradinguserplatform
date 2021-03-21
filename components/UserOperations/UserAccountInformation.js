@@ -23,10 +23,13 @@ class AccountInformation extends PureComponent {
   state = {
     isReferralFormVisible: false,
     isWireTransferRequestFormVisible: false,
-    isUserWireTransferAvailable: false,
+    isUserWireTransferAvailable: true,
     lastWireTransferRequestDate: null,
-    isRequestingLastRequest: false,
+    hasFetchedLastRequest: false,
     isWireTransferRequestAddCompleted: false,
+    lastWireTransferRequestAssociatedOperation: '',
+    hasInitRequiredMonthsCompleted: false,
+    hasOneMonthHoldCompleted: true,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -44,47 +47,47 @@ class AccountInformation extends PureComponent {
     ) {
       _.assignIn(updatedState, {
         isWireTransferRequestFormVisible: false,
-        isUserWireTransferAvailable: false,
+        isUserWireTransferAvailable: nextProps.userAccount.account.associatedOperation !== prevState.lastWireTransferRequestAssociatedOperation,
       })
     }
 
-    if (nextProps.userAccount && !prevState.isUserWireTransferAvailable) {
+    if (nextProps.userAccount && prevState.isUserWireTransferAvailable) {
       const getTotalMonths = getTotalMonthsFromDate(nextProps.userAccount.user.startDate)
       const isProfitMonthAccount = nextProps.userAccount.account.associatedOperation === 2
       const requiredHoldTime = isProfitMonthAccount ? 1 : 6
+
+
       _.assignIn(updatedState, {
-        isUserWireTransferAvailable: getTotalMonths >= requiredHoldTime,
+        hasInitRequiredMonthsCompleted: getTotalMonths >= requiredHoldTime,
       })
     }
 
-    if (nextProps.userAccount && !prevState.isRequestingLastRequest) {
+    if (nextProps.userAccount && !prevState.hasFetchedLastRequest) {
       nextProps.fetchGetUserAccountWireTransferRequests(
-        nextProps.userAccount.id,
+        nextProps.userAccount.user.username,
         nextProps.userAccount.account.associatedOperation
       )
-      _.assignIn(updatedState, {
-        isRequestingLastRequest: true,
-      })
       return {
-        isRequestingLastRequest: true,
+        hasFetchedLastRequest: true,
       }
     }
-    console.log('[=====  here  =====>')
-    console.log(nextProps.lastWireTransferRequest)
-    console.log('<=====  /here  =====]')
 
     if (
       Object.keys(nextProps.lastWireTransferRequest).length > 0 &&
       !prevState.lastWireTransferRequestDate
     ) {
-      const { createdAt } = nextProps.lastWireTransferRequest[0]
+
+      const { createdAt, associatedOperation } = nextProps.lastWireTransferRequest
+
 
       const getTotalMonths = getTotalMonthsFromDate(createdAt)
 
       _.assignIn(updatedState, {
-        isUserWireTransferAvailable: getTotalMonths > 0,
+        hasOneMonthHoldCompleted: getTotalMonths > 0,
+        isUserWireTransferAvailable: associatedOperation !== nextProps.userAccount.account.associatedOperation,
         lastWireTransferRequestDate: createdAt,
         isWireTransferRequestFormVisible: false,
+        lastWireTransferRequestAssociatedOperation: associatedOperation
       })
     }
 
@@ -108,7 +111,7 @@ class AccountInformation extends PureComponent {
       <Button
         onClick={this._onHandleShowWireTransferForm}
         disabled={
-          !this.state.isUserWireTransferAvailable || this.props.isWireTransferRequestAddCompleted
+          (!this.state.hasInitRequiredMonthsCompleted || !this.state.hasOneMonthHoldCompleted) && !this.state.isUserWireTransferAvailable
         }
       >
         <Icon type="dollar" /> Wire Transfer Request
@@ -124,6 +127,15 @@ class AccountInformation extends PureComponent {
       </Tooltip>
     )
   }
+
+  _onWireTransferRequest = (data) => {
+    this.setState({
+      lastWireTransferRequestAssociatedOperation: data.associatedOperation,
+    })
+    this.props.onWireTransferRequest(data)
+  }
+
+
 
   render() {
     const { t } = this.props
@@ -221,7 +233,7 @@ class AccountInformation extends PureComponent {
                   width={650}
                 >
                   <WireTransferRequestForm
-                    onWireTransferRequest={this.props.onWireTransferRequest}
+                    onWireTransferRequest={this._onWireTransferRequest}
                     userAccount={this.props.userAccount}
                     isWireTransferRequestLoading={this.props.isWireTransferRequestLoading}
                     isWireTransferRequestCompleted={this.props.isWireTransferRequestCompleted}

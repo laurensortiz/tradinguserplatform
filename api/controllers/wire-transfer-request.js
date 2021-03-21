@@ -95,9 +95,9 @@ module.exports = {
     return res.status(200).send(wireTransferRequest)
   },
 
-  async getByUserAccountId(req, res) {
+  async getByUsername(req, res) {
     const wireTransferRequest = await WireTransferRequest.findAll(
-      wireTransferRequestQuery.listByUserAccountId({ req })
+      wireTransferRequestQuery.listByUsername({ req })
     )
 
     if (!wireTransferRequest) {

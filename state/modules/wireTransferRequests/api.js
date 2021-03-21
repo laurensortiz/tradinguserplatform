@@ -23,10 +23,10 @@ export const addWireTransferRequest = async (wireTransferRequest) => {
   })
 }
 
-export const getUserAccountWireTransferRequests = async (userAccountId, associatedOperation) => {
+export const getUserAccountWireTransferRequests = async (username, associatedOperation) => {
   return fetch({
     method: 'get',
-    url: `wire-transfer-request/user-account/${userAccountId}/${associatedOperation}`,
+    url: `wire-transfer-request/user-account/${username}/${associatedOperation}`,
   })
 }
 

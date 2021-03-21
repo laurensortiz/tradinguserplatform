@@ -14,12 +14,12 @@ const queries = {
       order: [['id', 'DESC']],
     }
   },
-  listByUserAccountId: ({ req }) => {
-    const userAccountId = get(req, 'params.userAccountId', '')
+  listByUsername: ({ req }) => {
+    const username = get(req, 'params.username', '')
     const associatedOperation = get(req, 'params.associatedOperation', 1)
     return {
       where: {
-        userAccountId,
+        username,
         associatedOperation,
         status: 1,
       },

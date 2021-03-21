@@ -8,7 +8,6 @@ moment.locale('es') // Set Lang to Spanish
 
 import { Input, Row, Col, Button, Form, DatePicker, Icon, Select, Divider } from 'antd'
 
-import { AmountFormatValidation } from '../../common/utils'
 import { accountOperations } from '../../state/modules/accounts'
 import { userOperations } from '../../state/modules/users'
 import { userAccountOperations } from '../../state/modules/userAccounts'
@@ -52,6 +51,7 @@ class AddOrEditForm extends PureComponent {
     accounts: [],
     currentUserAccountList: [],
     userAccount: {},
+    userAccountId: null
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -59,11 +59,19 @@ class AddOrEditForm extends PureComponent {
       ...prevState,
     }
 
+    if (nextProps.actionType === 'edit' && prevState.accounts.length > 0 && Object.keys(nextProps.selectedWireTransferRequest).length > 0 && nextProps.selectedWireTransferRequest.userAccountId !== prevState.userAccountId) {
+      const userAccount = prevState.accounts.find(({id}) => id == nextProps.selectedWireTransferRequest.userAccountId)
+      _.assign(updatedState, {
+        userAccount
+      })
+    }
+
     if (!_.isEqual(nextProps.accounts, prevState.accounts)) {
       _.assign(updatedState, {
         accounts: nextProps.accounts,
       })
     }
+
     if (!_.isEqual(nextProps.users, prevState.users)) {
       _.assign(updatedState, {
         users: _.filter(nextProps.users, { roleId: 2, status: 1 }),
@@ -81,6 +89,7 @@ class AddOrEditForm extends PureComponent {
   }
 
   componentDidMount() {
+
     if (_.isEmpty(this.state.userAccounts)) {
       this.props.fetchGetAllUserAccounts({
         associatedOperation: -1,
@@ -116,10 +125,19 @@ class AddOrEditForm extends PureComponent {
 
   _handleSubmit = (e) => {
     e.preventDefault()
+    const saveState = _.omit(this.state, [
+      'confirmDirty',
+      'isInvalid',
+      'accounts',
+      'users',
+      'userAccount',
+    ])
+
+    console.log(saveState)
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const saveState = _.omit(this.state, ['confirmDirty', 'isInvalid', 'accounts', 'users'])
-        const { id, user, guaranteeOperation, account } = this.state.userAccount
+        const { id, guaranteeOperation } = this.state.userAccount
+
         if (_.isEqual(this.props.actionType, 'add')) {
           this.props.onAddNew({
             ...saveState,
@@ -227,13 +245,13 @@ class AddOrEditForm extends PureComponent {
     const { commissionByReference } = this.state.userAccount
 
     return new Promise((resolve, reject) => {
-      if (!_.isEmpty(value) && !regex.test(value)) {
+      if (Number(value) > 0 && !_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
       }
 
-      if (parseFloat(value) == 0) {
-        reject('La opereración debe ser mayor a 0')
-      }
+      // if (parseFloat(value) == 0) {
+      //   reject('La opereración debe ser mayor a 0')
+      // }
 
       if (parseFloat(commissionByReference || 0) - parseFloat(value) < 0) {
         reject(NO_MONEY_ERROR_MESSAGE) // reject with error message
@@ -245,7 +263,8 @@ class AddOrEditForm extends PureComponent {
 
   render() {
     const { getFieldDecorator, resetFields } = this.props.form
-    if (!this.state.commissionsCharge) {
+
+    if (!this.state.commissionsCharge && Number(this.state.commissionsCharge) <= 0) {
       resetFields(['commissionsCharge'])
     }
 
@@ -331,12 +350,12 @@ class AddOrEditForm extends PureComponent {
           <Col xs={24} sm={12}>
             {this.props.actionType === 'add' ? (
               <Form.Item label="Usuario">
-                {getFieldDecorator('user', {
+                {getFieldDecorator('username', {
                   rules: [{ required: true, message: 'Por favor ingrese el Usuario' }],
                 })(
                   <Select
                     showSearch={true}
-                    name="user"
+                    name="username"
                     onChange={(value) =>
                       this._handleCustomChangeSelect({ name: 'username', value })
                     }
@@ -416,6 +435,7 @@ class AddOrEditForm extends PureComponent {
                 ],
               })(
                 <Select
+                  name="transferMethod"
                   onChange={(value) => this._handleChangeSelect({ name: 'transferMethod', value })}
                 >
                   <Option value="Banco">Banco</Option>
@@ -429,12 +449,10 @@ class AddOrEditForm extends PureComponent {
           <Col xs={24} sm={12}>
             {this.props.actionType === 'add' ? (
               <Form.Item label="Cuenta para retiro de fondos">
-                {getFieldDecorator('accountWithdrawalRequest', {
-                  rules: [{ required: true, message: 'Por favor indique el tipo de Cuenta' }],
-                })(
+                {getFieldDecorator('accountWithdrawalRequest')(
                   <Select
                     showSearch={true}
-                    name="user"
+                    name="accountWithdrawalRequest"
                     onChange={(value) =>
                       this._handleCustomChangeSelect({ name: 'accountWithdrawalRequest', value })
                     }
@@ -449,11 +467,6 @@ class AddOrEditForm extends PureComponent {
               <Form.Item label="Cuenta para retiro de fondos">
                 {getFieldDecorator('accountWithdrawalRequest', {
                   initialValue: accountWithdrawalRequestInitValue,
-                  rules: [
-                    {
-                      required: false,
-                    },
-                  ],
                 })(
                   <Input
                     name="accountWithdrawalRequest"
@@ -486,7 +499,7 @@ class AddOrEditForm extends PureComponent {
                 initialValue: commissionsChargeInitValue,
                 rules: [
                   {
-                    required: !!this.state.commissionsCharge,
+                    required: !!this.state.commissionsCharge && Number(this.state.commissionsCharge) > 0,
                     message: `Campo requerido`,
                   },
                   {
@@ -619,7 +632,7 @@ class AddOrEditForm extends PureComponent {
                 initialValue: beneficiaryBankNameInitValue,
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: 'Por favor ingrese su Nombre del Banco',
                   },
                 ],
@@ -672,7 +685,7 @@ class AddOrEditForm extends PureComponent {
                 initialValue: beneficiaryBankAddressInitValue,
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: `Requerida Dirección`,
                   },
                 ],
@@ -750,7 +763,7 @@ class AddOrEditForm extends PureComponent {
                 initialValue: intermediaryBankAddressInitValue,
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: `Requerida Dirección`,
                   },
                 ],

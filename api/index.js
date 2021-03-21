@@ -181,8 +181,8 @@ module.exports = (app) => {
   app.post('/api/wire-transfer-request', wireTransferRequest.list)
   app.get('/api/wire-transfer-request/:wireTransferRequestId', wireTransferRequest.get)
   app.get(
-    '/api/wire-transfer-request/user-account/:userAccountId/:associatedOperation',
-    wireTransferRequest.getByUserAccountId
+    '/api/wire-transfer-request/user-account/:username/:associatedOperation',
+    wireTransferRequest.getByUsername
   )
   app.post('/api/wire-transfer-request/create', wireTransferRequest.create)
   app.put('/api/wire-transfer-request/:wireTransferRequestId', wireTransferRequest.update)

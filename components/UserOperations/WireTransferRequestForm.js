@@ -183,24 +183,6 @@ class WireTransferRequestForm extends PureComponent {
           </div>
 
           <Form onSubmit={this._handleSubmit} className="auth-form">
-            <Form.Item label="Seleccione la moneda de transferencia">
-              {getFieldDecorator('currencyType', {
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')} ${t('currencyType')}`,
-                  },
-                ],
-              })(
-                <Select
-                  onChange={(value) => this._handleChangeSelect({ name: 'currencyType', value })}
-                >
-                  <Option value="USD">USD</Option>
-                  <Option value="EUR">EUR</Option>
-                  <Option value="GBP">GBP</Option>
-                </Select>
-              )}
-            </Form.Item>
             <Form.Item label="Método de transferencia">
               {getFieldDecorator('transferMethod', {
                 rules: [
@@ -218,324 +200,354 @@ class WireTransferRequestForm extends PureComponent {
                 </Select>
               )}
             </Form.Item>
-            <Form.Item label="La cuenta para retiro de fondos">
-              {getFieldDecorator('accountWithdrawalRequest', {
-                initialValue: currentAccountType,
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')}`,
-                  },
-                ],
-              })(
-                <Input
-                  disabled
-                  placeholder={`La cuenta para retiro de fondos`}
-                  name="accountWithdrawalRequest"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`RCM ${t('account')}`}>
-              {getFieldDecorator('accountRCM', {
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')} RCM ${t('account')}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`RCM ${t('account')}`}
-                  name="accountRCM"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`${t('amount')} USD`}>
-              {getFieldDecorator('amount', {
-                rules: [
-                  { required: true, message: 'Por favor indique el monto' },
-                  {
-                    validator: this.handleInversion,
-                  },
-                ],
-              })(
-                <div>
-                  <Input
-                    name="amount"
-                    onChange={this._handleChange}
-                    placeholder={`${t('amountNote')} $`}
-                  />
-                </div>
-              )}
-            </Form.Item>
-            {isOTCAccount && (
-              <Form.Item label={`${t('commissionsCharge')} USD`}>
-                {getFieldDecorator('commissionsCharge', {
-                  rules: [
-                    {
-                      required: !!this.state.commissionsCharge && this.state.commissionsCharge > 0,
-                      message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
-                    },
-                    {
-                      validator: this.handleCommission,
-                    },
-                  ],
-                })(
-                  <div>
+            {this.state.transferMethod !== "" && (
+              <React.Fragment>
+                <Form.Item label="Seleccione la moneda de transferencia">
+                  {getFieldDecorator('currencyType', {
+                    rules: [
+                      {
+                        required: true,
+                        message: `${t('requiredFieldMessage')} ${t('currencyType')}`,
+                      },
+                    ],
+                  })(
+                    <Select
+                      onChange={(value) => this._handleChangeSelect({ name: 'currencyType', value })}
+                    >
+                      <Option value="USD">USD</Option>
+                      <Option value="EUR">EUR</Option>
+                      <Option value="GBP">GBP</Option>
+                    </Select>
+                  )}
+                </Form.Item>
+                <Form.Item label="La cuenta para retiro de fondos">
+                  {getFieldDecorator('accountWithdrawalRequest', {
+                    initialValue: currentAccountType,
+                    rules: [
+                      {
+                        required: true,
+                        message: `${t('requiredFieldMessage')}`,
+                      },
+                    ],
+                  })(
                     <Input
-                      name="commissionsCharge"
+                      disabled
+                      placeholder={`La cuenta para retiro de fondos`}
+                      name="accountWithdrawalRequest"
                       onChange={this._handleChange}
-                      placeholder={`${t('commissionsCharge')} $`}
                     />
-                  </div>
+                  )}
+                </Form.Item>
+                <Form.Item label={`RCM ${t('account')}`}>
+                  {getFieldDecorator('accountRCM', {
+                    rules: [
+                      {
+                        required: true,
+                        message: `${t('requiredFieldMessage')} RCM ${t('account')}`,
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder={`RCM ${t('account')}`}
+                      name="accountRCM"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+                <Form.Item label={`${t('amount')} USD`}>
+                  {getFieldDecorator('amount', {
+                    rules: [
+                      { required: true, message: 'Por favor indique el monto' },
+                      {
+                        validator: this.handleInversion,
+                      },
+                    ],
+                  })(
+                    <div>
+                      <Input
+                        name="amount"
+                        onChange={this._handleChange}
+                        placeholder={`${t('amountNote')} $`}
+                      />
+                    </div>
+                  )}
+                </Form.Item>
+                {isOTCAccount && (
+                  <Form.Item label={`${t('commissionsCharge')} USD`}>
+                    {getFieldDecorator('commissionsCharge', {
+                      rules: [
+                        {
+                          required: !!this.state.commissionsCharge && this.state.commissionsCharge > 0,
+                          message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
+                        },
+                        {
+                          validator: this.handleCommission,
+                        },
+                      ],
+                    })(
+                      <div>
+                        <Input
+                          name="commissionsCharge"
+                          onChange={this._handleChange}
+                          placeholder={`${t('commissionsCharge')} $`}
+                        />
+                      </div>
+                    )}
+                  </Form.Item>
                 )}
-              </Form.Item>
+
+                <Form.Item label={`${t('commissionsReferenceDetail')}`}>
+                  {getFieldDecorator('commissionsReferenceDetail', {
+                    rules: [
+                      {
+                        required: false,
+                        message: `${t('requiredFieldMessage')} ${t('commissionsReferenceDetail')}`,
+                      },
+                    ],
+                  })(
+                    <div>
+                      <TextArea
+                        rows={4}
+                        name="commissionsReferenceDetail"
+                        onChange={this._handleChange}
+                        placeholder={`${t('commissionsReferenceDetail')}`}
+                      />
+                    </div>
+                  )}
+                </Form.Item>
+                <Divider orientation="left">Detalles de Cuenta ( Beneficiario)</Divider>
+                <p>Detalles de la cuenta a la que quiere transferir</p>
+                <Form.Item label={`Número de Cuenta`}>
+                  {getFieldDecorator('beneficiaryPersonAccountNumber', {
+                    rules: [
+                      {
+                        required: true,
+                        message: `${t('requiredFieldMessage')} Número de Cuenta}`,
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder={`Número de Cuenta`}
+                      name="beneficiaryPersonAccountNumber"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+                <Form.Item label={`Nombre`}>
+                  {getFieldDecorator('beneficiaryPersonFirstName', {
+                    rules: [
+                      {
+                        required: true,
+                        message: `${t('requiredFieldMessage')} Nombre}`,
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder={`Nombre`}
+                      name="beneficiaryPersonFirstName"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+                <Form.Item label={`Apellido`}>
+                  {getFieldDecorator('beneficiaryPersonLastName', {
+                    rules: [
+                      {
+                        required: true,
+                        message: `${t('requiredFieldMessage')} Apellido}`,
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder={`Apellido`}
+                      name="beneficiaryPersonLastName"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+                <Form.Item label={`Dirección`}>
+                  {getFieldDecorator('beneficiaryPersonAddress', {
+                    rules: [
+                      {
+                        required: true,
+                        message: `${t('requiredFieldMessage')} Dirección`,
+                      },
+                    ],
+                  })(
+                    <div>
+                      <TextArea
+                        rows={4}
+                        name="beneficiaryPersonAddress"
+                        onChange={this._handleChange}
+                        placeholder={`Dirección`}
+                      />
+                    </div>
+                  )}
+                </Form.Item>
+                <Divider orientation="left">Banco Beneficiario</Divider>
+                {/*Starts condition section*/}
+                {this.state.transferMethod === 'Banco' && (
+                  <React.Fragment>
+                    <p>Información del banco que recibe los fondos</p>
+                    <Form.Item label={`Nombre del Banco`}>
+                      {getFieldDecorator('beneficiaryBankName', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} Nombre}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={`Nombre del Banco`}
+                          name="beneficiaryBankName"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                    <Form.Item label={`Swift`}>
+                      {getFieldDecorator('beneficiaryBankSwift', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} Swift}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={`Swift`}
+                          name="beneficiaryBankSwift"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                    <Form.Item label={`ABA`}>
+                      {getFieldDecorator('beneficiaryBankABA', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} ABA}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={`ABA`}
+                          name="beneficiaryBankABA"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                    <Form.Item label={`Dirección`}>
+                      {getFieldDecorator('beneficiaryBankAddress', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} Dirección`,
+                          },
+                        ],
+                      })(
+                        <div>
+                          <TextArea
+                            rows={4}
+                            name="beneficiaryBankAddress"
+                            onChange={this._handleChange}
+                            placeholder={`Dirección`}
+                          />
+                        </div>
+                      )}
+                    </Form.Item>
+                    <Divider orientation="left">Banco Intermediario</Divider>
+                    <p>En caso de requerir banco intermediario, por favor agregar los datos</p>
+                    <Form.Item label={`Nombre del Banco`}>
+                      {getFieldDecorator('intermediaryBankName', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} Nombre}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={`Nombre del Banco`}
+                          name="intermediaryBankName"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                    <Form.Item label={`Swift`}>
+                      {getFieldDecorator('intermediaryBankSwift', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} Swift}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={`Swift`}
+                          name="intermediaryBankSwift"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                    <Form.Item label={`ABA`}>
+                      {getFieldDecorator('intermediaryBankABA', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} ABA}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={`ABA`}
+                          name="intermediaryBankABA"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                    <Form.Item label={`Dirección`}>
+                      {getFieldDecorator('intermediaryBankAddress', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} Dirección`,
+                          },
+                        ],
+                      })(
+                        <div>
+                          <TextArea
+                            rows={4}
+                            name="intermediaryBankAddress"
+                            onChange={this._handleChange}
+                            placeholder={`Dirección`}
+                          />
+                        </div>
+                      )}
+                    </Form.Item>
+                    <Form.Item label={`Cuenta entre bancos`}>
+                      {getFieldDecorator('intermediaryBankAccountInterBank', {
+                        rules: [
+                          {
+                            required: false,
+                            message: `${t('requiredFieldMessage')} Cuenta entre bancos}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={`Cuenta entre bancos`}
+                          name="intermediaryBankAccountInterBank"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                  </React.Fragment>
+                )}
+                {/*Ends condition section*/}
+              </React.Fragment>
             )}
 
-            <Form.Item label={`${t('commissionsReferenceDetail')}`}>
-              {getFieldDecorator('commissionsReferenceDetail', {
-                rules: [
-                  {
-                    required: false,
-                    message: `${t('requiredFieldMessage')} ${t('commissionsReferenceDetail')}`,
-                  },
-                ],
-              })(
-                <div>
-                  <TextArea
-                    rows={4}
-                    name="commissionsReferenceDetail"
-                    onChange={this._handleChange}
-                    placeholder={`${t('commissionsReferenceDetail')}`}
-                  />
-                </div>
-              )}
-            </Form.Item>
-            <Divider orientation="left">Detalles de Cuenta ( Beneficiario)</Divider>
-            <p>Detalles de la cuenta a la que quiere transferir</p>
-            <Form.Item label={`Número de Cuenta`}>
-              {getFieldDecorator('beneficiaryPersonAccountNumber', {
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')} Número de Cuenta}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`Número de Cuenta`}
-                  name="beneficiaryPersonAccountNumber"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`Nombre`}>
-              {getFieldDecorator('beneficiaryPersonFirstName', {
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')} Nombre}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`Nombre`}
-                  name="beneficiaryPersonFirstName"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`Apellido`}>
-              {getFieldDecorator('beneficiaryPersonLastName', {
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')} Apellido}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`Apellido`}
-                  name="beneficiaryPersonLastName"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`Dirección`}>
-              {getFieldDecorator('beneficiaryPersonAddress', {
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')} Dirección`,
-                  },
-                ],
-              })(
-                <div>
-                  <TextArea
-                    rows={4}
-                    name="beneficiaryPersonAddress"
-                    onChange={this._handleChange}
-                    placeholder={`Dirección`}
-                  />
-                </div>
-              )}
-            </Form.Item>
-            <Divider orientation="left">Banco Beneficiario</Divider>
-            <p>Información del banco que recibe los fondos</p>
-            <Form.Item label={`Nombre del Banco`}>
-              {getFieldDecorator('beneficiaryBankName', {
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')} Nombre}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`Nombre del Banco`}
-                  name="beneficiaryBankName"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`Swift`}>
-              {getFieldDecorator('beneficiaryBankSwift', {
-                rules: [
-                  {
-                    required: false,
-                    message: `${t('requiredFieldMessage')} Swift}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`Swift`}
-                  name="beneficiaryBankSwift"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`ABA`}>
-              {getFieldDecorator('beneficiaryBankABA', {
-                rules: [
-                  {
-                    required: false,
-                    message: `${t('requiredFieldMessage')} ABA}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`ABA`}
-                  name="beneficiaryBankABA"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`Dirección`}>
-              {getFieldDecorator('beneficiaryBankAddress', {
-                rules: [
-                  {
-                    required: true,
-                    message: `${t('requiredFieldMessage')} Dirección`,
-                  },
-                ],
-              })(
-                <div>
-                  <TextArea
-                    rows={4}
-                    name="beneficiaryBankAddress"
-                    onChange={this._handleChange}
-                    placeholder={`Dirección`}
-                  />
-                </div>
-              )}
-            </Form.Item>
-            <Divider orientation="left">Banco Intermediario</Divider>
-            <p>En caso de requerir banco intermediario, por favor agregar los datos</p>
-            <Form.Item label={`Nombre del Banco`}>
-              {getFieldDecorator('intermediaryBankName', {
-                rules: [
-                  {
-                    required: false,
-                    message: `${t('requiredFieldMessage')} Nombre}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`Nombre del Banco`}
-                  name="intermediaryBankName"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`Swift`}>
-              {getFieldDecorator('intermediaryBankSwift', {
-                rules: [
-                  {
-                    required: false,
-                    message: `${t('requiredFieldMessage')} Swift}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`Swift`}
-                  name="intermediaryBankSwift"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`ABA`}>
-              {getFieldDecorator('intermediaryBankABA', {
-                rules: [
-                  {
-                    required: false,
-                    message: `${t('requiredFieldMessage')} ABA}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`ABA`}
-                  name="intermediaryBankABA"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-            <Form.Item label={`Dirección`}>
-              {getFieldDecorator('intermediaryBankAddress', {
-                rules: [
-                  {
-                    required: false,
-                    message: `${t('requiredFieldMessage')} Dirección`,
-                  },
-                ],
-              })(
-                <div>
-                  <TextArea
-                    rows={4}
-                    name="intermediaryBankAddress"
-                    onChange={this._handleChange}
-                    placeholder={`Dirección`}
-                  />
-                </div>
-              )}
-            </Form.Item>
-            <Form.Item label={`Cuenta entre bancos`}>
-              {getFieldDecorator('intermediaryBankAccountInterBank', {
-                rules: [
-                  {
-                    required: false,
-                    message: `${t('requiredFieldMessage')} Cuenta entre bancos}`,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder={`Cuenta entre bancos`}
-                  name="intermediaryBankAccountInterBank"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
+
             <Alert
               message="Tiempo de liberación de fondos de 15 a 30 días, por revisión múltiple de cada transacción por parte del Exchange y su departamento de arbitraje."
               banner
