@@ -7,15 +7,12 @@ const Sequelize = require('sequelize');
 module.exports = {
 
   development: {
-    username: 'tfjzhiafbndtul',
-    password: '7f04ec2c816094490f6d7b0e7556d250b74bac716265ad1c5058799f2440a9f3',
-    database: 'dc935b3fdtmj3p',
-    host: 'ec2-34-196-180-38.compute-1.amazonaws.com',
+    username: 'webtrader_user',
+    password: 'w3bTr4d3r!@#',
+    database: 'webtrader_db',
+    host: '127.0.0.1',
     port: 5432,
     dialect: 'postgres',
-    dialectOptions: {
-      ssl: true,
-    },
     define: {
       //prevent sequelize from pluralizing table names
       freezeTableName: true
