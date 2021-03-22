@@ -183,36 +183,38 @@ class WireTransferRequestForm extends PureComponent {
           </div>
 
           <Form onSubmit={this._handleSubmit} className="auth-form">
-            <Form.Item label="Método de transferencia">
+            <Form.Item label={t('wt transferMethod')}>
               {getFieldDecorator('transferMethod', {
                 rules: [
                   {
                     required: true,
-                    message: `${t('requiredFieldMessage')} Método de transferencia`,
+                    message: `${t('requiredFieldGeneralMessage')}`,
                   },
                 ],
               })(
                 <Select
                   onChange={(value) => this._handleChangeSelect({ name: 'transferMethod', value })}
                 >
-                  <Option value="Banco">Banco</Option>
-                  <Option value="Remesa">Remesa</Option>
+                  <Option value="Banco">{t('wt bank')}</Option>
+                  <Option value="Remesa">{t('wt remittance')}</Option>
                 </Select>
               )}
             </Form.Item>
-            {this.state.transferMethod !== "" && (
+            {this.state.transferMethod !== '' && (
               <React.Fragment>
-                <Form.Item label="Seleccione la moneda de transferencia">
+                <Form.Item label={t('wt currencyType')}>
                   {getFieldDecorator('currencyType', {
                     rules: [
                       {
                         required: true,
-                        message: `${t('requiredFieldMessage')} ${t('currencyType')}`,
+                        message: `${t('requiredFieldGeneralMessage')}`,
                       },
                     ],
                   })(
                     <Select
-                      onChange={(value) => this._handleChangeSelect({ name: 'currencyType', value })}
+                      onChange={(value) =>
+                        this._handleChangeSelect({ name: 'currencyType', value })
+                      }
                     >
                       <Option value="USD">USD</Option>
                       <Option value="EUR">EUR</Option>
@@ -220,19 +222,19 @@ class WireTransferRequestForm extends PureComponent {
                     </Select>
                   )}
                 </Form.Item>
-                <Form.Item label="La cuenta para retiro de fondos">
+                <Form.Item label={t('wt accountWithdrawalRequest')}>
                   {getFieldDecorator('accountWithdrawalRequest', {
                     initialValue: currentAccountType,
                     rules: [
                       {
                         required: true,
-                        message: `${t('requiredFieldMessage')}`,
+                        message: `${t('requiredFieldGeneralMessage')}`,
                       },
                     ],
                   })(
                     <Input
                       disabled
-                      placeholder={`La cuenta para retiro de fondos`}
+                      placeholder={t('wt accountWithdrawalRequest')}
                       name="accountWithdrawalRequest"
                       onChange={this._handleChange}
                     />
@@ -243,7 +245,7 @@ class WireTransferRequestForm extends PureComponent {
                     rules: [
                       {
                         required: true,
-                        message: `${t('requiredFieldMessage')} RCM ${t('account')}`,
+                        message: `${t('requiredFieldGeneralMessage')}`,
                       },
                     ],
                   })(
@@ -257,7 +259,7 @@ class WireTransferRequestForm extends PureComponent {
                 <Form.Item label={`${t('amount')} USD`}>
                   {getFieldDecorator('amount', {
                     rules: [
-                      { required: true, message: 'Por favor indique el monto' },
+                      { required: true, message: `${t('requiredFieldGeneralMessage')}` },
                       {
                         validator: this.handleInversion,
                       },
@@ -267,7 +269,7 @@ class WireTransferRequestForm extends PureComponent {
                       <Input
                         name="amount"
                         onChange={this._handleChange}
-                        placeholder={`${t('amountNote')} $`}
+                        placeholder={`${t('wt amountNote')} $`}
                       />
                     </div>
                   )}
@@ -277,7 +279,8 @@ class WireTransferRequestForm extends PureComponent {
                     {getFieldDecorator('commissionsCharge', {
                       rules: [
                         {
-                          required: !!this.state.commissionsCharge && this.state.commissionsCharge > 0,
+                          required:
+                            !!this.state.commissionsCharge && this.state.commissionsCharge > 0,
                           message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
                         },
                         {
@@ -315,62 +318,64 @@ class WireTransferRequestForm extends PureComponent {
                     </div>
                   )}
                 </Form.Item>
-                <Divider orientation="left">Detalles de Cuenta ( Beneficiario)</Divider>
-                <p>Detalles de la cuenta a la que quiere transferir</p>
-                <Form.Item label={`Número de Cuenta`}>
+                <Divider orientation="left">{`${t('wt accountDetail')} (${t(
+                  'wt beneficiary'
+                )})`}</Divider>
+                <p>{t('wt beneficiaryMessage')}</p>
+                <Form.Item label={t('account')}>
                   {getFieldDecorator('beneficiaryPersonAccountNumber', {
                     rules: [
                       {
                         required: true,
-                        message: `${t('requiredFieldMessage')} Número de Cuenta}`,
+                        message: `${t('requiredFieldGeneralMessage')}`,
                       },
                     ],
                   })(
                     <Input
-                      placeholder={`Número de Cuenta`}
+                      placeholder={t('account')}
                       name="beneficiaryPersonAccountNumber"
                       onChange={this._handleChange}
                     />
                   )}
                 </Form.Item>
-                <Form.Item label={`Nombre`}>
+                <Form.Item label={t('firstName')}>
                   {getFieldDecorator('beneficiaryPersonFirstName', {
                     rules: [
                       {
                         required: true,
-                        message: `${t('requiredFieldMessage')} Nombre}`,
+                        message: `${t('requiredFieldGeneralMessage')}`,
                       },
                     ],
                   })(
                     <Input
-                      placeholder={`Nombre`}
+                      placeholder={t('firstName')}
                       name="beneficiaryPersonFirstName"
                       onChange={this._handleChange}
                     />
                   )}
                 </Form.Item>
-                <Form.Item label={`Apellido`}>
+                <Form.Item label={t('lastName')}>
                   {getFieldDecorator('beneficiaryPersonLastName', {
                     rules: [
                       {
                         required: true,
-                        message: `${t('requiredFieldMessage')} Apellido}`,
+                        message: `${t('requiredFieldGeneralMessage')}`,
                       },
                     ],
                   })(
                     <Input
-                      placeholder={`Apellido`}
+                      placeholder={t('lastName')}
                       name="beneficiaryPersonLastName"
                       onChange={this._handleChange}
                     />
                   )}
                 </Form.Item>
-                <Form.Item label={`Dirección`}>
+                <Form.Item label={t('address')}>
                   {getFieldDecorator('beneficiaryPersonAddress', {
                     rules: [
                       {
                         required: true,
-                        message: `${t('requiredFieldMessage')} Dirección`,
+                        message: `${t('requiredFieldGeneralMessage')}`,
                       },
                     ],
                   })(
@@ -379,41 +384,27 @@ class WireTransferRequestForm extends PureComponent {
                         rows={4}
                         name="beneficiaryPersonAddress"
                         onChange={this._handleChange}
-                        placeholder={`Dirección`}
+                        placeholder={t('address')}
                       />
                     </div>
                   )}
                 </Form.Item>
-                <Divider orientation="left">Banco Beneficiario</Divider>
+                <Divider orientation="left">{`${t('wt bank')} ${t('wt beneficiary')}`}</Divider>
                 {/*Starts condition section*/}
                 {this.state.transferMethod === 'Banco' && (
                   <React.Fragment>
-                    <p>Información del banco que recibe los fondos</p>
-                    <Form.Item label={`Nombre del Banco`}>
-                      {getFieldDecorator('beneficiaryBankName', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} Nombre}`,
-                          },
-                        ],
-                      })(
+                    <p>{t('wt beneficiaryBankMessage')}}</p>
+                    <Form.Item label={t('wt bankName')}>
+                      {getFieldDecorator('beneficiaryBankName')(
                         <Input
-                          placeholder={`Nombre del Banco`}
+                          placeholder={t('wt bankName')}
                           name="beneficiaryBankName"
                           onChange={this._handleChange}
                         />
                       )}
                     </Form.Item>
                     <Form.Item label={`Swift`}>
-                      {getFieldDecorator('beneficiaryBankSwift', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} Swift}`,
-                          },
-                        ],
-                      })(
+                      {getFieldDecorator('beneficiaryBankSwift')(
                         <Input
                           placeholder={`Swift`}
                           name="beneficiaryBankSwift"
@@ -422,14 +413,7 @@ class WireTransferRequestForm extends PureComponent {
                       )}
                     </Form.Item>
                     <Form.Item label={`ABA`}>
-                      {getFieldDecorator('beneficiaryBankABA', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} ABA}`,
-                          },
-                        ],
-                      })(
+                      {getFieldDecorator('beneficiaryBankABA')(
                         <Input
                           placeholder={`ABA`}
                           name="beneficiaryBankABA"
@@ -437,52 +421,33 @@ class WireTransferRequestForm extends PureComponent {
                         />
                       )}
                     </Form.Item>
-                    <Form.Item label={`Dirección`}>
-                      {getFieldDecorator('beneficiaryBankAddress', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} Dirección`,
-                          },
-                        ],
-                      })(
+                    <Form.Item label={t('address')}>
+                      {getFieldDecorator('beneficiaryBankAddress')(
                         <div>
                           <TextArea
                             rows={4}
                             name="beneficiaryBankAddress"
                             onChange={this._handleChange}
-                            placeholder={`Dirección`}
+                            placeholder={t('address')}
                           />
                         </div>
                       )}
                     </Form.Item>
-                    <Divider orientation="left">Banco Intermediario</Divider>
-                    <p>En caso de requerir banco intermediario, por favor agregar los datos</p>
-                    <Form.Item label={`Nombre del Banco`}>
-                      {getFieldDecorator('intermediaryBankName', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} Nombre}`,
-                          },
-                        ],
-                      })(
+                    <Divider orientation="left">{`${t('wt bank')} ${t(
+                      'wt intermediary'
+                    )}`}</Divider>
+                    <p>{t('wt intermediaryBankMessage')}</p>
+                    <Form.Item label={t('wt bankName')}>
+                      {getFieldDecorator('intermediaryBankName')(
                         <Input
-                          placeholder={`Nombre del Banco`}
+                          placeholder={t('wt bankName')}
                           name="intermediaryBankName"
                           onChange={this._handleChange}
                         />
                       )}
                     </Form.Item>
                     <Form.Item label={`Swift`}>
-                      {getFieldDecorator('intermediaryBankSwift', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} Swift}`,
-                          },
-                        ],
-                      })(
+                      {getFieldDecorator('intermediaryBankSwift')(
                         <Input
                           placeholder={`Swift`}
                           name="intermediaryBankSwift"
@@ -491,14 +456,7 @@ class WireTransferRequestForm extends PureComponent {
                       )}
                     </Form.Item>
                     <Form.Item label={`ABA`}>
-                      {getFieldDecorator('intermediaryBankABA', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} ABA}`,
-                          },
-                        ],
-                      })(
+                      {getFieldDecorator('intermediaryBankABA')(
                         <Input
                           placeholder={`ABA`}
                           name="intermediaryBankABA"
@@ -506,36 +464,22 @@ class WireTransferRequestForm extends PureComponent {
                         />
                       )}
                     </Form.Item>
-                    <Form.Item label={`Dirección`}>
-                      {getFieldDecorator('intermediaryBankAddress', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} Dirección`,
-                          },
-                        ],
-                      })(
+                    <Form.Item label={t('address')}>
+                      {getFieldDecorator('intermediaryBankAddress')(
                         <div>
                           <TextArea
                             rows={4}
                             name="intermediaryBankAddress"
                             onChange={this._handleChange}
-                            placeholder={`Dirección`}
+                            placeholder={t('address')}
                           />
                         </div>
                       )}
                     </Form.Item>
-                    <Form.Item label={`Cuenta entre bancos`}>
-                      {getFieldDecorator('intermediaryBankAccountInterBank', {
-                        rules: [
-                          {
-                            required: false,
-                            message: `${t('requiredFieldMessage')} Cuenta entre bancos}`,
-                          },
-                        ],
-                      })(
+                    <Form.Item label={t('wt crossBankAccounts')}>
+                      {getFieldDecorator('intermediaryBankAccountInterBank')(
                         <Input
-                          placeholder={`Cuenta entre bancos`}
+                          placeholder={t('wt crossBankAccounts')}
                           name="intermediaryBankAccountInterBank"
                           onChange={this._handleChange}
                         />
@@ -547,24 +491,20 @@ class WireTransferRequestForm extends PureComponent {
               </React.Fragment>
             )}
 
+            <Alert message={t('wt paymentTimePolitics')} banner style={{ margin: '20px 0' }} />
 
             <Alert
-              message="Tiempo de liberación de fondos de 15 a 30 días, por revisión múltiple de cada transacción por parte del Exchange y su departamento de arbitraje."
-              banner
-              style={{ margin: '20px 0' }}
-            />
-
-            <Alert
-              message="Acepto (amos) y reconozco (reconocemos) que es posible que un banco corresponsal u otra entidad financiera que intervenga en la transferencia/giro por mi (nosotros) solicitando o requerido, sea de mi pais o del exterior, pueda rechazar la transferencia/giro y/o retener, bloquear, penalizar y/o congelar los fondos objeto de la solicitud en cumplimiento de las normas que le sean aplicables (lavado de activos AML, OFAC, ONU, etc) y exonero (exoneramos) de responsabilidad a Royal Capital como Broker y a los bancos que se utilicen para las transferencias respectivas, en los maximos terminos adminitidos por la ley aplicable, por cualquier perjuicio que dichas acciones puedan ocacionarme (ocacionarnos). "
+              message={t('wt paymentPolitics')}
               type="warning"
               style={{ margin: '10px 0 30px', textAlign: 'justify' }}
             />
-            <Form.Item label="Entiendo lo anteriormente mencionado sobre los periodos de retiro">
+            <Form.Item label={t('wt agreementPaymentPolitics')}>
               {getFieldDecorator('acceptsWithdrawalRequest', {
                 valuePropName: 'checked',
                 rules: [
                   {
                     required: true,
+                    message: `${t('requiredFieldGeneralMessage')}`,
                   },
                 ],
               })(

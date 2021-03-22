@@ -36,6 +36,7 @@
   "noAccountDataFound": "Nenhuma conta associada ao seu nome foi encontrada.",
   "requiredFieldMessage": "Por favor insira o seu",
   "notValidMessage": "Não é um valor válido",
+  "requiredFieldGeneralMessage": "Campo obrigatório",
   "yes": "Sim",
   "uploadFileIndicator": "Arraste e solte ou selecione um arquivo",
   "uploadFileFormatValid": "Os formatos de arquivo aceitos são: .pdf, .jpg y .png",
@@ -116,10 +117,28 @@
 
   "selectFilterType": "Selecione o tipo de filtro",
 
+  "address": "Morada",
   "account": "Cobrar",
   "amount": "Quantia",
-  "amountNote": "Insira o valor a ser solicitado em dólares americanos",
   "commissionsCharge": "Cobrança de Comissões",
-  "commissionsReferenceDetail": "Detalhe das referências que geraram comissões"
+  "commissionsReferenceDetail": "Detalhe das referências que geraram comissões",
+
+  "wt amountNote": "Insira o valor a ser solicitado em dólares americanos",
+  "wt transferMethod": "Método de transferência",
+  "wt bank": "Banco",
+  "wt bankName": "Nome do banco",
+  "wt remittance": "Remessa",
+  "wt currencyType": "Moeda de transferência",
+  "wt accountWithdrawalRequest": "A conta de retirada de fundos",
+  "wt accountDetail": "Detalhes da conta",
+  "wt beneficiary": "Beneficiário",
+  "wt intermediary": "Intermediário",
+  "wt beneficiaryMessage": "Detalhes da conta para a qual deseja transferir",
+  "wt beneficiaryBankMessage": "Informações do banco que recebe os fundos",
+  "wt intermediaryBankMessage": "Se você precisar de um banco intermediário, adicione os dados",
+  "wt crossBankAccounts": "Contas bancárias cruzadas",
+  "wt paymentTimePolitics": "Tempo de liberação de fundos de 15 a 30 dias, por revisão múltipla de cada transação por parte do Exchange e seu departamento de arbitraje.",
+  "wt paymentPolitics": "Acepto (amos) y reconozco (reconocemos) que é possível que um banco corresponsal u otra entidad financiera que intervenga en la transferencia / giro por mi (nosotros) solicitando o requerido, mar de mi pais o del exterior, pueda rechazar la transferencia / giro y / o retener, bloquear, penalizar e / o congelar os fondos objeto de la solicitação en cumplimiento de las normas that le sean aplicables (lavado de ativos AML, OFAC, ONU, etc) y exonero (exoneramos) de responsabilidad a Royal Capital Broker ya los bancos que se utilicen to las transferencias excelentes, en los maximos terminos adminitidos por la ley aplicable, por cualquier perjuicio que dichas acciones puedan ocacionarme (ocacionarnos).",
+  "wt agreementPaymentPolitics": "Entiendo lo anteriormente usado sobre los periodos de retiro"
 
 }
