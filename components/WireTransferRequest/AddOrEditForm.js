@@ -62,7 +62,6 @@ class AddOrEditForm extends PureComponent {
 
     if (
       nextProps.actionType === 'edit' &&
-      prevState.accounts.length > 0 &&
       Object.keys(nextProps.selectedWireTransferRequest).length > 0 &&
       nextProps.selectedWireTransferRequest.userAccountId !== prevState.userAccountId
     ) {
