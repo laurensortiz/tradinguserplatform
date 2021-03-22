@@ -206,6 +206,7 @@ class AddOrEditForm extends PureComponent {
 
   handleInversion = (rule, value, callback) => {
     const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
+    console.log(this.state.userAccount)
     const userStartedDay = this.state.userAccount.user.startDate
     const { associatedOperation, percentage } = this.state.userAccount.account
     const isOTCAccount = associatedOperation === 1
@@ -226,7 +227,11 @@ class AddOrEditForm extends PureComponent {
 
     return new Promise((resolve, reject) => {
       console.log('1')
-      if (!Object.keys(this.state.userAccount).length || this.state.status === 4) {
+      if (
+        !Object.keys(this.state.userAccount).length ||
+        this.state.status === 4 ||
+        value == this.state.amount
+      ) {
         resolve()
         return
       }
