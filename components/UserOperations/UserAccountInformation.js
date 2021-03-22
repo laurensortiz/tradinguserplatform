@@ -73,7 +73,7 @@ class AccountInformation extends PureComponent {
     }
 
     if (
-      Object.keys(nextProps.lastWireTransferRequest).length > 0 &&
+      nextProps.lastWireTransferRequest && Object.keys(nextProps.lastWireTransferRequest).length > 0 &&
       !prevState.lastWireTransferRequestDate
     ) {
 

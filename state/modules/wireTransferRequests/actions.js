@@ -91,9 +91,7 @@ const requestUserAccountWireTransferRequests = () => {
 }
 
 const requestUserAccountWireTransferRequestsSuccess = (wireTransferRequest) => {
-  console.log('[=====  HEYYY  =====>');
-  console.log(wireTransferRequest[0]);
-  console.log('<=====  /HEYYY  =====]');
+
   return {
     type: types.WIRE_TRANSFER_REQUESTS_USER_ACCOUNT_SUCCESS,
     payload: wireTransferRequest[0],
