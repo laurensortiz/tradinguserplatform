@@ -122,6 +122,7 @@
   "amount": "Monto",
   "commissionsCharge": "Cobro de Comisiones",
   "commissionsReferenceDetail": "Detalle de las referencias que generaron comisiones",
+  "personIDNumber": "Número de identificación",
 
   "wt amountNote": "Digite el monto a solicitar en Dólares Americanos",
   "wt transferMethod": "Método de transferencia",

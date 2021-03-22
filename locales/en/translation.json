@@ -122,6 +122,7 @@
   "amount": "Amount",
   "commissionsCharge": "Commissions Charge",
   "commissionsReferenceDetail": "Detail of references that generated commissions",
+  "personIDNumber": "ID number",
 
   "wt amountNote": "Enter the amount to request in American Dollars",
   "wt transferMethod": "Transfer Method",

@@ -2036,6 +2036,7 @@ alter table public."UserAccount" add "wireTransferAmount" numeric(10,2) NULL;
 alter table public."WireTransferRequest" add "beneficiaryBankABA" varchar(255) NULL;
 alter table public."WireTransferRequest" add "intermediaryBankABA" varchar(255) NULL;
 alter table public."WireTransferRequest" add "associatedOperation" int4 NOT NULL;
+alter table public."WireTransferRequest" add "beneficiaryPersonID" varchar(255) NULL;
 /*
 * End Changes Mar 16, 2021
 */

@@ -90,6 +90,10 @@ module.exports = (Sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      beneficiaryPersonID: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       username: {
         type: DataTypes.STRING,
         allowNull: true,

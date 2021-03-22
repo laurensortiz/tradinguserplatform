@@ -122,6 +122,7 @@
   "amount": "Quantia",
   "commissionsCharge": "Cobrança de Comissões",
   "commissionsReferenceDetail": "Detalhe das referências que geraram comissões",
+  "personIDNumber": "Número de identificación",
 
   "wt amountNote": "Insira o valor a ser solicitado em dólares americanos",
   "wt transferMethod": "Método de transferência",

@@ -24,6 +24,7 @@ class AddOrEditForm extends PureComponent {
     amount: 0.0,
     commissionsCharge: 0.0,
     commissionsReferenceDetail: '',
+    beneficiaryPersonID: '',
     beneficiaryPersonAccountNumber: '',
     beneficiaryPersonLastName: '',
     beneficiaryPersonAddress: '',
@@ -51,7 +52,7 @@ class AddOrEditForm extends PureComponent {
     accounts: [],
     currentUserAccountList: [],
     userAccount: {},
-    userAccountId: null
+    userAccountId: null,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -59,10 +60,17 @@ class AddOrEditForm extends PureComponent {
       ...prevState,
     }
 
-    if (nextProps.actionType === 'edit' && prevState.accounts.length > 0 && Object.keys(nextProps.selectedWireTransferRequest).length > 0 && nextProps.selectedWireTransferRequest.userAccountId !== prevState.userAccountId) {
-      const userAccount = prevState.accounts.find(({id}) => id == nextProps.selectedWireTransferRequest.userAccountId)
+    if (
+      nextProps.actionType === 'edit' &&
+      prevState.accounts.length > 0 &&
+      Object.keys(nextProps.selectedWireTransferRequest).length > 0 &&
+      nextProps.selectedWireTransferRequest.userAccountId !== prevState.userAccountId
+    ) {
+      const userAccount = prevState.accounts.find(
+        ({ id }) => id == nextProps.selectedWireTransferRequest.userAccountId
+      )
       _.assign(updatedState, {
-        userAccount
+        userAccount,
       })
     }
 
@@ -89,7 +97,6 @@ class AddOrEditForm extends PureComponent {
   }
 
   componentDidMount() {
-
     if (_.isEmpty(this.state.userAccounts)) {
       this.props.fetchGetAllUserAccounts({
         associatedOperation: -1,
@@ -132,7 +139,7 @@ class AddOrEditForm extends PureComponent {
       'users',
       'userAccount',
     ])
-    
+
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const { id, guaranteeOperation } = this.state.userAccount
@@ -170,9 +177,12 @@ class AddOrEditForm extends PureComponent {
 
     if (_.isEqual(fieldName, 'username')) {
       const currentUserAccountList = this.state.accounts.filter(({ userId }) => userId === id)
+      const accountRCM = currentUserAccountList[0].user.userID || ''
+
       this.setState({
         username: name,
         currentUserAccountList,
+        accountRCM,
       })
     } else if (_.isEqual(fieldName, 'accountWithdrawalRequest')) {
       const userAccount = this.state.accounts.find((account) => account.id === id)
@@ -196,9 +206,6 @@ class AddOrEditForm extends PureComponent {
 
   handleInversion = (rule, value, callback) => {
     const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
-console.log('[=====  account  =====>');
-console.log(this.state.userAccount);
-console.log('<=====  /account  =====]');
     const userStartedDay = this.state.userAccount.user.startDate
     const { associatedOperation, percentage } = this.state.userAccount.account
     const isOTCAccount = associatedOperation === 1
@@ -218,7 +225,8 @@ console.log('<=====  /account  =====]');
     const amountAvailable = (accountValue / 100) * percentageFromAccount
 
     return new Promise((resolve, reject) => {
-      if(!Object.keys(this.state.userAccount).length) {
+      console.log('1')
+      if (!Object.keys(this.state.userAccount).length || this.state.status === 4) {
         resolve()
       }
       if (!_.isEmpty(value) && !regex.test(value)) {
@@ -250,6 +258,10 @@ console.log('<=====  /account  =====]');
     const { commissionByReference } = this.state.userAccount
 
     return new Promise((resolve, reject) => {
+      console.log('2')
+      if (!Object.keys(this.state.userAccount).length || this.state.status === 4) {
+        resolve()
+      }
       if (Number(value) > 0 && !_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
       }
@@ -301,6 +313,9 @@ console.log('<=====  /account  =====]');
       this.state.beneficiaryPersonAccountNumber
     )
       ? this.state.beneficiaryPersonAccountNumber
+      : undefined
+    const beneficiaryPersonIDInitValue = !_.isEmpty(this.state.beneficiaryPersonID)
+      ? this.state.beneficiaryPersonID
       : undefined
     const beneficiaryPersonFirstNameInitValue = !_.isEmpty(this.state.beneficiaryPersonFirstName)
       ? this.state.beneficiaryPersonFirstName
@@ -504,7 +519,8 @@ console.log('<=====  /account  =====]');
                 initialValue: commissionsChargeInitValue,
                 rules: [
                   {
-                    required: !!this.state.commissionsCharge && Number(this.state.commissionsCharge) > 0,
+                    required:
+                      !!this.state.commissionsCharge && Number(this.state.commissionsCharge) > 0,
                     message: `Campo requerido`,
                   },
                   {
@@ -545,23 +561,43 @@ console.log('<=====  /account  =====]');
 
         <Row gutter={16}>
           <Col xs={24} sm={12}>
-            <Form.Item label="Número de Cuenta">
-              {getFieldDecorator('beneficiaryPersonAccountNumber', {
-                initialValue: beneficiaryPersonAccountNumberInitValue,
-                rules: [
-                  {
-                    required: true,
-                    message: 'Por favor ingrese Número de Cuenta',
-                  },
-                ],
-              })(
-                <Input
-                  placeholder="Número de Cuenta"
-                  name="beneficiaryPersonAccountNumber"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
+            {this.state.transferMethod === 'Banco' ? (
+              <Form.Item label="Número de Cuenta">
+                {getFieldDecorator('beneficiaryPersonAccountNumber', {
+                  initialValue: beneficiaryPersonAccountNumberInitValue,
+                  rules: [
+                    {
+                      required: true,
+                      message: 'Por favor ingrese Número de Cuenta',
+                    },
+                  ],
+                })(
+                  <Input
+                    placeholder="Número de Cuenta"
+                    name="beneficiaryPersonAccountNumber"
+                    onChange={this._handleChange}
+                  />
+                )}
+              </Form.Item>
+            ) : (
+              <Form.Item label="Número de Identificación">
+                {getFieldDecorator('beneficiaryPersonID', {
+                  initialValue: beneficiaryPersonIDInitValue,
+                  rules: [
+                    {
+                      required: true,
+                      message: 'Por favor ingrese Número de identificación',
+                    },
+                  ],
+                })(
+                  <Input
+                    placeholder="Número de Identificación"
+                    name="beneficiaryPersonID"
+                    onChange={this._handleChange}
+                  />
+                )}
+              </Form.Item>
+            )}
           </Col>
           <Col xs={24} sm={12}>
             <React.Fragment>
@@ -629,178 +665,193 @@ console.log('<=====  /account  =====]');
           </Col>
         </Row>
 
-        <Divider orientation="left">Banco Beneficiario</Divider>
-        <Row>
-          <Col xs={24} sm={24}>
-            <Form.Item label="Nombre del Banco">
-              {getFieldDecorator('beneficiaryBankName', {
-                initialValue: beneficiaryBankNameInitValue,
-                rules: [
-                  {
-                    required: false,
-                    message: 'Por favor ingrese su Nombre del Banco',
-                  },
-                ],
-              })(
-                <Input
-                  placeholder="Nombre del Banco"
-                  name="beneficiaryBankName"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Form.Item label="Swift">
-            {getFieldDecorator('beneficiaryBankSwift', {
-              initialValue: beneficiaryBankSwiftInitValue,
-              rules: [
-                {
-                  required: false,
-                  message: 'Por favor ingrese Swift',
-                },
-              ],
-            })(
-              <Input
-                placeholder="Swift"
-                name="beneficiaryBankSwift"
-                onChange={this._handleChange}
-              />
-            )}
-          </Form.Item>
-        </Row>
-        <Row gutter={16}>
-          <Form.Item label="ABA">
-            {getFieldDecorator('beneficiaryBankABA', {
-              initialValue: beneficiaryBankABAInitValue,
-              rules: [
-                {
-                  required: false,
-                  message: 'Por favor ingrese ABA',
-                },
-              ],
-            })(<Input placeholder="ABA" name="beneficiaryBankABA" onChange={this._handleChange} />)}
-          </Form.Item>
-        </Row>
-        <Row gutter={16}>
-          <Col>
-            <Form.Item label={`Dirección`}>
-              {getFieldDecorator('beneficiaryBankAddress', {
-                initialValue: beneficiaryBankAddressInitValue,
-                rules: [
-                  {
-                    required: false,
-                    message: `Requerida Dirección`,
-                  },
-                ],
-              })(
-                <TextArea
-                  rows={4}
-                  name="beneficiaryBankAddress"
-                  onChange={this._handleChange}
-                  placeholder={`Dirección`}
-                />
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
+        {/*Conditional Transfer Method*/}
+        {this.state.transferMethod === 'Banco' && (
+          <React.Fragment>
+            <Divider orientation="left">Banco Beneficiario</Divider>
+            <Row>
+              <Col xs={24} sm={24}>
+                <Form.Item label="Nombre del Banco">
+                  {getFieldDecorator('beneficiaryBankName', {
+                    initialValue: beneficiaryBankNameInitValue,
+                    rules: [
+                      {
+                        required: false,
+                        message: 'Por favor ingrese su Nombre del Banco',
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder="Nombre del Banco"
+                      name="beneficiaryBankName"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Form.Item label="Swift">
+                {getFieldDecorator('beneficiaryBankSwift', {
+                  initialValue: beneficiaryBankSwiftInitValue,
+                  rules: [
+                    {
+                      required: false,
+                      message: 'Por favor ingrese Swift',
+                    },
+                  ],
+                })(
+                  <Input
+                    placeholder="Swift"
+                    name="beneficiaryBankSwift"
+                    onChange={this._handleChange}
+                  />
+                )}
+              </Form.Item>
+            </Row>
+            <Row gutter={16}>
+              <Form.Item label="ABA">
+                {getFieldDecorator('beneficiaryBankABA', {
+                  initialValue: beneficiaryBankABAInitValue,
+                  rules: [
+                    {
+                      required: false,
+                      message: 'Por favor ingrese ABA',
+                    },
+                  ],
+                })(
+                  <Input
+                    placeholder="ABA"
+                    name="beneficiaryBankABA"
+                    onChange={this._handleChange}
+                  />
+                )}
+              </Form.Item>
+            </Row>
+            <Row gutter={16}>
+              <Col>
+                <Form.Item label={`Dirección`}>
+                  {getFieldDecorator('beneficiaryBankAddress', {
+                    initialValue: beneficiaryBankAddressInitValue,
+                    rules: [
+                      {
+                        required: false,
+                        message: `Requerida Dirección`,
+                      },
+                    ],
+                  })(
+                    <TextArea
+                      rows={4}
+                      name="beneficiaryBankAddress"
+                      onChange={this._handleChange}
+                      placeholder={`Dirección`}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
 
-        <Divider orientation="left">Banco Intermediario</Divider>
-        <Row>
-          <Col xs={24} sm={24}>
-            <Form.Item label="Nombre del Banco">
-              {getFieldDecorator('intermediaryBankName', {
-                initialValue: intermediaryBankNameInitValue,
-                rules: [
-                  {
-                    required: false,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder="Nombre del Banco"
-                  name="intermediaryBankName"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={24}>
-            <Form.Item label="Swift">
-              {getFieldDecorator('intermediaryBankSwift', {
-                initialValue: intermediaryBankSwiftInitValue,
-                rules: [
-                  {
-                    required: false,
-                    message: 'Por favor ingrese Swift',
-                  },
-                ],
-              })(
-                <Input
-                  placeholder="Swift"
-                  name="intermediaryBankSwift"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={24}>
-            <Form.Item label="ABA">
-              {getFieldDecorator('intermediaryBankABA', {
-                initialValue: intermediaryBankABAInitValue,
-                rules: [
-                  {
-                    required: false,
-                    message: 'Por favor ingrese ABA',
-                  },
-                ],
-              })(
-                <Input placeholder="ABA" name="intermediaryBankABA" onChange={this._handleChange} />
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col xs={24} sm={24}>
-            <Form.Item label={`Dirección`}>
-              {getFieldDecorator('intermediaryBankAddress', {
-                initialValue: intermediaryBankAddressInitValue,
-                rules: [
-                  {
-                    required: false,
-                    message: `Requerida Dirección`,
-                  },
-                ],
-              })(
-                <Input
-                  name="intermediaryBankAddress"
-                  onChange={this._handleChange}
-                  placeholder={`Dirección`}
-                />
-              )}
-            </Form.Item>
-          </Col>
-          <Col xs={24} sm={24}>
-            <Form.Item label="Cuenta entre bancos">
-              {getFieldDecorator('intermediaryBankAccountInterBank', {
-                initialValue: intermediaryBankAccountInterBankInitValue,
-                rules: [
-                  {
-                    required: false,
-                  },
-                ],
-              })(
-                <Input
-                  placeholder="Nombre del Banco"
-                  name="intermediaryBankAccountInterBank"
-                  onChange={this._handleChange}
-                />
-              )}
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}></Row>
+            <Divider orientation="left">Banco Intermediario</Divider>
+            <Row>
+              <Col xs={24} sm={24}>
+                <Form.Item label="Nombre del Banco">
+                  {getFieldDecorator('intermediaryBankName', {
+                    initialValue: intermediaryBankNameInitValue,
+                    rules: [
+                      {
+                        required: false,
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder="Nombre del Banco"
+                      name="intermediaryBankName"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={24}>
+                <Form.Item label="Swift">
+                  {getFieldDecorator('intermediaryBankSwift', {
+                    initialValue: intermediaryBankSwiftInitValue,
+                    rules: [
+                      {
+                        required: false,
+                        message: 'Por favor ingrese Swift',
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder="Swift"
+                      name="intermediaryBankSwift"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={24}>
+                <Form.Item label="ABA">
+                  {getFieldDecorator('intermediaryBankABA', {
+                    initialValue: intermediaryBankABAInitValue,
+                    rules: [
+                      {
+                        required: false,
+                        message: 'Por favor ingrese ABA',
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder="ABA"
+                      name="intermediaryBankABA"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col xs={24} sm={24}>
+                <Form.Item label={`Dirección`}>
+                  {getFieldDecorator('intermediaryBankAddress', {
+                    initialValue: intermediaryBankAddressInitValue,
+                    rules: [
+                      {
+                        required: false,
+                        message: `Requerida Dirección`,
+                      },
+                    ],
+                  })(
+                    <Input
+                      name="intermediaryBankAddress"
+                      onChange={this._handleChange}
+                      placeholder={`Dirección`}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={24}>
+                <Form.Item label="Cuenta entre bancos">
+                  {getFieldDecorator('intermediaryBankAccountInterBank', {
+                    initialValue: intermediaryBankAccountInterBankInitValue,
+                    rules: [
+                      {
+                        required: false,
+                      },
+                    ],
+                  })(
+                    <Input
+                      placeholder="Nombre del Banco"
+                      name="intermediaryBankAccountInterBank"
+                      onChange={this._handleChange}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}></Row>
+          </React.Fragment>
+        )}
 
         <hr />
         <Row gutter={16}>

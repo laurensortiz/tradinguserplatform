@@ -19,6 +19,7 @@ module.exports = {
           beneficiaryPersonAddress: req.body.beneficiaryPersonAddress,
 
           beneficiaryBankName: req.body.beneficiaryBankName,
+          beneficiaryPersonID: req.body.beneficiaryPersonID,
           beneficiaryBankSwift: req.body.beneficiaryBankSwift,
           beneficiaryBankABA: req.body.beneficiaryBankABA,
           beneficiaryBankAddress: req.body.beneficiaryBankAddress,
@@ -136,6 +137,8 @@ module.exports = {
             beneficiaryPersonAccountNumber:
               req.body.beneficiaryPersonAccountNumber ||
               wireTransferRequest.beneficiaryPersonAccountNumber,
+            beneficiaryPersonID:
+              req.body.beneficiaryPersonID || wireTransferRequest.beneficiaryPersonID,
             beneficiaryPersonFirstName:
               req.body.beneficiaryPersonFirstName || wireTransferRequest.beneficiaryPersonFirstName,
 

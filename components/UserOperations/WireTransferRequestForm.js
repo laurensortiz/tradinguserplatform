@@ -19,6 +19,7 @@ class WireTransferRequestForm extends PureComponent {
     commissionsCharge: 0.0,
     commissionsReferenceDetail: '',
     beneficiaryPersonAccountNumber: '',
+    beneficiaryPersonID: '',
     beneficiaryPersonFirstName: '',
     beneficiaryPersonLastName: '',
     beneficiaryPersonAddress: '',
@@ -67,6 +68,7 @@ class WireTransferRequestForm extends PureComponent {
           accountWithdrawalRequest,
           userAccountId: id,
           username: user.username,
+          accountRCM: user.userID,
           associatedOperation: account.associatedOperation,
           guaranteeOperationNet:
             Number(guaranteeOperation) -
@@ -242,6 +244,7 @@ class WireTransferRequestForm extends PureComponent {
                 </Form.Item>
                 <Form.Item label={`RCM ${t('account')}`}>
                   {getFieldDecorator('accountRCM', {
+                    initialValue: user.userID || '',
                     rules: [
                       {
                         required: true,
@@ -253,6 +256,7 @@ class WireTransferRequestForm extends PureComponent {
                       placeholder={`RCM ${t('account')}`}
                       name="accountRCM"
                       onChange={this._handleChange}
+                      disabled={!!user.userID}
                     />
                   )}
                 </Form.Item>
@@ -322,22 +326,42 @@ class WireTransferRequestForm extends PureComponent {
                   'wt beneficiary'
                 )})`}</Divider>
                 <p>{t('wt beneficiaryMessage')}</p>
-                <Form.Item label={t('account')}>
-                  {getFieldDecorator('beneficiaryPersonAccountNumber', {
-                    rules: [
-                      {
-                        required: true,
-                        message: `${t('requiredFieldGeneralMessage')}`,
-                      },
-                    ],
-                  })(
-                    <Input
-                      placeholder={t('account')}
-                      name="beneficiaryPersonAccountNumber"
-                      onChange={this._handleChange}
-                    />
-                  )}
-                </Form.Item>
+                {this.state.transferMethod === 'Banco' ? (
+                  <Form.Item label={t('account')}>
+                    {getFieldDecorator('beneficiaryPersonAccountNumber', {
+                      rules: [
+                        {
+                          required: true,
+                          message: `${t('requiredFieldGeneralMessage')}`,
+                        },
+                      ],
+                    })(
+                      <Input
+                        placeholder={t('account')}
+                        name="beneficiaryPersonAccountNumber"
+                        onChange={this._handleChange}
+                      />
+                    )}
+                  </Form.Item>
+                ) : (
+                  <Form.Item label={t('personIDNumber')}>
+                    {getFieldDecorator('beneficiaryPersonID', {
+                      rules: [
+                        {
+                          required: true,
+                          message: `${t('requiredFieldGeneralMessage')}`,
+                        },
+                      ],
+                    })(
+                      <Input
+                        placeholder={t('personIDNumber')}
+                        name="beneficiaryPersonID"
+                        onChange={this._handleChange}
+                      />
+                    )}
+                  </Form.Item>
+                )}
+
                 <Form.Item label={t('firstName')}>
                   {getFieldDecorator('beneficiaryPersonFirstName', {
                     rules: [

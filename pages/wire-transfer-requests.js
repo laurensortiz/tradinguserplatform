@@ -101,7 +101,6 @@ class WireTransferRequests extends Component {
   }
 
   _onClose = () => {
-    console.log('in')
     this._handleTableOnChange()
     this.props.resetAfterRequest()
     this.setState({
