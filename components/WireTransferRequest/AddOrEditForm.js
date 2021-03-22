@@ -228,6 +228,7 @@ class AddOrEditForm extends PureComponent {
       console.log('1')
       if (!Object.keys(this.state.userAccount).length || this.state.status === 4) {
         resolve()
+        return
       }
       if (!_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
@@ -261,6 +262,7 @@ class AddOrEditForm extends PureComponent {
       console.log('2')
       if (!Object.keys(this.state.userAccount).length || this.state.status === 4) {
         resolve()
+        return
       }
       if (Number(value) > 0 && !_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
