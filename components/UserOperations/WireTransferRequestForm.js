@@ -101,7 +101,7 @@ class WireTransferRequestForm extends PureComponent {
     if (isOTCAccount) {
       percentageFromAccount = is10percent ? 10 : 7.5
     } else {
-      percentageFromAccount = percentage
+      percentageFromAccount = 100
     }
 
     const amountAvailable = (accountValue / 100) * percentageFromAccount
@@ -117,7 +117,7 @@ class WireTransferRequestForm extends PureComponent {
 
       // Next validation only applies to OTC accounts
       if (isOTCAccount) {
-        if (parseFloat(guaranteeOperation) < 1000) {
+        if (parseFloat(guaranteeOperation) < 0) {
           reject(NO_MONEY_ERROR_MESSAGE)
         }
         if (parseFloat(guaranteeOperation) - parseFloat(amountAvailable) < 0) {

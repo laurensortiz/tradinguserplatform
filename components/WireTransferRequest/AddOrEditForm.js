@@ -6,7 +6,7 @@ import _ from 'lodash'
 
 moment.locale('es') // Set Lang to Spanish
 
-import { Input, Row, Col, Button, Form, DatePicker, Icon, Select, Divider } from 'antd'
+import { Input, Row, Col, Button, Form, DatePicker, Icon, Select, Divider, Switch } from 'antd'
 
 import { accountOperations } from '../../state/modules/accounts'
 import { userOperations } from '../../state/modules/users'
@@ -53,6 +53,7 @@ class AddOrEditForm extends PureComponent {
     currentUserAccountList: [],
     userAccount: {},
     userAccountId: null,
+    isAmountValidationActive: true,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -73,12 +74,6 @@ class AddOrEditForm extends PureComponent {
       })
     }
 
-    if (!_.isEqual(nextProps.accounts, prevState.accounts)) {
-      _.assign(updatedState, {
-        accounts: nextProps.accounts,
-      })
-    }
-
     if (!_.isEqual(nextProps.users, prevState.users)) {
       _.assign(updatedState, {
         users: _.filter(nextProps.users, { roleId: 2, status: 1 }),
@@ -96,12 +91,6 @@ class AddOrEditForm extends PureComponent {
   }
 
   componentDidMount() {
-    if (_.isEmpty(this.state.userAccounts)) {
-      this.props.fetchGetAllUserAccounts({
-        associatedOperation: -1,
-      })
-    }
-
     if (_.isEmpty(this.state.users)) {
       this.props.fetchGetUsers()
     }
@@ -175,7 +164,7 @@ class AddOrEditForm extends PureComponent {
     const name = codeIdName[1]
 
     if (_.isEqual(fieldName, 'username')) {
-      const currentUserAccountList = this.state.accounts.filter(({ userId }) => userId === id)
+      const currentUserAccountList = this.props.accounts.filter(({ userId }) => userId === id)
       const accountRCM = currentUserAccountList[0].user.userID || ''
 
       this.setState({
@@ -184,7 +173,7 @@ class AddOrEditForm extends PureComponent {
         accountRCM,
       })
     } else if (_.isEqual(fieldName, 'accountWithdrawalRequest')) {
-      const userAccount = this.state.accounts.find((account) => account.id === id)
+      const userAccount = this.props.accounts.find((account) => account.id === id)
       this.setState({
         accountWithdrawalRequest: name,
         associatedOperation: Number(codeIdName[2] || 1),
@@ -205,6 +194,9 @@ class AddOrEditForm extends PureComponent {
 
   handleInversion = (rule, value, callback) => {
     const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
+    console.log('[=====    =====>')
+    console.log(this.state.userAccount)
+    console.log('<=====  /  =====]')
     const userStartedDay = this.state.userAccount.user.startDate
     const { associatedOperation, percentage } = this.state.userAccount.account
     const isOTCAccount = associatedOperation === 1
@@ -218,21 +210,21 @@ class AddOrEditForm extends PureComponent {
     if (isOTCAccount) {
       percentageFromAccount = is10percent ? 10 : 7.5
     } else {
-      percentageFromAccount = percentage
+      percentageFromAccount = 100
     }
 
     const amountAvailable = (accountValue / 100) * percentageFromAccount
 
     return new Promise((resolve, reject) => {
-      console.log('1')
+      console.log(this.state.userAccount)
       if (
         !Object.keys(this.state.userAccount).length ||
         this.state.status === 4 ||
         value == this.state.amount
       ) {
         resolve()
-        return
       }
+      console.log('1')
       if (!_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
       }
@@ -243,7 +235,7 @@ class AddOrEditForm extends PureComponent {
 
       // Next validation only applies to OTC accounts
       if (isOTCAccount) {
-        if (parseFloat(guaranteeOperation) < 1000) {
+        if (parseFloat(guaranteeOperation) < 0) {
           reject(NO_MONEY_ERROR_MESSAGE)
         }
         if (parseFloat(guaranteeOperation) - parseFloat(value) < 0) {
@@ -265,7 +257,6 @@ class AddOrEditForm extends PureComponent {
     const { commissionByReference } = this.state.userAccount
 
     return new Promise((resolve, reject) => {
-      console.log('2')
       if (!Object.keys(this.state.userAccount).length || this.state.status === 4) {
         resolve()
         return
@@ -286,11 +277,24 @@ class AddOrEditForm extends PureComponent {
     })
   }
 
+  _handleActiveValidation = (e) => {
+    this.setState({
+      isAmountValidationActive: e,
+    })
+  }
+
   render() {
     const { getFieldDecorator, resetFields } = this.props.form
 
-    if (!this.state.commissionsCharge && Number(this.state.commissionsCharge) <= 0) {
+    if (
+      (!this.state.commissionsCharge && Number(this.state.commissionsCharge) <= 0) ||
+      !this.state.isAmountValidationActive
+    ) {
       resetFields(['commissionsCharge'])
+    }
+
+    if (!this.state.isAmountValidationActive) {
+      resetFields(['amount'])
     }
 
     // Default values for edit action
@@ -505,19 +509,33 @@ class AddOrEditForm extends PureComponent {
               </Form.Item>
             )}
           </Col>
-          <Col xs={24} sm={12}>
-            <Form.Item label={`Monto USD`}>
-              {getFieldDecorator('amount', {
-                initialValue: amountInitValue,
-                value: amountInitValue,
-                rules: [
-                  { required: true, message: 'Por favor indique el monto' },
-                  {
-                    validator: this.handleInversion,
-                  },
-                ],
-              })(<Input name="amount" onChange={this._handleChange} placeholder={`Monto USD`} />)}
-            </Form.Item>
+          <Col xs={24} sm={10}>
+            <Col xs={18}>
+              <Form.Item label={`Monto USD`}>
+                {getFieldDecorator('amount', {
+                  initialValue: amountInitValue,
+                  value: amountInitValue,
+                  rules: [
+                    {
+                      required: this.state.isAmountValidationActive,
+                      message: 'Por favor indique el monto',
+                    },
+                    {
+                      validator: this.handleInversion,
+                    },
+                  ],
+                })(<Input name="amount" onChange={this._handleChange} placeholder={`Monto USD`} />)}
+              </Form.Item>
+            </Col>
+            <Col xs={6}>
+              <Switch
+                onChange={this._handleActiveValidation}
+                checkedChildren="Validar"
+                unCheckedChildren="No Validar"
+                checked={this.state.isAmountValidationActive}
+                style={{ width: '100%', marginTop: 30, minWidth: 115 }}
+              />
+            </Col>
           </Col>
         </Row>
         <Row gutter={16}>
@@ -925,7 +943,6 @@ class AddOrEditForm extends PureComponent {
 function mapStateToProps(state) {
   const { userAccountsState, usersState } = state
   return {
-    accounts: userAccountsState.list,
     users: usersState.list,
   }
 }
@@ -933,7 +950,6 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchGetAllUserAccounts: userAccountOperations.fetchGetAllUserAccounts,
       fetchGetAccounts: accountOperations.fetchGetAccounts,
       fetchGetUsers: userOperations.fetchGetUsers,
     },
