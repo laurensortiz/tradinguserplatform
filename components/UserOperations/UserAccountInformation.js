@@ -97,6 +97,7 @@ class AccountInformation extends PureComponent {
   }
 
   _getHeaderCard = () => {
+    return
     const wireTransferBtn = (
       <Button
         onClick={this._onHandleShowWireTransferForm}
