@@ -36,7 +36,7 @@ module.exports = {
           status: 1,
           userAccountId: req.body.userAccountId,
           associatedOperation: req.body.associatedOperation,
-          createdAt: req.body.createdAt
+          createdAt: !!req.body.createdAt
             ? moment(new Date(req.body.createdAt)).tz('America/New_York').format()
             : moment(new Date()).tz('America/New_York').format(),
           updatedAt: moment(new Date()).tz('America/New_York').format(),
@@ -175,6 +175,9 @@ module.exports = {
               req.body.associatedOperation | wireTransferRequest.associatedOperation,
             status: req.body.status,
             updatedAt: new Date(),
+            createdAt: !!req.body.createdAt
+              ? moment(new Date(req.body.createdAt)).tz('America/New_York').format()
+              : moment(new Date()).tz('America/New_York').format(),
             closedAt:
               req.body.status === 4
                 ? moment(new Date()).tz('America/New_York').format()
