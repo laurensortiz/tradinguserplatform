@@ -67,9 +67,6 @@ class AccountInformation extends PureComponent {
       nextProps.lastWireTransferRequest &&
       Object.keys(nextProps.lastWireTransferRequest).length > 0
     ) {
-      console.log('[=====  hhh  =====>')
-      console.log(nextProps.lastWireTransferRequest)
-      console.log('<=====  /hhh  =====]')
       const { createdAt, associatedOperation } = nextProps.lastWireTransferRequest
 
       const getTotalMonths = getTotalMonthsFromDate(createdAt)
