@@ -3,6 +3,7 @@ import types from './types'
 // Get All Users
 const initialState = {
   list: [],
+  userList: [],
   item: {},
   isCompleted: false,
   isLoading: false,
@@ -67,6 +68,7 @@ export function settings(state = initialState, action) {
     case types.WIRE_TRANSFER_REQUESTS_USER_ACCOUNT_REQUEST:
       return {
         ...state,
+        userList: [],
         isCompleted: false,
         isLoading: true,
         isSuccess: false,
@@ -77,11 +79,12 @@ export function settings(state = initialState, action) {
         isSuccess: true,
         isCompleted: true,
         isLoading: false,
-        item: action.payload,
+        userList: action.payload,
       }
     case types.WIRE_TRANSFER_REQUESTS_USER_ACCOUNT_ERROR:
       return {
         ...state,
+        userList: [],
         isSuccess: false,
         isCompleted: true,
         isLoading: false,
@@ -128,7 +131,7 @@ export function settings(state = initialState, action) {
         isSuccess: true,
         isCompleted: true,
         isLoading: false,
-        jobTitle: action.payload,
+        item: action.payload,
         message: 'Solicitud Incluido con éxito',
       }
     case types.WIRE_TRANSFER_REQUEST_EDIT_ERROR:

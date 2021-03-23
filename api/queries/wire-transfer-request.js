@@ -30,7 +30,6 @@ const queries = {
   // },
   listByUsername: ({ req }) => {
     const username = get(req, 'params.username', '')
-    const associatedOperation = get(req, 'params.associatedOperation', 1)
     return {
       where: {
         username,

@@ -63,20 +63,13 @@ class AccountInformation extends PureComponent {
       })
     }
 
-    if (nextProps.userAccount && !prevState.hasFetchedLastRequest) {
-      nextProps.fetchGetUserAccountWireTransferRequests(
-        nextProps.userAccount.user.username,
-        nextProps.userAccount.account.associatedOperation
-      )
-      return {
-        hasFetchedLastRequest: true,
-      }
-    }
-
     if (
       nextProps.lastWireTransferRequest &&
       Object.keys(nextProps.lastWireTransferRequest).length > 0
     ) {
+      console.log('[=====  hhh  =====>')
+      console.log(nextProps.lastWireTransferRequest)
+      console.log('<=====  /hhh  =====]')
       const { createdAt, associatedOperation } = nextProps.lastWireTransferRequest
 
       const getTotalMonths = getTotalMonthsFromDate(createdAt)
@@ -107,7 +100,6 @@ class AccountInformation extends PureComponent {
   }
 
   _getHeaderCard = () => {
-    return
     const wireTransferBtn = (
       <Button
         onClick={this._onHandleShowWireTransferForm}
@@ -284,7 +276,6 @@ class AccountInformation extends PureComponent {
 
 function mapStateToProps(state) {
   return {
-    lastWireTransferRequest: state.wireTransferRequestsState.item,
     isWireTransferRequestLoading: state.wireTransferRequestsState.isLoading,
     isWireTransferRequestSuccess: state.wireTransferRequestsState.isSuccess,
     wireTransferRequestMessage: state.wireTransferRequestsState.message,
@@ -295,8 +286,6 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchGetUserAccountWireTransferRequests:
-        wireTransferRequestOperations.fetchGetUserAccountWireTransferRequests,
       resetWireTransferRequestAfterRequest: wireTransferRequestOperations.resetAfterRequest,
     },
     dispatch
