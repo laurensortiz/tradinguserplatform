@@ -244,6 +244,9 @@ class AddOrEditForm extends PureComponent {
 
       // Next validation only applies to OTC accounts
       if (isOTCAccount) {
+        if (parseFloat(guaranteeOperation) < 1000) {
+          reject(NO_MONEY_ERROR_MESSAGE)
+        }
         if (parseFloat(guaranteeOperation) - parseFloat(value) < 0) {
           reject(NO_MONEY_ERROR_MESSAGE)
         }

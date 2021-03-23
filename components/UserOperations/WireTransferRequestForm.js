@@ -105,7 +105,6 @@ class WireTransferRequestForm extends PureComponent {
     }
 
     const amountAvailable = (accountValue / 100) * percentageFromAccount
-    const guaranteeOperationAvailable = (guaranteeOperation / 100) * percentageFromAccount
 
     return new Promise((resolve, reject) => {
       if (!_.isEmpty(value) && !regex.test(value)) {
@@ -118,7 +117,10 @@ class WireTransferRequestForm extends PureComponent {
 
       // Next validation only applies to OTC accounts
       if (isOTCAccount) {
-        if (parseFloat(guaranteeOperationAvailable) - parseFloat(value) < 0) {
+        if (parseFloat(guaranteeOperation) < 1000) {
+          reject(NO_MONEY_ERROR_MESSAGE)
+        }
+        if (parseFloat(guaranteeOperation) - parseFloat(amountAvailable) < 0) {
           reject(NO_MONEY_ERROR_MESSAGE)
         }
       }
