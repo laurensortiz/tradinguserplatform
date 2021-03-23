@@ -12,6 +12,7 @@
   "btn clean": "Clean",
   "btn syncData": "Sync Data",
   "btn sendReference": "Send Reference",
+  "btn wireTransferRequest": "Send Request",
 
   "title marketOperations": "Market Operations OTC",
   "title investmentOperations": "Investment Operations",
@@ -21,6 +22,7 @@
   "actionMessage ticketCreated": "Referral Ticket has been created",
   "actionMessage noOperationFound": "No Trades found for this account",
   "actionMessage downloadingHistoryReport": "Downloading Account History Report",
+  "actionMessage wireTransferCreated": "Wire Transfer Request has been created",
 
   "sharedAccount": "Shared Account",
   "allOperations": "All Operations",
@@ -34,6 +36,7 @@
   "noAccountDataFound": "No accounts associated with your name were found.",
   "requiredFieldMessage": "Please enter your",
   "notValidMessage": "Not valid value",
+  "requiredFieldGeneralMessage": "Required field",
   "yes": "Yes",
   "uploadFileIndicator": "Drag and drop or select a file",
   "uploadFileFormatValid": "Accepted file formats are: .pdf, .jpg y .png",
@@ -112,6 +115,32 @@
   "Collaborator": "Collaborator",
   "referredClientDescription": "Referred client description",
 
-  "selectFilterType": "Select filter type"
+  "selectFilterType": "Select filter type",
+
+  "address": "Address",
+  "account": "Account",
+  "amount": "Amount",
+  "commissionsCharge": "Commissions Charge",
+  "commissionsReferenceDetail": "Detail of references that generated commissions",
+  "personIDNumber": "ID number",
+
+  "wt amountNote": "Enter the amount to request in American Dollars",
+  "wt transferMethod": "Transfer Method",
+  "wt bank": "Bank",
+  "wt bankName": "Bank name",
+  "wt remittance": "Remittance",
+  "wt currencyType": "Transfer currency",
+  "wt accountWithdrawalRequest": "The fund withdrawal account",
+  "wt accountDetail": "Account Detail",
+  "wt beneficiary": "Beneficiary",
+  "wt intermediary": "Intermediary",
+  "wt beneficiaryMessage": "Details of the account you want to transfer",
+  "wt beneficiaryBankMessage": "Information of the bank that receives the funds",
+  "wt intermediaryBankMessage": "If you require an intermediary bank, please fulfilled this information",
+  "wt crossBankAccounts": "Cross Bank Accounts",
+  "wt paymentTimePolitics": "The range time for release funds is from 15 to 30 days, by multiple review of each transaction by the Exchange and its arbitration department.",
+  "wt paymentPolitics": "I accept (amos) and reconozco (reconocemos) that it is possible that a correspondent bank or another financial entity that intervenes in the transference / turnover by me (nosotros) requesting the defendant, if my country is abroad, can reject the transference / turnover and / or retain, block, penalize and / or freeze the objects subject to the request in compliance with the rules that are applicable (lax AML, OFAC, UN, etc.) and exonerate (exonerate) from liability to Royal Capital Broker in the banks that are used for the respective transfers, in the maximum terms administered by the applicable law, for any loss that the actions may cause (as they are).",
+  "wt agreementPaymentPolitics": "I understand the aforementioned about retreat periods"
+
 
 }

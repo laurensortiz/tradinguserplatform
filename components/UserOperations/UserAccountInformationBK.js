@@ -47,9 +47,7 @@ class AccountInformation extends PureComponent {
     ) {
       _.assignIn(updatedState, {
         isWireTransferRequestFormVisible: false,
-        isUserWireTransferAvailable:
-          nextProps.userAccount.account.associatedOperation !==
-          prevState.lastWireTransferRequestAssociatedOperation,
+        isUserWireTransferAvailable: nextProps.userAccount.account.associatedOperation !== prevState.lastWireTransferRequestAssociatedOperation,
       })
     }
 
@@ -57,6 +55,7 @@ class AccountInformation extends PureComponent {
       const getTotalMonths = getTotalMonthsFromDate(nextProps.userAccount.user.startDate)
       const isProfitMonthAccount = nextProps.userAccount.account.associatedOperation === 2
       const requiredHoldTime = isProfitMonthAccount ? 1 : 6
+
 
       _.assignIn(updatedState, {
         hasInitRequiredMonthsCompleted: getTotalMonths >= requiredHoldTime,
@@ -74,20 +73,21 @@ class AccountInformation extends PureComponent {
     }
 
     if (
-      nextProps.lastWireTransferRequest &&
-      Object.keys(nextProps.lastWireTransferRequest).length > 0
+      nextProps.lastWireTransferRequest && Object.keys(nextProps.lastWireTransferRequest).length > 0 &&
+      !prevState.lastWireTransferRequestDate
     ) {
+
       const { createdAt, associatedOperation } = nextProps.lastWireTransferRequest
+
 
       const getTotalMonths = getTotalMonthsFromDate(createdAt)
 
       _.assignIn(updatedState, {
         hasOneMonthHoldCompleted: getTotalMonths > 0,
-        isUserWireTransferAvailable:
-          associatedOperation !== nextProps.userAccount.account.associatedOperation,
+        isUserWireTransferAvailable: associatedOperation !== nextProps.userAccount.account.associatedOperation,
         lastWireTransferRequestDate: createdAt,
         isWireTransferRequestFormVisible: false,
-        lastWireTransferRequestAssociatedOperation: associatedOperation,
+        lastWireTransferRequestAssociatedOperation: associatedOperation
       })
     }
 
@@ -107,13 +107,11 @@ class AccountInformation extends PureComponent {
   }
 
   _getHeaderCard = () => {
-    return
     const wireTransferBtn = (
       <Button
         onClick={this._onHandleShowWireTransferForm}
         disabled={
-          (!this.state.hasInitRequiredMonthsCompleted || !this.state.hasOneMonthHoldCompleted) &&
-          !this.state.isUserWireTransferAvailable
+          (!this.state.hasInitRequiredMonthsCompleted || !this.state.hasOneMonthHoldCompleted) && !this.state.isUserWireTransferAvailable
         }
       >
         <Icon type="dollar" /> Wire Transfer Request
@@ -136,6 +134,8 @@ class AccountInformation extends PureComponent {
     })
     this.props.onWireTransferRequest(data)
   }
+
+
 
   render() {
     const { t } = this.props

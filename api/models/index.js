@@ -32,6 +32,7 @@ db.AssetClass = ORM.import(path.join(__dirname, 'asset-class.js'));
 db.Page = ORM.import(path.join(__dirname, 'page.js'));
 db.Setting = ORM.import(path.join(__dirname, 'setting.js'));
 db.Referral = ORM.import(path.join(__dirname, 'referral.js'));
+db.WireTransferRequest = ORM.import(path.join(__dirname, 'wire-transfer-request.js'));
 db.Log = ORM.import(path.join(__dirname, 'log.js'));
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {

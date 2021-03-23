@@ -47,7 +47,6 @@ const index = (emailInformation) => {
         reject( error )
       } else {
 
-        console.log( info );
         resolve( info )
       }
     } )

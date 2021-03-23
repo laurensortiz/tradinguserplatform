@@ -21,7 +21,7 @@ const queries = {
       order: [ [ 'createdAt', 'DESC' ] ],
     };
   },
-  get: ({ req, User, Role }) => {
+  get: ({ Role }) => {
     return {
       attributes: {
         exclude: [ 'salt', 'password' ],

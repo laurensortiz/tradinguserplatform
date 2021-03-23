@@ -173,7 +173,7 @@ class Export extends PureComponent {
       footer: {
         columns: [
           {
-            text: '© 2020 RC LLC. All rights reserved. ROYAL CAPITAL INTERNATIONAL TRADING AVISORS',
+            text: '© 2021 RC LLC. All rights reserved. ROYAL CAPITAL INTERNATIONAL TRADING AVISORS',
             alignment: 'center',
             fontSize: 9,
           }
