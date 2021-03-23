@@ -33,7 +33,6 @@ const queries = {
     return {
       where: {
         username,
-        status: 1,
       },
       order: [['createdAt', 'DESC']],
       silence: true,

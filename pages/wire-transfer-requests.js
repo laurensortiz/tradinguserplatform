@@ -11,6 +11,7 @@ import { wireTransferRequestOperations } from '../state/modules/wireTransferRequ
 import WireTransferRequestsTable from '../components/WireTransferRequest/DetailTable'
 import AddOrEditWireTransferRequestForm from '../components/WireTransferRequest/AddOrEditForm'
 import ExportWireTransferRequestDetail from '../components/WireTransferRequest/ExportDetail'
+import { userAccountOperations } from '../state/modules/userAccounts'
 
 const { TabPane } = Tabs
 
@@ -20,11 +21,18 @@ class WireTransferRequests extends Component {
     actionType: 'edit',
     selectedWireTransferRequest: {},
     wireTransferRequests: [],
+    userAccounts: [],
     status: 1,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
+
+    if (!_.isEqual(nextProps.accounts, prevState.accounts)) {
+      _.assign(updatedState, {
+        accounts: nextProps.accounts,
+      })
+    }
 
     if (!_.isEqual(nextProps.selectedWireTransferRequest, prevState.selectedWireTransferRequest)) {
       _.assignIn(updatedState, {
@@ -91,6 +99,11 @@ class WireTransferRequests extends Component {
     this.props.fetchGetWireTransferRequests({
       status: this.state.status,
     })
+    if (_.isEmpty(this.state.userAccounts)) {
+      this.props.fetchGetAllUserAccounts({
+        associatedOperation: -1,
+      })
+    }
   }
 
   _addWireTransfer = () => {
@@ -213,6 +226,7 @@ class WireTransferRequests extends Component {
             isLoading={this.props.isLoading}
             selectedWireTransferRequest={this.state.selectedWireTransferRequest}
             actionType={this.state.actionType}
+            accounts={this.state.accounts}
           />
         </Drawer>
       </Document>
@@ -228,6 +242,7 @@ function mapStateToProps(state) {
     isSuccess: state.wireTransferRequestsState.isSuccess,
     isCompleted: state.wireTransferRequestsState.isCompleted,
     message: state.wireTransferRequestsState.message,
+    accounts: state.userAccountsState.list,
   }
 }
 
@@ -242,6 +257,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchGetWireTransferRequestWireTransferRequests:
         wireTransferRequestOperations.fetchGetWireTransferRequestWireTransferRequests,
       resetAfterRequest: wireTransferRequestOperations.resetAfterRequest,
+      fetchGetAllUserAccounts: userAccountOperations.fetchGetAllUserAccounts,
     },
     dispatch
   )
