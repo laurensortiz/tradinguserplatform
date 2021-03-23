@@ -33,7 +33,7 @@ const queries = {
         {
           model: User,
           as: 'user',
-          attributes: ['firstName', 'lastName', 'username', 'userID'],
+          attributes: ['firstName', 'lastName', 'username', 'userID', 'startDate'],
         },
         {
           model: Account,
@@ -135,7 +135,7 @@ const queries = {
             {
               model: User,
               as: 'user',
-              attributes: ['username', 'firstName', 'lastName', 'userID'],
+              attributes: ['username', 'firstName', 'lastName', 'userID', 'startDate'],
             },
             {
               model: Account,
