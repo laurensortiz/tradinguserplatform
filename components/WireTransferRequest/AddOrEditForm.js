@@ -66,7 +66,7 @@ class AddOrEditForm extends PureComponent {
       Object.keys(nextProps.selectedWireTransferRequest).length > 0 &&
       nextProps.selectedWireTransferRequest.userAccountId !== prevState.userAccountId
     ) {
-      const userAccount = prevState.accounts.find(
+      const userAccount = nextProps.accounts.find(
         ({ id }) => id == nextProps.selectedWireTransferRequest.userAccountId
       )
       _.assign(updatedState, {
