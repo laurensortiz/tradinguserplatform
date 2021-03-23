@@ -35,6 +35,18 @@ class UserAccount extends PureComponent {
     return null
   }
 
+  _hasLastRequest = ({ account }) => {
+    const getLastRequest = _.chain(this.props.lastWireTransferRequestList)
+      .groupBy('associatedOperation')
+      .transform((result, item) => {
+        const last = _.max(item, (el) => new Date(el.createdAt).getTime())
+        result.push(last)
+      }, [])
+      .value()
+
+    return _.find(getLastRequest, { associatedOperation: account.associatedOperation }) || {}
+  }
+
   _displayData = () => {
     if (_.isEmpty(this.props.accounts)) {
       return <Empty description={this.props.t('noAccountDataFound')} />
@@ -52,6 +64,7 @@ class UserAccount extends PureComponent {
           isWireTransferRequestCompleted={this.props.isWireTransferRequestCompleted}
           isWireTransferRequestSuccess={this.props.isWireTransferRequestSuccess}
           isWireTransferRequestAddCompleted={this.props.isWireTransferRequestAddCompleted}
+          lastWireTransferRequest={this._hasLastRequest(account)}
           key={account.id}
         />
       ))
