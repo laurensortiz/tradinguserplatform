@@ -60,6 +60,7 @@ class AccountInformation extends PureComponent {
 
       _.assignIn(updatedState, {
         hasInitRequiredMonthsCompleted: getTotalMonths >= requiredHoldTime,
+        isUserWireTransferAvailable: getTotalMonths >= requiredHoldTime,
       })
     }
 
