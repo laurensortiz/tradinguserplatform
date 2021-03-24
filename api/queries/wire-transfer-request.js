@@ -28,11 +28,15 @@ const queries = {
   //     silence: true,
   //   }
   // },
-  listByUsername: ({ req }) => {
+  listByUsername: ({ req, sequelize }) => {
+    const Op = sequelize.Op
     const username = get(req, 'params.username', '')
     return {
       where: {
         username,
+        status: {
+          [Op.gt]: 0,
+        },
       },
       order: [['createdAt', 'DESC']],
       silence: true,

@@ -1,4 +1,4 @@
-import { WireTransferRequest, UserAccount, User, ORM } from '../models'
+import { WireTransferRequest, UserAccount, User, ORM, sequelize } from '../models'
 import { wireTransferRequestQuery } from '../queries'
 import moment from 'moment-timezone'
 
@@ -98,7 +98,7 @@ module.exports = {
 
   async getByUsername(req, res) {
     const wireTransferRequest = await WireTransferRequest.findAll(
-      wireTransferRequestQuery.listByUsername({ req })
+      wireTransferRequestQuery.listByUsername({ req, sequelize })
     )
 
     if (!wireTransferRequest) {
