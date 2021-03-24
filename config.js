@@ -1,11 +1,10 @@
 if (process.env.NODE_ENV !== 'production') {
-  require('now-env');
+  require('now-env')
 }
 
-const Sequelize = require('sequelize');
+const Sequelize = require('sequelize')
 
 module.exports = {
-
   development: {
     username: 'webtrader_user',
     password: 'w3bTr4d3r!@#',
@@ -15,8 +14,8 @@ module.exports = {
     dialect: 'postgres',
     define: {
       //prevent sequelize from pluralizing table names
-      freezeTableName: true
-    }
+      freezeTableName: true,
+    },
   },
   stage: {
     username: process.env.DB_STAGE_USERNAME,
@@ -30,8 +29,8 @@ module.exports = {
     },
     define: {
       //prevent sequelize from pluralizing table names
-      freezeTableName: true
-    }
+      freezeTableName: true,
+    },
   },
   production: {
     username: process.env.DB_PRODUCTION_USERNAME,
@@ -45,8 +44,8 @@ module.exports = {
     },
     define: {
       //prevent sequelize from pluralizing table names
-      freezeTableName: true
-    }
+      freezeTableName: true,
+    },
   },
   /**
    * Heroku config
@@ -69,6 +68,4 @@ module.exports = {
   session: {
     secret: process.env.PRODUCTION_SECRET || 'placeholdersecret',
   },
-};
-
-
+}
