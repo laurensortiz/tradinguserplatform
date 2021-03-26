@@ -258,6 +258,7 @@ class DetailTable extends Component {
         <Radio.Group defaultValue={1} buttonStyle="solid" onChange={this.props.onTabChange}>
           <Radio.Button value={1}>Activos</Radio.Button>
           <Radio.Button value={4}>Cancelado</Radio.Button>
+          <Radio.Button value={5}>Anudado</Radio.Button>
           <Radio.Button value={0}>Eliminados</Radio.Button>
         </Radio.Group>
       </Col>
@@ -509,7 +510,7 @@ class DetailTable extends Component {
         ...this._getColumnDateProps('updatedAt', minDatesInTimes, maxDatesInTimes),
       },
       {
-        title: 'Fecha de Cierre',
+        title: 'Fecha de Cancelación',
         dataIndex: 'closedAt',
         key: 'closedAt',
         render: (value) =>

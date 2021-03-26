@@ -19,6 +19,9 @@ const getTotalMonthsFromDate = (date) => {
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
 }
 
+const IS_WEEKEND =
+  moment(new Date()).tz('America/New_York').day() === 6 ||
+  moment(new Date()).tz('America/New_York').day() === 0
 class AccountInformation extends PureComponent {
   state = {
     isReferralFormVisible: false,
@@ -56,11 +59,12 @@ class AccountInformation extends PureComponent {
     if (nextProps.userAccount && prevState.isUserWireTransferAvailable) {
       const getTotalMonths = getTotalMonthsFromDate(nextProps.userAccount.user.startDate)
       const isProfitMonthAccount = nextProps.userAccount.account.associatedOperation === 2
-      const requiredHoldTime = isProfitMonthAccount ? 1 : 6
+      const isOldUser = moment(nextProps.userAccount.user.startDate).isBefore('2020-12-15', 'day')
+      const requiredHoldTime = isProfitMonthAccount ? 1 : isOldUser ? 0 : 6
 
       _.assignIn(updatedState, {
         hasInitRequiredMonthsCompleted: getTotalMonths >= requiredHoldTime,
-        isUserWireTransferAvailable: !isProfitMonthAccount && getTotalMonths >= requiredHoldTime,
+        isUserWireTransferAvailable: getTotalMonths >= requiredHoldTime,
       })
     }
 
@@ -69,13 +73,13 @@ class AccountInformation extends PureComponent {
       Object.keys(nextProps.lastWireTransferRequest).length > 0
     ) {
       const { createdAt, associatedOperation } = nextProps.lastWireTransferRequest
-
       const getTotalMonths = getTotalMonthsFromDate(createdAt)
 
       _.assignIn(updatedState, {
         hasOneMonthHoldCompleted: getTotalMonths > 0,
         isUserWireTransferAvailable:
-          associatedOperation !== nextProps.userAccount.account.associatedOperation,
+          associatedOperation !== nextProps.userAccount.account.associatedOperation &&
+          getTotalMonths > 0,
         lastWireTransferRequestDate: createdAt,
         isWireTransferRequestFormVisible: false,
         lastWireTransferRequestAssociatedOperation: associatedOperation,
@@ -97,21 +101,26 @@ class AccountInformation extends PureComponent {
     })
   }
 
+  _isWireTransferBtnDisabled = () => {
+    return (
+      (!this.state.hasInitRequiredMonthsCompleted || !this.state.hasOneMonthHoldCompleted) &&
+      !this.state.isUserWireTransferAvailable
+    )
+  }
+
   _getHeaderCard = () => {
     const wireTransferBtn = (
       <Button
         onClick={this._onHandleShowWireTransferForm}
-        disabled={
-          (!this.state.hasInitRequiredMonthsCompleted || !this.state.hasOneMonthHoldCompleted) &&
-          !this.state.isUserWireTransferAvailable
-        }
+        disabled={IS_WEEKEND || !!this._isWireTransferBtnDisabled()}
       >
         <Icon type="dollar" /> Wire Transfer Request
       </Button>
     )
     const disableText =
       'No ha cumplido con el tiempo requerido para realizar la solicitud de dinero.'
-    return this.state.isUserWireTransferAvailable ? (
+
+    return !IS_WEEKEND && this.state.isUserWireTransferAvailable ? (
       wireTransferBtn
     ) : (
       <Tooltip placement="leftTop" title={disableText}>

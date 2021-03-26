@@ -1,4 +1,5 @@
 import { get } from 'lodash'
+
 const queries = {
   list: ({ req, UserAccount, User }) => {
     const status = Number(get(req, 'body.status', 1))
@@ -36,6 +37,7 @@ const queries = {
         username,
         status: {
           [Op.gt]: 0,
+          [Op.lte]: 4,
         },
       },
       order: [['createdAt', 'DESC']],

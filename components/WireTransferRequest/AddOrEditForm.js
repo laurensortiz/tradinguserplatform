@@ -15,7 +15,8 @@ import { userAccountOperations } from '../../state/modules/userAccounts'
 const { TextArea } = Input
 const { Option } = Select
 
-const NO_MONEY_ERROR_MESSAGE = 'Su solicitud sobrepasa lo permitido por el exchange'
+const NO_MONEY_ERROR_MESSAGE =
+  'Su solicitud sobrepasa lo permitido por el exchange o no tiene garantías suficientes en su cuenta.'
 
 class AddOrEditForm extends PureComponent {
   state = {
@@ -892,6 +893,7 @@ class AddOrEditForm extends PureComponent {
                 >
                   <Option value={1}>Activo</Option>
                   <Option value={4}>Cancelado</Option>
+                  <Option value={5}>Anulado</Option>
                 </Select>
               )}
             </Form.Item>
