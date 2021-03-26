@@ -78,21 +78,14 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE,
     },
-  });
+  })
 
-  User.associate = models => {
-
+  User.associate = (models) => {
     User.belongsTo(models.Role, {
       foreignKey: 'roleId',
       as: 'role',
-    });
+    })
+  }
 
-    // User.hasMany(models.UserAccount, {
-    //   foreignKey: 'userId',
-    //   as: 'user',
-    // });
-
-  };
-
-  return User;
-};
+  return User
+}
