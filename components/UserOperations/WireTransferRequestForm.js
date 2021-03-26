@@ -109,7 +109,7 @@ class WireTransferRequestForm extends PureComponent {
 
     return new Promise((resolve, reject) => {
       if (!_.isEmpty(value) && !regex.test(value)) {
-        reject('Formato inválido del monto') // reject with error message
+        reject('Formato inválido del monto.') // reject with error message
       }
 
       if (parseFloat(value) == 0) {
@@ -121,7 +121,7 @@ class WireTransferRequestForm extends PureComponent {
         if (parseFloat(guaranteeOperation) < 0) {
           reject(NO_MONEY_ERROR_MESSAGE)
         }
-        if (parseFloat(guaranteeOperation) - parseFloat(amountAvailable) < 0) {
+        if (parseFloat(guaranteeOperation) - parseFloat(value) < 0) {
           reject(NO_MONEY_ERROR_MESSAGE)
         }
       }
