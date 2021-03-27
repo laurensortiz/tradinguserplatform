@@ -118,8 +118,8 @@ class AccountInformation extends PureComponent {
       </Button>
     )
     const disableText = IS_WEEKEND
-      ? 'Los bancos no operan fines de semana, por favor procese su orden al siguiente día hábil laboral'
-      : 'No ha cumplido con el tiempo requerido para realizar la solicitud de dinero.'
+      ? this.props.t('wt disabledWeekendBtn')
+      : this.props.t('wt disabledBtn')
 
     return !IS_WEEKEND && this.state.isUserWireTransferAvailable ? (
       wireTransferBtn
