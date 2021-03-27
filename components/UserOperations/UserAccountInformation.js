@@ -117,8 +117,9 @@ class AccountInformation extends PureComponent {
         <Icon type="dollar" /> Wire Transfer Request
       </Button>
     )
-    const disableText =
-      'No ha cumplido con el tiempo requerido para realizar la solicitud de dinero.'
+    const disableText = IS_WEEKEND
+      ? 'Los bancos no operan fines de semana, por favor procese su orden al siguiente día hábil laboral'
+      : 'No ha cumplido con el tiempo requerido para realizar la solicitud de dinero.'
 
     return !IS_WEEKEND && this.state.isUserWireTransferAvailable ? (
       wireTransferBtn
