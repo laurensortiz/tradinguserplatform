@@ -453,6 +453,22 @@ class DetailTable extends Component {
         ...this.getColumnSearchProps('username'),
       },
       {
+        title: 'Nombre',
+        dataIndex: 'userAccount.user.firstName',
+        key: 'userAccount.user.firstName',
+        sorter: (a, b) => Sort(a.userAccount.user.firstName, b.userAccount.user.firstName),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('userAccount.user.firstName'),
+      },
+      {
+        title: 'Apellido',
+        dataIndex: 'userAccount.user.lastName',
+        key: 'userAccount.user.lastName',
+        sorter: (a, b) => Sort(a.userAccount.user.lastName, b.userAccount.user.lastName),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('userAccount.user.lastName'),
+      },
+      {
         title: 'Moneda',
         dataIndex: 'currencyType',
         key: 'currencyType',

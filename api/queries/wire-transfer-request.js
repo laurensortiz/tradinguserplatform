@@ -7,6 +7,20 @@ const queries = {
       where: {
         status,
       },
+      include: [
+        {
+          model: UserAccount,
+          as: 'userAccount',
+          attributes: ['userId', 'accountId'],
+          include: [
+            {
+              model: User,
+              as: 'user',
+              attributes: ['username', 'firstName', 'lastName'],
+            },
+          ],
+        },
+      ],
       order: [['id', 'DESC']],
     }
   },
