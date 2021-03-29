@@ -12,7 +12,7 @@
     "migrate": "NODE_ENV=production sequelize db:migrate",
     "migrate:undo": "NODE_ENV=production sequelize db:migrate:undo:all",
     "seed": "NODE_ENV=production sequelize db:seed:all",
-    "start": "NODE_OPTIONS=--http-server-default-timeout=0 NODE_ENV=production node index.js",
+    "start": "NODE_ENV=production node index.js",
     "heroku-postbuild": "NODE_ENV=production npm run build"
   },
   "dependencies": {
