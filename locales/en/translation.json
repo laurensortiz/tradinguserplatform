@@ -142,7 +142,6 @@
   "wt paymentPolitics": "I accept (amos) and reconozco (reconocemos) that it is possible that a correspondent bank or another financial entity that intervenes in the transference / turnover by me (nosotros) requesting the defendant, if my country is abroad, can reject the transference / turnover and / or retain, block, penalize and / or freeze the objects subject to the request in compliance with the rules that are applicable (lax AML, OFAC, UN, etc.) and exonerate (exonerate) from liability to Royal Capital Broker in the banks that are used for the respective transfers, in the maximum terms administered by the applicable law, for any loss that the actions may cause (as they are).",
   "wt agreementPaymentPolitics": "I understand the aforementioned about retreat periods",
   "wt disabledWeekendBtn":  "Banks do not operate on weekends, please process your order the next business day",
-  "wt disabledBtn": "You have not met the time required to make the request for money."
-
-
+  "wt disabledBtn": "You have not met the time required to make the request for money.",
+  "wt disabledBtnHoliday": "Dear investor, during this week of Easter or Holy Week no transfer requests will be received, please make your request from Monday, April 5"
 }
