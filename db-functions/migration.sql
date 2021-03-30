@@ -2020,7 +2020,7 @@ create TABLE public."WireTransferRequest" (
   "intermediaryBankAccountInterBank" varchar(255) NULL,
   "transferMethod" varchar(255) NULL,
   "accountWithdrawalRequest" varchar(255) NULL,
-  "userAccountId" varchar(255) NULL,
+  "userAccountId" int4 NULL,
   "username" varchar(255) NULL,
   "notes" varchar(500) NULL,
   status int4 NOT NULL,
