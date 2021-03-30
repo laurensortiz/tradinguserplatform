@@ -130,6 +130,16 @@ class AccountInformation extends PureComponent {
     )
   }
 
+  _getHeaderCardHoliday = () => {
+    return (
+      <Tooltip placement="leftTop" title={this.props.t('wt disabledBtnHoliday')}>
+        <Button disabled>
+          <Icon type="dollar" /> Wire Transfer Request
+        </Button>
+      </Tooltip>
+    )
+  }
+
   _onWireTransferRequest = (data) => {
     this.setState({
       lastWireTransferRequestAssociatedOperation: data.associatedOperation,
@@ -167,7 +177,7 @@ class AccountInformation extends PureComponent {
         >
           <Row style={{ marginBottom: 20 }}>
             <Col>
-              <Descriptions title={this._getHeaderCard()}>
+              <Descriptions title={this._getHeaderCardHoliday()}>
                 <Descriptions.Item label={t('accountType')}>{accountName}</Descriptions.Item>
                 {_.isEqual(accountType, 1) ? (
                   <Descriptions.Item label={t('profitCommission')}>
