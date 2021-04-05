@@ -2050,3 +2050,5 @@ insert into public."Page" (id,"name","content",status,"createdAt","updatedAt") V
 /*
 * End Changes Mar 24, 2021
 */
+
+alter table public."WireTransferRequest" add "amountBK" varchar(255) NULL;
