@@ -10,6 +10,7 @@ module.exports = {
           currencyType: req.body.currencyType,
           accountRCM: req.body.accountRCM,
           amount: Number(req.body.amount),
+          amountBK: req.body.amount,
           commissionsCharge: Number(req.body.commissionsCharge),
           commissionsReferenceDetail: req.body.commissionsReferenceDetail,
 
@@ -129,9 +130,10 @@ module.exports = {
           {
             currencyType: req.body.currencyType || wireTransferRequest.currencyType,
             accountRCM: req.body.accountRCM || wireTransferRequest.accountRCM,
-            amount: Number(req.body.amount) || wireTransferRequest.amount,
-            commissionsCharge:
-              Number(req.body.commissionsCharge) || wireTransferRequest.commissionsCharge,
+            amount: req.body.amount ? Number(req.body.amount) : wireTransferRequest.amount,
+            commissionsCharge: req.body.commissionsCharge
+              ? Number(req.body.commissionsCharge)
+              : wireTransferRequest.commissionsCharge,
             commissionsReferenceDetail:
               req.body.commissionsReferenceDetail || wireTransferRequest.commissionsReferenceDetail,
             beneficiaryPersonAccountNumber:

@@ -122,6 +122,10 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
         type: DataTypes.DATE,
       },
+      amountBK: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     },
     {
       timestamps: false,
