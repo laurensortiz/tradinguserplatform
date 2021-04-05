@@ -177,7 +177,7 @@ class AccountInformation extends PureComponent {
         >
           <Row style={{ marginBottom: 20 }}>
             <Col>
-              <Descriptions title={this._getHeaderCardHoliday()}>
+              <Descriptions title={this._getHeaderCard()}>
                 <Descriptions.Item label={t('accountType')}>{accountName}</Descriptions.Item>
                 {_.isEqual(accountType, 1) ? (
                   <Descriptions.Item label={t('profitCommission')}>
