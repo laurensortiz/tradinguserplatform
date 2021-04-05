@@ -81,7 +81,6 @@ class AccountInformation extends PureComponent {
           associatedOperation !== nextProps.userAccount.account.associatedOperation &&
           getTotalMonths > 0,
         lastWireTransferRequestDate: createdAt,
-        isWireTransferRequestFormVisible: false,
         lastWireTransferRequestAssociatedOperation: associatedOperation,
       })
     }
@@ -121,7 +120,7 @@ class AccountInformation extends PureComponent {
       ? this.props.t('wt disabledWeekendBtn')
       : this.props.t('wt disabledBtn')
 
-    return !IS_WEEKEND && this.state.isUserWireTransferAvailable ? (
+    return !IS_WEEKEND && !this._isWireTransferBtnDisabled() ? (
       wireTransferBtn
     ) : (
       <Tooltip placement="leftTop" title={disableText}>
