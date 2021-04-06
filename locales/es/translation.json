@@ -143,6 +143,7 @@
   "wt agreementPaymentPolitics": "Entiendo lo anteriormente mencionado sobre los periodos de retiro",
   "wt disabledWeekendBtn":  "Los bancos no operan fines de semana, por favor procese su orden al siguiente día hábil laboral",
   "wt disabledBtn": "No ha cumplido con el tiempo requerido para realizar la solicitud de dinero.",
-  "wt disabledBtnHoliday": "Estimado inversionista, durante esta semana de Pascua o Semana Santa no se recibirán solicitudes de transferencia, por favor realice su solicitud a partir del lunes 5 de Abril"
+  "wt disabledBtnHoliday": "Estimado inversionista, durante esta semana de Pascua o Semana Santa no se recibirán solicitudes de transferencia, por favor realice su solicitud a partir del lunes 5 de Abril",
+  "wt disabledBtnAfterHours": "Por favor solicitar dinero dentro del horario comercial. Horario de 7:30am a 19:00 horas New York."
 
 }

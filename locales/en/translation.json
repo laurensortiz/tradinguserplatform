@@ -143,5 +143,6 @@
   "wt agreementPaymentPolitics": "I understand the aforementioned about retreat periods",
   "wt disabledWeekendBtn":  "Banks do not operate on weekends, please process your order the next business day",
   "wt disabledBtn": "You have not met the time required to make the request for money.",
-  "wt disabledBtnHoliday": "Dear investor, during this week of Easter or Holy Week no transfer requests will be received, please make your request from Monday, April 5"
+  "wt disabledBtnHoliday": "Dear investor, during this week of Easter or Holy Week no transfer requests will be received, please make your request from Monday, April 5",
+  "wt disabledBtnAfterHours": "Please request money during business hours. Hours from 7:30a.m. to 7:00 p.m. New York."
 }
