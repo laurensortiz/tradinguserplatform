@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { Row, Col, Descriptions, Card, Icon, Button, Modal, Tooltip } from 'antd'
 import _ from 'lodash'
 import { withNamespaces } from 'react-i18next'
-import moment from 'moment'
+import moment from 'moment-timezone'
 
 import { FormatCurrency, IsOperationPositive, StaticAmountBox } from '../../common/utils'
 import ReferralForm from './ReferralForm'
@@ -14,14 +14,26 @@ import { wireTransferRequestOperations } from '../../state/modules/wireTransferR
 import { connect } from 'react-redux'
 
 const getTotalMonthsFromDate = (date) => {
-  const userStartDate = new moment(date)
-  const today = new moment()
+  const userStartDate = moment(date)
+  const today = moment()
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
 }
 
 const IS_WEEKEND =
   moment(new Date()).tz('America/New_York').day() === 6 ||
   moment(new Date()).tz('America/New_York').day() === 0
+
+const isBetweenAfterHours = () => {
+  let start = moment('19:00', 'H:mm')
+  let end = moment('07:30', 'H:mm')
+  let serverHours = moment().tz('America/New_York').format('H:mm')
+  let server = moment(serverHours, 'H:mm')
+  return (
+    (server >= start && server <= moment('23:59:59', 'h:mm:ss')) ||
+    (server >= moment('0:00:00', 'h:mm:ss') && server < end)
+  )
+}
+
 class AccountInformation extends PureComponent {
   state = {
     isReferralFormVisible: false,
@@ -139,6 +151,16 @@ class AccountInformation extends PureComponent {
     )
   }
 
+  _getHeaderCardAfterHours = () => {
+    return (
+      <Tooltip placement="leftTop" title={this.props.t('wt disabledBtnAfterHours')}>
+        <Button disabled>
+          <Icon type="dollar" /> Wire Transfer Request
+        </Button>
+      </Tooltip>
+    )
+  }
+
   _onWireTransferRequest = (data) => {
     this.setState({
       lastWireTransferRequestAssociatedOperation: data.associatedOperation,
@@ -164,6 +186,8 @@ class AccountInformation extends PureComponent {
 
     const isOperationPositive = IsOperationPositive(accountValue, balanceInitial)
 
+    const isOutBusinessHours = isBetweenAfterHours()
+
     return (
       <>
         <ExportUserAccountsPDF userAccount={this.props.userAccount} />
@@ -176,7 +200,9 @@ class AccountInformation extends PureComponent {
         >
           <Row style={{ marginBottom: 20 }}>
             <Col>
-              <Descriptions title={this._getHeaderCard()}>
+              <Descriptions
+                title={isOutBusinessHours ? this._getHeaderCardAfterHours() : this._getHeaderCard()}
+              >
                 <Descriptions.Item label={t('accountType')}>{accountName}</Descriptions.Item>
                 {_.isEqual(accountType, 1) ? (
                   <Descriptions.Item label={t('profitCommission')}>
