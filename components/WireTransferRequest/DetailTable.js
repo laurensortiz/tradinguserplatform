@@ -469,6 +469,22 @@ class DetailTable extends Component {
         ...this.getColumnSearchProps('userAccount.user.lastName'),
       },
       {
+        title: 'País',
+        dataIndex: 'userAccount.user.country',
+        key: 'userAccount.user.country',
+        sorter: (a, b) => Sort(a.userAccount.user.country, b.userAccount.user.country),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('userAccount.user.country'),
+      },
+      {
+        title: 'Referido',
+        dataIndex: 'userAccount.user.referred',
+        key: 'userAccount.user.referred',
+        sorter: (a, b) => Sort(a.userAccount.user.referred, b.userAccount.user.referred),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('userAccount.user.referred'),
+      },
+      {
         title: 'Moneda',
         dataIndex: 'currencyType',
         key: 'currencyType',
@@ -492,7 +508,14 @@ class DetailTable extends Component {
         sortDirections: ['descend', 'ascend'],
         ...this.getColumnSearchProps('amount'),
       },
-
+      {
+        title: 'Tipo de Cuenta',
+        dataIndex: 'accountWithdrawalRequest',
+        key: 'accountWithdrawalRequest',
+        sorter: (a, b) => Sort(a.accountWithdrawalRequest, b.accountWithdrawalRequest),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('accountWithdrawalRequest'),
+      },
       {
         title: 'Fecha de Creación',
         dataIndex: 'createdAt',

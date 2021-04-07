@@ -16,7 +16,7 @@ const queries = {
             {
               model: User,
               as: 'user',
-              attributes: ['username', 'firstName', 'lastName'],
+              attributes: ['username', 'firstName', 'lastName', 'referred', 'country'],
             },
           ],
         },
