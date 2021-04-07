@@ -62,6 +62,14 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    country: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    referred: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     startDate: {
       type: DataTypes.DATE,
       allowNull: true,

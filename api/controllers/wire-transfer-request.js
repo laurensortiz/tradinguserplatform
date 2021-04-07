@@ -9,7 +9,7 @@ module.exports = {
         const wireTransferRequest = await WireTransferRequest.create({
           currencyType: req.body.currencyType,
           accountRCM: req.body.accountRCM,
-          amount: Number(req.body.amount),
+          amount: Number(req.body.amount.replace(',', '')),
           amountBK: req.body.amount,
           commissionsCharge: Number(req.body.commissionsCharge),
           commissionsReferenceDetail: req.body.commissionsReferenceDetail,
@@ -130,7 +130,9 @@ module.exports = {
           {
             currencyType: req.body.currencyType || wireTransferRequest.currencyType,
             accountRCM: req.body.accountRCM || wireTransferRequest.accountRCM,
-            amount: req.body.amount ? Number(req.body.amount) : wireTransferRequest.amount,
+            amount: req.body.amount
+              ? Number(req.body.amount.replace(',', ''))
+              : wireTransferRequest.amount,
             commissionsCharge: req.body.commissionsCharge
               ? Number(req.body.commissionsCharge)
               : wireTransferRequest.commissionsCharge,

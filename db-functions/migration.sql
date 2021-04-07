@@ -2047,8 +2047,19 @@ alter table public."WireTransferRequest" add "beneficiaryPersonID" varchar(255) 
 insert into public."Page" (id,"name","content",status,"createdAt","updatedAt") VALUES
 (3,'MetaTrader 5','<div id="webterminal" style="width:100%;height:600px;"></div> <script async type="text/javascript" src="https://trade.mql5.com/trade/widget.js"></script> <script async type="text/javascript"> new MetaTraderWebTerminal( "webterminal", { version: 5, servers: ["RoyalCapitalLtd-Server"], server: "RoyalCapitalLtd-Server", demoAllServers: true, utmCampaign: "", utmSource: "www.royalcap-int.com", startMode: "create_demo", language: "en", colorScheme: "black_on_white" } ); </script>',1,'2021-03-24 23:48:47.000','2021-03-24 23:48:47.000')
 
+alter table public."WireTransferRequest" add "amountBK" varchar(255) NULL;
+
 /*
 * End Changes Mar 24, 2021
 */
 
-alter table public."WireTransferRequest" add "amountBK" varchar(255) NULL;
+
+/*
+* Start Changes Abr 7, 2021
+*/
+alter table public."User" add "country" varchar(255) NULL;
+alter table public."User" add "referred" varchar(255) NULL;
+
+/*
+* Start Changes Abr 7, 2021
+*/
