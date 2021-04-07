@@ -152,7 +152,6 @@ module.exports = {
     try {
       const updatedUser = await user.update({
         email: req.body.email || user.email,
-        username: _.toLower(req.body.username) || user.username,
         firstName: req.body.firstName || user.firstName,
         lastName: req.body.lastName || user.lastName,
         firstName2: req.body.firstName2 || user.firstName2,
