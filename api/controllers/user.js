@@ -149,30 +149,37 @@ module.exports = {
       })
     }
 
-    const updatedUser = await user.update({
-      email: req.body.email || user.email,
-      username: _.toLower(req.body.username) || user.username,
-      firstName: req.body.firstName || user.firstName,
-      lastName: req.body.lastName || user.lastName,
-      firstName2: req.body.firstName2,
-      lastName2: req.body.lastName2,
-      firstName3: req.body.firstName3,
-      lastName3: req.body.lastName3,
-      firstName4: req.body.firstName4,
-      lastName4: req.body.lastName4,
-      country: req.body.country || user.country,
-      referred: req.body.referred || user.referred,
-      userID: req.body.userID || user.userID,
-      startDate: req.body.startDate || user.startDate,
-      endDate: req.body.endDate || user.endDate,
-      roleId: _.get(req, 'body.role.id', user.roleId),
-      status: req.body.status || user.status,
-      phoneNumber: req.body.phoneNumber || user.phoneNumber,
-      password: req.body.password ? hashPassword(req.body.password) : user.password,
-      salt: req.body.password ? salt : user.salt,
-    })
+    try {
+      const updatedUser = await user.update({
+        email: req.body.email || user.email,
+        username: _.toLower(req.body.username) || user.username,
+        firstName: req.body.firstName || user.firstName,
+        lastName: req.body.lastName || user.lastName,
+        firstName2: req.body.firstName2 || user.firstName2,
+        lastName2: req.body.lastName2 || user.lastName2,
+        firstName3: req.body.firstName3 || user.firstName3,
+        lastName3: req.body.lastName3 || user.lastName3,
+        firstName4: req.body.firstName4 || user.firstName4,
+        lastName4: req.body.lastName4 || user.lastName4,
+        country: req.body.country || user.country,
+        referred: req.body.referred || user.referred,
+        userID: req.body.userID || user.userID,
+        startDate: req.body.startDate || user.startDate,
+        endDate: req.body.endDate || user.endDate,
+        roleId: _.get(req, 'body.role.id', user.roleId),
+        status: req.body.status || user.status,
+        phoneNumber: req.body.phoneNumber || user.phoneNumber,
+        password: req.body.password ? hashPassword(req.body.password) : user.password,
+        salt: req.body.password ? salt : user.salt,
+      })
 
-    return res.status(200).send(updatedUser)
+      return res.status(200).send(updatedUser)
+    } catch (e) {
+      console.log('[=====  erro  =====>')
+      console.log(e)
+      console.log('<=====  /erro  =====]')
+      return res.status(500).send(e)
+    }
   },
 
   async delete(req, res) {
