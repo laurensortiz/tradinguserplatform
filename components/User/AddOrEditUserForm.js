@@ -320,7 +320,14 @@ class AddOrEditUserForm extends PureComponent {
             {getFieldDecorator('username', {
               initialValue: this.state.username,
               rules: [{ required: true, message: 'Por favor ingrese su Usuario' }],
-            })(<Input name="username" onChange={this._handleChange} placeholder="Usuario" />)}
+            })(
+              <Input
+                name="username"
+                onChange={this._handleChange}
+                placeholder="Usuario"
+                disabled={_.isEqual(this.props.actionType, 'edit')}
+              />
+            )}
           </Form.Item>
           <Form.Item label="Usuario ID" className={classNames({ hidden: isAdminUser })}>
             {getFieldDecorator('userID', {
