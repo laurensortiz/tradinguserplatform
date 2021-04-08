@@ -113,10 +113,16 @@ class AccountInformation extends PureComponent {
   }
 
   _isWireTransferBtnDisabled = () => {
-    return (
-      (!this.state.hasInitRequiredMonthsCompleted || !this.state.hasOneMonthHoldCompleted) &&
-      !this.state.isUserWireTransferAvailable
-    )
+    const isProfitMonth = this.props.userAccount.account.associatedOperation === 2
+
+    if (isProfitMonth) {
+      return false
+    } else {
+      return (
+        (!this.state.hasInitRequiredMonthsCompleted || !this.state.hasOneMonthHoldCompleted) &&
+        !this.state.isUserWireTransferAvailable
+      )
+    }
   }
 
   _getHeaderCard = () => {
