@@ -181,7 +181,10 @@ class DetailTable extends Component {
       <Icon type="filter" theme="filled" style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value, record) => {
-      return _.get(record, dataIndex).toString().toLowerCase().includes(value.toLowerCase())
+      const filterData = _.get(record, dataIndex)
+      if (filterData) {
+        return filterData.toString().toLowerCase().includes(value.toLowerCase())
+      }
     },
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
@@ -192,7 +195,7 @@ class DetailTable extends Component {
       const displayText =
         dataIndex === 'initialAmount' || dataIndex === 'amount'
           ? this._displayTableAmount(text)
-          : text
+          : text || ''
       return this.state.searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
