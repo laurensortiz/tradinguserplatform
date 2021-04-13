@@ -29,12 +29,16 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
     },
     initialAmount: {
-      type: DataTypes.DECIMAL(10,2),
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
-      defaultValue: 0
+      defaultValue: 0,
     },
     hasBrokerGuarantee: {
       type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    brokerName: {
+      type: DataTypes.STRING,
       allowNull: true,
     },
     brokerGuaranteeCode: {
@@ -82,15 +86,13 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE,
     },
-  });
-  Referral.associate = models => {
-
+  })
+  Referral.associate = (models) => {
     Referral.belongsTo(models.UserAccount, {
       foreignKey: 'userAccountId',
       as: 'userAccount',
-    });
+    })
+  }
 
-  };
-
-  return Referral;
-};
+  return Referral
+}

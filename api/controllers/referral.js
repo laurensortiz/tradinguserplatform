@@ -1,11 +1,10 @@
-import { Referral, UserAccount, User } from '../models';
-import { referralQuery } from '../queries';
-import SendEmail from '../../common/email';
+import { Referral, UserAccount, User } from '../models'
+import { referralQuery } from '../queries'
+import SendEmail from '../../common/email'
 
 module.exports = {
   async create(req, res) {
     try {
-
       const referral = await Referral.create({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -16,6 +15,7 @@ module.exports = {
         jobTitle: req.body.jobTitle,
         initialAmount: req.body.initialAmount,
         hasBrokerGuarantee: req.body.hasBrokerGuarantee,
+        brokerName: req.body.brokerName,
         brokerGuaranteeCode: req.body.brokerGuaranteeCode,
         quantity: Number(req.body.quantity),
         personalIdDocument: req.body.personalIdDocument,
@@ -26,60 +26,55 @@ module.exports = {
         userAccountId: req.body.userAccountId,
         createdAt: new Date(),
         updatedAt: new Date(),
-      });
+      })
 
       const sendEmail = await SendEmail({
         ...req.body,
-        ticketId: referral.id
-      });
+        ticketId: referral.id,
+      })
 
-
-      return res.status(200).send(referral);
+      return res.status(200).send(referral)
     } catch (err) {
-      return res.status(500).send(err);
+      return res.status(500).send(err)
     }
   },
 
   async list(req, res) {
-    const referrals = await Referral.findAll(
-      referralQuery.list({ req, UserAccount, User })
-    );
+    const referrals = await Referral.findAll(referralQuery.list({ req, UserAccount, User }))
 
     if (!referrals) {
       return res.status(404).send({
         message: '404 on Referral get List',
-      });
+      })
     }
-    return res.status(200).send(referrals);
+    return res.status(200).send(referrals)
   },
 
   async get(req, res) {
     const referral = await Referral.findByPk(
       req.params.referralId,
       referralQuery.get({ req, UserAccount, User })
-    );
+    )
 
     if (!referral) {
       return res.status(404).send({
         message: '404 on Referral get',
-      });
+      })
     }
 
-    return res.status(200).send(referral);
+    return res.status(200).send(referral)
   },
 
   async getByUserAccountId(req, res) {
-    const referral = await Referral.findAll(
-      referralQuery.listByUsername({ req})
-    );
+    const referral = await Referral.findAll(referralQuery.listByUsername({ req }))
 
     if (!referral) {
       return res.status(404).send({
         message: '404 on Referral get',
-      });
+      })
     }
 
-    return res.status(200).send(referral);
+    return res.status(200).send(referral)
   },
 
   async update(req, res) {
@@ -88,14 +83,14 @@ module.exports = {
         id: req.params.referralId,
       },
       attributes: {
-        exclude: [ 'personalIdDocument' ],
+        exclude: ['personalIdDocument'],
       },
-    });
+    })
 
     if (!referral) {
       return res.status(404).send({
         message: '404 on Referral update',
-      });
+      })
     }
 
     const updatedReferral = await referral.update({
@@ -108,6 +103,7 @@ module.exports = {
       jobTitle: req.body.jobTitle || referral.jobTitle,
       initialAmount: req.body.initialAmount || referral.initialAmount,
       hasBrokerGuarantee: req.body.hasBrokerGuarantee,
+      brokerName: req.body.brokerName || referral.brokerName,
       brokerGuaranteeCode: req.body.brokerGuaranteeCode || referral.brokerGuaranteeCode,
       quantity: Number(req.body.quantity) || referral.quantity,
       //personalIdDocument: req.body.personalIdDocument || referral.personalIdDocument,
@@ -117,9 +113,9 @@ module.exports = {
       notes: req.body.notes || referral.notes,
       status: req.body.status,
       updatedAt: new Date(),
-    });
+    })
 
-    return res.status(200).send(updatedReferral);
+    return res.status(200).send(updatedReferral)
   },
 
   async delete(req, res) {
@@ -128,23 +124,23 @@ module.exports = {
         id: req.params.referralId,
       },
       attributes: {
-        exclude: [ 'personalIdDocument' ],
+        exclude: ['personalIdDocument'],
       },
-    });
+    })
 
     if (!referral) {
       return res.status(404).send({
         message: 'Referral Not Found',
-      });
+      })
     }
 
     //await referral.destroy();
-    await referral.update( {
+    await referral.update({
       status: 0,
-    } );
+    })
 
     return res.status(200).send({
       message: 'Referral has been deleted',
-    });
+    })
   },
-};
+}

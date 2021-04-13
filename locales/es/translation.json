@@ -110,6 +110,7 @@
   "city": "Ciudad",
   "occupation": "Ocupación",
   "buyBrokerGuarantee": "Compra Broker Guarantee",
+  "brokerName": "Nombre del corredor que desea asignar",
   "brokerGuaranteeCode": "Código de Broker Guarantee",
   "personalID": "Identificación",
   "Collaborator": "Colaborador",

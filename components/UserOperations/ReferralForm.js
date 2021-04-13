@@ -235,7 +235,7 @@ class ReferralForm extends PureComponent {
               {getFieldDecorator('initialAmount', {
                 rules: [
                   {
-                    required: false,
+                    required: true,
                     message: `${t('requiredFieldMessage')} ${t('investmentAmount')}`,
                   },
                   {
@@ -265,6 +265,22 @@ class ReferralForm extends PureComponent {
                   }
                   checkedChildren={t('yes')}
                   unCheckedChildren="No"
+                />
+              )}
+            </Form.Item>
+            <Form.Item label={t('brokerName')}>
+              {getFieldDecorator('brokerName', {
+                rules: [
+                  {
+                    required: false,
+                    message: `${t('requiredFieldMessage')} ${t('brokerName')}`,
+                  },
+                ],
+              })(
+                <Input
+                  placeholder={t('brokerName')}
+                  name="brokerName"
+                  onChange={this._handleChange}
                 />
               )}
             </Form.Item>

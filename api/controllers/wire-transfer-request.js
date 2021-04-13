@@ -58,9 +58,10 @@ module.exports = {
 
         await userAccount.update(
           {
-            guaranteeOperationNet: req.body.guaranteeOperationNet,
-            wireTransferAmount:
-              Number(req.body.amount.replace(',', '')) + Number(req.body.commissionsCharge),
+            guaranteeOperationNet:
+              Number(req.body.guaranteeOperationNet.replace(',', '')) +
+                userAccount.guaranteeOperationNet || 0,
+            wireTransferAmount: Number(req.body.amount.replace(',', '')) + userAccount.amount || 0,
           },
           { transaction: t }
         )
