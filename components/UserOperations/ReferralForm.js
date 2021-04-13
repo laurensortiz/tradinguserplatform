@@ -272,7 +272,7 @@ class ReferralForm extends PureComponent {
               {getFieldDecorator('brokerName', {
                 rules: [
                   {
-                    required: false,
+                    required: true,
                     message: `${t('requiredFieldMessage')} ${t('brokerName')}`,
                   },
                 ],
