@@ -110,6 +110,7 @@
   "city": "City",
   "occupation": "Occupation",
   "buyBrokerGuarantee": "Buy Broker Guarantee",
+  "brokerName": "Name of the broker that you want to assign",
   "brokerGuaranteeCode": "Broker Guarantee Code",
   "personalID": "Personal ID",
   "Collaborator": "Collaborator",

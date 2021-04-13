@@ -2063,3 +2063,12 @@ alter table public."User" add "referred" varchar(255) NULL;
 /*
 * Start Changes Abr 7, 2021
 */
+
+/*
+* Start Changes Abr 13, 2021
+*/
+alter table public."Referral" add "brokerName" varchar(255) DEFAULT '';
+
+/*
+* Start Changes Abr 13, 2021
+*/

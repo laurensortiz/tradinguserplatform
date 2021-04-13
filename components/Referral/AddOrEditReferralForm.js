@@ -1,17 +1,18 @@
-import React, { PureComponent } from 'react';
-import { bindActionCreators } from "redux";
-import { connect } from 'react-redux';
-import moment from 'moment';
-import _ from 'lodash';
+import React, { PureComponent } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import moment from 'moment'
+import _ from 'lodash'
 
-moment.locale( 'es' ); // Set Lang to Spanish
+moment.locale('es') // Set Lang to Spanish
 
-import { Input, Row, Col, Button, Form, Tag, DatePicker, Icon, Switch, Upload } from 'antd';
+import { Input, Row, Col, Button, Form, Tag, DatePicker, Icon, Switch, Upload } from 'antd'
 
-import { AmountFormatValidation } from '../../common/utils';
-const { TextArea } = Input;
+import { AmountFormatValidation } from '../../common/utils'
+const { TextArea } = Input
 class AddOrEditReferralForm extends PureComponent {
   state = {
+    id: null,
     firstName: '',
     lastName: '',
     email: '',
@@ -21,6 +22,7 @@ class AddOrEditReferralForm extends PureComponent {
     jobTitle: '',
     initialAmount: 0.0,
     hasBrokerGuarantee: 0,
+    brokerName: '',
     brokerGuaranteeCode: '',
     quantity: 0,
     personalIdDocument: '',
@@ -32,21 +34,34 @@ class AddOrEditReferralForm extends PureComponent {
     isInvalid: true,
     username: '',
     personalIdDocumentDownloadType: 'pdf',
-    downloadDocumentName: ''
-  };
+    downloadDocumentName: '',
+  }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    let updatedState = {};
-    if (!_.isEmpty( nextProps.selectedReferral )) {
-      const { selectedReferral } = nextProps;
-      const username = _.get(selectedReferral, 'userAccount.user.username', '');
+    let updatedState = {}
+    if (
+      Object.keys(nextProps.selectedReferral).length > 0 &&
+      !_.isEqual(nextProps.selectedReferral.id, prevState.id)
+    ) {
+      console.log('dsdsd')
+      const { selectedReferral } = nextProps
+      const username = _.get(selectedReferral, 'userAccount.user.username', '')
       let personalIdDocument = '',
         personalIdDocumentDownloadType = 'pdf',
-        downloadDocumentName = '';
-      if (_.get(selectedReferral, 'personalIdDocument.type', '') === 'Buffer' && !_.isEmpty(_.get(selectedReferral, 'personalIdDocument.data', ''))) {
-        personalIdDocument = Buffer.from(selectedReferral.personalIdDocument.data, 'base64').toString('utf8');
-        personalIdDocumentDownloadType = ((personalIdDocument.split(',')[0]).split('/')[1]).split(';')[0];
-        downloadDocumentName = `ID-${selectedReferral.firstName}-${selectedReferral.lastName}.${personalIdDocumentDownloadType}`;
+        downloadDocumentName = ''
+      if (
+        _.get(selectedReferral, 'personalIdDocument.type', '') === 'Buffer' &&
+        !_.isEmpty(_.get(selectedReferral, 'personalIdDocument.data', ''))
+      ) {
+        personalIdDocument = Buffer.from(
+          selectedReferral.personalIdDocument.data,
+          'base64'
+        ).toString('utf8')
+        personalIdDocumentDownloadType = personalIdDocument
+          .split(',')[0]
+          .split('/')[1]
+          .split(';')[0]
+        downloadDocumentName = `ID-${selectedReferral.firstName}-${selectedReferral.lastName}.${personalIdDocumentDownloadType}`
       }
       _.assignIn(updatedState, {
         ...prevState,
@@ -54,67 +69,85 @@ class AddOrEditReferralForm extends PureComponent {
         username,
         personalIdDocument,
         personalIdDocumentDownloadType,
-        downloadDocumentName
+        downloadDocumentName,
       })
-
     }
-    return !_.isEmpty(updatedState) ? updatedState : null;
+    return !_.isEmpty(updatedState) ? updatedState : null
   }
 
-  _handleChange = e => {
-    let value = '';
+  _handleChange = (e) => {
+    let value = ''
     if (e.target.type === 'checkbox') {
-      value = e.target.checked ? 1 : 0;
+      value = e.target.checked ? 1 : 0
     } else {
-      value = e.target.value;
+      value = e.target.value
     }
-    this.setState( { [ e.target.name ]: value } );
-  };
+    this.setState({ [e.target.name]: value })
+  }
 
-  _handleSubmit = e => {
-    e.preventDefault();
-    this.props.form.validateFields( (err, values) => {
+  _handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
       if (!err) {
-        const saveState = _.omit(this.state, ['personalIdDocument']);
-        if (_.isEqual( this.props.actionType, 'add' )) {
-          this.props.onAddNew( saveState )
+        const saveState = _.omit(this.state, ['personalIdDocument'])
+        if (_.isEqual(this.props.actionType, 'add')) {
+          this.props.onAddNew(saveState)
         } else {
-          this.props.onEdit( saveState )
+          console.log('[=====  stat  =====>')
+          console.log(saveState)
+          console.log('<=====  /stat  =====]')
+          this.props.onEdit(saveState)
         }
       }
-    } );
-
-  };
-
+    })
+  }
 
   render() {
-    const { getFieldDecorator } = this.props.form;
-    const isAddAction = _.isEqual( this.props.actionType, 'add' );
-
+    const { getFieldDecorator } = this.props.form
+    const isAddAction = _.isEqual(this.props.actionType, 'add')
 
     // Default values for edit action
-    const firstNameInitValue = !_.isEmpty( this.state.firstName ) ? this.state.firstName : undefined;
-    const lastNameInitValue = !_.isEmpty( this.state.lastName ) ? this.state.lastName : undefined;
-    const emailInitValue = !_.isEmpty( this.state.email ) ? this.state.email : undefined;
-    const phoneNumberInitValue = !_.isEmpty( this.state.phoneNumber ) ? this.state.phoneNumber : undefined;
-    const countryInitValue = !_.isEmpty( this.state.country ) ? this.state.country : undefined;
-    const cityInitValue = !_.isEmpty( this.state.city ) ? this.state.city : undefined;
-    const jobTitleInitValue = !_.isEmpty( this.state.jobTitle ) ? this.state.jobTitle : undefined;
-    const initialAmountInitValue = !_.isEmpty( this.state.initialAmount ) ? this.state.initialAmount : undefined;
-    const hasBrokerGuaranteeInitValue = this.state.hasBrokerGuarantee === 1 ? 'checked' : null;
-    const brokerGuaranteeCodeInitValue = !_.isEmpty( this.state.brokerGuaranteeCode ) ? this.state.brokerGuaranteeCode : undefined;
-    const quantityInitValue = this.state.quantity > 0 ? this.state.quantity : undefined;
-    const personalIdDocumentInitValue = !_.isEmpty( this.state.personalIdDocument ) ? this.state.personalIdDocument : undefined;
-    const collaboratorIBInitValue = !_.isEmpty( this.state.collaboratorIB ) ? this.state.collaboratorIB : undefined;
-    const descriptionInitValue = !_.isEmpty( this.state.description ) ? this.state.description : undefined;
-    const notesInitValue = !_.isEmpty( this.state.notes ) ? this.state.notes : undefined;
+    const firstNameInitValue = !_.isEmpty(this.state.firstName) ? this.state.firstName : undefined
+    const lastNameInitValue = !_.isEmpty(this.state.lastName) ? this.state.lastName : undefined
+    const emailInitValue = !_.isEmpty(this.state.email) ? this.state.email : undefined
+    const phoneNumberInitValue = !_.isEmpty(this.state.phoneNumber)
+      ? this.state.phoneNumber
+      : undefined
+    const countryInitValue = !_.isEmpty(this.state.country) ? this.state.country : undefined
+    const cityInitValue = !_.isEmpty(this.state.city) ? this.state.city : undefined
+    const jobTitleInitValue = !_.isEmpty(this.state.jobTitle) ? this.state.jobTitle : undefined
+    const initialAmountInitValue = !_.isEmpty(this.state.initialAmount)
+      ? this.state.initialAmount
+      : undefined
+    const hasBrokerGuaranteeInitValue = this.state.hasBrokerGuarantee === 1 ? 'checked' : null
+    const brokerNameInitValue = !_.isEmpty(this.state.brokerName)
+      ? this.state.brokerName
+      : undefined
+    const brokerGuaranteeCodeInitValue = !_.isEmpty(this.state.brokerGuaranteeCode)
+      ? this.state.brokerGuaranteeCode
+      : undefined
+    const quantityInitValue = this.state.quantity > 0 ? this.state.quantity : undefined
+    const personalIdDocumentInitValue = !_.isEmpty(this.state.personalIdDocument)
+      ? this.state.personalIdDocument
+      : undefined
+    const collaboratorIBInitValue = !_.isEmpty(this.state.collaboratorIB)
+      ? this.state.collaboratorIB
+      : undefined
+    const descriptionInitValue = !_.isEmpty(this.state.description)
+      ? this.state.description
+      : undefined
+    const notesInitValue = !_.isEmpty(this.state.notes) ? this.state.notes : undefined
+
+    console.log('[=====  ttt  =====>')
+    console.log(this.state)
+    console.log('<=====  /ttt  =====]')
 
     return (
-      <Form onSubmit={ this._handleSubmit } className="auth-form">
+      <Form onSubmit={this._handleSubmit} className="auth-form">
         <Row gutter={16}>
           <Col xs={24} sm={12}>
             <Form.Item label="Nombre">
-              { getFieldDecorator( 'firstName', {
+              {getFieldDecorator('firstName', {
                 initialValue: firstNameInitValue,
                 rules: [
                   {
@@ -122,12 +155,12 @@ class AddOrEditReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Nombre',
                   },
                 ],
-              } )( <Input placeholder="Nombre" name="firstName" onChange={ this._handleChange }/> ) }
+              })(<Input placeholder="Nombre" name="firstName" onChange={this._handleChange} />)}
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item label="Apellido">
-              { getFieldDecorator( 'lastName', {
+              {getFieldDecorator('lastName', {
                 initialValue: lastNameInitValue,
                 rules: [
                   {
@@ -135,30 +168,39 @@ class AddOrEditReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Apellido',
                   },
                 ],
-              } )( <Input placeholder="Apellido" name="lastName" onChange={ this._handleChange }/> ) }
+              })(<Input placeholder="Apellido" name="lastName" onChange={this._handleChange} />)}
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col xs={24} sm={12}>
             <Form.Item label="Email">
-              { getFieldDecorator( 'email', {
+              {getFieldDecorator('email', {
                 initialValue: emailInitValue,
-                rules: [ {
-                  type: 'email', message: 'No es un Email válido',
-                }, {
-                  required: true,
-                  message: 'Por favor ingrese el Email',
-                } ],
-              } )(
-                <Input name="email" type="email" onChange={ this._handleChange }
-                       prefix={ <Icon type="mail" style={ { color: 'rgba(0,0,0,.25)' } }/> } placeholder="Email"/>
-              ) }
+                rules: [
+                  {
+                    type: 'email',
+                    message: 'No es un Email válido',
+                  },
+                  {
+                    required: true,
+                    message: 'Por favor ingrese el Email',
+                  },
+                ],
+              })(
+                <Input
+                  name="email"
+                  type="email"
+                  onChange={this._handleChange}
+                  prefix={<Icon type="mail" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                  placeholder="Email"
+                />
+              )}
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item label="Teléfono">
-              { getFieldDecorator( 'phoneNumber', {
+              {getFieldDecorator('phoneNumber', {
                 initialValue: phoneNumberInitValue,
                 rules: [
                   {
@@ -166,14 +208,14 @@ class AddOrEditReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Teléfono',
                   },
                 ],
-              } )( <Input placeholder="Teléfono" name="phoneNumber" onChange={ this._handleChange }/> ) }
+              })(<Input placeholder="Teléfono" name="phoneNumber" onChange={this._handleChange} />)}
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col xs={24} sm={12}>
             <Form.Item label="País">
-              { getFieldDecorator( 'country', {
+              {getFieldDecorator('country', {
                 initialValue: countryInitValue,
                 rules: [
                   {
@@ -181,12 +223,12 @@ class AddOrEditReferralForm extends PureComponent {
                     message: 'Por favor ingrese su País',
                   },
                 ],
-              } )( <Input placeholder="País" name="country" onChange={ this._handleChange }/> ) }
+              })(<Input placeholder="País" name="country" onChange={this._handleChange} />)}
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item label="Ciudad">
-              { getFieldDecorator( 'city', {
+              {getFieldDecorator('city', {
                 initialValue: cityInitValue,
                 rules: [
                   {
@@ -194,14 +236,14 @@ class AddOrEditReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Ciudad',
                   },
                 ],
-              } )( <Input placeholder="Ciudad" name="city" onChange={ this._handleChange }/> ) }
+              })(<Input placeholder="Ciudad" name="city" onChange={this._handleChange} />)}
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col xs={24} sm={12}>
             <Form.Item label="Ocupación">
-              { getFieldDecorator( 'jobTitle', {
+              {getFieldDecorator('jobTitle', {
                 initialValue: jobTitleInitValue,
                 rules: [
                   {
@@ -209,54 +251,67 @@ class AddOrEditReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Ocupación',
                   },
                 ],
-              } )( <Input placeholder="Ocupación" name="jobTitle" onChange={ this._handleChange }/> ) }
+              })(<Input placeholder="Ocupación" name="jobTitle" onChange={this._handleChange} />)}
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
             <Form.Item label="Monto de Inversión $">
-              { getFieldDecorator( 'initialAmount', {
+              {getFieldDecorator('initialAmount', {
                 initialValue: initialAmountInitValue,
-                rules: [ { required: false, message: 'Por favor ingrese el Monto de Inversión' },
+                rules: [
+                  { required: false, message: 'Por favor ingrese el Monto de Inversión' },
                   {
-                    validator: (rule, amount) => AmountFormatValidation( rule, amount )
-                  }
+                    validator: (rule, amount) => AmountFormatValidation(rule, amount),
+                  },
                 ],
-              } )(
-                <Input name="initialAmount" onChange={ this._handleChange }
-                       placeholder="Monto de Inversión $"/>
-              ) }
+              })(
+                <Input
+                  name="initialAmount"
+                  onChange={this._handleChange}
+                  placeholder="Monto de Inversión $"
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
-          <Col xs={24} sm={12}><Form.Item label="Cantidad">
-            { getFieldDecorator( 'quantity', {
-              initialValue: quantityInitValue,
-              rules: [
-                {
-                  required: false,
-                  message: 'Por favor ingrese su Cantidad',
-                },
-              ],
-            } )( <Input placeholder="Cantidad" name="quantity" onChange={ this._handleChange }/> ) }
-          </Form.Item></Col>
-          <Col xs={24} sm={12}><Form.Item label="IB Colaborador">
-            { getFieldDecorator( 'collaboratorIB', {
-              initialValue: collaboratorIBInitValue,
-              rules: [
-                {
-                  required: false,
-                  message: 'Por favor ingrese su IB Colaborador',
-                },
-              ],
-            } )( <Input placeholder="IB Colaborador" name="collaboratorIB" onChange={ this._handleChange }/> ) }
-          </Form.Item></Col>
+          <Col xs={24} sm={12}>
+            <Form.Item label="Cantidad">
+              {getFieldDecorator('quantity', {
+                initialValue: quantityInitValue,
+                rules: [
+                  {
+                    required: false,
+                    message: 'Por favor ingrese su Cantidad',
+                  },
+                ],
+              })(<Input placeholder="Cantidad" name="quantity" onChange={this._handleChange} />)}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={12}>
+            <Form.Item label="IB Colaborador">
+              {getFieldDecorator('collaboratorIB', {
+                initialValue: collaboratorIBInitValue,
+                rules: [
+                  {
+                    required: false,
+                    message: 'Por favor ingrese su IB Colaborador',
+                  },
+                ],
+              })(
+                <Input
+                  placeholder="IB Colaborador"
+                  name="collaboratorIB"
+                  onChange={this._handleChange}
+                />
+              )}
+            </Form.Item>
+          </Col>
         </Row>
         <Row gutter={16}>
-
           <Col xs={24} sm={12}>
             <Form.Item label="Código de Broker Guarantee">
-              { getFieldDecorator( 'brokerGuaranteeCode', {
+              {getFieldDecorator('brokerGuaranteeCode', {
                 initialValue: brokerGuaranteeCodeInitValue,
                 rules: [
                   {
@@ -264,33 +319,65 @@ class AddOrEditReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Código de Broker Guarantee',
                   },
                 ],
-              } )( <Input placeholder="Código de Broker Guarantee" name="brokerGuaranteeCode"
-                          onChange={ this._handleChange }/> ) }
+              })(
+                <Input
+                  placeholder="Código de Broker Guarantee"
+                  name="brokerGuaranteeCode"
+                  onChange={this._handleChange}
+                />
+              )}
             </Form.Item>
           </Col>
           <Col xs={24} sm={12}>
+            <Form.Item label="Nombre del corredor asignado">
+              {getFieldDecorator('brokerName', {
+                initialValue: brokerNameInitValue,
+                rules: [
+                  {
+                    required: false,
+                    message: 'Por favor ingrese su Código de Broker Guarantee',
+                  },
+                ],
+              })(
+                <Input
+                  placeholder="Nombre del corredor asignado"
+                  name="brokerName"
+                  onChange={this._handleChange}
+                />
+              )}
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={16}>
+          <Col xs={24} sm={12}>
             <Form.Item label="Compra Broker Guarantee">
-              { getFieldDecorator( 'hasBrokerGuarantee', {
+              {getFieldDecorator('hasBrokerGuarantee', {
                 valuePropName: 'checked',
                 initialValue: hasBrokerGuaranteeInitValue,
-              } )(
-                <Switch name="hasBrokerGuarantee" onChange={ (e) => this._handleChange( {
-                  target: {
-                    type: 'checkbox',
-                    checked: e,
-                    name: 'hasBrokerGuarantee'
+              })(
+                <Switch
+                  name="hasBrokerGuarantee"
+                  onChange={(e) =>
+                    this._handleChange({
+                      target: {
+                        type: 'checkbox',
+                        checked: e,
+                        name: 'hasBrokerGuarantee',
+                      },
+                    })
                   }
-                } ) } checkedChildren="Sí" unCheckedChildren="No"/>
-              ) }
+                  checkedChildren="Sí"
+                  unCheckedChildren="No"
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
 
-
         <Row>
           <Col xs={24} sm={24}>
             <Form.Item label="Descripción del cliente referido">
-              { getFieldDecorator( 'description', {
+              {getFieldDecorator('description', {
                 initialValue: descriptionInitValue,
                 rules: [
                   {
@@ -298,32 +385,39 @@ class AddOrEditReferralForm extends PureComponent {
                     message: 'Por favor ingrese su Descripción del cliente referido',
                   },
                 ],
-              } )( <TextArea rows={3} placeholder="Descripción del cliente referido" name="description"
-                             onChange={ this._handleChange }/> ) }
+              })(
+                <TextArea
+                  rows={3}
+                  placeholder="Descripción del cliente referido"
+                  name="description"
+                  onChange={this._handleChange}
+                />
+              )}
             </Form.Item>
           </Col>
         </Row>
         <Row gutter={16}>
           <Col xs={24} sm={24}>
             {!_.isEmpty(this.state.personalIdDocument) ? (
-              <a className="download-file" type="primary" href={this.state.personalIdDocument} download={this.state.downloadDocumentName}>
-                <Icon type="contacts" /> Descargar Documento Identificación</a>
-            ) : <h3><Icon type="contacts" /> Documento no suministrado</h3>}
+              <a
+                className="download-file"
+                type="primary"
+                href={this.state.personalIdDocument}
+                download={this.state.downloadDocumentName}
+              >
+                <Icon type="contacts" /> Descargar Documento Identificación
+              </a>
+            ) : (
+              <h3>
+                <Icon type="contacts" /> Documento no suministrado
+              </h3>
+            )}
           </Col>
         </Row>
         <Row>
           <Col xs={24} sm={12}></Col>
           <Col xs={24} sm={12}></Col>
         </Row>
-
-
-
-
-
-
-
-
-
 
         {/*<Form.Item label="Identificación">*/}
         {/*  { getFieldDecorator( 'personalIdDocument', {*/}
@@ -353,10 +447,9 @@ class AddOrEditReferralForm extends PureComponent {
         {/*  ) }*/}
         {/*</Form.Item>*/}
 
-
-        <hr/>
+        <hr />
         <Form.Item label="Notas Administrativas">
-          { getFieldDecorator( 'notes', {
+          {getFieldDecorator('notes', {
             initialValue: notesInitValue,
             rules: [
               {
@@ -364,33 +457,32 @@ class AddOrEditReferralForm extends PureComponent {
                 message: 'Por favor ingrese su nota',
               },
             ],
-          } )( <TextArea rows={8} placeholder="" name="notes"
-                         onChange={ this._handleChange }/> ) }
+          })(<TextArea rows={8} placeholder="" name="notes" onChange={this._handleChange} />)}
         </Form.Item>
         <Form.Item>
-          <Button style={ { width: '100%' } } type="primary" htmlType="submit" size="large"
-                  className="login-form-button">
+          <Button
+            style={{ width: '100%' }}
+            type="primary"
+            htmlType="submit"
+            size="large"
+            className="login-form-button"
+          >
             Guardar Actualización
           </Button>
         </Form.Item>
       </Form>
-
-    );
+    )
   }
 }
-
 
 function mapStateToProps(state) {
-  const { accountsState, usersState } = state;
-  return {
-
-  }
+  const { accountsState, usersState } = state
+  return {}
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators( {
+const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch)
 
-  }, dispatch );
-
-
-export default connect( mapStateToProps, mapDispatchToProps )( Form.create( { name: 'register' } )( AddOrEditReferralForm ) );
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Form.create({ name: 'register' })(AddOrEditReferralForm))
