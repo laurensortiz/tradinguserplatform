@@ -14,7 +14,7 @@ import enforceSSL from './common/enforce-ssl'
 
 const dev = process.env.NODE_ENV !== 'production'
 const port = parseInt(process.env.PORT, 10) || 8000
-const app = next({ dev, quiet: false })
+const app = next({ dev, quiet: false, api: { externalResolver: true } })
 const nextRequestHandler = app.getRequestHandler()
 
 app.prepare().then(() => {
