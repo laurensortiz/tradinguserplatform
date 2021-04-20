@@ -869,6 +869,32 @@ module.exports = {
                     break
 
                   /**
+                   * LUMBER  FT
+                   */
+                  case 'lumber-FT':
+                    if (marketOperation.assetClassId === 2) {
+                      calculatedValue = 110 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
+                    } else {
+                      throw new Error(
+                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                      )
+                    }
+                    break
+
+                  /**
+                   * SOYBEAN OIL US  FT
+                   */
+                  case 'soybean-oil-FT':
+                    if (marketOperation.assetClassId === 2) {
+                      calculatedValue = 600 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
+                    } else {
+                      throw new Error(
+                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                      )
+                    }
+                    break
+
+                  /**
                    * COFFEE US FT
                    */
                   case 'coffee-FT':

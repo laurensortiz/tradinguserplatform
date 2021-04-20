@@ -107,6 +107,16 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
+    code: 'lumber-FT',
+    name: 'Lumber FT ',
+    scope: 'price',
+  },
+  {
+    code: 'soybean-oil-FT',
+    name: 'Soybean Oil US FT ',
+    scope: 'price',
+  },
+  {
     code: 'coffee-FT',
     name: 'Coffee US FT ',
     scope: 'price',
