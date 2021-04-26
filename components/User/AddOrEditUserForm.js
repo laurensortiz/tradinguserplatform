@@ -4,13 +4,11 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
 import classNames from 'classnames'
-import { Input, Button, Form, Tag, Select, DatePicker, Icon, Radio, Row, Col } from 'antd'
+import { Input, Button, Form, DatePicker, Icon, Radio, Row, Col } from 'antd'
 
 moment.locale('es') // Set Lang to Spanish
 
 import { accountOperations } from '../../state/modules/accounts'
-
-const { Option } = Select
 
 const MAX_NUMBER_USERS = 3
 
@@ -38,6 +36,7 @@ class AddOrEditUserForm extends PureComponent {
       name: '',
     },
     startDate: null,
+    signDate: null,
     endDate: null,
     confirmDirty: false,
     isInvalid: true,
@@ -95,30 +94,6 @@ class AddOrEditUserForm extends PureComponent {
     this.setState({ [e.target.name]: value })
   }
 
-  _handleChangeCheckBox = (e) => {
-    const value = e.target.checked ? 1 : 2
-    this.setState({
-      role: {
-        id: value,
-      },
-    })
-  }
-
-  _handleChangeSelect = (event) => {
-    const { value } = event
-    const fieldName = event.name
-    const codeIdName = value.split('-')
-
-    const id = Number(codeIdName[0])
-    const name = codeIdName[1]
-    this.setState({
-      [fieldName]: {
-        id,
-        name,
-      },
-    })
-  }
-
   _handleSubmit = (e) => {
     e.preventDefault()
     this.props.form.validateFields((err, values) => {
@@ -137,6 +112,12 @@ class AddOrEditUserForm extends PureComponent {
   _setStartDate = (date) => {
     this.setState({
       startDate: moment.parseZone(date).format(),
+    })
+  }
+
+  _setSignDate = (date) => {
+    this.setState({
+      signDate: moment.parseZone(date).format(),
     })
   }
 
@@ -251,11 +232,9 @@ class AddOrEditUserForm extends PureComponent {
   render() {
     const { getFieldDecorator } = this.props.form
     const { isAdminUser } = this.state
-    // Default values for edit action
-    const roleInitValue = _.isEqual(this.state.role.id, 1)
-    const accountInitValue = !_.isEmpty(this.state.account.name)
-      ? this.state.account.name
-      : undefined
+    const isAddAction = _.isEqual(this.props.actionType, 'add')
+    const isEditAction = _.isEqual(this.props.actionType, 'edit')
+
     const emailInitValue = !_.isEmpty(this.state.email) ? this.state.email : undefined
     const referredInitValue = !_.isEmpty(this.state.referred) ? this.state.referred : undefined
     const countryInitValue = !_.isEmpty(this.state.country) ? this.state.country : undefined
@@ -265,12 +244,15 @@ class AddOrEditUserForm extends PureComponent {
     const startDateInitValue = !_.isEmpty(this.state.startDate)
       ? moment.parseZone(this.state.startDate)
       : undefined
+    const signDateInitValue = !_.isEmpty(this.state.signDate)
+      ? moment.parseZone(this.state.signDate)
+      : undefined
     const endDateInitValue = !_.isEmpty(this.state.endDate)
       ? moment.parseZone(this.state.endDate)
       : undefined
     return (
       <div className="add-edit-user-modal">
-        {_.isEqual(this.props.actionType, 'add') || _.isEqual(this.props.actionType, 'edit') ? (
+        {isAddAction || isEditAction ? (
           <Radio.Group
             onChange={this._handleSelectUserType}
             value={isAdminUser ? 'admin' : 'regular'}
@@ -292,7 +274,7 @@ class AddOrEditUserForm extends PureComponent {
               <Form.Item label="Nombre">
                 {getFieldDecorator('firstName', {
                   initialValue: this.state.firstName,
-                  rules: [{ message: 'Por favor ingrese su Nombre' }],
+                  rules: [{ required: true, message: 'Por favor ingrese su Nombre' }],
                 })(<Input name="firstName" onChange={this._handleChange} placeholder="Nombre" />)}
               </Form.Item>
             </Col>
@@ -300,7 +282,7 @@ class AddOrEditUserForm extends PureComponent {
               <Form.Item label="Apellido">
                 {getFieldDecorator('lastName', {
                   initialValue: this.state.lastName,
-                  rules: [{ message: 'Por favor ingrese su Apellido' }],
+                  rules: [{ required: true, message: 'Por favor ingrese su Apellido' }],
                 })(<Input name="lastName" onChange={this._handleChange} placeholder="Apellido" />)}
               </Form.Item>
             </Col>
@@ -316,25 +298,32 @@ class AddOrEditUserForm extends PureComponent {
             </Row>
           ) : null}
 
-          <Form.Item label="Usuario">
-            {getFieldDecorator('username', {
-              initialValue: this.state.username,
-              rules: [{ required: true, message: 'Por favor ingrese su Usuario' }],
-            })(
-              <Input
-                name="username"
-                onChange={this._handleChange}
-                placeholder="Usuario"
-                disabled={_.isEqual(this.props.actionType, 'edit')}
-              />
-            )}
-          </Form.Item>
-          <Form.Item label="Usuario ID" className={classNames({ hidden: isAdminUser })}>
-            {getFieldDecorator('userID', {
-              initialValue: this.state.userID,
-              rules: [{ message: 'Por favor ingrese el ID del usuario' }],
-            })(<Input name="userID" onChange={this._handleChange} placeholder="Cuenta Cliente" />)}
-          </Form.Item>
+          {isEditAction && (
+            <React.Fragment>
+              <Form.Item label="Usuario">
+                {getFieldDecorator('username', {
+                  initialValue: this.state.username,
+                  rules: [{ required: true, message: 'Por favor ingrese su Usuario' }],
+                })(
+                  <Input
+                    name="username"
+                    onChange={this._handleChange}
+                    placeholder="Usuario"
+                    disabled={_.isEqual(this.props.actionType, 'edit')}
+                  />
+                )}
+              </Form.Item>
+              <Form.Item label="Usuario ID" className={classNames({ hidden: isAdminUser })}>
+                {getFieldDecorator('userID', {
+                  initialValue: this.state.userID,
+                  rules: [{ message: 'Por favor ingrese el ID del usuario' }],
+                })(
+                  <Input name="userID" onChange={this._handleChange} placeholder="Cuenta Cliente" />
+                )}
+              </Form.Item>
+            </React.Fragment>
+          )}
+
           <Form.Item label="Email">
             {getFieldDecorator('email', {
               initialValue: emailInitValue,
@@ -363,55 +352,58 @@ class AddOrEditUserForm extends PureComponent {
               rules: [{ message: 'Por favor ingrese su número de teléfono' }],
             })(<Input name="phoneNumber" onChange={this._handleChange} placeholder="Teléfono" />)}
           </Form.Item>
-          <Row>
-            <Col xs={24} sm={12}>
-              <Form.Item label="Contraseña">
-                {getFieldDecorator('password', {
-                  rules: [
-                    {
-                      required: _.isEqual(this.props.actionType, 'add'),
-                      message: 'Por favor ingrese la Contraseña',
-                    },
-                    {
-                      validator: this._validateToNextPassword,
-                    },
-                  ],
-                })(
-                  <Input.Password
-                    name="password"
-                    onChange={this._handleChange}
-                    prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                    type="password"
-                    placeholder="Contraseña"
-                  />
-                )}
-              </Form.Item>
-            </Col>
-            <Col xs={24} sm={12}>
-              <Form.Item label="Confirmar Contraseña">
-                {getFieldDecorator('verifyPassword', {
-                  rules: [
-                    {
-                      required: _.isEqual(this.props.actionType, 'add'),
-                      message: 'Por favor ingrese la Contraseña',
-                    },
-                    {
-                      validator: this._compareToFirstPassword,
-                    },
-                  ],
-                })(
-                  <Input.Password
-                    name="verifyPassword"
-                    onChange={this._handleChange}
-                    prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                    type="password"
-                    placeholder="Confirmar Contraseña"
-                    onBlur={this._handleConfirmBlur}
-                  />
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
+          {isEditAction && (
+            <Row>
+              <Col xs={24} sm={12}>
+                <Form.Item label="Contraseña">
+                  {getFieldDecorator('password', {
+                    rules: [
+                      {
+                        required: _.isEqual(this.props.actionType, 'add'),
+                        message: 'Por favor ingrese la Contraseña',
+                      },
+                      {
+                        validator: this._validateToNextPassword,
+                      },
+                    ],
+                  })(
+                    <Input.Password
+                      name="password"
+                      onChange={this._handleChange}
+                      prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                      type="password"
+                      placeholder="Contraseña"
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+              <Col xs={24} sm={12}>
+                <Form.Item label="Confirmar Contraseña">
+                  {getFieldDecorator('verifyPassword', {
+                    rules: [
+                      {
+                        required: _.isEqual(this.props.actionType, 'add'),
+                        message: 'Por favor ingrese la Contraseña',
+                      },
+                      {
+                        validator: this._compareToFirstPassword,
+                      },
+                    ],
+                  })(
+                    <Input.Password
+                      name="verifyPassword"
+                      onChange={this._handleChange}
+                      prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                      type="password"
+                      placeholder="Confirmar Contraseña"
+                      onBlur={this._handleConfirmBlur}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
+
           <Form.Item label="País" className={classNames({ hidden: isAdminUser })}>
             {getFieldDecorator('country', {
               initialValue: countryInitValue,
@@ -429,6 +421,13 @@ class AddOrEditUserForm extends PureComponent {
                 {getFieldDecorator('startDate', {
                   initialValue: startDateInitValue,
                 })(<DatePicker onChange={this._setStartDate} placeholder="Fecha de Inicio" />)}
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={12}>
+              <Form.Item label="Fecha de Firma">
+                {getFieldDecorator('signDate', {
+                  initialValue: signDateInitValue,
+                })(<DatePicker onChange={this._setSignDate} placeholder="Fecha de Firma" />)}
               </Form.Item>
             </Col>
             <Col xs={24} sm={12}>

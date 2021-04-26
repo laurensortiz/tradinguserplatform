@@ -37,6 +37,8 @@ class Detail extends Component {
     const referred = _.get(this.props, 'currentUser.referred', '')
     const phoneNumber = _.get(this.props, 'currentUser.phoneNumber', '')
     const startDate = _.get(this.props, 'currentUser.startDate', null)
+    const signDate = _.get(this.props, 'currentUser.signDate', null)
+    const createdByUsername = _.get(this.props, 'currentUser.createdByUsername', '')
 
     const status = _.get(this.props, 'currentUser.status', 1)
     const { name, color } = FormatStatus(status)
@@ -70,6 +72,10 @@ class Detail extends Component {
           <Descriptions.Item label="País">{country}</Descriptions.Item>
           <Descriptions.Item label="Referido">{referred}</Descriptions.Item>
           <Descriptions.Item label="Fecha de Inicio">{FormatDate(startDate)}</Descriptions.Item>
+          <Descriptions.Item label="Fecha de Firma">{FormatDate(signDate)}</Descriptions.Item>
+          <Descriptions.Item label="Creado por Usuario">
+            <Tag color="#1b1f21">{createdByUsername}</Tag>
+          </Descriptions.Item>
         </Descriptions>
       </>
     )
