@@ -152,6 +152,8 @@ module.exports = {
       status: req.body.status || userAccount.status,
       updatedAt: new Date(),
       marginUsed: req.body.marginUsed || userAccount.marginUsed,
+      guaranteeOperationNet: req.body.guaranteeOperationNet || userAccount.guaranteeOperationNet,
+      wireTransferAmount: req.body.wireTransferAmount || userAccount.wireTransferAmount,
     })
 
     Log({

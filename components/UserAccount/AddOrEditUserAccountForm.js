@@ -47,6 +47,8 @@ class AddOrEditUserAccountForm extends PureComponent {
     users: [],
     brokers: [],
     lastUpdate: '',
+    guaranteeOperationNet: '',
+    wireTransferAmount: '',
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -244,6 +246,12 @@ class AddOrEditUserAccountForm extends PureComponent {
       ? this.state.commissionByReference
       : undefined
     const brokerInitValue = !_.isEmpty(this.state.brokerName) ? this.state.brokerName : undefined
+    const guaranteeOperationNetInitValue = !_.isEmpty(this.state.guaranteeOperationNet)
+      ? this.state.guaranteeOperationNet
+      : undefined
+    const wireTransferAmountInitValue = !_.isEmpty(this.state.wireTransferAmount)
+      ? this.state.wireTransferAmount
+      : undefined
 
     return (
       <Form onSubmit={this._handleSubmit} className="auth-form">
@@ -443,8 +451,35 @@ class AddOrEditUserAccountForm extends PureComponent {
               )}
             </Form.Item>
           </Col>
-          <Col xs={24} sm={8}></Col>
-          <Col xs={24} sm={8}></Col>
+        </Row>
+        <h2>Wiretransfer</h2>
+        <Row gutter={10}>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Monto Solicitado">
+              {getFieldDecorator('wireTransferAmount', {
+                initialValue: wireTransferAmountInitValue,
+              })(
+                <Input
+                  name="wireTransferAmount"
+                  onChange={this._handleChange}
+                  placeholder="Monto Solicitado"
+                />
+              )}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Garantías disponibles sobre monto solicitado">
+              {getFieldDecorator('guaranteeOperationNet', {
+                initialValue: guaranteeOperationNetInitValue,
+              })(
+                <Input
+                  name="guaranteeOperationNet"
+                  onChange={this._handleChange}
+                  placeholder="Garantías disponibles"
+                />
+              )}
+            </Form.Item>
+          </Col>
         </Row>
 
         <Form.Item>
