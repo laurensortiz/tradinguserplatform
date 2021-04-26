@@ -169,6 +169,10 @@ class WireTransferRequestForm extends PureComponent {
       resetFields(['commissionsCharge'])
     }
 
+    if (!!this.state.commissionsCharge || this.state.commissionsCharge > 0) {
+      resetFields(['amount'])
+    }
+
     return (
       <Draggable handle=".handle">
         <div className="modal-main-wrapper ant-modal-content ant-modal-body">
@@ -267,7 +271,11 @@ class WireTransferRequestForm extends PureComponent {
                 <Form.Item label={`${t('amount')} USD`}>
                   {getFieldDecorator('amount', {
                     rules: [
-                      { required: true, message: `${t('requiredFieldGeneralMessage')}` },
+                      {
+                        required:
+                          !this.state.commissionsCharge && this.state.commissionsCharge <= 0,
+                        message: `${t('requiredFieldGeneralMessage')}`,
+                      },
                       {
                         validator: this.handleInversion,
                       },
