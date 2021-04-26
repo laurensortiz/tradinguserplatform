@@ -117,8 +117,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'coffee-FT',
-    name: 'Coffee US FT ',
+    code: 'coffee-FT-OP',
+    name: 'Coffee US FT OP',
     scope: 'price',
   },
 ]
