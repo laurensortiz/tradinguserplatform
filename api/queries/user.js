@@ -1,8 +1,8 @@
-import {get} from 'lodash';
+import { get } from 'lodash'
 const queries = {
   list: ({ req, User, Role }) => {
-    const status = get(req, 'body.status', 1);
-    const roleId = get(req, 'body.roleId', 2);
+    const status = get(req, 'body.status', 1)
+    const roleId = get(req, 'body.roleId', 2)
 
     return {
       where: {
@@ -10,7 +10,7 @@ const queries = {
         roleId: roleId,
       },
       attributes: {
-        exclude: [ 'salt', 'password' ],
+        exclude: ['salt'],
       },
       include: [
         {
@@ -18,13 +18,13 @@ const queries = {
           as: 'role',
         },
       ],
-      order: [ [ 'createdAt', 'DESC' ] ],
-    };
+      order: [['createdAt', 'DESC']],
+    }
   },
   get: ({ Role }) => {
     return {
       attributes: {
-        exclude: [ 'salt', 'password' ],
+        exclude: ['salt', 'password'],
       },
       include: [
         {
@@ -32,9 +32,9 @@ const queries = {
           as: 'role',
         },
       ],
-      order: [ [ 'createdAt', 'DESC' ] ],
-    };
+      order: [['createdAt', 'DESC']],
+    }
   },
-};
+}
 
-export default queries;
+export default queries

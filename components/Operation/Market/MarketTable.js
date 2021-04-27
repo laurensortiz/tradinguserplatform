@@ -494,10 +494,6 @@ class MarketTable extends Component {
       products,
     } = this.state
 
-    console.log('[=====  ss  =====>')
-    console.log(selectedRowKeys)
-    console.log('<=====  /ss  =====]')
-
     const columns = [
       {
         title: '',
