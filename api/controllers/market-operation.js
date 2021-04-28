@@ -897,8 +897,8 @@ module.exports = {
                   /**
                    * COFFEE US FT
                    */
-                  case 'coffee-FT':
-                    if (marketOperation.assetClassId === 2) {
+                  case 'coffee-FT-OP':
+                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
                       calculatedValue = 375 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                     } else {
                       throw new Error(
