@@ -433,6 +433,12 @@ module.exports = {
     let valueFT = 0
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body
+      console.log('[=====  BULK DETAIIL  =====>')
+      console.log('IDS', operationsIds)
+      console.log('Type', updateType)
+      console.log('Value', updateValue)
+      console.log('Scope', updateScope)
+      console.log('<=====  /BULK DETAIIL  =====]')
       let result
       await ORM.transaction(async (t) => {
         switch (updateScope) {
@@ -1045,6 +1051,9 @@ module.exports = {
         return res.status(200).send('Completed')
       })
     } catch (error) {
+      console.log('[=====  ERROR on BULK  =====>')
+      console.log(error)
+      console.log('<=====  /ERROR on BULK  =====]')
       return res.status(400).send({
         message: error.message,
       })
