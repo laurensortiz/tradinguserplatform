@@ -273,7 +273,7 @@ class Export extends PureComponent {
                   bold: true,
                   fontSize: 15,
                 },
-                { text: moment().format('DD/MM/YYYY'), alignment: 'right' },
+                { text: moment(wt.createdAt).format('DD/MM/YYYY'), alignment: 'right' },
               ],
             ],
           },
