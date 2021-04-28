@@ -172,7 +172,7 @@ class Users extends Component {
   }
 
   _handleExportDetail = (userSelected) => {
-    ExportUserDetail([userSelected])
+    ExportUserDetail(userSelected)
   }
 
   render() {

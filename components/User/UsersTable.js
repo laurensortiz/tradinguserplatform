@@ -8,6 +8,7 @@ import Highlighter from 'react-highlight-words'
 
 import { Sort, SortDate, FormatDate } from '../../common/utils'
 import classNames from 'classnames'
+import BulkUpdateSteps from './BulkUpdateSteps'
 
 class UsersTable extends Component {
   state = {
@@ -15,12 +16,42 @@ class UsersTable extends Component {
     searchedColumn: '',
     isAdminUsersSelected: false,
     isMenuFold: true,
+    selectedRowKeys: [],
+    isBulkUpdateActive: false,
+  }
+
+  onSelectAllOperation = (isSelected) => {
+    const { currentDataSource, userAccounts } = this.state
+    const dataSource = !_.isEmpty(currentDataSource) ? currentDataSource : userAccounts
+    const allOperationsIds = isSelected ? dataSource.map((ope) => ope.id) : []
+    this.setState({ selectedRowKeys: allOperationsIds })
+  }
+
+  onSelectOperation = (selectedRowKeys) => {
+    this.setState({ selectedRowKeys })
+  }
+
+  _onSelectBulkReport = () => {
+    const selectedAccounts = this.getSelectedAccount()
+    this.props.onRequestExportDetail(selectedAccounts)
+  }
+
+  getSelectedAccount = () => {
+    return _.filter(this.props.users, (user) => _.includes(this.state.selectedRowKeys, user.id))
+  }
+
+  onCancelBulkProcess = () => {
+    this.setState({
+      isBulkUpdateActive: false,
+      selectedRowKeys: [],
+    })
+    this.props.onRequestUpdateTable()
   }
 
   _handleExportHistory = (userId) => {
     const selectedUser = _.find(this.props.users, { id: userId })
 
-    this.props.onRequestExportDetail(selectedUser)
+    this.props.onRequestExportDetail([selectedUser])
   }
 
   _getCTA = (type, row) => {
@@ -139,14 +170,52 @@ class UsersTable extends Component {
 
   _displayTableHeader = () => {
     return (
-      <Radio.Group
-        defaultValue={this.props.dataStatus}
-        buttonStyle="solid"
-        onChange={this.props.onTabChange}
-      >
-        <Radio.Button value={1}>Activos</Radio.Button>
-        <Radio.Button value={0}>Eliminados</Radio.Button>
-      </Radio.Group>
+      <>
+        <Row>
+          <Col sm={12}>
+            <Radio.Group
+              defaultValue={this.props.dataStatus}
+              buttonStyle="solid"
+              onChange={this.props.onTabChange}
+            >
+              <Radio.Button value={1}>Activos</Radio.Button>
+              <Radio.Button value={0}>Eliminados</Radio.Button>
+            </Radio.Group>
+          </Col>
+          <Col sm={12} style={{ textAlign: 'right' }}>
+            <Button
+              type="secondary"
+              className={classNames({ hidden: this.state.isBulkUpdateActive })}
+              onClick={() => this.setState({ isBulkUpdateActive: true })}
+              size="large"
+            >
+              <Icon type="retweet" /> Reporte Masivo
+            </Button>
+            <Button
+              type="danger"
+              className={classNames({ hidden: !this.state.isBulkUpdateActive })}
+              onClick={this.onCancelBulkProcess}
+            >
+              <Icon type="close-circle" /> Cerrar
+            </Button>
+          </Col>
+        </Row>
+        {this.state.isBulkUpdateActive ? (
+          <Row>
+            <Col>
+              <div className="multiple-actualization-module">
+                <BulkUpdateSteps
+                  selectedElements={this.state.selectedRowKeys.length}
+                  onClickUpdate={this._onSelectBulkReport}
+                  isProcessComplete={this.props.isBulkCompleted}
+                  isBulkLoading={this.props.isBulkLoading}
+                  isBulkSuccess={this.props.isBulkSuccess}
+                />
+              </div>
+            </Col>
+          </Row>
+        ) : null}
+      </>
     )
   }
 
@@ -231,8 +300,17 @@ class UsersTable extends Component {
       },
     ]
 
+    const { selectedRowKeys, isBulkUpdateActive } = this.state
+
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectOperation,
+      onSelectAll: this.onSelectAllOperation,
+    }
+
     return (
       <Table
+        rowSelection={isBulkUpdateActive ? rowSelection : null}
         rowKey={(record) => record.id}
         columns={columns}
         dataSource={this.props.users}
