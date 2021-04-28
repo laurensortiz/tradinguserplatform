@@ -52,5 +52,5 @@ app.prepare().then(() => {
     console.log(`🚀 Running on localhost:${port}`)
   })
 
-  //server.setTimeout(300000)
+  server.setTimeout(300000)
 })
