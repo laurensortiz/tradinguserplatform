@@ -121,6 +121,11 @@ const BULK_UPDATE_TYPES = [
     name: 'Coffee US FT OP',
     scope: 'price',
   },
+  {
+    code: 'gasoline-FT-OP',
+    name: 'Gasoline FT OP',
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({

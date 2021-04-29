@@ -901,11 +901,24 @@ module.exports = {
                     break
 
                   /**
-                   * COFFEE US FT
+                   * COFFEE US FT OP
                    */
                   case 'coffee-FT-OP':
                     if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
                       calculatedValue = 375 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
+                    } else {
+                      throw new Error(
+                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                      )
+                    }
+                    break
+
+                  /**
+                   * GASOLINE FT OP
+                   */
+                  case 'gasoline-FT-OP':
+                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                      calculatedValue = 420 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
                     } else {
                       throw new Error(
                         'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
