@@ -70,11 +70,23 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    createdByUsername: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    createdByUserId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     startDate: {
       type: DataTypes.DATE,
       allowNull: true,
     },
     endDate: {
+      allowNull: true,
+      type: DataTypes.DATE,
+    },
+    signDate: {
       allowNull: true,
       type: DataTypes.DATE,
     },

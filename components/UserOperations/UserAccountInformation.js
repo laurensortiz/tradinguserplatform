@@ -177,6 +177,7 @@ class AccountInformation extends PureComponent {
   render() {
     const { t } = this.props
     const userId = _.get(this.props, 'userAccount.user.id', 0)
+    const username = _.get(this.props, 'userAccount.user.username', '')
     const userAccountId = _.get(this.props, 'userAccount.id')
     const accountValue = _.get(this.props, 'userAccount.accountValue', 0.0)
     const accountType = _.get(this.props, 'userAccount.account.associatedOperation', 1)
@@ -193,6 +194,8 @@ class AccountInformation extends PureComponent {
     const isOperationPositive = IsOperationPositive(accountValue, balanceInitial)
 
     const isOutBusinessHours = isBetweenAfterHours()
+
+    const showReferralBtn = username !== 'edubritoc807810116'
 
     return (
       <>
@@ -237,13 +240,15 @@ class AccountInformation extends PureComponent {
 
                     <Descriptions.Item label={t('commissionsByReference')}>
                       {FormatCurrency.format(commissionByReference)}
-                      <Button
-                        type="tertiary"
-                        style={{ marginLeft: 10, fontSize: 15 }}
-                        onClick={this._onHandleShowForm}
-                      >
-                        <Icon type="solution" /> {t('btn referral')}
-                      </Button>
+                      {showReferralBtn && (
+                        <Button
+                          type="tertiary"
+                          style={{ marginLeft: 10, fontSize: 15 }}
+                          onClick={this._onHandleShowForm}
+                        >
+                          <Icon type="solution" /> {t('btn referral')}
+                        </Button>
+                      )}
                     </Descriptions.Item>
                   </>
                 ) : null}

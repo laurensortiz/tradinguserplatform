@@ -2,11 +2,22 @@ import bcrypt from 'bcrypt'
 import passport from 'passport'
 import _ from 'lodash'
 import { userQuery } from '../queries'
-import { User, Role, Account, UserAccount } from '../models'
+import { User, Role, ORM } from '../models'
 import { hashPassword, salt } from '../hashPassword'
+import NumberFromString from '../../common/utils/number-from-string'
 
 const isEmptyOrNull = (string) => {
   return !string || !string.trim()
+}
+
+const getFirstWord = (str) => str.trim().toLowerCase().split(' ')[0]
+
+const getFirstLetter = (str) => str.trim().toLowerCase().charAt(0)
+
+const getComposedUsername = (firstName, lastName) => {
+  const firstLetterFromName = getFirstLetter(firstName)
+  const firstLastName = getFirstWord(lastName)
+  return `${firstLetterFromName}${firstLastName}`
 }
 
 const getUserProps = (user) => {
@@ -19,76 +30,91 @@ const getUserProps = (user) => {
 
 module.exports = {
   async create(req, res) {
-    const firstName = req.body.firstName
-    const lastName = req.body.lastName
-    const firstName2 = _.get(req, 'body.firstName2', '')
-    const lastName2 = _.get(req, 'body.lastName2', '')
-    const firstName3 = _.get(req, 'body.firstName3', '')
-    const lastName3 = _.get(req, 'body.lastName3', '')
-    const firstName4 = _.get(req, 'body.firstName4', '')
-    const lastName4 = _.get(req, 'body.lastName4', '')
-    const country = _.get(req, 'body.country', '')
-    const referred = _.get(req, 'body.referred', '')
-    const username = _.toLower(req.body.username)
-    const email = req.body.email
-    const userID = req.body.userID
-    const startDate = req.body.startDate
-    const password = req.body.password
-    const verifyPassword = req.body.verifyPassword
-    const phoneNumber = req.body.phoneNumber
-    const roleId = _.get(req, 'body.role.id', 2)
-    const status = req.body.status || 1
-
-    if (isEmptyOrNull(username) || isEmptyOrNull(password) || isEmptyOrNull(verifyPassword)) {
-      return res.status(500).send({
-        message: 'Please fill out all fields.',
-      })
-    }
-
-    if (password !== verifyPassword) {
-      return res.status(500).send({
-        message: 'Your passwords do not match.',
-      })
-    }
-
+    const currentUser = _.get(req, 'user', {})
     try {
-      const user = await User.create({
-        username: username.toLowerCase(),
-        email,
-        userID,
-        firstName,
-        lastName,
-        firstName2,
-        lastName2,
-        firstName3,
-        lastName3,
-        firstName4,
-        lastName4,
-        country,
-        referred,
-        salt,
-        password: hashPassword(password),
-        startDate,
-        roleId,
-        phoneNumber,
-        status,
-      })
+      const firstName = req.body.firstName
+      const lastName = req.body.lastName
+      const firstName2 = _.get(req, 'body.firstName2', '')
+      const lastName2 = _.get(req, 'body.lastName2', '')
+      const firstName3 = _.get(req, 'body.firstName3', '')
+      const lastName3 = _.get(req, 'body.lastName3', '')
+      const firstName4 = _.get(req, 'body.firstName4', '')
+      const lastName4 = _.get(req, 'body.lastName4', '')
+      const country = _.get(req, 'body.country', '')
+      const referred = _.get(req, 'body.referred', '')
+      const email = req.body.email
+      const startDate = req.body.startDate
+      const signDate = req.body.signDate
+      const phoneNumber = req.body.phoneNumber
+      const roleId = _.get(req, 'body.role.id', 2)
+      const status = req.body.status || 1
+      const createdByUsername = currentUser.username
+      const createdByUserId = currentUser.id
 
-      return res.status(200).send(user)
-      // return req.login( user, err => {
-      //   if (!err) {
-      //     return res.status( 200 ).send( getUserProps(user) );
-      //   }
+      // if (isEmptyOrNull(username) || isEmptyOrNull(password) || isEmptyOrNull(verifyPassword)) {
+      //   return res.status(500).send({
+      //     message: 'Please fill out all fields.',
+      //   })
+      // }
       //
-      //   return res.status( 500 ).send( {
-      //     message: 'Auth error',
-      //   } );
-      // } );
+      // if (password !== verifyPassword) {
+      //   return res.status(500).send({
+      //     message: 'Your passwords do not match.',
+      //   })
+      // }
+
+      await ORM.transaction(async (t) => {
+        const lastRegisteredUsername = await User.findAll(
+          {
+            limit: 1,
+            attributes: ['username', 'userID'],
+            order: [['createdAt', 'DESC']],
+            silence: true,
+          },
+          { transaction: t }
+        )
+
+        const lastUsernameConsecutive = NumberFromString(lastRegisteredUsername[0].username)
+        const lastUserIDConsecutive = NumberFromString(lastRegisteredUsername[0].userID)
+        const composedUsername = getComposedUsername(firstName, lastName)
+        const username = `${composedUsername}${Number(lastUsernameConsecutive) + 1}`
+        const userID = `${Number(lastUserIDConsecutive) + 1}-${getFirstWord(
+          firstName
+        ).toUpperCase()}${getFirstWord(lastName).toUpperCase()}`
+        const password = `${composedUsername}@${new Date().getFullYear()}` // eg. jperez@2021
+
+        const user = await User.create(
+          {
+            username: username.toLowerCase(),
+            email,
+            userID,
+            firstName,
+            lastName,
+            firstName2,
+            lastName2,
+            firstName3,
+            lastName3,
+            firstName4,
+            lastName4,
+            country,
+            referred,
+            salt,
+            password: hashPassword(password),
+            startDate,
+            signDate,
+            roleId,
+            phoneNumber,
+            status,
+            createdByUsername,
+            createdByUserId,
+          },
+          { transaction: t }
+        )
+
+        return res.status(200).send(user)
+      })
     } catch (err) {
       return res.status(500).send(err)
-      // return res.status( 500 ).send( {
-      //   message: 'Authentication failed, try again.'
-      // } );
     }
   },
 
@@ -154,16 +180,17 @@ module.exports = {
         email: req.body.email || user.email,
         firstName: req.body.firstName || user.firstName,
         lastName: req.body.lastName || user.lastName,
-        firstName2: req.body.firstName2 || user.firstName2,
-        lastName2: req.body.lastName2 || user.lastName2,
-        firstName3: req.body.firstName3 || user.firstName3,
-        lastName3: req.body.lastName3 || user.lastName3,
-        firstName4: req.body.firstName4 || user.firstName4,
-        lastName4: req.body.lastName4 || user.lastName4,
+        firstName2: req.body.firstName2,
+        lastName2: req.body.lastName2,
+        firstName3: req.body.firstName3,
+        lastName3: req.body.lastName3,
+        firstName4: req.body.firstName4,
+        lastName4: req.body.lastName4,
         country: req.body.country || user.country,
         referred: req.body.referred || user.referred,
         userID: req.body.userID || user.userID,
         startDate: req.body.startDate || user.startDate,
+        signDate: req.body.signDate || user.signDate,
         endDate: req.body.endDate || user.endDate,
         roleId: _.get(req, 'body.role.id', user.roleId),
         status: req.body.status || user.status,
@@ -174,11 +201,15 @@ module.exports = {
 
       return res.status(200).send(updatedUser)
     } catch (e) {
-      console.log('[=====  erro  =====>')
-      console.log(e)
-      console.log('<=====  /erro  =====]')
       return res.status(500).send(e)
     }
+  },
+  async getLastUser(req, res) {
+    return await User.findAll({
+      limit: 1,
+      order: [['createdAt', 'DESC']],
+      silence: true,
+    })
   },
 
   async delete(req, res) {

@@ -93,9 +93,6 @@ class AddOrEditReferralForm extends PureComponent {
         if (_.isEqual(this.props.actionType, 'add')) {
           this.props.onAddNew(saveState)
         } else {
-          console.log('[=====  stat  =====>')
-          console.log(saveState)
-          console.log('<=====  /stat  =====]')
           this.props.onEdit(saveState)
         }
       }
@@ -137,10 +134,6 @@ class AddOrEditReferralForm extends PureComponent {
       ? this.state.description
       : undefined
     const notesInitValue = !_.isEmpty(this.state.notes) ? this.state.notes : undefined
-
-    console.log('[=====  ttt  =====>')
-    console.log(this.state)
-    console.log('<=====  /ttt  =====]')
 
     return (
       <Form onSubmit={this._handleSubmit} className="auth-form">

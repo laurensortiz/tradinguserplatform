@@ -2070,5 +2070,16 @@ alter table public."User" add "referred" varchar(255) NULL;
 alter table public."Referral" add "brokerName" varchar(255) DEFAULT '';
 
 /*
-* Start Changes Abr 13, 2021
+* End Changes Abr 13, 2021
+*/
+
+
+/*
+* Start Changes Abr 25, 2021
+*/
+alter table public."User" add "signDate" timestamptz NULL;
+alter table public."User" add "createdByUsername" varchar(255) DEFAULT '';
+alter table public."User" add "createdByUserId" integer NULL;
+/*
+* End Changes Abr 25, 2021
 */
