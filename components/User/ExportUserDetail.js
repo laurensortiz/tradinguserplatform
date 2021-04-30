@@ -14,6 +14,7 @@ const EXCEL_HEADER_MARKET = [
   'País',
   'Referido',
   'Usuario',
+  'Contraseña',
   'UserID',
   'Creado por el Usuario',
   'Fecha de Creación',
@@ -33,6 +34,13 @@ const getExportFileName = (orgId) => {
   return `usuario_${time}.xlsx`
 }
 
+const getPassword = (username, createdAt) => {
+  const date = new Date(createdAt)
+  const user = username.replace(/[0-9]/g, '')
+  const year = date.getFullYear()
+  return `${user}@${year}`
+}
+
 const _formatData = (data) => {
   return _.map(data, (user) => {
     return {
@@ -43,6 +51,7 @@ const _formatData = (data) => {
       País: user.country,
       Referido: user.referred,
       Usuario: user.username,
+      Contraseña: getPassword(user.username, user.createdAt),
       UserID: user.userID,
       'Creado por el Usuario': user.createdByUsername,
       'Fecha de Creación': FormatDate(user.createdAt),

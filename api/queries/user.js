@@ -10,7 +10,7 @@ const queries = {
         roleId: roleId,
       },
       attributes: {
-        exclude: ['salt'],
+        exclude: ['salt', 'password'],
       },
       include: [
         {
