@@ -40,7 +40,7 @@ class Pages extends Component {
   handshakeURL = () => {
     const aci = moment().format('YYYYMMDDHHMMSS')
     const usi = 'johndoe123'
-    const uri = `page=index&usi=${usi}&aci=${aci}&eml=kgriffiths@recognia.com`
+    const uri = `usi=${usi}&aci=${aci}`
     return `https://site.recognia.com/royalcapital/serve.shtml?tkn=${btoa(uri)}`
   }
 
@@ -64,9 +64,8 @@ class Pages extends Component {
 
     return (
       <Document className="static-page">
-        <p>dsds </p>
         <Skeleton active loading={this.props.isLoading}>
-          {!_.isEmpty(this.state.page.content) ? <InnerHTML html={eso.rep} /> : null}
+          {!_.isEmpty(this.state.page.content) ? <InnerHTML html={content} /> : null}
         </Skeleton>
       </Document>
     )
