@@ -477,17 +477,28 @@ class MarketTable extends Component {
     </Row>
   )
 
+  _getTPlist = (operations) => {
+    return _.chain(operations)
+      .reduce((result, operation) => {
+        result.push(operation.takingProfit)
+        return result
+      }, [])
+      .uniq()
+      .sortBy((value) => parseInt(value, 10))
+      .value()
+  }
+
   render() {
     const datesInTimes = _.map(this.state.marketOperations, (record) => moment(record.createdAt)),
       maxDatesInTimes = moment.max(datesInTimes).add(1, 'days'),
       minDatesInTimes = moment.min(datesInTimes).subtract(1, 'days')
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden'
+    const tpList = this._getTPlist(this.state.marketOperations)
 
     const {
       selectedRowKeys,
       isBulkUpdateActive,
       marketOperations,
-      sortedInfo,
       filteredInfo,
       assetClasses,
       brokers,
@@ -628,8 +639,16 @@ class MarketTable extends Component {
           <span key={takingProfit}>{DisplayTableAmount(takingProfit)}</span>
         ),
         sorter: (a, b) => Sort(a.takingProfit, b.takingProfit),
+        filters: tpList.map((value) => {
+          return {
+            text: value,
+            value,
+          }
+        }),
         sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('takingProfit'),
+        filteredValue: filteredInfo['takingProfit'] || null,
+        onFilter: (value, record) => (record.takingProfit ? record.takingProfit === value : null),
+        ellipsis: true,
       },
       {
         title: 'Fecha de Apertura',
@@ -701,7 +720,7 @@ class MarketTable extends Component {
           rowSelection={isBulkUpdateActive ? rowSelection : null}
           rowKey={(record) => record.id}
           columns={columns}
-          dataSource={this.state.marketOperations}
+          dataSource={marketOperations}
           loading={this.props.isLoading}
           scroll={{ x: true }}
           className={classNames({
