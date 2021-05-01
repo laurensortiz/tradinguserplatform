@@ -496,14 +496,6 @@ class DetailTable extends Component {
         ...this.getColumnSearchProps('currencyType'),
       },
       {
-        title: 'RCM Cuenta',
-        dataIndex: 'accountRCM',
-        key: 'accountRCM',
-        sorter: (a, b) => Sort(a.accountRCM, b.accountRCM),
-        sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('accountRCM'),
-      },
-      {
         title: 'Monto USD',
         dataIndex: 'amount',
         key: 'amount',
@@ -512,12 +504,28 @@ class DetailTable extends Component {
         ...this.getColumnSearchProps('amount'),
       },
       {
+        title: 'Comisiones',
+        dataIndex: 'commissionsCharge',
+        key: 'commissionsCharge',
+        render: (commissionsCharge) => DisplayTableAmount(commissionsCharge),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('commissionsCharge'),
+      },
+      {
         title: 'Tipo de Cuenta',
         dataIndex: 'accountWithdrawalRequest',
         key: 'accountWithdrawalRequest',
         sorter: (a, b) => Sort(a.accountWithdrawalRequest, b.accountWithdrawalRequest),
         sortDirections: ['descend', 'ascend'],
         ...this.getColumnSearchProps('accountWithdrawalRequest'),
+      },
+      {
+        title: 'RCM Cuenta',
+        dataIndex: 'accountRCM',
+        key: 'accountRCM',
+        sorter: (a, b) => Sort(a.accountRCM, b.accountRCM),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('accountRCM'),
       },
       {
         title: 'Fecha de Creación',

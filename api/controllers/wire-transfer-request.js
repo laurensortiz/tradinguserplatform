@@ -1,9 +1,12 @@
 import { WireTransferRequest, UserAccount, User, ORM, sequelize } from '../models'
 import { wireTransferRequestQuery } from '../queries'
 import moment from 'moment-timezone'
+import _ from 'lodash'
+import Log from '../../common/log'
 
 module.exports = {
   async create(req, res) {
+    const userId = _.get(req, 'user.id', 0)
     try {
       await ORM.transaction(async (t) => {
         const wireTransferRequest = await WireTransferRequest.create({
@@ -56,7 +59,9 @@ module.exports = {
           throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
         }
 
-        await userAccount.update(
+        const userAccountSnapShot = JSON.stringify(userAccount)
+
+        const updatedUserAccount = await userAccount.update(
           {
             guaranteeOperationNet:
               Number(req.body.guaranteeOperationNet.replace(',', '')) +
@@ -65,6 +70,16 @@ module.exports = {
           },
           { transaction: t }
         )
+
+        Log({
+          userId,
+          userAccountId: userAccount.id,
+          tableUpdated: 'userAccount',
+          action: 'create',
+          type: 'wire-transfer',
+          snapShotBeforeAction: userAccountSnapShot,
+          snapShotAfterAction: JSON.stringify(updatedUserAccount),
+        })
 
         return res.status(200).send(wireTransferRequest)
       })
@@ -114,6 +129,7 @@ module.exports = {
   },
 
   async update(req, res) {
+    const userId = _.get(req, 'user.id', 0)
     const wireTransferRequest = await WireTransferRequest.findOne({
       where: {
         id: req.params.wireTransferRequestId,
@@ -125,6 +141,8 @@ module.exports = {
         message: '404 on WireTransferRequest update',
       })
     }
+
+    const wireTransferRequestSnapShot = JSON.stringify(wireTransferRequest)
 
     try {
       await ORM.transaction(async (t) => {
@@ -212,13 +230,42 @@ module.exports = {
             throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
           }
 
-          await userAccount.update(
-            {
-              guaranteeOperationNet: 0.0,
-              wireTransferAmount: 0.0,
+          const hasActiveWireTransfer = await WireTransferRequest.findAll({
+            where: {
+              username: wireTransferRequest.username,
+              status: 1,
             },
-            { transaction: t }
-          )
+          })
+
+          if (hasActiveWireTransfer.length > 1) {
+            await userAccount.update(
+              {
+                guaranteeOperationNet:
+                  Number(userAccount.guaranteeOperationNet) - Number(wireTransferRequest.amount),
+                wireTransferAmount:
+                  Number(userAccount.wireTransferAmount) - Number(wireTransferRequest.amount),
+              },
+              { transaction: t }
+            )
+          } else {
+            await userAccount.update(
+              {
+                guaranteeOperationNet: 0.0,
+                wireTransferAmount: 0.0,
+              },
+              { transaction: t }
+            )
+          }
+
+          Log({
+            userId,
+            userAccountId: userAccount.id,
+            tableUpdated: 'userAccount',
+            action: 'update',
+            type: 'wire-transfer',
+            snapShotBeforeAction: wireTransferRequestSnapShot,
+            snapShotAfterAction: JSON.stringify(updatedWireTransferRequest),
+          })
         }
 
         return res.status(200).send(updatedWireTransferRequest)
