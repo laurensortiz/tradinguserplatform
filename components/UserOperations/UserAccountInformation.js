@@ -240,7 +240,7 @@ class AccountInformation extends PureComponent {
 
                     <Descriptions.Item label={t('commissionsByReference')}>
                       {FormatCurrency.format(commissionByReference)}
-                      {showReferralBtn && (
+                      {showReferralBtn ? (
                         <Button
                           type="tertiary"
                           style={{ marginLeft: 10, fontSize: 15 }}
@@ -248,6 +248,12 @@ class AccountInformation extends PureComponent {
                         >
                           <Icon type="solution" /> {t('btn referral')}
                         </Button>
+                      ) : (
+                        <Tooltip placement="leftTop" title="Suspendido Temporalmente">
+                          <Button type="tertiary" style={{ marginLeft: 10, fontSize: 15 }} disabled>
+                            <Icon type="solution" /> {t('btn referral')}
+                          </Button>
+                        </Tooltip>
                       )}
                     </Descriptions.Item>
                   </>
