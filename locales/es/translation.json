@@ -139,7 +139,7 @@
   "wt beneficiaryBankMessage": "Información del banco que recibe los fondos",
   "wt intermediaryBankMessage": "En caso de requerir banco intermediario, por favor agregar los datos",
   "wt crossBankAccounts": "Cuenta entre bancos",
-  "wt paymentTimePolitics": "Tiempo de liberación de fondos de 15 a 30 días, por revisión múltiple de cada transacción por parte del Exchange y su departamento de arbitraje.",
+  "wt paymentTimePolitics": "Tiempo de liberación de fondos de 15 a 30 días hábiles, por revisión múltiple de cada transacción por parte del Exchange y su departamento de arbitraje.",
   "wt paymentPolitics": "Acepto (amos) y reconozco (reconocemos) que es posible que un banco corresponsal u otra entidad financiera que intervenga en la transferencia/giro por mi (nosotros) solicitando o requerido, sea de mi pais o del exterior, pueda rechazar la transferencia/giro y/o retener, bloquear, penalizar y/o congelar los fondos objeto de la solicitud en cumplimiento de las normas que le sean aplicables (lavado de activos AML, OFAC, ONU, etc) y exonero (exoneramos) de responsabilidad a Royal Capital como Broker y a los bancos que se utilicen para las transferencias respectivas, en los maximos terminos adminitidos por la ley aplicable, por cualquier perjuicio que dichas acciones puedan ocacionarme (ocacionarnos). ",
   "wt agreementPaymentPolitics": "Entiendo lo anteriormente mencionado sobre los periodos de retiro",
   "wt disabledWeekendBtn":  "Los bancos no operan fines de semana, por favor procese su orden al siguiente día hábil laboral",

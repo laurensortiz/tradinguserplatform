@@ -139,7 +139,7 @@
   "wt beneficiaryBankMessage": "Information of the bank that receives the funds",
   "wt intermediaryBankMessage": "If you require an intermediary bank, please fulfilled this information",
   "wt crossBankAccounts": "Cross Bank Accounts",
-  "wt paymentTimePolitics": "The range time for release funds is from 15 to 30 days, by multiple review of each transaction by the Exchange and its arbitration department.",
+  "wt paymentTimePolitics": "The range time for release funds is from 15 to 30 business days, by multiple review of each transaction by the Exchange and its arbitration department.",
   "wt paymentPolitics": "I accept (amos) and reconozco (reconocemos) that it is possible that a correspondent bank or another financial entity that intervenes in the transference / turnover by me (nosotros) requesting the defendant, if my country is abroad, can reject the transference / turnover and / or retain, block, penalize and / or freeze the objects subject to the request in compliance with the rules that are applicable (lax AML, OFAC, UN, etc.) and exonerate (exonerate) from liability to Royal Capital Broker in the banks that are used for the respective transfers, in the maximum terms administered by the applicable law, for any loss that the actions may cause (as they are).",
   "wt agreementPaymentPolitics": "I understand the aforementioned about retreat periods",
   "wt disabledWeekendBtn":  "Banks do not operate on weekends, please process your order the next business day",
