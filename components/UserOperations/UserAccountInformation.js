@@ -16,7 +16,7 @@ import { connect } from 'react-redux'
 const getTotalMonthsFromDate = (date) => {
   const userStartDate = moment(new Date(date))
   const today = moment()
-  return parseFloat(moment.duration(today.diff(userStartDate)).asMonths())
+  return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
 }
 
 const IS_WEEKEND =
