@@ -199,9 +199,6 @@ module.exports = {
               req.body.associatedOperation | wireTransferRequest.associatedOperation,
             status: req.body.status,
             updatedAt: moment(new Date()).tz('America/New_York').format(),
-            createdAt: !!req.body.createdAt
-              ? moment(new Date(req.body.createdAt)).tz('America/New_York').format()
-              : moment(new Date()).tz('America/New_York').format(),
             closedAt:
               req.body.status === 4
                 ? moment(new Date()).tz('America/New_York').format()
