@@ -926,6 +926,19 @@ module.exports = {
                     }
                     break
 
+                  /**
+                   * AVENA FT OP
+                   */
+                  case 'avena-FT-OP':
+                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                      calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    } else {
+                      throw new Error(
+                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                      )
+                    }
+                    break
+
                   default:
                 }
 
