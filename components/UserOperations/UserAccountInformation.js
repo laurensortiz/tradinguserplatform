@@ -19,6 +19,12 @@ const getTotalMonthsFromDate = (date) => {
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
 }
 
+const isSameRequestedDay = (date) => {
+  const userStartDate = moment(new Date(date))
+  const today = moment()
+  return today.format('DD') === userStartDate.format('DD')
+}
+
 const IS_WEEKEND =
   moment(new Date()).tz('America/New_York').day() === 6 ||
   moment(new Date()).tz('America/New_York').day() === 0
@@ -86,12 +92,13 @@ class AccountInformation extends PureComponent {
     ) {
       const { createdAt, associatedOperation } = nextProps.lastWireTransferRequest
       const getTotalMonths = getTotalMonthsFromDate(createdAt)
+      const isTodayCompleted = isSameRequestedDay(createdAt)
 
       _.assignIn(updatedState, {
-        hasOneMonthHoldCompleted: getTotalMonths > 0,
+        hasOneMonthHoldCompleted: getTotalMonths > 0 || isTodayCompleted,
         isUserWireTransferAvailable:
           associatedOperation !== nextProps.userAccount.account.associatedOperation &&
-          getTotalMonths > 0,
+          (getTotalMonths > 0 || isTodayCompleted),
         lastWireTransferRequestDate: createdAt,
         lastWireTransferRequestAssociatedOperation: associatedOperation,
       })
