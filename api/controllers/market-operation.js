@@ -939,6 +939,19 @@ module.exports = {
                     }
                     break
 
+                  /**
+                   * AZUCAR FT OP
+                   */
+                  case 'sugar-FT-CFD':
+                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 12) {
+                      calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    } else {
+                      throw new Error(
+                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                      )
+                    }
+                    break
+
                   default:
                 }
 
