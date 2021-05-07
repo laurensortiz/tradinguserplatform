@@ -95,10 +95,10 @@ class AccountInformation extends PureComponent {
       const isTodayCompleted = isSameRequestedDay(createdAt)
 
       _.assignIn(updatedState, {
-        hasOneMonthHoldCompleted: getTotalMonths > 0 || isTodayCompleted,
+        hasOneMonthHoldCompleted: getTotalMonths > 0,
         isUserWireTransferAvailable:
           associatedOperation !== nextProps.userAccount.account.associatedOperation &&
-          (getTotalMonths > 0 || isTodayCompleted),
+          getTotalMonths > 0,
         lastWireTransferRequestDate: createdAt,
         lastWireTransferRequestAssociatedOperation: associatedOperation,
       })
