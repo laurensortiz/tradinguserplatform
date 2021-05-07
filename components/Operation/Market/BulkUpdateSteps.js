@@ -132,8 +132,13 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'sugar-FT-CFD',
-    name: "Sugar #11 Jul '21 (SBN21)",
+    code: 'sugar-FT',
+    name: "Sugar #11 Jul '21 (SBN21) - FT",
+    scope: 'price',
+  },
+  {
+    code: 'sugar-CFD',
+    name: "Sugar #11 Jul '21 (SBN21) - CFDs",
     scope: 'price',
   },
 ]
