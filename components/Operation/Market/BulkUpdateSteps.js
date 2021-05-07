@@ -131,6 +131,11 @@ const BULK_UPDATE_TYPES = [
     name: 'AVENA – OATS FT',
     scope: 'price',
   },
+  {
+    code: 'sugar-FT-CFD',
+    name: "Sugar #11 Jul '21 (SBN21)",
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({
