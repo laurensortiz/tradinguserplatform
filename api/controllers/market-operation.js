@@ -965,7 +965,7 @@ module.exports = {
                       marketOperation.assetClassId === 12 ||
                       marketOperation.assetClassId === 15
                     ) {
-                      calculatedValue = 200 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                      calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
                     } else {
                       throw new Error(
                         'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
