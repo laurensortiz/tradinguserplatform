@@ -943,7 +943,11 @@ module.exports = {
                    * AZUCAR FT OP
                    */
                   case 'sugar-FT-CFD':
-                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 12) {
+                    if (
+                      marketOperation.assetClassId === 2 ||
+                      marketOperation.assetClassId === 12 ||
+                      marketOperation.assetClassId === 15
+                    ) {
                       calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
                     } else {
                       throw new Error(
