@@ -94,15 +94,17 @@ module.exports = {
         const userAccountSnapShot = JSON.stringify(userAccount)
 
         const guaranteeOperationNetReq =
-          req.body.guaranteeOperationNet === 0 ? '0' : req.body.guaranteeOperationNet
-        const wireTransferAmountReq = req.body.amount === 0 ? '0' : req.body.amount
+          req.body.guaranteeOperationNet === 0 ? '0' : `${req.body.guaranteeOperationNet}`
+        const wireTransferAmountReq = req.body.amount === 0 ? '0' : `${req.body.amount}`
+
         const updatedUserAccount = await userAccount.update(
           {
             guaranteeOperationNet:
-              Number(guaranteeOperationNetReq.replace(',', '')) +
-                userAccount.guaranteeOperationNet || 0,
+              parseFloat(guaranteeOperationNetReq.replace(',', '')) +
+                parseFloat(userAccount.guaranteeOperationNet) || 0,
             wireTransferAmount:
-              Number(wireTransferAmountReq.replace(',', '')) + userAccount.amount || 0,
+              parseFloat(wireTransferAmountReq.replace(',', '')) +
+                parseFloat(userAccount.wireTransferAmount) || 0,
           },
           { transaction: t }
         )
