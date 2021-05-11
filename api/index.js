@@ -110,6 +110,8 @@ module.exports = (app) => {
   app.put('/api/user-accounts/:userAccountId', userAccount.update)
   app.delete('/api/user-accounts/:userAccountId', userAccount.delete)
 
+  app.post('/api/user-accounts/fix', userAccount.fix)
+
   // User Account Movement
   app.get('/api/user-account-movement/list/:userAccountId', userAccountMovement.list)
   app.get('/api/user-account-movement/:userAccountMovementId', userAccountMovement.get)

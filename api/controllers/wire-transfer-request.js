@@ -4,15 +4,60 @@ import moment from 'moment-timezone'
 import _ from 'lodash'
 import Log from '../../common/log'
 
+const NO_MONEY_ERROR_MESSAGE =
+  'Su solicitud sobrepasa lo permitido por el exchange o no tiene garantías suficientes en su cuenta.'
+
 module.exports = {
   async create(req, res) {
     const userId = _.get(req, 'user.id', 0)
+    const userStartedDay = _.get(req, 'user.startDate', '')
+    const isOTCAccount = req.body.associatedOperation === 1
+    const amount = Number(req.body.amount.replace(',', ''))
+
+    const is10percent = moment(userStartedDay).isBefore('2020-12-15', 'day')
+
     try {
       await ORM.transaction(async (t) => {
+        const userAccount = await UserAccount.findOne(
+          {
+            where: {
+              id: req.body.userAccountId,
+            },
+          },
+          { transaction: t }
+        )
+
+        if (!userAccount) {
+          throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
+        }
+
+        let percentageFromAccount
+
+        if (isOTCAccount) {
+          percentageFromAccount = is10percent ? 10 : 7.5
+        } else {
+          percentageFromAccount = 100
+        }
+
+        const amountAvailable = (userAccount.accountValue / 100) * percentageFromAccount
+
+        if (isOTCAccount) {
+          if (parseFloat(userAccount.guaranteeOperation) < 0) {
+            throw new Error(NO_MONEY_ERROR_MESSAGE)
+          }
+          if (parseFloat(userAccount.guaranteeOperation) - parseFloat(amount) < 0) {
+            throw new Error(NO_MONEY_ERROR_MESSAGE)
+          }
+        }
+
+        if (parseFloat(amountAvailable) - parseFloat(amount) < 0) {
+          throw new Error(NO_MONEY_ERROR_MESSAGE)
+        }
+
         const wireTransferRequest = await WireTransferRequest.create({
           currencyType: req.body.currencyType,
           accountRCM: req.body.accountRCM,
-          amount: Number(req.body.amount.replace(',', '')),
+          amount,
           amountBK: req.body.amount,
           commissionsCharge: Number(req.body.commissionsCharge),
           commissionsReferenceDetail: req.body.commissionsReferenceDetail,
@@ -46,27 +91,18 @@ module.exports = {
           updatedAt: moment(new Date()).tz('America/New_York').format(),
         })
 
-        const userAccount = await UserAccount.findOne(
-          {
-            where: {
-              id: req.body.userAccountId,
-            },
-          },
-          { transaction: t }
-        )
-
-        if (!userAccount) {
-          throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
-        }
-
         const userAccountSnapShot = JSON.stringify(userAccount)
 
+        const guaranteeOperationNetReq =
+          req.body.guaranteeOperationNet === 0 ? '0' : req.body.guaranteeOperationNet
+        const wireTransferAmountReq = req.body.amount === 0 ? '0' : req.body.amount
         const updatedUserAccount = await userAccount.update(
           {
             guaranteeOperationNet:
-              Number(req.body.guaranteeOperationNet.replace(',', '')) +
+              Number(guaranteeOperationNetReq.replace(',', '')) +
                 userAccount.guaranteeOperationNet || 0,
-            wireTransferAmount: Number(req.body.amount.replace(',', '')) + userAccount.amount || 0,
+            wireTransferAmount:
+              Number(wireTransferAmountReq.replace(',', '')) + userAccount.amount || 0,
           },
           { transaction: t }
         )
