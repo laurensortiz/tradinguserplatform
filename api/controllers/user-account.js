@@ -11,6 +11,8 @@ import {
   AssetClass,
   sequelize,
   UserAccountMovement,
+  WireTransferRequest,
+  ORM,
 } from '../models'
 import { userAccountQuery } from '../queries'
 import Log from '../../common/log'
@@ -54,6 +56,64 @@ module.exports = {
     }
 
     return res.status(200).send(userAccounts)
+  },
+
+  async fix(req, res) {
+    const ids = [224, 704]
+    try {
+      await ORM.transaction(async (t) => {
+        for (const userAccountId of ids) {
+          const sum = await WireTransferRequest.findAll(
+            {
+              where: {
+                userAccountId,
+                status: 1,
+                associatedOperation: 1,
+              },
+              attributes: [[sequelize.fn('sum', sequelize.col('amount')), 'total']],
+              raw: true,
+            },
+            { transaction: t }
+          )
+
+          const total = Number(sum[0].total)
+
+          const userAccount = await UserAccount.findOne(
+            {
+              where: {
+                id: userAccountId,
+              },
+              attributes: {
+                exclude: ['snapShotAccount'],
+              },
+            },
+            { transaction: t }
+          )
+
+          if (!userAccount) {
+            return res.status(404).send({
+              message: '404 on UserAccount update',
+            })
+          }
+
+          const guaranteeOperation = userAccount.guaranteeOperation
+
+          await userAccount.update(
+            {
+              guaranteeOperationNet: Number(guaranteeOperation) - Number(total),
+              wireTransferAmount: Number(total),
+            },
+            { transaction: t }
+          )
+        }
+
+        return res.status(200).send('DONE')
+      })
+    } catch (e) {
+      console.log('[=====  err  =====>')
+      console.log(e)
+      console.log('<=====  /err  =====]')
+    }
   },
 
   async get(req, res) {
