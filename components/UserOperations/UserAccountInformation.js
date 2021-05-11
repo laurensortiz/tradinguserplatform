@@ -121,11 +121,6 @@ class AccountInformation extends PureComponent {
 
   _isWireTransferBtnDisabled = () => {
     const isProfitMonth = this.props.userAccount.account.associatedOperation === 2
-    console.log('[=====  test  =====>')
-    console.log(this.state.isUserWireTransferAvailable)
-    console.log(this.state.hasInitRequiredMonthsCompleted)
-    console.log(this.state.hasOneMonthHoldCompleted)
-    console.log('<=====  /test  =====]')
     if (isProfitMonth) {
       return false
     } else {
@@ -148,9 +143,6 @@ class AccountInformation extends PureComponent {
     const disableText = IS_WEEKEND
       ? this.props.t('wt disabledWeekendBtn')
       : this.props.t('wt disabledBtn')
-    console.log('[=====  BTN  =====>')
-    console.log(this._isWireTransferBtnDisabled())
-    console.log('<=====  /BTN  =====]')
 
     return !IS_WEEKEND && !this._isWireTransferBtnDisabled() ? (
       wireTransferBtn

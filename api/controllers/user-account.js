@@ -52,19 +52,7 @@ module.exports = {
         message: '404 on UserAccount get List',
       })
     }
-    return res.status(200).send(userAccounts)
-  },
 
-  async allAccounts(req, res) {
-    const userAccounts = await UserAccount.findAll(
-      userAccountQuery.list({ req, sequelize, User, Account, MarketOperation, Product, Broker })
-    )
-
-    if (!userAccounts) {
-      return res.status(404).send({
-        message: '404 on UserAccount get List',
-      })
-    }
     return res.status(200).send(userAccounts)
   },
 
