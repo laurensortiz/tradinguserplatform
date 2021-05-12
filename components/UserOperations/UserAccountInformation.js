@@ -14,7 +14,7 @@ import { wireTransferRequestOperations } from '../../state/modules/wireTransferR
 import { connect } from 'react-redux'
 
 const getTotalMonthsFromDate = (date) => {
-  const userStartDate = moment(new Date(date))
+  const userStartDate = moment(new Date(date)).add(-1, 'days')
   const today = moment()
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
 }
