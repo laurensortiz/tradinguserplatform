@@ -73,17 +73,17 @@ const queries = {
         {
           model: Product,
           as: 'product',
-          attributes: ['name'],
+          attributes: ['name', 'id', 'code'],
         },
         {
           model: Broker,
           as: 'broker',
-          attributes: ['name'],
+          attributes: ['name', 'id'],
         },
         {
           model: AssetClass,
           as: 'assetClass',
-          attributes: ['name'],
+          attributes: ['name', 'id'],
         },
         {
           model: Commodity,
