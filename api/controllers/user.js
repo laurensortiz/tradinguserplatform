@@ -176,11 +176,7 @@ module.exports = {
   },
 
   async update(req, res) {
-    const user = await User.findByPk({
-      where: {
-        id: req.params.id,
-      },
-    })
+    const user = await User.findByPk(req.params.id)
 
     if (!user) {
       return res.status(404).send({
