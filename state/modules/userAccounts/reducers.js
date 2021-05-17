@@ -1,5 +1,5 @@
-import { combineReducers } from "redux";
-import types from "./types";
+import { combineReducers } from 'redux'
+import types from './types'
 
 // Get All Users
 const initialStateUsers = {
@@ -11,9 +11,13 @@ const initialStateUsers = {
   isHistoryReportLoading: false,
   isHistoryReportSuccess: false,
   isHistoryReportComplete: false,
+  isListReportSuccess: false,
+  isListReportLoading: false,
+  isListReportComplete: false,
   historyReportData: [],
+  listReportData: [],
   message: '',
-};
+}
 
 export function users(state = initialStateUsers, action) {
   switch (action.type) {
@@ -24,7 +28,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: true,
         isSuccess: false,
-      };
+      }
     case types.ALL_USER_ACCOUNTS_SUCCESS:
       return {
         ...state,
@@ -32,7 +36,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: false,
         list: action.payload,
-      };
+      }
     case types.ALL_USER_ACCOUNTS_ERROR:
       return {
         ...state,
@@ -40,7 +44,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: true,
         isLoading: false,
         message: action.payload,
-      };
+      }
     // User Accounts
     case types.USER_ACCOUNTS_REQUEST:
       return {
@@ -48,7 +52,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: true,
         isSuccess: false,
-      };
+      }
     case types.USER_ACCOUNTS_SUCCESS:
       return {
         ...state,
@@ -56,7 +60,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: false,
         list: action.payload,
-      };
+      }
     case types.USER_ACCOUNTS_ERROR:
       return {
         ...state,
@@ -64,7 +68,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: true,
         isLoading: false,
         message: action.payload,
-      };
+      }
     // User Account
     case types.USER_ACCOUNT_REQUEST:
       return {
@@ -72,7 +76,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: true,
         isSuccess: false,
-      };
+      }
     case types.USER_ACCOUNT_SUCCESS:
       return {
         ...state,
@@ -80,7 +84,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: false,
         isLoading: false,
         item: action.payload,
-      };
+      }
     case types.USER_ACCOUNT_ERROR:
       return {
         ...state,
@@ -88,7 +92,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: true,
         isLoading: false,
         message: action.payload,
-      };
+      }
     // Add Project
     case types.USER_ACCOUNT_ADD_REQUEST:
       return {
@@ -96,7 +100,7 @@ export function users(state = initialStateUsers, action) {
         isSuccess: false,
         isFailure: false,
         isLoading: true,
-      };
+      }
     case types.USER_ACCOUNT_ADD_SUCCESS:
       return {
         ...state,
@@ -105,7 +109,7 @@ export function users(state = initialStateUsers, action) {
         isLoading: false,
         item: action.payload,
         message: 'Cuenta de Usuario Incluido con éxito',
-      };
+      }
     case types.USER_ACCOUNT_ADD_ERROR:
       return {
         ...state,
@@ -113,7 +117,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: true,
         isLoading: false,
         message: action.payload,
-      };
+      }
     // Edit Project
     case types.USER_ACCOUNT_EDIT_REQUEST:
       return {
@@ -121,7 +125,7 @@ export function users(state = initialStateUsers, action) {
         isSuccess: false,
         isFailure: false,
         isLoading: true,
-      };
+      }
     case types.USER_ACCOUNT_EDIT_SUCCESS:
       return {
         ...state,
@@ -130,7 +134,7 @@ export function users(state = initialStateUsers, action) {
         isLoading: false,
         item: action.payload,
         message: 'Cuenta de Usuario Incluido con éxito',
-      };
+      }
     case types.USER_ACCOUNT_EDIT_ERROR:
       return {
         ...state,
@@ -138,7 +142,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: true,
         isLoading: false,
         message: action.payload,
-      };
+      }
     // Delete Project
     case types.USER_ACCOUNT_DELETE_REQUEST:
       return {
@@ -146,7 +150,7 @@ export function users(state = initialStateUsers, action) {
         isSuccess: false,
         isFailure: false,
         isLoading: true,
-      };
+      }
     case types.USER_ACCOUNT_DELETE_SUCCESS:
       return {
         ...state,
@@ -155,7 +159,7 @@ export function users(state = initialStateUsers, action) {
         isLoading: false,
         project: action.payload,
         message: 'Cuenta de Usuario Incluido con éxito',
-      };
+      }
     case types.USER_ACCOUNT_DELETE_ERROR:
       return {
         ...state,
@@ -163,7 +167,7 @@ export function users(state = initialStateUsers, action) {
         isFailure: true,
         isLoading: false,
         message: action.payload,
-      };
+      }
     // User Account History Report
     case types.USER_ACCOUNT_HISTORY_REPORT_REQUEST:
       return {
@@ -174,8 +178,8 @@ export function users(state = initialStateUsers, action) {
         isHistoryReportLoading: true,
         isHistoryReportSuccess: false,
         isHistoryReportComplete: false,
-        historyReportData: []
-      };
+        historyReportData: [],
+      }
     case types.USER_ACCOUNT_HISTORY_REPORT_SUCCESS:
       return {
         ...state,
@@ -184,7 +188,7 @@ export function users(state = initialStateUsers, action) {
         isHistoryReportComplete: true,
         historyReportData: action.payload,
         message: 'Historial de la Cuenta de Usuario Generado con éxito',
-      };
+      }
     case types.USER_ACCOUNT_HISTORY_REPORT_ERROR:
       return {
         ...state,
@@ -193,7 +197,37 @@ export function users(state = initialStateUsers, action) {
         isHistoryReportComplete: true,
         historyReportData: [],
         message: action.payload,
-      };
+      }
+    // User Account Report List
+    case types.USER_ACCOUNT_LIST_REPORT_REQUEST:
+      return {
+        ...state,
+        isFailure: false,
+        isLoading: false,
+        isSuccess: false,
+        isListReportLoading: true,
+        isListReportSuccess: false,
+        isListReportComplete: false,
+        listReportData: [],
+      }
+    case types.USER_ACCOUNT_LIST_REPORT_SUCCESS:
+      return {
+        ...state,
+        isListReportLoading: false,
+        isListReportSuccess: true,
+        isListReportComplete: true,
+        listReportData: action.payload,
+        message: 'Estado Cuenta de Usuario Generado con éxito',
+      }
+    case types.USER_ACCOUNT_LIST_REPORT_ERROR:
+      return {
+        ...state,
+        isListReportLoading: false,
+        isListReportSuccess: false,
+        isListReportComplete: true,
+        listReportData: [],
+        message: action.payload,
+      }
 
     case types.RESET_AFTER_REQUEST:
       return {
@@ -207,10 +241,14 @@ export function users(state = initialStateUsers, action) {
         isHistoryReportSuccess: false,
         isHistoryReportComplete: false,
         historyReportData: [],
-      };
+        listReportData: [],
+        isListReportSuccess: false,
+        isListReportLoading: false,
+        isListReportComplete: false,
+      }
     default:
       return state
   }
 }
 
-export default users;
+export default users

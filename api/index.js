@@ -105,6 +105,7 @@ module.exports = (app) => {
   app.post('/api/user-accounts', userAccount.list)
   app.get('/api/user-accounts/:id', userAccount.get)
   app.post('/api/user-accounts/report', userAccount.getReport)
+  app.post('/api/user-accounts/list-report', userAccount.getListReport)
   app.get('/api/user-accounts/user/:userId', userAccount.getByUser)
   app.post('/api/user-accounts/new', userAccount.create)
   app.put('/api/user-accounts/:id', userAccount.update)
