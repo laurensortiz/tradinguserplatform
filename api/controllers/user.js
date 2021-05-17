@@ -46,9 +46,14 @@ module.exports = {
       const createdByUsername = currentUser.username
       const createdByUserId = currentUser.id
 
+      const isAdmin = roleId === 1
+
       await ORM.transaction(async (t) => {
         const lastRegisteredUsername = await User.findAll(
           {
+            where: {
+              roleId: 2,
+            },
             limit: 1,
             attributes: ['username', 'userID'],
             order: [['createdAt', 'DESC']],
@@ -60,14 +65,17 @@ module.exports = {
         const lastUsernameConsecutive = NumberFromString(lastRegisteredUsername[0].username)
         const lastUserIDConsecutive = NumberFromString(lastRegisteredUsername[0].userID)
         const composedUsername = getComposedUsername(firstName, lastName)
-        const username = `${composedUsername}${Number(lastUsernameConsecutive) + 1}`
-        const userID = `${Number(lastUserIDConsecutive) + 1}-${getFirstWord(
-          firstName
-        ).toUpperCase()}${getFirstWord(lastName).toUpperCase()}`
-        const password =
-          roleId === 1 // if is Admin
-            ? `forex@${new Date().getFullYear()}`
-            : `${composedUsername}@${new Date().getFullYear()}` // eg. jperez@2021
+        const username = isAdmin
+          ? composedUsername
+          : `${composedUsername}${Number(lastUsernameConsecutive) + 1}`
+        const userID = isAdmin
+          ? ''
+          : `${Number(lastUserIDConsecutive) + 1}-${getFirstWord(
+              firstName
+            ).toUpperCase()}${getFirstWord(lastName).toUpperCase()}`
+        const password = isAdmin
+          ? `forex@${new Date().getFullYear()}`
+          : `${composedUsername}@${new Date().getFullYear()}` // eg. jperez@2021
 
         const user = await User.create(
           {
