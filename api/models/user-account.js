@@ -52,10 +52,6 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: true,
     },
-    snapShotAccount: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
     brokerId: {
       type: DataTypes.INTEGER,
       allowNull: true,

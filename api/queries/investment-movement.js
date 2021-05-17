@@ -1,30 +1,22 @@
-import { UserAccount, User, Account } from "../models";
-
 const queries = {
-  list: ({ req, UserAccount }) => {
+  list: ({ req }) => {
     return {
-      attributes: {
-        exclude: [],
-      },
       where: {
-        investmentOperationId: req.params.investmentOperationId,
-        status: 1
+        investmentOperationId: req.params.id,
+        status: 1,
       },
-      order: [ [ 'createdAt', 'DESC' ] ],
-    };
+      order: [['createdAt', 'DESC']],
+    }
   },
-  get: ({ req, UserAccount }) => {
+  get: ({ req }) => {
     return {
-      attributes: {
-        exclude: [],
-      },
       where: {
-        investmentOperationId: req.params.investmentOperationId,
-        status: 1
+        investmentOperationId: req.params.id,
+        status: 1,
       },
-      order: [ [ 'createdAt', 'DESC' ] ],
-    };
+      order: [['createdAt', 'DESC']],
+    }
   },
-};
+}
 
-export default queries;
+export default queries

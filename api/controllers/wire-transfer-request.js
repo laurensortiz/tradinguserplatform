@@ -18,7 +18,7 @@ module.exports = {
 
     try {
       await ORM.transaction(async (t) => {
-        const userAccount = await UserAccount.findOne(
+        const userAccount = await UserAccount.findByPk(
           {
             where: {
               id: req.body.userAccountId,
@@ -126,57 +126,76 @@ module.exports = {
         return res.status(200).send(wireTransferRequest)
       })
     } catch (err) {
-      console.error(err)
-      return res.status(500).send(err)
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
   async list(req, res) {
-    const wireTransferRequests = await WireTransferRequest.findAll(
-      wireTransferRequestQuery.list({ req, UserAccount, User })
-    )
+    try {
+      const wireTransferRequests = await WireTransferRequest.findAll(
+        wireTransferRequestQuery.list({ req, UserAccount, User })
+      )
 
-    if (!wireTransferRequests) {
-      return res.status(404).send({
-        message: '404 on WireTransferRequest get List',
+      if (!wireTransferRequests) {
+        return res.status(404).send({
+          message: '404 on WireTransferRequest get List',
+        })
+      }
+      return res.status(200).send(wireTransferRequests)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-    return res.status(200).send(wireTransferRequests)
   },
 
   async get(req, res) {
-    const wireTransferRequest = await WireTransferRequest.findByPk(req.params.wireTransferRequestId)
+    try {
+      const wireTransferRequest = await WireTransferRequest.findByPk(req.params.id)
 
-    if (!wireTransferRequest) {
-      return res.status(404).send({
-        message: '404 on WireTransferRequest get',
+      if (!wireTransferRequest) {
+        return res.status(404).send({
+          message: '404 on WireTransferRequest get',
+        })
+      }
+
+      return res.status(200).send(wireTransferRequest)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(wireTransferRequest)
   },
 
   async getByUsername(req, res) {
-    const wireTransferRequest = await WireTransferRequest.findAll(
-      wireTransferRequestQuery.listByUsername({ req, sequelize })
-    )
+    try {
+      const wireTransferRequest = await WireTransferRequest.findAll(
+        wireTransferRequestQuery.listByUsername({ req, sequelize })
+      )
 
-    if (!wireTransferRequest) {
-      return res.status(404).send({
-        message: '404 on WireTransferRequest get',
+      if (!wireTransferRequest) {
+        return res.status(404).send({
+          message: '404 on WireTransferRequest get',
+        })
+      }
+
+      return res.status(200).send(wireTransferRequest)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(wireTransferRequest)
   },
 
   async update(req, res) {
     const userId = _.get(req, 'user.id', 0)
-    const wireTransferRequest = await WireTransferRequest.findOne({
-      where: {
-        id: req.params.wireTransferRequestId,
-      },
-    })
+    const wireTransferRequest = await WireTransferRequest.findByPk(req.params.id)
 
     if (!wireTransferRequest) {
       return res.status(404).send({
@@ -309,29 +328,36 @@ module.exports = {
 
         return res.status(200).send(updatedWireTransferRequest)
       })
-    } catch (e) {}
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
   },
 
   async delete(req, res) {
-    const wireTransferRequest = await WireTransferRequest.findOne({
-      where: {
-        id: req.params.wireTransferRequestId,
-      },
-    })
+    try {
+      const wireTransferRequest = await WireTransferRequest.findByPk(req.params.id)
 
-    if (!wireTransferRequest) {
-      return res.status(404).send({
-        message: 'WireTransferRequest Not Found',
+      if (!wireTransferRequest) {
+        return res.status(404).send({
+          message: 'WireTransferRequest Not Found',
+        })
+      }
+
+      await wireTransferRequest.update({
+        status: 0,
+      })
+
+      return res.status(200).send({
+        message: 'WireTransferRequest has been deleted',
+      })
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    //await wireTransferRequest.destroy();
-    await wireTransferRequest.update({
-      status: 0,
-    })
-
-    return res.status(200).send({
-      message: 'WireTransferRequest has been deleted',
-    })
   },
 }

@@ -1,5 +1,4 @@
-import { Broker } from '../models';
-import { brokerQuery } from '../queries';
+import { Broker } from '../models'
 
 module.exports = {
   async create(req, res) {
@@ -8,83 +7,107 @@ module.exports = {
         name: req.body.name,
         status: 1,
         createdAt: new Date(),
-      });
+      })
 
-      return res.status(200).send(broker);
+      return res.status(200).send(broker)
     } catch (err) {
-      return res.status(500).send(err);
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
   async list(req, res) {
-    const brokers = await Broker.findAll(
-      brokerQuery.list({ req })
-    );
+    try {
+      const brokers = await Broker.findAll({
+        where: {
+          status: 1,
+        },
+        attributes: ['id', 'name'],
+        order: [['id', 'DESC']],
+      })
 
-    if (!brokers) {
-      return res.status(404).send({
-        message: '404 on Broker get List',
-      });
+      if (!brokers) {
+        return res.status(404).send({
+          message: '404 on Broker get List',
+        })
+      }
+      return res.status(200).send(brokers)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-    return res.status(200).send(brokers);
   },
 
   async get(req, res) {
-    const broker = await Broker.findByPk(
-      req.params.brokerId
-    );
+    try {
+      const broker = await Broker.findByPk(req.params.id)
 
-    if (!broker) {
-      return res.status(404).send({
-        message: '404 on Broker get',
-      });
+      if (!broker) {
+        return res.status(404).send({
+          message: '404 on Broker get',
+        })
+      }
+
+      return res.status(200).send(broker)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-
-    return res.status(200).send(broker);
   },
 
   async update(req, res) {
-    const broker = await Broker.findOne({
-      where: {
-        id: req.params.brokerId,
-      },
-    });
+    try {
+      const broker = await Broker.findByPk(req.params.id)
 
-    if (!broker) {
-      return res.status(404).send({
-        message: '404 on Broker update',
-      });
+      if (!broker) {
+        return res.status(404).send({
+          message: '404 on Broker update',
+        })
+      }
+
+      const updatedBroker = await broker.update({
+        name: req.body.name || broker.name,
+        code: req.body.code || broker.code,
+        updatedAt: new Date(),
+      })
+
+      return res.status(200).send(updatedBroker)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-
-    const updatedBroker = await broker.update({
-      name: req.body.name || broker.name,
-      code: req.body.code || broker.code,
-      updatedAt: new Date(),
-    });
-
-    return res.status(200).send(updatedBroker);
   },
 
   async delete(req, res) {
-    const broker = await Broker.findOne({
-      where: {
-        id: req.params.brokerId,
-      },
-    });
+    try {
+      const broker = await Broker.findByPk(req.params.id)
 
-    if (!broker) {
-      return res.status(404).send({
-        message: 'Broker Not Found',
-      });
+      if (!broker) {
+        return res.status(404).send({
+          message: 'Broker Not Found',
+        })
+      }
+
+      await broker.update({
+        status: 0,
+      })
+
+      return res.status(200).send({
+        message: 'Broker has been deleted',
+      })
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-
-    //await broker.destroy();
-    await broker.update( {
-      status: 0,
-    } );
-
-    return res.status(200).send({
-      message: 'Broker has been deleted',
-    });
   },
-};
+}

@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import get from 'lodash/get'
 
 function conditionalStatus(req, sequelize) {
   const Op = sequelize.Op
@@ -15,7 +15,7 @@ function conditionalStatus(req, sequelize) {
 }
 
 const queries = {
-  list: ({ req, sequelize, User, Account, MarketOperation, Product, Broker }) => {
+  list: ({ req, sequelize, User, Account, Broker }) => {
     const Op = sequelize.Op
     const statusActive = get(req, 'body.status', 1)
     const associatedOperation = get(req, 'body.associatedOperation', 1)
@@ -25,9 +25,6 @@ const queries = {
     return {
       where: {
         status: statusActive,
-      },
-      attributes: {
-        exclude: ['snapShotAccount'],
       },
       include: [
         {
@@ -47,32 +44,8 @@ const queries = {
           as: 'broker',
           attributes: ['name', 'id'],
         },
-        {
-          model: MarketOperation,
-          as: 'marketOperation',
-          attributes: ['status'],
-          include: [
-            {
-              model: Product,
-              as: 'product',
-              attributes: ['name'],
-            },
-          ],
-        },
       ],
 
-      order: [['createdAt', 'DESC']],
-    }
-  },
-  get: ({ req }) => {
-    return {
-      where: {
-        id: req.params.userAccountId || 0,
-        status: 1,
-      },
-      attributes: {
-        exclude: ['snapShotAccount'],
-      },
       order: [['createdAt', 'DESC']],
     }
   },
@@ -81,9 +54,6 @@ const queries = {
       where: {
         status: 1,
         userId: req.params.userId || 0,
-      },
-      attributes: {
-        exclude: ['snapShotAccount'],
       },
       include: [
         {
@@ -128,9 +98,6 @@ const queries = {
         {
           model: UserAccount,
           as: 'userAccount',
-          attributes: {
-            exclude: ['snapShotAccount'],
-          },
           include: [
             {
               model: User,
