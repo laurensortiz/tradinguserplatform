@@ -278,12 +278,12 @@ module.exports = {
         await marketOperation.update(
           {
             longShort: req.body.longShort || marketOperation.longShort,
-            userAccountId: _.get(req, 'body.userAccount.id', 0) || marketOperation.userAccountId,
-            brokerId: _.get(req, 'body.broker.id', 0) || marketOperation.brokerId,
-            productId: _.get(req, 'body.product.id', 0) || marketOperation.productId,
+            userAccountId: req.body.userAccount.id || marketOperation.userAccountId,
+            brokerId: req.body.broker.id || marketOperation.brokerId,
+            productId: req.body.product.id || marketOperation.productId,
             commoditiesTotal: req.body.commoditiesTotal || marketOperation.commoditiesTotal,
-            commodityId: _.get(req, 'body.commodity.id', 1) || marketOperation.commodityId,
-            assetClassId: _.get(req, 'body.assetClass.id', 1) || marketOperation.assetClassId,
+            commodityId: req.body.commodity.id || marketOperation.commodityId,
+            assetClassId: req.body.assetClass.id || marketOperation.assetClassId,
             buyPrice: req.body.buyPrice || marketOperation.buyPrice,
             takingProfit: req.body.takingProfit || marketOperation.takingProfit,
             stopLost: req.body.stopLost || marketOperation.stopLost,
@@ -316,13 +316,7 @@ module.exports = {
             throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
           }
           const accountValueBeforeEndOperation = `${userAccount.accountValue}`
-          const {
-            initialAmount,
-            amount,
-            holdStatusCommission,
-            maintenanceMargin,
-            assetClassId,
-          } = marketOperation
+          const { initialAmount, amount, maintenanceMargin, assetClassId } = marketOperation
           const { percentage } = marketOperation.userAccount.account
           const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12
 
