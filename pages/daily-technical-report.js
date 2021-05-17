@@ -40,7 +40,7 @@ class Pages extends Component {
   handshakeURL = () => {
     const aci = moment().format('YYYYMMDDHHMMSS')
     const usi = 'johndoe123'
-    const uri = `usi=${usi}&aci=${aci}`
+    const uri = `usi=${usi}&aci=${aci}&page=economic_calendar`
     return `https://site.recognia.com/royalcapital/serve.shtml?tkn=${btoa(uri)}`
   }
 
