@@ -118,33 +118,50 @@ module.exports = {
         return res.status(200).send(marketOperation)
       })
     } catch (err) {
-      return res.status(500).send(err)
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
   async list(req, res) {
-    let marketOperation
-    if (req.user.roleId == 1) {
-      marketOperation = await MarketOperation.findAll(
-        marketOperationQuery.listAdmin({
-          req,
-          sequelize,
-          UserAccount,
-          User,
-          Account,
-          Product,
-          Broker,
-          Commodity,
-          AssetClass,
-        })
-      )
-    } else {
-      marketOperation = await MarketOperation.findAll(
+    try {
+      const marketOperation = await MarketOperation.findAll(
         marketOperationQuery.list({
           req,
           sequelize,
           UserAccount,
           User,
+          Product,
+          Broker,
+          AssetClass,
+        })
+      )
+
+      if (!marketOperation) {
+        return res.status(404).send({
+          message: '404 on MarketOperation get List',
+        })
+      }
+
+      return res.status(200).send(marketOperation)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
+  },
+
+  async accountReport(req, res) {
+    try {
+      const marketOperation = await MarketOperation.findAll(
+        marketOperationQuery.accountReport({
+          req,
+          sequelize,
+          UserAccount,
+          User,
           Account,
           Product,
           Broker,
@@ -152,110 +169,77 @@ module.exports = {
           AssetClass,
         })
       )
-    }
 
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: '404 on MarketOperation get List',
-      })
-    }
-    return res.status(200).send(marketOperation)
-  },
-  async listByUserAccount(req, res) {
-    const marketOperation = await MarketOperation.findAll(
-      marketOperationQuery.list({
-        req,
-        sequelize,
-        UserAccount,
-        User,
-        Account,
-        Product,
-        Broker,
-        Commodity,
-        AssetClass,
-      })
-    )
-
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: '404 on MarketOperation get List',
+      if (!marketOperation) {
+        return res.status(404).send({
+          message: '404 on MarketOperation get List',
+        })
+      }
+      return res.status(200).send(marketOperation)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-    return res.status(200).send(marketOperation)
-  },
-
-  async accountReport(req, res) {
-    const marketOperation = await MarketOperation.findAll(
-      marketOperationQuery.accountReport({
-        req,
-        sequelize,
-        UserAccount,
-        User,
-        Account,
-        Product,
-        Broker,
-        Commodity,
-        AssetClass,
-      })
-    )
-
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: '404 on MarketOperation get List',
-      })
-    }
-    return res.status(200).send(marketOperation)
   },
 
   async get(req, res) {
-    const marketOperation = await MarketOperation.findByPk(
-      req.params.marketOperationId,
-      marketOperationQuery.get({
-        req,
-        UserAccount,
-        User,
-        Account,
-        Product,
-        Broker,
-        Commodity,
-        AssetClass,
-      })
-    )
+    try {
+      const marketOperation = await MarketOperation.findByPk(
+        req.params.marketOperationId,
+        marketOperationQuery.get({
+          req,
+          UserAccount,
+          User,
+          Account,
+          Product,
+          Broker,
+          Commodity,
+          AssetClass,
+        })
+      )
 
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: '404 on MarketOperation get',
+      if (!marketOperation) {
+        return res.status(404).send({
+          message: '404 on MarketOperation get',
+        })
+      }
+
+      return res.status(200).send(marketOperation)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(marketOperation)
   },
 
   async update(req, res) {
     const userId = _.get(req, 'user.id', 0)
     await ORM.transaction(async (t) => {
-      const marketOperation = await MarketOperation.findOne({
-        where: {
-          id: req.params.marketOperationId,
-        },
-        include: [
-          {
-            model: UserAccount,
-            as: 'userAccount',
-            attributes: {
-              exclude: ['snapShotAccount'],
-            },
-            include: [
-              {
-                model: Account,
-                as: 'account',
-                attributes: ['name', 'percentage', 'associatedOperation'],
-              },
-            ],
+      const marketOperation = await MarketOperation.findOne(
+        {
+          where: {
+            id: req.params.marketOperationId,
           },
-        ],
-        silence: true,
-      })
+          include: [
+            {
+              model: UserAccount,
+              as: 'userAccount',
+              include: [
+                {
+                  model: Account,
+                  as: 'account',
+                  attributes: ['name', 'percentage', 'associatedOperation'],
+                },
+              ],
+            },
+          ],
+          silence: true,
+        },
+        { transaction: t }
+      )
 
       if (!marketOperation) {
         return res.status(404).send({
@@ -273,16 +257,20 @@ module.exports = {
       }
 
       if (marketOperation.status === 4 && !_.isNil(req.body.endDate)) {
-        await marketOperation.update(
-          {
-            updatedAt: moment(new Date()).tz('America/New_York').format(),
-            endDate: !_.isNil(req.body.endDate)
-              ? moment(req.body.endDate).tz('America/New_York').format()
-              : marketOperation.endDate,
-          },
-          { transaction: t }
-        )
-        return res.status(200).send(marketOperation)
+        try {
+          await marketOperation.update(
+            {
+              updatedAt: moment(new Date()).tz('America/New_York').format(),
+              endDate: !_.isNil(req.body.endDate)
+                ? moment(req.body.endDate).tz('America/New_York').format()
+                : marketOperation.endDate,
+            },
+            { transaction: t }
+          )
+          return res.status(200).send(marketOperation)
+        } catch (e) {
+          return res.status(500).send(e)
+        }
       }
 
       try {
@@ -314,11 +302,14 @@ module.exports = {
         )
 
         if (marketOperation.status === 4) {
-          const userAccount = await UserAccount.findOne({
-            where: {
-              id: marketOperation.userAccountId,
+          const userAccount = await UserAccount.findOne(
+            {
+              where: {
+                id: marketOperation.userAccountId,
+              },
             },
-          })
+            { transaction: t }
+          )
 
           if (!userAccount) {
             throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
@@ -420,9 +411,10 @@ module.exports = {
         }
 
         return res.status(200).send(marketOperation)
-      } catch (e) {
-        return res.status(401).send({
-          message: e.message,
+      } catch (err) {
+        return res.status(500).send({
+          message: err.message,
+          name: err.name,
         })
       }
     })
@@ -430,7 +422,6 @@ module.exports = {
 
   async bulkUpdate(req, res) {
     const userId = _.get(req, 'user.id', 0)
-    let valueFT = 0
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body
       console.log('[=====  BULK DETAIIL  =====>')
@@ -458,9 +449,6 @@ module.exports = {
                       {
                         model: UserAccount,
                         as: 'userAccount',
-                        attributes: {
-                          exclude: ['snapShotAccount'],
-                        },
                         include: [
                           {
                             model: Account,
@@ -1110,36 +1098,43 @@ module.exports = {
         }
         return res.status(200).send('Completed')
       })
-    } catch (error) {
+    } catch (err) {
       console.log('[=====  ERROR on BULK  =====>')
-      console.log(error)
+      console.log(err)
       console.log('<=====  /ERROR on BULK  =====]')
-      return res.status(400).send({
-        message: error.message,
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
   },
 
   async delete(req, res) {
-    const marketOperation = await MarketOperation.findOne({
-      where: {
-        id: req.params.marketOperationId,
-      },
-    })
+    try {
+      const marketOperation = await MarketOperation.findOne({
+        where: {
+          id: req.params.marketOperationId,
+        },
+      })
 
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: 'MarketOperation Not Found',
+      if (!marketOperation) {
+        return res.status(404).send({
+          message: 'MarketOperation Not Found',
+        })
+      }
+
+      await marketOperation.update({
+        status: 0,
+      })
+
+      return res.status(200).send({
+        message: 'MarketOperation has been deleted',
+      })
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    //await marketOperation.destroy();
-    await marketOperation.update({
-      status: 0,
-    })
-
-    return res.status(200).send({
-      message: 'MarketOperation has been deleted',
-    })
   },
 }

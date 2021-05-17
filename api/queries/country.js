@@ -1,19 +1,3 @@
-const queries = {
-  list: ({ req }) => {
-    return {
-      where: {
-        status: 1,
-      },
-      attributes: [ 'id', 'name', 'code' ],
-      order: [ [ 'id', 'DESC' ] ],
-    };
-  },
-  get: ({ req }) => {
-    return {
-      attributes: [ 'id', 'name', 'code' ],
-      order: [ [ 'id', 'DESC' ] ],
-    };
-  },
-};
+const queries = {}
 
-export default queries;
+export default queries

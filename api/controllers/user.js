@@ -1,14 +1,9 @@
-import bcrypt from 'bcrypt'
 import passport from 'passport'
 import _ from 'lodash'
 import { userQuery } from '../queries'
 import { User, Role, ORM } from '../models'
 import { hashPassword, salt } from '../hashPassword'
 import NumberFromString from '../../common/utils/number-from-string'
-
-const isEmptyOrNull = (string) => {
-  return !string || !string.trim()
-}
 
 const getFirstWord = (str) => str.trim().toLowerCase().split(' ')[0]
 
@@ -51,18 +46,6 @@ module.exports = {
       const createdByUsername = currentUser.username
       const createdByUserId = currentUser.id
 
-      // if (isEmptyOrNull(username) || isEmptyOrNull(password) || isEmptyOrNull(verifyPassword)) {
-      //   return res.status(500).send({
-      //     message: 'Please fill out all fields.',
-      //   })
-      // }
-      //
-      // if (password !== verifyPassword) {
-      //   return res.status(500).send({
-      //     message: 'Your passwords do not match.',
-      //   })
-      // }
-
       await ORM.transaction(async (t) => {
         const lastRegisteredUsername = await User.findAll(
           {
@@ -81,7 +64,10 @@ module.exports = {
         const userID = `${Number(lastUserIDConsecutive) + 1}-${getFirstWord(
           firstName
         ).toUpperCase()}${getFirstWord(lastName).toUpperCase()}`
-        const password = `${composedUsername}@${new Date().getFullYear()}` // eg. jperez@2021
+        const password =
+          roleId === 1 // if is Admin
+            ? `forex@${new Date().getFullYear()}`
+            : `${composedUsername}@${new Date().getFullYear()}` // eg. jperez@2021
 
         const user = await User.create(
           {
@@ -114,7 +100,10 @@ module.exports = {
         return res.status(200).send(user)
       })
     } catch (err) {
-      return res.status(500).send(err)
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
@@ -143,31 +132,47 @@ module.exports = {
   logout(req, res) {
     req.logout()
     return res.status(200).send({
-      message: 'You are successfully logged out',
+      message: 'Deslogueo exitoso',
     })
   },
 
   async list(req, res) {
-    const users = await User.findAll(userQuery.list({ req, User, Role }))
+    try {
+      const users = await User.findAll(userQuery.list({ req, Role }))
 
-    return res.status(200).send(users)
+      return res.status(200).send(users)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
   },
 
   async get(req, res) {
-    const user = await User.findByPk(req.params.userId, userQuery.get({ req, User, Role }))
+    try {
+      const user = await User.findByPk(userQuery.get({ req, Role }))
 
-    if (!user) {
-      return res.status(404).send({
-        message: '404 on user get',
+      if (!user) {
+        return res.status(404).send({
+          message: '404 on user get',
+        })
+      }
+      return res.status(200).send(user)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    //return res.status(200).send(getUserProps(user));
-    return res.status(200).send(user)
   },
 
   async update(req, res) {
-    const user = await User.findByPk(req.params.userId)
+    const user = await User.findByPk({
+      where: {
+        id: req.params.id,
+      },
+    })
 
     if (!user) {
       return res.status(404).send({
@@ -200,42 +205,45 @@ module.exports = {
       })
 
       return res.status(200).send(updatedUser)
-    } catch (e) {
-      return res.status(500).send(e)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-  },
-  async getLastUser(req, res) {
-    return await User.findAll({
-      limit: 1,
-      order: [['createdAt', 'DESC']],
-      silence: true,
-    })
   },
 
   async delete(req, res) {
-    const user = await User.findByPk(req.params.userId)
+    try {
+      const user = await User.findByPk(req.params.id)
 
-    if (!user) {
-      return res.status(403).send({
-        message: 'Forbidden: User Not Found',
+      if (!user) {
+        return res.status(403).send({
+          message: 'Forbidden: User Not Found',
+        })
+      }
+      /*
+       * TODO: Verify if is the current user logged
+       * */
+      //req.logout();
+
+      //await user.destroy();
+      /*
+      Handled deletion by status instead of deleting in order
+      to keep it on db
+       */
+      await user.update({
+        status: 0,
+      })
+
+      return res.status(200).send({
+        message: 'Usuario eliminado exitosamente',
+      })
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-    /*
-     * TODO: Verify if is the current user logged
-     * */
-    //req.logout();
-
-    //await user.destroy();
-    /*
-    Handled deletion by status instead of deleting in order
-    to keep it on db
-     */
-    await user.update({
-      status: 0,
-    })
-
-    return res.status(200).send({
-      message: 'User has been deleted',
-    })
   },
 }

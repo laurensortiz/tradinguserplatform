@@ -378,6 +378,11 @@ class UserAccountsTable extends Component {
 
     const columns = [
       {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
+      {
         title: 'Usuario',
         dataIndex: 'user.username',
         key: 'user.username',

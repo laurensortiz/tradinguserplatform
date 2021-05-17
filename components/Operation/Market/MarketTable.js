@@ -507,6 +507,11 @@ class MarketTable extends Component {
 
     const columns = [
       {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
+      {
         title: '',
         dataIndex: 'behavior',
         key: 'behavior',
@@ -538,8 +543,7 @@ class MarketTable extends Component {
         render: (text) => <span key={`${text}`}>{`${text}`}</span>,
         sorter: (a, b) => Sort(a.product.name, b.product.name),
         sortDirections: ['descend', 'ascend'],
-        filters: products.map(({ name, code }) => {
-          console.log(name)
+        filters: products.map(({ name }) => {
           return {
             text: name,
             value: name,

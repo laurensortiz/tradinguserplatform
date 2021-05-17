@@ -1812,8 +1812,6 @@ ALTER TABLE public."MarketOperation" ADD "profitBrut" numeric(10,2) DEFAULT 0;
 ALTER TABLE public."MarketOperation" ADD "profitNet" numeric(10,2) DEFAULT 0;
 
 
-ALTER TABLE public."UserAccount" ADD "snapShotAccount" varchar() DEFAULT '';
-
 
 /*
 * End Changes August 21, 2020

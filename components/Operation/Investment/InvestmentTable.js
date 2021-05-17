@@ -187,6 +187,11 @@ class InvestmentTable extends Component {
 
     const columns = [
       {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
+      {
         title: 'Estado',
         dataIndex: 'status',
         key: 'status',

@@ -1,100 +1,119 @@
-import _ from 'lodash';
-import moment from 'moment-timezone';
-import { InvestmentOperation, UserAccount, User, Account, InvestmentMovement } from '../models';
-import { investmentMovementQuery, userQuery } from '../queries';
+import _ from 'lodash'
+import moment from 'moment-timezone'
+import { InvestmentMovement } from '../models'
+import { investmentMovementQuery } from '../queries'
 
 module.exports = {
   async create(req, res) {
     try {
-
       const investmentMovement = await InvestmentMovement.create({
         gpInversion: req.body.gpInversion,
         investmentOperationId: Number(req.body.investmentOperationId),
         gpAmount: req.body.gpAmount,
         status: _.get(req, 'body.status', 1),
-        createdAt: moment(req.body.createdAt).tz('America/New_York').format() || moment().tz('America/New_York').format(),
-        updatedAt: moment().tz('America/New_York').format()
-      });
+        createdAt:
+          moment(req.body.createdAt).tz('America/New_York').format() ||
+          moment().tz('America/New_York').format(),
+        updatedAt: moment().tz('America/New_York').format(),
+      })
 
-      return res.status(200).send(investmentMovement);
+      return res.status(200).send(investmentMovement)
     } catch (err) {
-      return res.status(500).send(err);
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
   async list(req, res) {
-    const investmentMovement = await InvestmentMovement.findAll(
-      investmentMovementQuery.list({ req })
-    );
+    try {
+      const investmentMovement = await InvestmentMovement.findAll(
+        investmentMovementQuery.list({ req })
+      )
 
-    if (!investmentMovement) {
-      return res.status(404).send({
-        message: '404 on InvestmentMovement get List',
-      });
+      if (!investmentMovement) {
+        return res.status(404).send({
+          message: '404 on InvestmentMovement get List',
+        })
+      }
+      return res.status(200).send(investmentMovement)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-    return res.status(200).send(investmentMovement);
   },
 
   async get(req, res) {
-    const investmentMovement = await InvestmentMovement.findByPk(
-      req.params.investmentMovementId,
-      userQuery.get( { req, UserAccount } )
-    );
+    try {
+      const investmentMovement = await InvestmentMovement.findByPk(req.params.id)
 
-    if (!investmentMovement) {
-      return res.status(404).send({
-        message: '404 on InvestmentMovement get',
-      });
+      if (!investmentMovement) {
+        return res.status(404).send({
+          message: '404 on InvestmentMovement get',
+        })
+      }
+
+      return res.status(200).send(investmentMovement)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-
-    return res.status(200).send(investmentMovement);
   },
 
   async update(req, res) {
-    const investmentMovement = await InvestmentMovement.findOne({
-      where: {
-        id: req.params.investmentMovementId,
-      },
-      silence: true
-    });
+    try {
+      const investmentMovement = await InvestmentMovement.findByPk(req.params.id)
 
-    if (!investmentMovement) {
-      return res.status(404).send({
-        message: '404 on InvestmentMovement update',
-      });
+      if (!investmentMovement) {
+        return res.status(404).send({
+          message: '404 on InvestmentMovement update',
+        })
+      }
+
+      const updatedInvestmentMovement = await investmentMovement.update({
+        gpInversion: req.body.gpInversion || investmentMovement.gpInversion,
+        gpAmount: req.body.gpAmount || investmentMovement.gpAmount,
+        status: _.get(req, 'body.status', 1),
+        createdAt:
+          moment(req.body.createdAt).tz('America/New_York').format() ||
+          investmentMovement.createdAt,
+        updatedAt: moment().tz('America/New_York').format(),
+      })
+
+      return res.status(200).send(updatedInvestmentMovement)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-
-    const updatedInvestmentMovement = await investmentMovement.update({
-      gpInversion: req.body.gpInversion || investmentMovement.gpInversion,
-      gpAmount: req.body.gpAmount || investmentMovement.gpAmount,
-      status: _.get(req, 'body.status', 1),
-      createdAt: moment(req.body.createdAt).tz('America/New_York').format() || investmentMovement.createdAt,
-      updatedAt: moment().tz('America/New_York').format(),
-    });
-
-    return res.status(200).send(updatedInvestmentMovement);
   },
 
   async delete(req, res) {
-    const investmentMovement = await InvestmentMovement.findOne({
-      where: {
-        id: req.params.investmentMovementId,
-      },
-    });
+    try {
+      const investmentMovement = await InvestmentMovement.findByPk(req.params.id)
 
-    if (!investmentMovement) {
-      return res.status(404).send({
-        message: 'InvestmentMovement Not Found',
-      });
+      if (!investmentMovement) {
+        return res.status(404).send({
+          message: 'InvestmentMovement Not Found',
+        })
+      }
+
+      await investmentMovement.destroy()
+
+      return res.status(200).send({
+        message: 'InvestmentMovement has been deleted',
+      })
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
-
-    await investmentMovement.destroy();
-    // await investmentMovement.update( {
-    //   status: 0,
-    // } );
-
-    return res.status(200).send({
-      message: 'InvestmentMovement has been deleted',
-    });
   },
-};
+}

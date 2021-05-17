@@ -1,7 +1,6 @@
-import { UserAccount, User, Account } from "../models";
-import {get} from 'lodash';
+import { User, Account } from '../models'
 const queries = {
-  list: ({ req, UserAccount }) => {
+  list: ({ UserAccount }) => {
     return {
       attributes: {
         exclude: [],
@@ -14,23 +13,24 @@ const queries = {
             {
               model: User,
               as: 'user',
-              attributes: ['username', 'firstName', 'lastName']
+              attributes: ['username', 'firstName', 'lastName'],
             },
             {
               model: Account,
               as: 'account',
-              attributes: ['name', 'percentage', 'associatedOperation']
+              attributes: ['name', 'percentage', 'associatedOperation'],
             },
           ],
         },
       ],
-      order: [ [ 'createdAt', 'DESC' ] ],
-    };
+      order: [['createdAt', 'DESC']],
+      silence: true,
+    }
   },
   getByUser: ({ accountIds, UserAccount, User, Account }) => {
     return {
       where: {
-        userAccountId: accountIds
+        userAccountId: accountIds,
       },
       attributes: {
         exclude: [],
@@ -43,33 +43,30 @@ const queries = {
             {
               model: User,
               as: 'user',
-              attributes: ['username', 'firstName', 'lastName']
+              attributes: ['username', 'firstName', 'lastName'],
             },
             {
               model: Account,
               as: 'account',
-              attributes: ['name', 'percentage', 'associatedOperation']
+              attributes: ['name', 'percentage', 'associatedOperation'],
             },
           ],
         },
       ],
-      order: [ [ 'createdAt', 'DESC' ] ],
-    };
+      order: [['createdAt', 'DESC']],
+    }
   },
-  get: ({ req, UserAccount }) => {
+  get: ({ UserAccount }) => {
     return {
-      attributes: {
-        exclude: [],
-      },
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
         },
       ],
-      order: [ [ 'createdAt', 'DESC' ] ],
-    };
+      order: [['createdAt', 'DESC']],
+    }
   },
-};
+}
 
-export default queries;
+export default queries

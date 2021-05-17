@@ -1,64 +1,62 @@
-import {get} from 'lodash';
+import { get } from 'lodash'
 const queries = {
   list: ({ req, UserAccount, User }) => {
-    const status = get(req, 'body.status', 1);
+    const status = get(req, 'body.status', 1)
     return {
       where: {
         status,
       },
       attributes: {
-        exclude: [ 'personalIdDocument' ],
+        exclude: ['personalIdDocument'],
       },
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
-          exclude: [ 'snapShotAccount' ],
           attributes: ['id'],
           include: [
             {
               model: User,
               as: 'user',
-              attributes: ['username', 'firstName', 'lastName']
+              attributes: ['username', 'firstName', 'lastName'],
             },
           ],
         },
       ],
-      order: [ [ 'id', 'DESC' ] ],
-    };
+      order: [['id', 'DESC']],
+    }
   },
-  get: ({ req, UserAccount, User }) => {
+  get: ({ UserAccount, User }) => {
     return {
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
-          exclude: [ 'snapShotAccount' ],
           attributes: ['userId'],
           include: [
             {
               model: User,
               as: 'user',
-              attributes: ['username', 'firstName', 'lastName']
+              attributes: ['username', 'firstName', 'lastName'],
             },
           ],
         },
       ],
-      order: [ [ 'id', 'DESC' ] ],
-    };
+      order: [['id', 'DESC']],
+    }
   },
-  listByUsername: ({ req, UserAccount, User }) => {
-    const username = get(req, 'body.username', '');
+  listByUsername: ({ req }) => {
+    const username = get(req, 'body.username', '')
     return {
       where: {
         username,
       },
       attributes: {
-        exclude: [ 'personalIdDocument' ],
+        exclude: ['personalIdDocument'],
       },
-      order: [ [ 'id', 'DESC' ] ],
-    };
+      order: [['id', 'DESC']],
+    }
   },
-};
+}
 
-export default queries;
+export default queries
