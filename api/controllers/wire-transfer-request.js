@@ -18,7 +18,7 @@ module.exports = {
 
     try {
       await ORM.transaction(async (t) => {
-        const userAccount = await UserAccount.findByPk(
+        const userAccount = await UserAccount.findOne(
           {
             where: {
               id: req.body.userAccountId,
@@ -30,6 +30,9 @@ module.exports = {
         if (!userAccount) {
           throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
         }
+        console.log('[=====  ACCC  =====>')
+        console.log(userAccount)
+        console.log('<=====  /ACCC  =====]')
 
         let percentageFromAccount
 
@@ -126,6 +129,9 @@ module.exports = {
         return res.status(200).send(wireTransferRequest)
       })
     } catch (err) {
+      console.log('[=====  ERR  =====>')
+      console.log(err)
+      console.log('<=====  /ERR  =====]')
       return res.status(500).send({
         message: err.message,
         name: err.name,
