@@ -136,6 +136,7 @@ module.exports = {
           Product,
           Broker,
           AssetClass,
+          Commodity,
         })
       )
 
