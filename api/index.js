@@ -129,18 +129,18 @@ module.exports = (app) => {
   // Investment Movement
   app.get('/api/investment-movement/investment-operation/:id', investmentMovement.list)
 
-  app.get('/api/investment-movement/:investmentMovementId', investmentMovement.get)
+  app.get('/api/investment-movement/:id', investmentMovement.get)
   app.post('/api/investment-movement', investmentMovement.create)
-  app.put('/api/investment-movement/:investmentMovementId', investmentMovement.update)
-  app.delete('/api/investment-movement/:investmentMovementId', investmentMovement.delete)
+  app.put('/api/investment-movement/:id', investmentMovement.update)
+  app.delete('/api/investment-movement/:id', investmentMovement.delete)
 
   // Market Operation
   app.get('/api/market-operation/:status/:userAccountId/', marketOperation.list)
-  app.get('/api/market-operation/:marketOperationId', marketOperation.get)
+  app.get('/api/market-operation/:id', marketOperation.get)
   app.post('/api/market-operation/accountReport', marketOperation.accountReport)
   app.post('/api/market-operation', marketOperation.create)
-  app.put('/api/market-operation/:marketOperationId', marketOperation.update)
-  app.delete('/api/market-operation/:marketOperationId', marketOperation.delete)
+  app.put('/api/market-operation/:id', marketOperation.update)
+  app.delete('/api/market-operation/:id', marketOperation.delete)
   app.post('/api/market-operation/bulk-update', marketOperation.bulkUpdate)
 
   // Market Movement

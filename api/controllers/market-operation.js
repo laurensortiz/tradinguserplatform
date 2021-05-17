@@ -187,7 +187,7 @@ module.exports = {
   async get(req, res) {
     try {
       const marketOperation = await MarketOperation.findByPk(
-        req.params.marketOperationId,
+        req.params.id,
         marketOperationQuery.get({
           req,
           UserAccount,
@@ -221,7 +221,7 @@ module.exports = {
       const marketOperation = await MarketOperation.findOne(
         {
           where: {
-            id: req.params.marketOperationId,
+            id: req.params.id,
           },
           include: [
             {
@@ -1111,11 +1111,7 @@ module.exports = {
 
   async delete(req, res) {
     try {
-      const marketOperation = await MarketOperation.findOne({
-        where: {
-          id: req.params.marketOperationId,
-        },
-      })
+      const marketOperation = await MarketOperation.findByPk(req.params.id)
 
       if (!marketOperation) {
         return res.status(404).send({
