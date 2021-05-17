@@ -34,7 +34,7 @@ function getWhereConditions(req, sequelize) {
   return whereConditions
 }
 const queries = {
-  list: ({ req, sequelize, UserAccount, User, Product, Broker, AssetClass, Account }) => {
+  list: ({ req, sequelize, UserAccount, User, Product, Broker, AssetClass, Commodity }) => {
     return {
       where: getWhereConditions(req, sequelize),
       attributes: [
@@ -84,6 +84,11 @@ const queries = {
           model: AssetClass,
           as: 'assetClass',
           attributes: ['name'],
+        },
+        {
+          model: Commodity,
+          as: 'commodity',
+          attributes: ['name', 'id'],
         },
       ],
       order: [
