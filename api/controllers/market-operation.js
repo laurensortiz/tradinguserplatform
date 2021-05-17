@@ -426,6 +426,7 @@ module.exports = {
       console.log('Scope', updateScope)
       console.log('<=====  /BULK DETAIIL  =====]')
       let result
+      let pivotUserAccountTable = []
       await ORM.transaction(async (t) => {
         switch (updateScope) {
           case 'status':
@@ -433,7 +434,7 @@ module.exports = {
               /**
                * Close Operation
                */
-              let pivotUserAccountTable = []
+
               for (const operationID of operationsIds) {
                 const marketOperation = await MarketOperation.findOne(
                   {
@@ -656,7 +657,9 @@ module.exports = {
                 }
 
                 if (marketOperation.status !== 1) {
-                  throw new Error('Una o más operaciones seleccionadas no se encuentran Activas')
+                  throw new Error(
+                    `Una o más operaciones seleccionadas no se encuentran Activas. [Operación = ${marketOperation.id}]`
+                  )
                 }
 
                 /**
@@ -680,7 +683,7 @@ module.exports = {
                       calculatedValue = gpAmount * commoditiesTotal
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al mercados de Stocks'
+                        `Una o más operaciones seleccionadas no corresponde al mercados de Stocks. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -693,7 +696,7 @@ module.exports = {
                       calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -708,7 +711,7 @@ module.exports = {
                       calculatedValue = gpAmount * commoditiesTotal // 1 FT = $1
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -721,7 +724,7 @@ module.exports = {
                       calculatedValue = gpAmount * commoditiesTotal // 1 FT = $1
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -734,7 +737,7 @@ module.exports = {
                       calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $5000
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
 
@@ -748,7 +751,7 @@ module.exports = {
                       calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -761,7 +764,7 @@ module.exports = {
                       calculatedValue = 500 * gpAmount * commoditiesTotal // 1 FT = $500
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -774,7 +777,7 @@ module.exports = {
                       calculatedValue = commoditiesTotal * gpAmount // 1 Barrel = $1
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -787,7 +790,7 @@ module.exports = {
                       calculatedValue = 25 * gpAmount * commoditiesTotal // 1 FT = $25
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -800,7 +803,7 @@ module.exports = {
                       calculatedValue = 1250 * gpAmount * commoditiesTotal
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -813,7 +816,7 @@ module.exports = {
                       calculatedValue = 10 * gpAmount * commoditiesTotal
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -826,7 +829,7 @@ module.exports = {
                       calculatedValue = 150 * gpAmount * commoditiesTotal
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -839,7 +842,7 @@ module.exports = {
                       calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $1000
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -852,7 +855,7 @@ module.exports = {
                       calculatedValue = 10 * gpAmount * commoditiesTotal // 1 FT = $10
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -865,7 +868,7 @@ module.exports = {
                       calculatedValue = 110 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -878,7 +881,7 @@ module.exports = {
                       calculatedValue = 600 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -891,7 +894,7 @@ module.exports = {
                       calculatedValue = 375 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -904,7 +907,7 @@ module.exports = {
                       calculatedValue = 420 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -917,7 +920,7 @@ module.exports = {
                       calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -934,7 +937,7 @@ module.exports = {
                       calculatedValue = 1120 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -951,7 +954,7 @@ module.exports = {
                       calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break

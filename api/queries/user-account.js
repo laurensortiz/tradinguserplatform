@@ -1,4 +1,5 @@
 import get from 'lodash/get'
+import { MarketOperation } from '../models'
 
 function conditionalStatus(req, sequelize) {
   const Op = sequelize.Op
@@ -15,7 +16,7 @@ function conditionalStatus(req, sequelize) {
 }
 
 const queries = {
-  list: ({ req, sequelize, User, Account, Broker }) => {
+  list: ({ req, sequelize, User, Account, Broker, MarketOperation, Product }) => {
     const Op = sequelize.Op
     const statusActive = get(req, 'body.status', 1)
     const associatedOperation = get(req, 'body.associatedOperation', 1)
@@ -43,6 +44,18 @@ const queries = {
           model: Broker,
           as: 'broker',
           attributes: ['name', 'id'],
+        },
+        {
+          model: MarketOperation,
+          as: 'marketOperation',
+          attributes: ['status'],
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              attributes: ['name'],
+            },
+          ],
         },
       ],
 
