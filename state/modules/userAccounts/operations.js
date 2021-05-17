@@ -1,4 +1,4 @@
-import  {
+import {
   fetchGetAllUserAccounts,
   fetchGetUserAccounts,
   fetchGetUserAccount,
@@ -6,8 +6,10 @@ import  {
   fetchEditUserAccount,
   fetchDeleteUserAccount,
   fetchGetUserAccountHistoryReport,
-  resetAfterRequest
-} from './actions';
+  resetAfterRequest,
+  fetchGetUserAccountReportList,
+  fetchGetUserAccountListReport,
+} from './actions'
 
 export default {
   fetchGetAllUserAccounts,
@@ -17,5 +19,6 @@ export default {
   fetchEditUserAccount,
   fetchDeleteUserAccount,
   fetchGetUserAccountHistoryReport,
+  fetchGetUserAccountListReport,
   resetAfterRequest,
 }

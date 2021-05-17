@@ -30,6 +30,14 @@ export const getUserAccountHistoryReport = async (userAccount) => {
   })
 }
 
+export const getUserAccountListReport = async (accountListIds) => {
+  return fetch({
+    method: 'post',
+    url: `user-accounts/list-report`,
+    data: { accountListIds },
+  })
+}
+
 export const addUserAccount = async (userAccount) => {
   return fetch({
     method: 'post',

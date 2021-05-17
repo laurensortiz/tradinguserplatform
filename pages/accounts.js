@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { Row, Col, Button, Drawer, Tabs, Icon, Radio, notification } from 'antd'
+import { Row, Col, Button, Drawer, Icon, Radio, notification } from 'antd'
 import _ from 'lodash'
 
 import Document from '../components/Document'
@@ -15,8 +15,6 @@ import { marketOperationOperations } from '../state/modules/marketOperation'
 import ExportHistoryReport from '../components/Operation/shared/ExportUserAccountHistory'
 import ExportUserAccountDetail from '../components/Operation/shared/ExportUserAccountDetail'
 import MovementsTable from '../components/UserAccount/MovementsTable'
-
-const { TabPane } = Tabs
 
 class Accounts extends Component {
   state = {
@@ -44,6 +42,28 @@ class Accounts extends Component {
         ExportHistoryReport(nextProps.historyReportData)
         notification.success({
           message: 'Descargando Reporte Historico de la cuenta',
+          onClose: () => {
+            nextProps.resetAfterRequest()
+          },
+          duration: 3,
+        })
+      }
+    }
+
+    if (nextProps.isListReportSuccess && nextProps.isListReportComplete) {
+      console.log(nextProps.listReportData)
+      if (_.isEmpty(nextProps.listReportData)) {
+        notification.info({
+          message: 'No se encontraron Operaciones para esta cuenta',
+          onClose: () => {
+            nextProps.resetAfterRequest()
+          },
+          duration: 3,
+        })
+      } else {
+        ExportUserAccountDetail(nextProps.listReportData)
+        notification.success({
+          message: 'Descargando Reporte de cuentas',
           onClose: () => {
             nextProps.resetAfterRequest()
           },
@@ -237,10 +257,11 @@ class Accounts extends Component {
   }
 
   _handleExportAccountReport = (accountsSelected) => {
-    console.log('[=====  selec  =====>')
-    console.log(accountsSelected)
-    console.log('<=====  /selec  =====]')
-    ExportUserAccountDetail(accountsSelected)
+    const accountsSelectedIds = accountsSelected.reduce((result, account) => {
+      result.push(account.id)
+      return result
+    }, [])
+    this.props.fetchGetUserAccountListReport(accountsSelectedIds)
   }
 
   _handleTabChange = ({ target }) => {
@@ -299,7 +320,11 @@ class Accounts extends Component {
           <Col>
             <UserAccountsTable
               userAccounts={this.props.userAccounts}
-              isLoading={this.props.isLoading || this.props.isHistoryReportLoading}
+              isLoading={
+                this.props.isLoading ||
+                this.props.isHistoryReportLoading ||
+                this.props.isListReportLoading
+              }
               onActive={this._onSelectActive}
               onEdit={this._onSelectEdit}
               onDelete={this._handleDeleteUserAccount}
@@ -356,6 +381,11 @@ function mapStateToProps(state) {
     isHistoryReportComplete: state.userAccountsState.isHistoryReportComplete,
     historyReportData: state.userAccountsState.historyReportData,
 
+    listReportData: state.userAccountsState.listReportData,
+    isListReportLoading: state.userAccountsState.isListReportLoading,
+    isListReportSuccess: state.userAccountsState.isListReportSuccess,
+    isListReportComplete: state.userAccountsState.isListReportComplete,
+
     isMovementCompleted: state.userAccountMovementsState.isCompleted,
 
     isBulkLoading: state.marketOperationsState.isBulkLoading,
@@ -374,6 +404,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchEditUserAccount: userAccountOperations.fetchEditUserAccount,
       fetchDeleteUserAccount: userAccountOperations.fetchDeleteUserAccount,
       fetchGetUserAccountHistoryReport: userAccountOperations.fetchGetUserAccountHistoryReport,
+      fetchGetUserAccountListReport: userAccountOperations.fetchGetUserAccountListReport,
       resetAfterRequest: userAccountOperations.resetAfterRequest,
 
       fetchBulkUpdateMarketOperation: marketOperationOperations.fetchBulkUpdateMarketOperation,

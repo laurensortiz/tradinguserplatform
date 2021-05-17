@@ -1,5 +1,4 @@
 import get from 'lodash/get'
-import { MarketOperation } from '../models'
 
 function conditionalStatus(req, sequelize) {
   const Op = sequelize.Op
@@ -16,7 +15,7 @@ function conditionalStatus(req, sequelize) {
 }
 
 const queries = {
-  list: ({ req, sequelize, User, Account, Broker, MarketOperation, Product }) => {
+  list: ({ req, sequelize, User, Account, Broker }) => {
     const Op = sequelize.Op
     const statusActive = get(req, 'body.status', 1)
     const associatedOperation = get(req, 'body.associatedOperation', 1)
@@ -26,6 +25,43 @@ const queries = {
     return {
       where: {
         status: statusActive,
+      },
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['firstName', 'lastName', 'username', 'userID', 'startDate'],
+        },
+        {
+          model: Account,
+          as: 'account',
+          where: {
+            associatedOperation: conditionalAssociatedOperation,
+          },
+        },
+        {
+          model: Broker,
+          as: 'broker',
+          attributes: ['name', 'id'],
+        },
+      ],
+
+      order: [['createdAt', 'DESC']],
+    }
+  },
+  accountsReport: ({ req, sequelize, User, Account, Broker, MarketOperation, Product }) => {
+    const Op = sequelize.Op
+    const statusActive = get(req, 'body.status', 1)
+    const associatedOperation = get(req, 'body.associatedOperation', 1)
+    const conditionalAssociatedOperation =
+      associatedOperation > 0 ? associatedOperation : { [Op.gt]: 0 }
+    console.log('[=====  test  =====>')
+    console.log(req.body.accountListIds)
+    console.log('<=====  /test  =====]')
+    return {
+      where: {
+        status: statusActive,
+        id: req.body.accountListIds,
       },
       include: [
         {
