@@ -201,8 +201,6 @@ class AccountInformation extends PureComponent {
 
     const isOutBusinessHours = isBetweenAfterHours()
 
-    const showReferralBtn = username !== 'edubritoc807810116'
-
     return (
       <>
         <ExportUserAccountsPDF userAccount={this.props.userAccount} />
@@ -245,22 +243,13 @@ class AccountInformation extends PureComponent {
                     </Descriptions.Item>
 
                     <Descriptions.Item label={t('commissionsByReference')}>
-                      {FormatCurrency.format(commissionByReference)}
-                      {showReferralBtn ? (
-                        <Button
-                          type="tertiary"
-                          style={{ marginLeft: 10, fontSize: 15 }}
-                          onClick={this._onHandleShowForm}
-                        >
-                          <Icon type="solution" /> {t('btn referral')}
-                        </Button>
-                      ) : (
-                        <Tooltip placement="leftTop" title="Suspendido Temporalmente">
-                          <Button type="tertiary" style={{ marginLeft: 10, fontSize: 15 }} disabled>
-                            <Icon type="solution" /> {t('btn referral')}
-                          </Button>
-                        </Tooltip>
-                      )}
+                      <Button
+                        type="tertiary"
+                        style={{ marginLeft: 10, fontSize: 15 }}
+                        onClick={this._onHandleShowForm}
+                      >
+                        <Icon type="solution" /> {t('btn referral')}
+                      </Button>
                     </Descriptions.Item>
                   </>
                 ) : null}

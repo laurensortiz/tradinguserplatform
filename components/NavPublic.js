@@ -32,6 +32,11 @@ class NavPublic extends PureComponent {
           </Link>
         </li>
         <li>
+          <Link className="menu-item" href="/daily-technical-report">
+            <Icon type="global" /> <span>{t('mainMenu dailyTechnicalReport')}</span>
+          </Link>
+        </li>
+        <li>
           <Link className="menu-item" href="/market">
             <Icon type="stock" /> <span>{t('mainMenu market')}</span>
           </Link>
