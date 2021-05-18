@@ -214,7 +214,6 @@ class AddOrEditForm extends PureComponent {
     const amountAvailable = (accountValue / 100) * percentageFromAccount
 
     return new Promise((resolve, reject) => {
-      console.log(this.state.userAccount)
       if (
         !Object.keys(this.state.userAccount).length ||
         this.state.status === 4 ||
@@ -222,7 +221,6 @@ class AddOrEditForm extends PureComponent {
       ) {
         resolve()
       }
-      console.log('1')
       if (!_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
       }

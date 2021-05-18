@@ -15,9 +15,6 @@ module.exports = {
             where: {
               id: Number(req.body.userAccountId),
             },
-            attributes: {
-              exclude: ['snapShotAccount'],
-            },
             include: [
               {
                 model: Account,
@@ -107,7 +104,10 @@ module.exports = {
         return res.status(200).send(userAccountMovement)
       })
     } catch (err) {
-      return res.status(500).send(err)
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
@@ -125,10 +125,7 @@ module.exports = {
   },
 
   async get(req, res) {
-    const userAccountMovement = await UserAccountMovement.findByPk(
-      req.params.userAccountMovementId,
-      userQuery.get({ req, UserAccount })
-    )
+    const userAccountMovement = await UserAccountMovement.findByPk(req.params.id)
 
     if (!userAccountMovement) {
       return res.status(404).send({
@@ -154,15 +151,7 @@ module.exports = {
     const userId = _.get(req, 'user.id', 0)
     try {
       await ORM.transaction(async (t) => {
-        const userAccountMovement = await UserAccountMovement.findOne(
-          {
-            where: {
-              id: req.params.userAccountMovementId,
-            },
-            silence: true,
-          },
-          { transaction: t }
-        )
+        const userAccountMovement = await UserAccountMovement.findByPk(req.params.id)
 
         if (!userAccountMovement) {
           return res.status(404).send({
@@ -174,9 +163,6 @@ module.exports = {
           {
             where: {
               id: Number(userAccountMovement.userAccountId),
-            },
-            attributes: {
-              exclude: ['snapShotAccount'],
             },
             include: [
               {
@@ -262,8 +248,11 @@ module.exports = {
         }
       })
       return res.status(200).send('updated')
-    } catch (e) {
-      return res.status(500).send(e)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
@@ -272,11 +261,7 @@ module.exports = {
 
     try {
       await ORM.transaction(async (t) => {
-        const userAccountMovement = await UserAccountMovement.findOne({
-          where: {
-            id: req.params.userAccountMovementId,
-          },
-        })
+        const userAccountMovement = await UserAccountMovement.findByPk(req.params.id)
 
         if (!userAccountMovement) {
           return res.status(404).send({
@@ -287,9 +272,6 @@ module.exports = {
         const userAccount = await UserAccount.findOne({
           where: {
             id: Number(userAccountMovement.userAccountId),
-          },
-          attributes: {
-            exclude: ['snapShotAccount'],
           },
         })
 
@@ -338,8 +320,11 @@ module.exports = {
           message: 'Movimiento de la cuenta eliminado exitosamente',
         })
       })
-    } catch (e) {
-      return res.status(500).send(e)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 }

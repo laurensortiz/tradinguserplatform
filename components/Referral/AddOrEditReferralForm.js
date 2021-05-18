@@ -43,7 +43,6 @@ class AddOrEditReferralForm extends PureComponent {
       Object.keys(nextProps.selectedReferral).length > 0 &&
       !_.isEqual(nextProps.selectedReferral.id, prevState.id)
     ) {
-      console.log('dsdsd')
       const { selectedReferral } = nextProps
       const username = _.get(selectedReferral, 'userAccount.user.username', '')
       let personalIdDocument = '',

@@ -1,15 +1,66 @@
 import { WireTransferRequest, UserAccount, User, ORM, sequelize } from '../models'
 import { wireTransferRequestQuery } from '../queries'
 import moment from 'moment-timezone'
+import _ from 'lodash'
+import Log from '../../common/log'
+
+const NO_MONEY_ERROR_MESSAGE =
+  'Su solicitud sobrepasa lo permitido por el exchange o no tiene garantías suficientes en su cuenta.'
 
 module.exports = {
   async create(req, res) {
+    const userId = _.get(req, 'user.id', 0)
+    const userStartedDay = _.get(req, 'user.startDate', '')
+    const isOTCAccount = req.body.associatedOperation === 1
+    const amount = Number(req.body.amount.replace(',', ''))
+
+    const is10percent = moment(userStartedDay).isBefore('2020-12-15', 'day')
+
     try {
       await ORM.transaction(async (t) => {
+        const userAccount = await UserAccount.findOne(
+          {
+            where: {
+              id: req.body.userAccountId,
+            },
+          },
+          { transaction: t }
+        )
+
+        if (!userAccount) {
+          throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
+        }
+        console.log('[=====  ACCC  =====>')
+        console.log(userAccount)
+        console.log('<=====  /ACCC  =====]')
+
+        let percentageFromAccount
+
+        if (isOTCAccount) {
+          percentageFromAccount = is10percent ? 10 : 7.5
+        } else {
+          percentageFromAccount = 100
+        }
+
+        const amountAvailable = (userAccount.accountValue / 100) * percentageFromAccount
+
+        if (isOTCAccount) {
+          if (parseFloat(userAccount.guaranteeOperation) < 0) {
+            throw new Error(NO_MONEY_ERROR_MESSAGE)
+          }
+          if (parseFloat(userAccount.guaranteeOperation) - parseFloat(amount) < 0) {
+            throw new Error(NO_MONEY_ERROR_MESSAGE)
+          }
+        }
+
+        if (parseFloat(amountAvailable) - parseFloat(amount) < 0) {
+          throw new Error(NO_MONEY_ERROR_MESSAGE)
+        }
+
         const wireTransferRequest = await WireTransferRequest.create({
           currencyType: req.body.currencyType,
           accountRCM: req.body.accountRCM,
-          amount: Number(req.body.amount.replace(',', '')),
+          amount,
           amountBK: req.body.amount,
           commissionsCharge: Number(req.body.commissionsCharge),
           commissionsReferenceDetail: req.body.commissionsReferenceDetail,
@@ -43,88 +94,122 @@ module.exports = {
           updatedAt: moment(new Date()).tz('America/New_York').format(),
         })
 
-        const userAccount = await UserAccount.findOne(
-          {
-            where: {
-              id: req.body.userAccountId,
-            },
-          },
-          { transaction: t }
-        )
+        const userAccountSnapShot = JSON.stringify(userAccount)
 
-        if (!userAccount) {
-          throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
-        }
-
-        await userAccount.update(
+        const wireTransferAmountReq = req.body.amount === 0 ? '0' : `${req.body.amount}`
+        const currentGuaranteeOperationNet = userAccount.guaranteeOperationNet
+          ? userAccount.guaranteeOperationNet
+          : 0
+        const currentWireTransferAmount = userAccount.wireTransferAmount
+          ? userAccount.wireTransferAmount
+          : 0
+        const updatedUserAccount = await userAccount.update(
           {
             guaranteeOperationNet:
-              Number(req.body.guaranteeOperationNet.replace(',', '')) +
-                userAccount.guaranteeOperationNet || 0,
-            wireTransferAmount: Number(req.body.amount.replace(',', '')) + userAccount.amount || 0,
+              parseFloat(userAccount.guaranteeOperation) -
+              parseFloat(wireTransferAmountReq.replace(',', '')) +
+              parseFloat(currentGuaranteeOperationNet),
+            wireTransferAmount:
+              parseFloat(wireTransferAmountReq.replace(',', '')) +
+              parseFloat(currentWireTransferAmount),
           },
           { transaction: t }
         )
+
+        Log({
+          userId,
+          userAccountId: userAccount.id,
+          tableUpdated: 'userAccount',
+          action: 'create',
+          type: 'wire-transfer',
+          snapShotBeforeAction: userAccountSnapShot,
+          snapShotAfterAction: JSON.stringify(updatedUserAccount),
+        })
 
         return res.status(200).send(wireTransferRequest)
       })
     } catch (err) {
-      console.error(err)
-      return res.status(500).send(err)
+      console.log('[=====  ERR  =====>')
+      console.log(err)
+      console.log('<=====  /ERR  =====]')
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
   async list(req, res) {
-    const wireTransferRequests = await WireTransferRequest.findAll(
-      wireTransferRequestQuery.list({ req, UserAccount, User })
-    )
+    try {
+      const wireTransferRequests = await WireTransferRequest.findAll(
+        wireTransferRequestQuery.list({ req, UserAccount, User })
+      )
 
-    if (!wireTransferRequests) {
-      return res.status(404).send({
-        message: '404 on WireTransferRequest get List',
+      if (!wireTransferRequests) {
+        return res.status(404).send({
+          message: '404 on WireTransferRequest get List',
+        })
+      }
+      return res.status(200).send(wireTransferRequests)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-    return res.status(200).send(wireTransferRequests)
   },
 
   async get(req, res) {
-    const wireTransferRequest = await WireTransferRequest.findByPk(req.params.wireTransferRequestId)
+    try {
+      const wireTransferRequest = await WireTransferRequest.findByPk(req.params.id)
 
-    if (!wireTransferRequest) {
-      return res.status(404).send({
-        message: '404 on WireTransferRequest get',
+      if (!wireTransferRequest) {
+        return res.status(404).send({
+          message: '404 on WireTransferRequest get',
+        })
+      }
+
+      return res.status(200).send(wireTransferRequest)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(wireTransferRequest)
   },
 
   async getByUsername(req, res) {
-    const wireTransferRequest = await WireTransferRequest.findAll(
-      wireTransferRequestQuery.listByUsername({ req, sequelize })
-    )
+    try {
+      const wireTransferRequest = await WireTransferRequest.findAll(
+        wireTransferRequestQuery.listByUsername({ req, sequelize })
+      )
 
-    if (!wireTransferRequest) {
-      return res.status(404).send({
-        message: '404 on WireTransferRequest get',
+      if (!wireTransferRequest) {
+        return res.status(404).send({
+          message: '404 on WireTransferRequest get',
+        })
+      }
+
+      return res.status(200).send(wireTransferRequest)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(wireTransferRequest)
   },
 
   async update(req, res) {
-    const wireTransferRequest = await WireTransferRequest.findOne({
-      where: {
-        id: req.params.wireTransferRequestId,
-      },
-    })
+    const userId = _.get(req, 'user.id', 0)
+    const wireTransferRequest = await WireTransferRequest.findByPk(req.params.id)
 
     if (!wireTransferRequest) {
       return res.status(404).send({
         message: '404 on WireTransferRequest update',
       })
     }
+
+    const wireTransferRequestSnapShot = JSON.stringify(wireTransferRequest)
 
     try {
       await ORM.transaction(async (t) => {
@@ -180,10 +265,7 @@ module.exports = {
             associatedOperation:
               req.body.associatedOperation | wireTransferRequest.associatedOperation,
             status: req.body.status,
-            updatedAt: new Date(),
-            createdAt: !!req.body.createdAt
-              ? moment(new Date(req.body.createdAt)).tz('America/New_York').format()
-              : moment(new Date()).tz('America/New_York').format(),
+            updatedAt: moment(new Date()).tz('America/New_York').format(),
             closedAt:
               req.body.status === 4
                 ? moment(new Date()).tz('America/New_York').format()
@@ -212,40 +294,76 @@ module.exports = {
             throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
           }
 
-          await userAccount.update(
-            {
-              guaranteeOperationNet: 0.0,
-              wireTransferAmount: 0.0,
+          const hasActiveWireTransfer = await WireTransferRequest.findAll({
+            where: {
+              username: wireTransferRequest.username,
+              status: 1,
             },
-            { transaction: t }
-          )
+          })
+
+          if (hasActiveWireTransfer.length > 1) {
+            await userAccount.update(
+              {
+                guaranteeOperationNet:
+                  Number(userAccount.guaranteeOperationNet) - Number(wireTransferRequest.amount),
+                wireTransferAmount:
+                  Number(userAccount.wireTransferAmount) - Number(wireTransferRequest.amount),
+              },
+              { transaction: t }
+            )
+          } else {
+            await userAccount.update(
+              {
+                guaranteeOperationNet: 0.0,
+                wireTransferAmount: 0.0,
+              },
+              { transaction: t }
+            )
+          }
+
+          Log({
+            userId,
+            userAccountId: userAccount.id,
+            tableUpdated: 'userAccount',
+            action: 'update',
+            type: 'wire-transfer',
+            snapShotBeforeAction: wireTransferRequestSnapShot,
+            snapShotAfterAction: JSON.stringify(updatedWireTransferRequest),
+          })
         }
 
         return res.status(200).send(updatedWireTransferRequest)
       })
-    } catch (e) {}
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
   },
 
   async delete(req, res) {
-    const wireTransferRequest = await WireTransferRequest.findOne({
-      where: {
-        id: req.params.wireTransferRequestId,
-      },
-    })
+    try {
+      const wireTransferRequest = await WireTransferRequest.findByPk(req.params.id)
 
-    if (!wireTransferRequest) {
-      return res.status(404).send({
-        message: 'WireTransferRequest Not Found',
+      if (!wireTransferRequest) {
+        return res.status(404).send({
+          message: 'WireTransferRequest Not Found',
+        })
+      }
+
+      await wireTransferRequest.update({
+        status: 0,
+      })
+
+      return res.status(200).send({
+        message: 'WireTransferRequest has been deleted',
+      })
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    //await wireTransferRequest.destroy();
-    await wireTransferRequest.update({
-      status: 0,
-    })
-
-    return res.status(200).send({
-      message: 'WireTransferRequest has been deleted',
-    })
   },
 }

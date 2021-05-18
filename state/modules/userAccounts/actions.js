@@ -6,6 +6,7 @@ import {
   editUserAccount,
   deleteUserAccount,
   getUserAccountHistoryReport,
+  getUserAccountListReport,
 } from './api'
 import types from './types'
 import { formatAxiosError } from '../../../common/utils'
@@ -227,6 +228,37 @@ const requestUserAccountHistoryReportError = (error) => {
   }
 }
 
+// User Account Report List
+export const fetchGetUserAccountListReport = (userAccountId) => async (dispatch) => {
+  dispatch(requestUserAccountListReport())
+  try {
+    const res = await getUserAccountListReport(userAccountId)
+    dispatch(requestUserAccountListReportSuccess(res.data))
+  } catch (e) {
+    dispatch(requestUserAccountListReportError(e.message))
+  }
+}
+
+const requestUserAccountListReport = () => {
+  return {
+    type: types.USER_ACCOUNT_LIST_REPORT_REQUEST,
+  }
+}
+
+const requestUserAccountListReportSuccess = (report) => {
+  return {
+    type: types.USER_ACCOUNT_LIST_REPORT_SUCCESS,
+    payload: report,
+  }
+}
+
+const requestUserAccountListReportError = (error) => {
+  return {
+    type: types.USER_ACCOUNT_LIST_REPORT_ERROR,
+    payload: formatAxiosError(error.response),
+  }
+}
+
 // Reset After any request
 export const resetAfterRequest = () => {
   return {
@@ -242,5 +274,6 @@ export default {
   fetchEditUserAccount,
   fetchDeleteUserAccount,
   fetchGetUserAccountHistoryReport,
+  fetchGetUserAccountListReport,
   resetAfterRequest,
 }

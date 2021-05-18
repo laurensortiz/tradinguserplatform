@@ -14,9 +14,15 @@ import { wireTransferRequestOperations } from '../../state/modules/wireTransferR
 import { connect } from 'react-redux'
 
 const getTotalMonthsFromDate = (date) => {
-  const userStartDate = moment(date)
+  const userStartDate = moment(new Date(date)).add(-1, 'days')
   const today = moment()
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
+}
+
+const isSameRequestedDay = (date) => {
+  const userStartDate = moment(new Date(date))
+  const today = moment()
+  return today.format('DD') === userStartDate.format('DD')
 }
 
 const IS_WEEKEND =
@@ -86,6 +92,7 @@ class AccountInformation extends PureComponent {
     ) {
       const { createdAt, associatedOperation } = nextProps.lastWireTransferRequest
       const getTotalMonths = getTotalMonthsFromDate(createdAt)
+      const isTodayCompleted = isSameRequestedDay(createdAt)
 
       _.assignIn(updatedState, {
         hasOneMonthHoldCompleted: getTotalMonths > 0,
@@ -114,7 +121,6 @@ class AccountInformation extends PureComponent {
 
   _isWireTransferBtnDisabled = () => {
     const isProfitMonth = this.props.userAccount.account.associatedOperation === 2
-
     if (isProfitMonth) {
       return false
     } else {
@@ -240,7 +246,7 @@ class AccountInformation extends PureComponent {
 
                     <Descriptions.Item label={t('commissionsByReference')}>
                       {FormatCurrency.format(commissionByReference)}
-                      {showReferralBtn && (
+                      {showReferralBtn ? (
                         <Button
                           type="tertiary"
                           style={{ marginLeft: 10, fontSize: 15 }}
@@ -248,6 +254,12 @@ class AccountInformation extends PureComponent {
                         >
                           <Icon type="solution" /> {t('btn referral')}
                         </Button>
+                      ) : (
+                        <Tooltip placement="leftTop" title="Suspendido Temporalmente">
+                          <Button type="tertiary" style={{ marginLeft: 10, fontSize: 15 }} disabled>
+                            <Icon type="solution" /> {t('btn referral')}
+                          </Button>
+                        </Tooltip>
                       )}
                     </Descriptions.Item>
                   </>

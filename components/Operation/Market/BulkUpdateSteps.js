@@ -126,6 +126,21 @@ const BULK_UPDATE_TYPES = [
     name: 'Gasoline FT OP',
     scope: 'price',
   },
+  {
+    code: 'avena-FT-OP',
+    name: 'AVENA – OATS FT',
+    scope: 'price',
+  },
+  {
+    code: 'sugar-FT',
+    name: "Sugar #11 Jul '21 (SBN21) - FT",
+    scope: 'price',
+  },
+  {
+    code: 'sugar-CFD',
+    name: "Sugar #11 Jul '21 (SBN21) - CFDs",
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({

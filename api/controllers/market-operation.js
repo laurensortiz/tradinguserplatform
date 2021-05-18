@@ -118,33 +118,51 @@ module.exports = {
         return res.status(200).send(marketOperation)
       })
     } catch (err) {
-      return res.status(500).send(err)
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
   async list(req, res) {
-    let marketOperation
-    if (req.user.roleId == 1) {
-      marketOperation = await MarketOperation.findAll(
-        marketOperationQuery.listAdmin({
-          req,
-          sequelize,
-          UserAccount,
-          User,
-          Account,
-          Product,
-          Broker,
-          Commodity,
-          AssetClass,
-        })
-      )
-    } else {
-      marketOperation = await MarketOperation.findAll(
+    try {
+      const marketOperation = await MarketOperation.findAll(
         marketOperationQuery.list({
           req,
           sequelize,
           UserAccount,
           User,
+          Product,
+          Broker,
+          AssetClass,
+          Commodity,
+        })
+      )
+
+      if (!marketOperation) {
+        return res.status(404).send({
+          message: '404 on MarketOperation get List',
+        })
+      }
+
+      return res.status(200).send(marketOperation)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
+  },
+
+  async accountReport(req, res) {
+    try {
+      const marketOperation = await MarketOperation.findAll(
+        marketOperationQuery.accountReport({
+          req,
+          sequelize,
+          UserAccount,
+          User,
           Account,
           Product,
           Broker,
@@ -152,110 +170,77 @@ module.exports = {
           AssetClass,
         })
       )
-    }
 
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: '404 on MarketOperation get List',
-      })
-    }
-    return res.status(200).send(marketOperation)
-  },
-  async listByUserAccount(req, res) {
-    const marketOperation = await MarketOperation.findAll(
-      marketOperationQuery.list({
-        req,
-        sequelize,
-        UserAccount,
-        User,
-        Account,
-        Product,
-        Broker,
-        Commodity,
-        AssetClass,
-      })
-    )
-
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: '404 on MarketOperation get List',
+      if (!marketOperation) {
+        return res.status(404).send({
+          message: '404 on MarketOperation get List',
+        })
+      }
+      return res.status(200).send(marketOperation)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-    return res.status(200).send(marketOperation)
-  },
-
-  async accountReport(req, res) {
-    const marketOperation = await MarketOperation.findAll(
-      marketOperationQuery.accountReport({
-        req,
-        sequelize,
-        UserAccount,
-        User,
-        Account,
-        Product,
-        Broker,
-        Commodity,
-        AssetClass,
-      })
-    )
-
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: '404 on MarketOperation get List',
-      })
-    }
-    return res.status(200).send(marketOperation)
   },
 
   async get(req, res) {
-    const marketOperation = await MarketOperation.findByPk(
-      req.params.marketOperationId,
-      marketOperationQuery.get({
-        req,
-        UserAccount,
-        User,
-        Account,
-        Product,
-        Broker,
-        Commodity,
-        AssetClass,
-      })
-    )
+    try {
+      const marketOperation = await MarketOperation.findByPk(
+        req.params.id,
+        marketOperationQuery.get({
+          req,
+          UserAccount,
+          User,
+          Account,
+          Product,
+          Broker,
+          Commodity,
+          AssetClass,
+        })
+      )
 
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: '404 on MarketOperation get',
+      if (!marketOperation) {
+        return res.status(404).send({
+          message: '404 on MarketOperation get',
+        })
+      }
+
+      return res.status(200).send(marketOperation)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(marketOperation)
   },
 
   async update(req, res) {
     const userId = _.get(req, 'user.id', 0)
     await ORM.transaction(async (t) => {
-      const marketOperation = await MarketOperation.findOne({
-        where: {
-          id: req.params.marketOperationId,
-        },
-        include: [
-          {
-            model: UserAccount,
-            as: 'userAccount',
-            attributes: {
-              exclude: ['snapShotAccount'],
-            },
-            include: [
-              {
-                model: Account,
-                as: 'account',
-                attributes: ['name', 'percentage', 'associatedOperation'],
-              },
-            ],
+      const marketOperation = await MarketOperation.findOne(
+        {
+          where: {
+            id: req.params.id,
           },
-        ],
-        silence: true,
-      })
+          include: [
+            {
+              model: UserAccount,
+              as: 'userAccount',
+              include: [
+                {
+                  model: Account,
+                  as: 'account',
+                  attributes: ['name', 'percentage', 'associatedOperation'],
+                },
+              ],
+            },
+          ],
+          silence: true,
+        },
+        { transaction: t }
+      )
 
       if (!marketOperation) {
         return res.status(404).send({
@@ -273,28 +258,32 @@ module.exports = {
       }
 
       if (marketOperation.status === 4 && !_.isNil(req.body.endDate)) {
-        await marketOperation.update(
-          {
-            updatedAt: moment(new Date()).tz('America/New_York').format(),
-            endDate: !_.isNil(req.body.endDate)
-              ? moment(req.body.endDate).tz('America/New_York').format()
-              : marketOperation.endDate,
-          },
-          { transaction: t }
-        )
-        return res.status(200).send(marketOperation)
+        try {
+          await marketOperation.update(
+            {
+              updatedAt: moment(new Date()).tz('America/New_York').format(),
+              endDate: !_.isNil(req.body.endDate)
+                ? moment(req.body.endDate).tz('America/New_York').format()
+                : marketOperation.endDate,
+            },
+            { transaction: t }
+          )
+          return res.status(200).send(marketOperation)
+        } catch (e) {
+          return res.status(500).send(e)
+        }
       }
 
       try {
         await marketOperation.update(
           {
             longShort: req.body.longShort || marketOperation.longShort,
-            userAccountId: _.get(req, 'body.userAccount.id', 0) || marketOperation.userAccountId,
-            brokerId: _.get(req, 'body.broker.id', 0) || marketOperation.brokerId,
-            productId: _.get(req, 'body.product.id', 0) || marketOperation.productId,
+            userAccountId: req.body.userAccount.id || marketOperation.userAccountId,
+            brokerId: req.body.broker.id || marketOperation.brokerId,
+            productId: req.body.product.id || marketOperation.productId,
             commoditiesTotal: req.body.commoditiesTotal || marketOperation.commoditiesTotal,
-            commodityId: _.get(req, 'body.commodity.id', 1) || marketOperation.commodityId,
-            assetClassId: _.get(req, 'body.assetClass.id', 1) || marketOperation.assetClassId,
+            commodityId: req.body.commodity.id || marketOperation.commodityId,
+            assetClassId: req.body.assetClass.id || marketOperation.assetClassId,
             buyPrice: req.body.buyPrice || marketOperation.buyPrice,
             takingProfit: req.body.takingProfit || marketOperation.takingProfit,
             stopLost: req.body.stopLost || marketOperation.stopLost,
@@ -314,23 +303,20 @@ module.exports = {
         )
 
         if (marketOperation.status === 4) {
-          const userAccount = await UserAccount.findOne({
-            where: {
-              id: marketOperation.userAccountId,
+          const userAccount = await UserAccount.findOne(
+            {
+              where: {
+                id: marketOperation.userAccountId,
+              },
             },
-          })
+            { transaction: t }
+          )
 
           if (!userAccount) {
             throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
           }
           const accountValueBeforeEndOperation = `${userAccount.accountValue}`
-          const {
-            initialAmount,
-            amount,
-            holdStatusCommission,
-            maintenanceMargin,
-            assetClassId,
-          } = marketOperation
+          const { initialAmount, amount, maintenanceMargin, assetClassId } = marketOperation
           const { percentage } = marketOperation.userAccount.account
           const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12
 
@@ -420,9 +406,10 @@ module.exports = {
         }
 
         return res.status(200).send(marketOperation)
-      } catch (e) {
-        return res.status(401).send({
-          message: e.message,
+      } catch (err) {
+        return res.status(500).send({
+          message: err.message,
+          name: err.name,
         })
       }
     })
@@ -430,7 +417,6 @@ module.exports = {
 
   async bulkUpdate(req, res) {
     const userId = _.get(req, 'user.id', 0)
-    let valueFT = 0
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body
       console.log('[=====  BULK DETAIIL  =====>')
@@ -440,6 +426,7 @@ module.exports = {
       console.log('Scope', updateScope)
       console.log('<=====  /BULK DETAIIL  =====]')
       let result
+      let pivotUserAccountTable = []
       await ORM.transaction(async (t) => {
         switch (updateScope) {
           case 'status':
@@ -447,7 +434,7 @@ module.exports = {
               /**
                * Close Operation
                */
-              let pivotUserAccountTable = []
+
               for (const operationID of operationsIds) {
                 const marketOperation = await MarketOperation.findOne(
                   {
@@ -458,9 +445,6 @@ module.exports = {
                       {
                         model: UserAccount,
                         as: 'userAccount',
-                        attributes: {
-                          exclude: ['snapShotAccount'],
-                        },
                         include: [
                           {
                             model: Account,
@@ -655,15 +639,9 @@ module.exports = {
             result = await Promise.all(
               operationsIds.map(async (operationID) => {
                 // Find Operation
-                const marketOperation = await MarketOperation.findOne(
-                  {
-                    where: {
-                      id: operationID,
-                    },
-                    silence: true,
-                  },
-                  { transaction: t }
-                )
+                const marketOperation = await MarketOperation.findByPk(operationID, {
+                  transaction: t,
+                })
 
                 /**
                  * Run some basic validations
@@ -673,7 +651,9 @@ module.exports = {
                 }
 
                 if (marketOperation.status !== 1) {
-                  throw new Error('Una o más operaciones seleccionadas no se encuentran Activas')
+                  throw new Error(
+                    `Una o más operaciones seleccionadas no se encuentran Activas. [Operación = ${marketOperation.id}]`
+                  )
                 }
 
                 /**
@@ -697,7 +677,7 @@ module.exports = {
                       calculatedValue = gpAmount * commoditiesTotal
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al mercados de Stocks'
+                        `Una o más operaciones seleccionadas no corresponde al mercados de Stocks. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -710,7 +690,7 @@ module.exports = {
                       calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -725,7 +705,7 @@ module.exports = {
                       calculatedValue = gpAmount * commoditiesTotal // 1 FT = $1
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -738,7 +718,7 @@ module.exports = {
                       calculatedValue = gpAmount * commoditiesTotal // 1 FT = $1
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -751,7 +731,7 @@ module.exports = {
                       calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $5000
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
 
@@ -765,7 +745,7 @@ module.exports = {
                       calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -778,7 +758,7 @@ module.exports = {
                       calculatedValue = 500 * gpAmount * commoditiesTotal // 1 FT = $500
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -791,7 +771,7 @@ module.exports = {
                       calculatedValue = commoditiesTotal * gpAmount // 1 Barrel = $1
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -804,7 +784,7 @@ module.exports = {
                       calculatedValue = 25 * gpAmount * commoditiesTotal // 1 FT = $25
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -817,7 +797,7 @@ module.exports = {
                       calculatedValue = 1250 * gpAmount * commoditiesTotal
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -830,7 +810,7 @@ module.exports = {
                       calculatedValue = 10 * gpAmount * commoditiesTotal
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -843,7 +823,7 @@ module.exports = {
                       calculatedValue = 150 * gpAmount * commoditiesTotal
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -856,7 +836,7 @@ module.exports = {
                       calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $1000
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -869,7 +849,7 @@ module.exports = {
                       calculatedValue = 10 * gpAmount * commoditiesTotal // 1 FT = $10
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -882,7 +862,7 @@ module.exports = {
                       calculatedValue = 110 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -895,7 +875,7 @@ module.exports = {
                       calculatedValue = 600 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -908,7 +888,7 @@ module.exports = {
                       calculatedValue = 375 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -921,7 +901,54 @@ module.exports = {
                       calculatedValue = 420 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
                     } else {
                       throw new Error(
-                        'Una o más operaciones seleccionadas no corresponde al Mercados y su Derivado de Inversión'
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                      )
+                    }
+                    break
+
+                  /**
+                   * AVENA FT OP
+                   */
+                  case 'avena-FT-OP':
+                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                      calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    } else {
+                      throw new Error(
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                      )
+                    }
+                    break
+
+                  /**
+                   * AZUCAR FT OP
+                   */
+                  case 'sugar-FT':
+                    if (
+                      marketOperation.assetClassId === 2 ||
+                      marketOperation.assetClassId === 12 ||
+                      marketOperation.assetClassId === 15
+                    ) {
+                      calculatedValue = 1120 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    } else {
+                      throw new Error(
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                      )
+                    }
+                    break
+
+                  /**
+                   * AZUCAR FT OP
+                   */
+                  case 'sugar-CFD':
+                    if (
+                      marketOperation.assetClassId === 2 ||
+                      marketOperation.assetClassId === 12 ||
+                      marketOperation.assetClassId === 15
+                    ) {
+                      calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    } else {
+                      throw new Error(
+                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                       )
                     }
                     break
@@ -952,14 +979,7 @@ module.exports = {
             // In this case operationsIds refers to User Accounts Ids
             result = await Promise.all(
               operationsIds.map(async (accountId, index) => {
-                const userAccount = await UserAccount.findOne(
-                  {
-                    where: {
-                      id: accountId,
-                    },
-                  },
-                  { transaction: t }
-                )
+                const userAccount = await UserAccount.findByPk(accountId, { transaction: t })
 
                 if (!userAccount) {
                   throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
@@ -968,13 +988,12 @@ module.exports = {
                 const snapShotAccount = JSON.stringify(userAccount)
 
                 try {
-                  const lastMarketOperationEntry = await MarketOperation.findAll({
-                    limit: 1,
-                    attributes: ['orderId'],
-                    order: [['id', 'DESC']],
-                  })
-
                   if (index === 0) {
+                    const lastMarketOperationEntry = await MarketOperation.findAll({
+                      limit: 1,
+                      attributes: ['orderId'],
+                      order: [['id', 'DESC']],
+                    })
                     nextOrderId = Number(lastMarketOperationEntry[0].orderId) + 1
                   } else {
                     nextOrderId = nextOrderId + 1
@@ -996,7 +1015,7 @@ module.exports = {
                       amount: updateValue.amount,
                       initialAmount: updateValue.amount,
                       holdStatusCommission: updateValue.holdStatusCommission || 0,
-                      orderId: nextOrderId || 0,
+                      orderId: nextOrderId,
                       status: _.get(updateValue, 'status', 1),
                       createdAt: moment(updateValue.createdAt || new Date())
                         .tz('America/New_York')
@@ -1063,36 +1082,39 @@ module.exports = {
         }
         return res.status(200).send('Completed')
       })
-    } catch (error) {
+    } catch (err) {
       console.log('[=====  ERROR on BULK  =====>')
-      console.log(error)
+      console.log(err)
       console.log('<=====  /ERROR on BULK  =====]')
-      return res.status(400).send({
-        message: error.message,
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
   },
 
   async delete(req, res) {
-    const marketOperation = await MarketOperation.findOne({
-      where: {
-        id: req.params.marketOperationId,
-      },
-    })
+    try {
+      const marketOperation = await MarketOperation.findByPk(req.params.id)
 
-    if (!marketOperation) {
-      return res.status(404).send({
-        message: 'MarketOperation Not Found',
+      if (!marketOperation) {
+        return res.status(404).send({
+          message: 'MarketOperation Not Found',
+        })
+      }
+
+      await marketOperation.update({
+        status: 0,
+      })
+
+      return res.status(200).send({
+        message: 'MarketOperation has been deleted',
+      })
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    //await marketOperation.destroy();
-    await marketOperation.update({
-      status: 0,
-    })
-
-    return res.status(200).send({
-      message: 'MarketOperation has been deleted',
-    })
   },
 }

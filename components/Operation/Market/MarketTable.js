@@ -74,7 +74,7 @@ class MarketTable extends Component {
     let updatedState = {}
     if (!_.isEqual(nextProps.marketOperations, prevState.marketOperations)) {
       _.assignIn(updatedState, {
-        marketOperations: nextProps.marketOperations,
+        marketOperations: _.orderBy(nextProps.marketOperations, ['id'], ['desc']),
       })
     }
     if (!_.isEqual(nextProps.assetClasses, prevState.assetClasses)) {
@@ -507,6 +507,11 @@ class MarketTable extends Component {
 
     const columns = [
       {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
+      {
         title: '',
         dataIndex: 'behavior',
         key: 'behavior',
@@ -538,14 +543,14 @@ class MarketTable extends Component {
         render: (text) => <span key={`${text}`}>{`${text}`}</span>,
         sorter: (a, b) => Sort(a.product.name, b.product.name),
         sortDirections: ['descend', 'ascend'],
-        filters: products.map(({ name, code }) => {
+        filters: products.map(({ name }) => {
           return {
-            text: `${name}-${code}`,
+            text: name,
             value: name,
           }
         }),
         filteredValue: filteredInfo['product.name'] || null,
-        onFilter: (value, record) => (record.product ? record.product.name.includes(value) : null),
+        onFilter: (value, record) => (record.product ? record.product.name === value : null),
         ellipsis: true,
       },
       {
@@ -560,7 +565,7 @@ class MarketTable extends Component {
           }
         }),
         filteredValue: filteredInfo.assetClass || null,
-        onFilter: (value, record) => record.assetClass.name.includes(value),
+        onFilter: (value, record) => record.assetClass.name === value,
         sorter: (a, b) => Sort(a.assetClass.name.length, b.assetClass.name.length),
         ellipsis: true,
       },
@@ -696,7 +701,7 @@ class MarketTable extends Component {
           }
         }),
         filteredValue: filteredInfo['broker.name'] || null,
-        onFilter: (value, record) => (record.broker ? record.broker.name.includes(value) : null),
+        onFilter: (value, record) => (record.broker ? record.broker.name === value : null),
         ellipsis: true,
       },
       {

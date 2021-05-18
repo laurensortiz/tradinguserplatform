@@ -23,6 +23,7 @@ const EXCEL_HEADER_MARKET = [
   'IB Colaborador',
   'Descripción del cliente referido',
   'Creado por el Usuario',
+  'Broker',
   'Fecha de Creación',
   'Fecha de Actualización',
 ]
@@ -58,6 +59,7 @@ const _formatData = (data) => {
       'IB Colaborador': account.collaboratorIB,
       'Descripción del cliente referido': account.description,
       'Creado por el Usuario': _.get(account, 'username', ' - '),
+      Broker: account.brokerName,
       'Fecha de Creación': FormatDate(account.createdAt),
       'Fecha de Actualización': FormatDate(account.updatedAt),
     }

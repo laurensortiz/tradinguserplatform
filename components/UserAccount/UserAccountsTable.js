@@ -43,7 +43,7 @@ class UserAccountsTable extends Component {
     let updatedState = {}
     if (!_.isEqual(nextProps.userAccounts, prevState.userAccounts)) {
       _.assignIn(updatedState, {
-        userAccounts: nextProps.userAccounts,
+        userAccounts: _.orderBy(nextProps.userAccounts, ['id'], ['desc']),
       })
     }
 
@@ -377,6 +377,11 @@ class UserAccountsTable extends Component {
     const { selectedRowKeys, isBulkUpdateActive, filteredInfo, brokers } = this.state
 
     const columns = [
+      {
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+      },
       {
         title: 'Usuario',
         dataIndex: 'user.username',

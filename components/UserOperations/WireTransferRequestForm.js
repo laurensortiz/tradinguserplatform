@@ -165,11 +165,17 @@ class WireTransferRequestForm extends PureComponent {
       ? `OTC - ${account.name}`
       : `ProfitMonth - ${account.name}`
 
-    if (!this.state.commissionsCharge || this.state.commissionsCharge <= 0) {
+    if (
+      !_.isNaN(Number(this.state.commissionsCharge)) &&
+      Number(this.state.commissionsCharge) <= 0
+    ) {
       resetFields(['commissionsCharge'])
     }
 
-    if (!!this.state.commissionsCharge || this.state.commissionsCharge > 0) {
+    if (
+      !_.isNaN(Number(this.state.commissionsCharge)) &&
+      Number(this.state.commissionsCharge) > 0
+    ) {
       resetFields(['amount'])
     }
 
@@ -273,7 +279,8 @@ class WireTransferRequestForm extends PureComponent {
                     rules: [
                       {
                         required:
-                          !this.state.commissionsCharge && this.state.commissionsCharge <= 0,
+                          !_.isNaN(Number(this.state.commissionsCharge)) &&
+                          Number(this.state.commissionsCharge) <= 0,
                         message: `${t('requiredFieldGeneralMessage')}`,
                       },
                       {
@@ -296,7 +303,8 @@ class WireTransferRequestForm extends PureComponent {
                       rules: [
                         {
                           required:
-                            !!this.state.commissionsCharge && this.state.commissionsCharge > 0,
+                            !_.isNaN(Number(this.state.commissionsCharge)) &&
+                            Number(this.state.commissionsCharge) > 0,
                           message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
                         },
                         {

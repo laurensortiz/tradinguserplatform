@@ -11,6 +11,8 @@ import {
   AssetClass,
   sequelize,
   UserAccountMovement,
+  WireTransferRequest,
+  ORM,
 } from '../models'
 import { userAccountQuery } from '../queries'
 import Log from '../../common/log'
@@ -38,160 +40,265 @@ module.exports = {
 
       return res.status(200).send(userAccount)
     } catch (err) {
-      return res.status(500).send(err)
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
     }
   },
 
   async list(req, res) {
-    const userAccounts = await UserAccount.findAll(
-      userAccountQuery.list({ req, sequelize, User, Account, MarketOperation, Product, Broker })
-    )
+    try {
+      const userAccounts = await UserAccount.findAll(
+        userAccountQuery.list({ req, sequelize, User, Account, MarketOperation, Product, Broker })
+      )
 
-    if (!userAccounts) {
-      return res.status(404).send({
-        message: '404 on UserAccount get List',
+      if (!userAccounts) {
+        return res.status(404).send({
+          message: '404 on UserAccount get List',
+        })
+      }
+
+      return res.status(200).send(userAccounts)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-    return res.status(200).send(userAccounts)
   },
 
-  async allAccounts(req, res) {
-    const userAccounts = await UserAccount.findAll(
-      userAccountQuery.list({ req, sequelize, User, Account, MarketOperation, Product, Broker })
-    )
+  async getListReport(req, res) {
+    try {
+      const userAccounts = await UserAccount.findAll(
+        userAccountQuery.accountsReport({
+          req,
+          sequelize,
+          User,
+          Account,
+          MarketOperation,
+          Product,
+          Broker,
+        })
+      )
 
-    if (!userAccounts) {
-      return res.status(404).send({
-        message: '404 on UserAccount get List',
+      if (!userAccounts) {
+        return res.status(404).send({
+          message: '404 on UserAccount get List',
+        })
+      }
+
+      return res.status(200).send(userAccounts)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-    return res.status(200).send(userAccounts)
+  },
+
+  async fix(req, res) {
+    const ids = [224, 704]
+    try {
+      await ORM.transaction(async (t) => {
+        for (const userAccountId of ids) {
+          const sum = await WireTransferRequest.findAll(
+            {
+              where: {
+                userAccountId,
+                status: 1,
+                associatedOperation: 1,
+              },
+              attributes: [[sequelize.fn('sum', sequelize.col('amount')), 'total']],
+              raw: true,
+            },
+            { transaction: t }
+          )
+
+          const total = Number(sum[0].total)
+
+          const userAccount = await UserAccount.findOne(
+            {
+              where: {
+                id: userAccountId,
+              },
+            },
+            { transaction: t }
+          )
+
+          if (!userAccount) {
+            return res.status(404).send({
+              message: '404 on UserAccount update',
+            })
+          }
+
+          const guaranteeOperation = userAccount.guaranteeOperation
+
+          await userAccount.update(
+            {
+              guaranteeOperationNet: Number(guaranteeOperation) - Number(total),
+              wireTransferAmount: Number(total),
+            },
+            { transaction: t }
+          )
+        }
+
+        return res.status(200).send('DONE')
+      })
+    } catch (e) {
+      console.log('[=====  err  =====>')
+      console.log(e)
+      console.log('<=====  /err  =====]')
+    }
   },
 
   async get(req, res) {
-    const userAccount = await UserAccount.findOne(userAccountQuery.get({ req }))
+    try {
+      const userAccount = await UserAccount.findByPk(req.params.id)
 
-    if (!userAccount) {
-      return res.status(404).send({
-        message: '404 on UserAccount get',
+      if (!userAccount) {
+        return res.status(404).send({
+          message: '404 on UserAccount get',
+        })
+      }
+
+      return res.status(200).send(userAccount)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(userAccount)
   },
 
   async getReport(req, res) {
-    const userAccountSoldOperations = await MarketOperation.findAll(
-      userAccountQuery.accountReport({
-        req,
-        User,
-        Account,
-        UserAccount,
-        MarketMovement,
-        Product,
-        Broker,
-        Commodity,
-        AssetClass,
-        sequelize,
-      })
-    )
+    try {
+      const userAccountSoldOperations = await MarketOperation.findAll(
+        userAccountQuery.accountReport({
+          req,
+          User,
+          Account,
+          UserAccount,
+          MarketMovement,
+          Product,
+          Broker,
+          Commodity,
+          AssetClass,
+          sequelize,
+        })
+      )
 
-    if (!userAccountSoldOperations) {
-      return res.status(404).send({
-        message: 'No se encontraron Operaciones Vendidas para la cuenta indicada',
+      if (!userAccountSoldOperations) {
+        return res.status(404).send({
+          message: 'No se encontraron Operaciones Vendidas para la cuenta indicada',
+        })
+      }
+
+      return res.status(200).send(userAccountSoldOperations)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(userAccountSoldOperations)
   },
 
   async getByUser(req, res) {
-    const userAccount = await UserAccount.findAll(
-      userAccountQuery.getByUser({ req, User, Role, Account, Broker, UserAccountMovement })
-    )
+    try {
+      const userAccount = await UserAccount.findAll(
+        userAccountQuery.getByUser({ req, User, Role, Account, Broker, UserAccountMovement })
+      )
 
-    if (!userAccount) {
-      return res.status(404).send({
-        message: '404 on UserAccount get',
+      if (!userAccount) {
+        return res.status(404).send({
+          message: '404 on UserAccount get',
+        })
+      }
+
+      return res.status(200).send(userAccount)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    return res.status(200).send(userAccount)
   },
 
   async update(req, res) {
-    const userId = _.get(req, 'user.id', 0)
-    const userAccount = await UserAccount.findOne({
-      where: {
-        id: req.params.userAccountId,
-      },
-      attributes: {
-        exclude: ['snapShotAccount'],
-      },
-    })
+    try {
+      const userId = _.get(req, 'user.id', 0)
+      const userAccount = await UserAccount.findByPk(req.params.id)
 
-    if (!userAccount) {
-      return res.status(404).send({
-        message: '404 on UserAccount update',
+      if (!userAccount) {
+        return res.status(404).send({
+          message: '404 on UserAccount update',
+        })
+      }
+
+      const userAccountSnapShot = JSON.stringify(userAccount)
+
+      const updatedUserAccount = await userAccount.update({
+        userId: _.get(req, 'body.user.id', userAccount.userId),
+        accountId: _.get(req, 'body.account.id', userAccount.accountId),
+        brokerId: _.get(req, 'body.broker.id', userAccount.brokerId),
+        accountValue: req.body.accountValue || userAccount.accountValue,
+        guaranteeOperation: req.body.guaranteeOperation || userAccount.guaranteeOperation,
+        guaranteeCredits: req.body.guaranteeCredits || userAccount.guaranteeCredits,
+        balanceInitial: req.body.balanceInitial || userAccount.balanceInitial,
+        balanceFinal: req.body.balanceFinal || userAccount.balanceFinal,
+        maintenanceMargin: req.body.maintenanceMargin || userAccount.maintenanceMargin,
+        commissionByReference: req.body.commissionByReference || userAccount.commissionByReference,
+        status: req.body.status || userAccount.status,
+        updatedAt: new Date(),
+        marginUsed: req.body.marginUsed || userAccount.marginUsed,
+        guaranteeOperationNet: req.body.guaranteeOperationNet || userAccount.guaranteeOperationNet,
+        wireTransferAmount: req.body.wireTransferAmount || userAccount.wireTransferAmount,
+      })
+
+      Log({
+        userId,
+        userAccountId: userAccount.id,
+        tableUpdated: 'userAccount',
+        action: 'update',
+        type: 'update',
+        snapShotBeforeAction: userAccountSnapShot,
+        snapShotAfterAction: JSON.stringify(updatedUserAccount),
+      })
+
+      return res.status(200).send(updatedUserAccount)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    const userAccountSnapShot = JSON.stringify(userAccount)
-
-    const updatedUserAccount = await userAccount.update({
-      userId: _.get(req, 'body.user.id', userAccount.userId),
-      accountId: _.get(req, 'body.account.id', userAccount.accountId),
-      brokerId: _.get(req, 'body.broker.id', userAccount.brokerId),
-      accountValue: req.body.accountValue || userAccount.accountValue,
-      guaranteeOperation: req.body.guaranteeOperation || userAccount.guaranteeOperation,
-      guaranteeCredits: req.body.guaranteeCredits || userAccount.guaranteeCredits,
-      balanceInitial: req.body.balanceInitial || userAccount.balanceInitial,
-      balanceFinal: req.body.balanceFinal || userAccount.balanceFinal,
-      maintenanceMargin: req.body.maintenanceMargin || userAccount.maintenanceMargin,
-      commissionByReference: req.body.commissionByReference || userAccount.commissionByReference,
-      status: req.body.status || userAccount.status,
-      updatedAt: new Date(),
-      marginUsed: req.body.marginUsed || userAccount.marginUsed,
-      guaranteeOperationNet: req.body.guaranteeOperationNet || userAccount.guaranteeOperationNet,
-      wireTransferAmount: req.body.wireTransferAmount || userAccount.wireTransferAmount,
-    })
-
-    Log({
-      userId,
-      userAccountId: userAccount.id,
-      tableUpdated: 'userAccount',
-      action: 'update',
-      type: 'update',
-      snapShotBeforeAction: userAccountSnapShot,
-      snapShotAfterAction: JSON.stringify(updatedUserAccount),
-    })
-
-    return res.status(200).send(updatedUserAccount)
   },
 
   async delete(req, res) {
-    const userId = _.get(req, 'user.id', 0)
-    const userAccount = await UserAccount.findOne({
-      where: {
-        id: req.params.userAccountId,
-      },
-    })
+    try {
+      const userId = _.get(req, 'user.id', 0)
+      const userAccount = await UserAccount.findByPk(req.params.id)
 
-    if (!userAccount) {
-      return res.status(404).send({
-        message: 'UserAccount Not Found',
+      if (!userAccount) {
+        return res.status(404).send({
+          message: 'UserAccount Not Found',
+        })
+      }
+
+      Log({ userId, action: 'update', type: 'delete' })
+
+      await userAccount.update({
+        status: 0,
+      })
+
+      return res.status(200).send({
+        message: 'UserAccount has been deleted',
+      })
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
       })
     }
-
-    Log({ userId, action: 'update', type: 'delete' })
-
-    //await userAccount.destroy();
-    await userAccount.update({
-      status: 0,
-    })
-
-    return res.status(200).send({
-      message: 'UserAccount has been deleted',
-    })
   },
 }

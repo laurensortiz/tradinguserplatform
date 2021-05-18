@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import get from 'lodash/get'
 
 function conditionalStatus(req, sequelize) {
   const Op = sequelize.Op
@@ -15,7 +15,7 @@ function conditionalStatus(req, sequelize) {
 }
 
 const queries = {
-  list: ({ req, sequelize, User, Account, MarketOperation, Product, Broker }) => {
+  list: ({ req, sequelize, User, Account, Broker }) => {
     const Op = sequelize.Op
     const statusActive = get(req, 'body.status', 1)
     const associatedOperation = get(req, 'body.associatedOperation', 1)
@@ -26,8 +26,42 @@ const queries = {
       where: {
         status: statusActive,
       },
-      attributes: {
-        exclude: ['snapShotAccount'],
+      include: [
+        {
+          model: User,
+          as: 'user',
+          attributes: ['firstName', 'lastName', 'username', 'userID', 'startDate'],
+        },
+        {
+          model: Account,
+          as: 'account',
+          where: {
+            associatedOperation: conditionalAssociatedOperation,
+          },
+        },
+        {
+          model: Broker,
+          as: 'broker',
+          attributes: ['name', 'id'],
+        },
+      ],
+
+      order: [['createdAt', 'DESC']],
+    }
+  },
+  accountsReport: ({ req, sequelize, User, Account, Broker, MarketOperation, Product }) => {
+    const Op = sequelize.Op
+    const statusActive = get(req, 'body.status', 1)
+    const associatedOperation = get(req, 'body.associatedOperation', 1)
+    const conditionalAssociatedOperation =
+      associatedOperation > 0 ? associatedOperation : { [Op.gt]: 0 }
+    console.log('[=====  test  =====>')
+    console.log(req.body.accountListIds)
+    console.log('<=====  /test  =====]')
+    return {
+      where: {
+        status: statusActive,
+        id: req.body.accountListIds,
       },
       include: [
         {
@@ -64,26 +98,11 @@ const queries = {
       order: [['createdAt', 'DESC']],
     }
   },
-  get: ({ req }) => {
-    return {
-      where: {
-        id: req.params.userAccountId || 0,
-        status: 1,
-      },
-      attributes: {
-        exclude: ['snapShotAccount'],
-      },
-      order: [['createdAt', 'DESC']],
-    }
-  },
   getByUser: ({ req, User, Account, UserAccountMovement }) => {
     return {
       where: {
         status: 1,
         userId: req.params.userId || 0,
-      },
-      attributes: {
-        exclude: ['snapShotAccount'],
       },
       include: [
         {
@@ -128,9 +147,6 @@ const queries = {
         {
           model: UserAccount,
           as: 'userAccount',
-          attributes: {
-            exclude: ['snapShotAccount'],
-          },
           include: [
             {
               model: User,
