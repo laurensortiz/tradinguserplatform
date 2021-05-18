@@ -33,11 +33,11 @@ class NavPrivate extends PureComponent {
               <Icon type="dollar" /> <span>WireTransfer</span>
             </Link>
           </li>
-          {/*<li>*/}
-          {/*  <Link className="menu-item" href="/daily-technical-report">*/}
-          {/*    <Icon type="global" /> <span>DTR</span>*/}
-          {/*  </Link>*/}
-          {/*</li>*/}
+          <li>
+            <Link className="menu-item" href="/daily-technical-report">
+              <Icon type="global" /> <span>DTR</span>
+            </Link>
+          </li>
           <li>
             <Link className="menu-item" href="/settings">
               <Icon type="setting" /> <span>Ajustes</span>

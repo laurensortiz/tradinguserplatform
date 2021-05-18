@@ -1,57 +1,38 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-import moment from 'moment-timezone'
-import crypto from 'crypto'
+import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { withNamespaces } from 'react-i18next'
-
-import { Skeleton } from 'antd'
-import _ from 'lodash'
-import InnerHTML from 'dangerously-set-html-content'
-
 import Document from '../components/Document'
 
-import { pageOperations } from '../state/modules/pages'
+import InnerHTML from 'dangerously-set-html-content'
+import moment from 'moment-timezone'
+import crypto from 'crypto'
 
-class Pages extends Component {
-  state = {
-    page: {
-      name: '',
-      content: '',
-    },
-    updated: false,
-  }
+function Page({ lng }) {
+  const { username } = useSelector((state) => ({
+    username: state.authState.currentUser.username || '',
+  }))
+  const [currentLang, setCurrentLang] = useState('es-US')
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let updatedState = {}
-
-    if (!_.isEqual(nextProps.page, prevState.page)) {
-      _.assignIn(updatedState, {
-        page: nextProps.page,
-      })
+  useEffect(() => {
+    if (lng == !currentLang) {
+      setCurrentLang(lng)
     }
+  }, [lng])
 
-    return !_.isEmpty(updatedState) ? updatedState : null
-  }
-
-  componentDidMount() {
-    this.props.fetchGetPage(3)
-  }
-
-  handshakeURL = () => {
+  const handshakeURL = () => {
     const key = 'bhkj0c53uLMUDApy7vR@^W3V'
     const gtm = moment.tz(new Date().toUTCString(), 'GMT')
     const aci = moment(gtm).format('YYYYMMDDHHmmss')
-    const lang = this.props.lng ? this.props.lng.split('-')[0] : 'es'
-    const usi = this.props.username
-    const params = `page=economic_calendar&usi=${usi}&aci=${aci}&lang=${lang}`
+    const lang = currentLang.split('-')[0]
+    const usi = username
+    const params = `page=av_ideas&usi=${usi}&aci=${aci}&lang=${lang}`
     const cipher = crypto.createCipheriv('des-ede3', key, '')
     const encrypted = `${cipher.update(params, 'utf8', 'base64')}${cipher.final('base64')}`
 
     return `https://site.recognia.com/royalcapital/serve.shtml?tkn=${encodeURIComponent(encrypted)}`
   }
 
-  render() {
+  const content = () => {
     const iframeContent = `
       <script async type="text/javascript">
       /*! iFrame Resizer (iframeSizer.min.js ) - v4.2.10 - 2020-02-04
@@ -67,36 +48,14 @@ class Pages extends Component {
       <iframe id="tradingcentral" src="handshakeURL" allowfullscreen="true" frameborder="0" scrolling="no" width="100%" height="2500">
       <script async language="javascript">iFrameResize();</script>
     `
-    const content = iframeContent.replace('handshakeURL', this.handshakeURL())
-
-    return (
-      <Document className="static-page iframe-page">
-        <Skeleton active loading={this.props.isLoading}>
-          {!_.isEmpty(this.state.page.content) ? <InnerHTML html={content} /> : null}
-        </Skeleton>
-      </Document>
-    )
+    return iframeContent.replace('handshakeURL', handshakeURL())
   }
-}
 
-function mapStateToProps(state) {
-  return {
-    page: state.pagesState.item,
-    isLoading: state.pagesState.isLoading,
-    isSuccess: state.pagesState.isSuccess,
-    isFailure: state.pagesState.isFailure,
-    message: state.pagesState.message,
-    username: state.authState.currentUser.username || '',
-  }
-}
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      fetchGetPage: pageOperations.fetchGetPage,
-      resetAfterRequest: pageOperations.resetAfterRequest,
-    },
-    dispatch
+  return (
+    <Document className="static-page iframe-page">
+      <InnerHTML html={content()} />
+    </Document>
   )
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNamespaces()(Pages))
+export default withNamespaces()(Page)
