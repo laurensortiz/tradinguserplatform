@@ -639,15 +639,9 @@ module.exports = {
             result = await Promise.all(
               operationsIds.map(async (operationID) => {
                 // Find Operation
-                const marketOperation = await MarketOperation.findOne(
-                  {
-                    where: {
-                      id: operationID,
-                    },
-                    silence: true,
-                  },
-                  { transaction: t }
-                )
+                const marketOperation = await MarketOperation.findByPk(operationID, {
+                  transaction: t,
+                })
 
                 /**
                  * Run some basic validations
@@ -985,14 +979,7 @@ module.exports = {
             // In this case operationsIds refers to User Accounts Ids
             result = await Promise.all(
               operationsIds.map(async (accountId, index) => {
-                const userAccount = await UserAccount.findOne(
-                  {
-                    where: {
-                      id: accountId,
-                    },
-                  },
-                  { transaction: t }
-                )
+                const userAccount = await UserAccount.findByPk(accountId, { transaction: t })
 
                 if (!userAccount) {
                   throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
@@ -1001,13 +988,12 @@ module.exports = {
                 const snapShotAccount = JSON.stringify(userAccount)
 
                 try {
-                  const lastMarketOperationEntry = await MarketOperation.findAll({
-                    limit: 1,
-                    attributes: ['orderId'],
-                    order: [['id', 'DESC']],
-                  })
-
                   if (index === 0) {
+                    const lastMarketOperationEntry = await MarketOperation.findAll({
+                      limit: 1,
+                      attributes: ['orderId'],
+                      order: [['id', 'DESC']],
+                    })
                     nextOrderId = Number(lastMarketOperationEntry[0].orderId) + 1
                   } else {
                     nextOrderId = nextOrderId + 1
@@ -1029,7 +1015,7 @@ module.exports = {
                       amount: updateValue.amount,
                       initialAmount: updateValue.amount,
                       holdStatusCommission: updateValue.holdStatusCommission || 0,
-                      orderId: nextOrderId || 0,
+                      orderId: nextOrderId,
                       status: _.get(updateValue, 'status', 1),
                       createdAt: moment(updateValue.createdAt || new Date())
                         .tz('America/New_York')
