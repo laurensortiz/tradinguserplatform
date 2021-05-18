@@ -9,11 +9,6 @@ class NavPrivate extends PureComponent {
       <>
         <ul className="main-menu">
           <li>
-            <Link className="menu-item" href="/daily-technical-report">
-              <Icon type="global" /> <span>DTR</span>
-            </Link>
-          </li>
-          <li>
             <Link className="menu-item" href="/users">
               <Icon type="user" /> <span>Usuarios</span>
             </Link>
@@ -36,6 +31,11 @@ class NavPrivate extends PureComponent {
           <li>
             <Link className="menu-item" href="/wire-transfer-requests">
               <Icon type="dollar" /> <span>WireTransfer</span>
+            </Link>
+          </li>
+          <li>
+            <Link className="menu-item" href="/daily-technical-report">
+              <Icon type="global" /> <span>DTR</span>
             </Link>
           </li>
           <li>
