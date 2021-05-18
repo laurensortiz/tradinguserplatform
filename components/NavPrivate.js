@@ -10,7 +10,7 @@ class NavPrivate extends PureComponent {
         <ul className="main-menu">
           <li>
             <Link className="menu-item" href="/daily-technical-report">
-              <Icon type="global" /> <span>RTD</span>
+              <Icon type="global" /> <span>DTR</span>
             </Link>
           </li>
           <li>
