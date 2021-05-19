@@ -243,6 +243,8 @@ class AccountInformation extends PureComponent {
                     </Descriptions.Item>
 
                     <Descriptions.Item label={t('commissionsByReference')}>
+                      {FormatCurrency.format(commissionByReference)}
+
                       <Button
                         type="tertiary"
                         style={{ marginLeft: 10, fontSize: 15 }}
