@@ -56,7 +56,7 @@
     "moment-range": "^4.0.2",
     "moment-timezone": "^0.5.28",
     "morgan": "^1.9.1",
-    "next": "8.0.3",
+    "next": "9.3.2",
     "node-sass": "^4.12.0",
     "nodemailer": "^6.4.11",
     "now-env": "^3.1.0",
