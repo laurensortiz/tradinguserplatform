@@ -53,7 +53,7 @@ class UserOperations extends Component {
 
     if (nextProps.isWireTransferRequestAddCompleted && nextProps.isWireTransferRequestSuccess) {
       message.destroy()
-      message.success(nextProps.t('actionMessage wireTransferCreated'), 3, () => {
+      message.success(nextProps.t('actionMessage wireTransferCreated'), 10, () => {
         nextProps.resetWireTransferRequestAfterRequest()
       })
     }

@@ -419,14 +419,7 @@ module.exports = {
     const userId = _.get(req, 'user.id', 0)
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body
-      console.log('[=====  BULK DETAIIL  =====>')
-      console.log('IDS', operationsIds)
-      console.log('Type', updateType)
-      console.log('Value', updateValue)
-      console.log('Scope', updateScope)
-      console.log('<=====  /BULK DETAIIL  =====]')
-      let result
-      let pivotUserAccountTable = []
+
       await ORM.transaction(async (t) => {
         switch (updateScope) {
           case 'status':
@@ -434,40 +427,29 @@ module.exports = {
               /**
                * Close Operation
                */
-
-              for (const operationID of operationsIds) {
-                const marketOperation = await MarketOperation.findOne(
-                  {
-                    where: {
-                      id: operationID,
-                    },
-                    include: [
-                      {
-                        model: UserAccount,
-                        as: 'userAccount',
-                        include: [
-                          {
-                            model: Account,
-                            as: 'account',
-                            attributes: ['name', 'percentage', 'associatedOperation'],
-                          },
-                        ],
-                      },
-                    ],
-                    silence: true,
+              let pivotUserAccountTable = []
+              const marketOperations = await MarketOperation.findAll(
+                {
+                  where: {
+                    id: operationsIds,
                   },
-                  { transaction: t }
-                )
+                  order: [['id', 'ASC']],
+                },
+                { transaction: t }
+              )
 
-                if (!marketOperation) {
-                  throw new Error('Ocurrió un error al momento de buscar la operación')
+              if (!marketOperations) {
+                throw new Error('Ocurrió un error al momento de buscar la operación')
+              }
+
+              for (let marketOperation of marketOperations) {
+                if (marketOperation.status === 4) {
+                  throw new Error(
+                    `Una o más operaciones seleccionas ya se encuentran cerradas. [Operación ID= ${marketOperation.id}]`
+                  )
                 }
 
                 const marketOperationSnapShot = JSON.stringify(marketOperation)
-
-                if (marketOperation.status === 4) {
-                  throw new Error('Una o más operaciones seleccionas ya se encuentran cerradas')
-                }
 
                 const userAccountIndex = _.findIndex(pivotUserAccountTable, {
                   id: marketOperation.userAccountId,
@@ -480,20 +462,25 @@ module.exports = {
                         where: {
                           id: marketOperation.userAccountId,
                         },
+                        include: [
+                          {
+                            model: Account,
+                            as: 'account',
+                            attributes: ['percentage'],
+                          },
+                        ],
                       })
 
                 if (!userAccount) {
                   throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
                 }
+
                 const accountValueBeforeEndOperation = `${userAccount.accountValue}`
-                const {
-                  initialAmount,
-                  amount,
-                  holdStatusCommission,
-                  maintenanceMargin,
-                  assetClassId,
-                } = marketOperation
-                const { percentage } = marketOperation.userAccount.account
+
+                const { initialAmount, amount, maintenanceMargin, assetClassId } = marketOperation
+
+                const { percentage } = userAccount.account
+
                 const isBrokerGuarantee =
                   userAccount.accountId === 10 ||
                   userAccount.accountId === 12 ||
@@ -601,10 +588,8 @@ module.exports = {
                 }
               }
               pivotUserAccountTable = []
-              result = 'All operations has been sold'
-              //END SELL OPERATION
             } else {
-              result = await MarketOperation.update(
+              await MarketOperation.update(
                 {
                   [updateType]: updateValue,
                 },
@@ -613,36 +598,44 @@ module.exports = {
               )
             }
 
-            return res.status(200).send(result)
+            return res.status(200).send('Completed')
 
           case 'stopLost':
-            result = await MarketOperation.update(
+            await MarketOperation.update(
               {
                 stopLost: updateValue,
               },
               { where: { id: operationsIds } },
               { transaction: t }
             )
-            return res.status(200).send(result)
+            return res.status(200).send('Completed')
 
           case 'takingProfit':
-            result = await MarketOperation.update(
+            await MarketOperation.update(
               {
                 takingProfit: updateValue,
               },
               { where: { id: operationsIds } },
               { transaction: t }
             )
-            return res.status(200).send(result)
+            return res.status(200).send('Completed')
 
           case 'price':
-            result = await Promise.all(
-              operationsIds.map(async (operationID) => {
-                // Find Operation
-                const marketOperation = await MarketOperation.findByPk(operationID, {
-                  transaction: t,
-                })
+            const allOperations = await MarketOperation.findAll(
+              {
+                where: {
+                  id: operationsIds,
+                },
+              },
+              { transaction: t }
+            )
 
+            if (!allOperations) {
+              throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
+            }
+
+            await Promise.all(
+              allOperations.map(async (marketOperation) => {
                 /**
                  * Run some basic validations
                  */
@@ -681,7 +674,6 @@ module.exports = {
                       )
                     }
                     break
-
                   /**
                    * GOLD FU | OP
                    */
@@ -694,7 +686,6 @@ module.exports = {
                       )
                     }
                     break
-
                   /**
                    * GOLD FU | OP
                    */
@@ -962,7 +953,7 @@ module.exports = {
                 return await MarketMovement.create(
                   {
                     gpInversion: ToFixNumber(calculatedValue + amount),
-                    marketOperationId: operationID,
+                    marketOperationId: marketOperation.id,
                     gpAmount: ToFixNumber(calculatedValue),
                     marketPrice,
                     status: 1,
@@ -976,15 +967,22 @@ module.exports = {
             break
           case 'create-operation':
             let nextOrderId = 0
+            const userAccounts = await UserAccount.findAll(
+              {
+                where: {
+                  id: operationsIds,
+                },
+              },
+              { transaction: t }
+            )
+
+            if (!userAccounts) {
+              throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
+            }
             // In this case operationsIds refers to User Accounts Ids
-            result = await Promise.all(
-              operationsIds.map(async (accountId, index) => {
-                const userAccount = await UserAccount.findByPk(accountId, { transaction: t })
 
-                if (!userAccount) {
-                  throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
-                }
-
+            await Promise.all(
+              userAccounts.map(async (userAccount, index) => {
                 const snapShotAccount = JSON.stringify(userAccount)
 
                 try {

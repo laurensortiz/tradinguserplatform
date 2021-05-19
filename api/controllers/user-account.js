@@ -206,7 +206,15 @@ module.exports = {
   async getByUser(req, res) {
     try {
       const userAccount = await UserAccount.findAll(
-        userAccountQuery.getByUser({ req, User, Role, Account, Broker, UserAccountMovement })
+        userAccountQuery.getByUser({
+          req,
+          User,
+          Role,
+          Account,
+          Broker,
+          UserAccountMovement,
+          UserAccount,
+        })
       )
 
       if (!userAccount) {
