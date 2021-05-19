@@ -32,11 +32,10 @@ class Pages extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchGetPage(2)
+    this.props.fetchGetPage(3)
   }
 
   render() {
-    console.log(this.state.updated)
     return (
       <Document className="static-page">
         <Skeleton active loading={this.props.isLoading}>
@@ -63,9 +62,6 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchGetPage: pageOperations.fetchGetPage,
-      fetchAddPage: pageOperations.fetchAddPage,
-      fetchEditPage: pageOperations.fetchEditPage,
-      fetchDeletePage: pageOperations.fetchDeletePage,
       resetAfterRequest: pageOperations.resetAfterRequest,
     },
     dispatch

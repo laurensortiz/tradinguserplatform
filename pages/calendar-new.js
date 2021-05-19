@@ -8,10 +8,12 @@ import moment from 'moment-timezone'
 import crypto from 'crypto'
 
 function Page({ lng }) {
+  const dispatch = useDispatch()
+  const [currentLang, setCurrentLang] = useState('es-US')
+
   const { username } = useSelector((state) => ({
     username: state.authState.currentUser.username || '',
   }))
-  const [currentLang, setCurrentLang] = useState('es-US')
 
   useEffect(() => {
     if (lng == !currentLang) {
@@ -25,7 +27,7 @@ function Page({ lng }) {
     const aci = moment(gtm).format('YYYYMMDDHHmmss')
     const lang = currentLang.split('-')[0]
     const usi = username
-    const params = `page=av_ideas&usi=${usi}&aci=${aci}&lang=${lang}`
+    const params = `page=economic_calendar&usi=${usi}&aci=${aci}&lang=${lang}`
     const cipher = crypto.createCipheriv('des-ede3', key, '')
     const encrypted = `${cipher.update(params, 'utf8', 'base64')}${cipher.final('base64')}`
 

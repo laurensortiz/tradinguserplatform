@@ -1,71 +1,26 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-
-import { Skeleton } from 'antd'
-import _ from 'lodash'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import InnerHTML from 'dangerously-set-html-content'
 
+import { pageOperations } from '../state/modules/pages'
 import Document from '../components/Document'
 
-import { pageOperations } from '../state/modules/pages'
+function Page() {
+  const dispatch = useDispatch()
 
-class Pages extends Component {
-  state = {
-    page: {
-      name: '',
-      content: '',
-    },
-    updated: false,
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let updatedState = {}
-
-    if (!_.isEqual(nextProps.page, prevState.page)) {
-      _.assignIn(updatedState, {
-        page: nextProps.page,
-      })
-    }
-
-    return !_.isEmpty(updatedState) ? updatedState : null
-  }
-
-  componentDidMount() {
-    this.props.fetchGetPage(3)
-  }
-
-  render() {
-    console.log(this.state.updated)
-    return (
-      <Document className="static-page">
-        <Skeleton active loading={this.props.isLoading}>
-          {!_.isEmpty(this.state.page.content) ? (
-            <InnerHTML html={`${this.state.page.content}`} />
-          ) : null}
-        </Skeleton>
-      </Document>
-    )
-  }
-}
-
-function mapStateToProps(state) {
-  return {
+  const { page } = useSelector((state) => ({
     page: state.pagesState.item,
-    isLoading: state.pagesState.isLoading,
-    isSuccess: state.pagesState.isSuccess,
-    isFailure: state.pagesState.isFailure,
-    message: state.pagesState.message,
-  }
+  }))
+
+  useEffect(() => {
+    dispatch(pageOperations.fetchGetPage(3))
+  }, [])
+
+  return (
+    <Document className="static-page">
+      <InnerHTML html={`${page.content}`} />
+    </Document>
+  )
 }
 
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      fetchGetPage: pageOperations.fetchGetPage,
-      resetAfterRequest: pageOperations.resetAfterRequest,
-    },
-    dispatch
-  )
-
-export default connect(mapStateToProps, mapDispatchToProps)(Pages)
+export default Page

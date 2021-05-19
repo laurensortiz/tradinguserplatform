@@ -1,134 +1,98 @@
-import React, { Component } from 'react';
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { Skeleton } from 'antd';
-import _ from 'lodash';
-import videojs from 'video.js';
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import InnerHTML from 'dangerously-set-html-content'
+import videoJS from 'video.js'
 
-import Document from '../components/Document';
+import { pageOperations } from '../state/modules/pages'
+import Document from '../components/Document'
 
-import { pageOperations } from "../state/modules/pages";
-import InnerHTML from "dangerously-set-html-content";
+function Page() {
+  const dispatch = useDispatch()
+  const [currentLang, setCurrentLang] = useState('es-US')
+  const [videoEl, setVideoEl] = useState(null)
+  let player
 
-
-class Pages extends Component {
-  state = {
-    page: {
-      name: '',
-      content: '',
-    },
-    updated: false,
-  };
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let updatedState = {};
-
-    if (!_.isEqual( nextProps.page, prevState.page )) {
-      _.assignIn( updatedState, {
-        page: nextProps.page
-      } )
-
-
+  useEffect(() => {
+    if (videoEl) {
+      player = videoJS(
+        videoEl,
+        {
+          autoplay: true,
+          controls: true,
+        },
+        function onPlayerReady() {
+          console.log('onPlayerReady', this)
+        }
+      )
     }
-
-    return !_.isEmpty( updatedState ) ? updatedState : null;
-  }
-
-  componentDidMount() {
-    this.props.fetchGetPage( 1 );
-    this.player = videojs( this.videoNode, {
-      autoplay: true,
-      controls: true,
-    }, function onPlayerReady() {
-      console.log( 'onPlayerReady', this )
-    } );
-
-  };
-
-  componentWillUnmount() {
-    if (this.player) {
-      this.player.dispose()
+    return () => {
+      if (player) {
+        player.dispose()
+      }
     }
-  }
+  }, [videoEl])
 
-  render() {
+  const onVideo = useCallback((el) => {
+    if (el) {
+      setVideoEl(el)
+    }
+  }, [])
 
-    return (
-
-      <Document className="static-page">
-        <style jsx>{ `
-          .news-container {
-            margin-bottom: 40px;
-          }
-          
-          .news-container h2 {
-            color: #fff;
-            font-weight: bold;
-            background: #000;
-            margin: 0;
-            padding: 5px 10px;
-            
-          }
-          
-          .news-container h2 span {
-            width: 10px;
-            height: 10px;
-            display: inline-block;
-            background: red;
-            border-radius: 50%;
-          }
-          
-          .news-container .video-js, .video-js {
-            width: 100%;
-          }
-      ` }</style>
-        );
-        <div className="news-container">
-          <h2>Noticias en vivo <span></span></h2>
-          <div data-vjs-player>
-            <video ref={ node => this.videoNode = node } className="video-js" width="100%" height="500">
-              <source type="application/x-mpegURL"
-                      src="https://liveproduseast.global.ssl.fastly.net/btv/desktop/us_live.m3u8"/>
-            </video>
-          </div>
-        </div>
-
-
-        <Skeleton active loading={ this.props.isLoading }>
-          {
-            ( !_.isEmpty( this.state.page.content ) ) ? (
-              <div className="widget-box-container">
-                <InnerHTML html={ `${ this.state.page.content }` }/>
-              </div>
-
-            ) : null
-          }
-
-        </Skeleton>
-
-      </Document>
-    );
-  }
-}
-
-function mapStateToProps(state) {
-  return {
+  const { page } = useSelector((state) => ({
     page: state.pagesState.item,
-    isLoading: state.pagesState.isLoading,
-    isSuccess: state.pagesState.isSuccess,
-    isFailure: state.pagesState.isFailure,
-    message: state.pagesState.message,
-  }
+  }))
+
+  useEffect(() => {
+    dispatch(pageOperations.fetchGetPage(1))
+  }, [])
+
+  return (
+    <Document className="static-page iframe-page">
+      <style jsx>{`
+        .news-container {
+          margin-bottom: 40px;
+        }
+
+        .news-container h2 {
+          color: #fff;
+          font-weight: bold;
+          background: #000;
+          margin: 0;
+          padding: 5px 10px;
+        }
+
+        .news-container h2 span {
+          width: 10px;
+          height: 10px;
+          display: inline-block;
+          background: red;
+          border-radius: 50%;
+        }
+
+        .news-container .video-js,
+        .video-js {
+          width: 100%;
+        }
+      `}</style>
+
+      <div className="news-container">
+        <h2>
+          Noticias en vivo <span></span>
+        </h2>
+        <div data-vjs-player>
+          <video id="video" ref={onVideo} className="video-js" width="100%" height="500">
+            <source
+              type="application/x-mpegURL"
+              src="https://liveproduseast.global.ssl.fastly.net/btv/desktop/us_live.m3u8"
+            />
+          </video>
+        </div>
+      </div>
+      <div className="widget-box-container">
+        <InnerHTML html={`${page.content}`} />
+      </div>
+    </Document>
+  )
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators( {
-    fetchGetPage: pageOperations.fetchGetPage,
-    fetchAddPage: pageOperations.fetchAddPage,
-    fetchEditPage: pageOperations.fetchEditPage,
-    fetchDeletePage: pageOperations.fetchDeletePage,
-    resetAfterRequest: pageOperations.resetAfterRequest,
-  }, dispatch );
-
-
-export default connect( mapStateToProps, mapDispatchToProps )( Pages );
+export default Page
