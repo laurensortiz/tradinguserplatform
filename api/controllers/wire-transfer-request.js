@@ -213,6 +213,15 @@ module.exports = {
 
     try {
       await ORM.transaction(async (t) => {
+        let closedAt
+        if (req.body.status === 4 && !wireTransferRequest.closedAt) {
+          closedAt = moment(new Date()).tz('America/New_York').format()
+        } else {
+          closedAt = !!req.body.closedAt
+            ? moment(req.body.closedAt).tz('America/New_York').format()
+            : wireTransferRequest.closedAt
+        }
+
         const updatedWireTransferRequest = await wireTransferRequest.update(
           {
             currencyType: req.body.currencyType || wireTransferRequest.currencyType,
@@ -266,10 +275,10 @@ module.exports = {
               req.body.associatedOperation | wireTransferRequest.associatedOperation,
             status: req.body.status,
             updatedAt: moment(new Date()).tz('America/New_York').format(),
-            closedAt:
-              req.body.status === 4
-                ? moment(new Date()).tz('America/New_York').format()
-                : wireTransferRequest.closedAt,
+            createdAt: !!req.body.createdAt
+              ? moment(req.body.createdAt).tz('America/New_York').format()
+              : wireTransferRequest.createdAt,
+            closedAt,
           },
           { transaction: t }
         )

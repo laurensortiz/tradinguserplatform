@@ -51,7 +51,6 @@ class Accounts extends Component {
     }
 
     if (nextProps.isListReportSuccess && nextProps.isListReportComplete) {
-      console.log(nextProps.listReportData)
       if (_.isEmpty(nextProps.listReportData)) {
         notification.info({
           message: 'No se encontraron Operaciones para esta cuenta',
@@ -261,7 +260,8 @@ class Accounts extends Component {
       result.push(account.id)
       return result
     }, [])
-    this.props.fetchGetUserAccountListReport(accountsSelectedIds)
+    const associatedOperation = this.state.associatedOperation
+    this.props.fetchGetUserAccountListReport({ accountsSelectedIds, associatedOperation })
   }
 
   _handleTabChange = ({ target }) => {

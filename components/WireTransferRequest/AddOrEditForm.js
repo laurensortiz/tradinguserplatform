@@ -192,6 +192,11 @@ class AddOrEditForm extends PureComponent {
       createdAt: moment.tz(date, 'America/New_York').format(),
     })
   }
+  _setClosedDate = (date) => {
+    this.setState({
+      closedAt: moment.tz(date, 'America/New_York').format(),
+    })
+  }
 
   handleInversion = (rule, value, callback) => {
     const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
@@ -370,6 +375,10 @@ class AddOrEditForm extends PureComponent {
 
     const createdDateInitValue = !_.isNull(this.state.createdAt)
       ? moment.tz(this.state.createdAt, 'America/New_York')
+      : undefined
+
+    const closedDateInitValue = !_.isNull(this.state.closedAt)
+      ? moment.tz(this.state.closedAt, 'America/New_York')
       : undefined
 
     return (
@@ -896,7 +905,8 @@ class AddOrEditForm extends PureComponent {
               )}
             </Form.Item>
           </Col>
-          <Col xs={24} sm={12}>
+
+          <Col xs={24} sm={6}>
             <Form.Item label="Fecha de Creación">
               {getFieldDecorator('createdAt', {
                 initialValue: createdDateInitValue,
@@ -905,6 +915,19 @@ class AddOrEditForm extends PureComponent {
                   onChange={this._setCreatedDate}
                   defaultPickerValue={createdDateInitValue}
                   placeholder="Fecha de Creación"
+                />
+              )}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={6}>
+            <Form.Item label="Fecha de Cancelación">
+              {getFieldDecorator('closedAt', {
+                initialValue: closedDateInitValue,
+              })(
+                <DatePicker
+                  onChange={this._setClosedDate}
+                  defaultPickerValue={closedDateInitValue}
+                  placeholder="Fecha de Cancelación"
                 />
               )}
             </Form.Item>
