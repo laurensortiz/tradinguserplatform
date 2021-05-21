@@ -53,15 +53,13 @@ const queries = {
     const Op = sequelize.Op
     const statusActive = get(req, 'body.status', 1)
     const associatedOperation = get(req, 'body.associatedOperation', 1)
+    const accountsSelectedIds = get(req, 'body.accountsSelectedIds', [])
     const conditionalAssociatedOperation =
       associatedOperation > 0 ? associatedOperation : { [Op.gt]: 0 }
-    console.log('[=====  test  =====>')
-    console.log(req.body.accountListIds)
-    console.log('<=====  /test  =====]')
     return {
       where: {
         status: statusActive,
-        id: req.body.accountListIds,
+        id: accountsSelectedIds,
       },
       include: [
         {

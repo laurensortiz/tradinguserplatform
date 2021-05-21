@@ -34,7 +34,7 @@ export const getUserAccountListReport = async (accountListIds) => {
   return fetch({
     method: 'post',
     url: `user-accounts/list-report`,
-    data: { accountListIds },
+    data: accountListIds,
   })
 }
 
