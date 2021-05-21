@@ -55,9 +55,6 @@ const queries = {
     const associatedOperation = get(req, 'body.associatedOperation', 1)
     const conditionalAssociatedOperation =
       associatedOperation > 0 ? associatedOperation : { [Op.gt]: 0 }
-    console.log('[=====  test  =====>')
-    console.log(req.body.accountListIds)
-    console.log('<=====  /test  =====]')
     return {
       where: {
         status: statusActive,
@@ -138,8 +135,6 @@ const queries = {
     MarketMovement,
     Product,
     Broker,
-    Commodity,
-    AssetClass,
     sequelize,
   }) => {
     return {
@@ -147,7 +142,6 @@ const queries = {
         userAccountId: req.body.id,
         status: conditionalStatus(req, sequelize),
       },
-
       include: [
         {
           model: UserAccount,
@@ -170,26 +164,21 @@ const queries = {
           model: MarketMovement,
           as: 'marketMovement',
           limit: 1,
+          attributes: ['gpInversion', 'gpAmount'],
           order: [['createdAt', 'DESC']],
         },
         {
           model: Product,
           as: 'product',
+          attributes: ['name', 'code'],
         },
         {
           model: Broker,
           as: 'broker',
-        },
-        {
-          model: Commodity,
-          as: 'commodity',
-        },
-        {
-          model: AssetClass,
-          as: 'assetClass',
+          attributes: ['name'],
         },
       ],
-      order: [['guaranteeOperationValueEndOperation', 'ASC']],
+      order: [['id', 'ASC']],
       silence: true,
     }
   },
