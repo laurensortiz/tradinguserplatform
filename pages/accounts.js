@@ -13,7 +13,9 @@ import AddOrEditUserAccountForm from '../components/UserAccount/AddOrEditUserAcc
 import { userAccountOperations } from '../state/modules/userAccounts'
 import { marketOperationOperations } from '../state/modules/marketOperation'
 import ExportHistoryReport from '../components/Operation/shared/ExportUserAccountHistory'
-import ExportUserAccountDetail from '../components/Operation/shared/ExportUserAccountDetail'
+import ExportUserAccountOTCDetail from '../components/Operation/shared/ExportUserAccountOTCDetail'
+import ExportUserAccountProfitMonthDetail from '../components/Operation/shared/ExportUserAccountProfitMonthDetail'
+
 import MovementsTable from '../components/UserAccount/MovementsTable'
 
 class Accounts extends Component {
@@ -60,7 +62,12 @@ class Accounts extends Component {
           duration: 3,
         })
       } else {
-        ExportUserAccountDetail(nextProps.listReportData)
+        if (prevState.associatedOperation === 1) {
+          ExportUserAccountOTCDetail(nextProps.listReportData)
+        } else {
+          ExportUserAccountProfitMonthDetail(nextProps.listReportData)
+        }
+
         notification.success({
           message: 'Descargando Reporte de cuentas',
           onClose: () => {
