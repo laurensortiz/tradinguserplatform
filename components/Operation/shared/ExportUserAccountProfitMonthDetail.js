@@ -13,6 +13,7 @@ const EXCEL_HEADER_MARKET = [
   'Tipo de Cuenta',
   'Comisión',
   'Valor de la Cuenta',
+  'Wire Transfer Activo',
   'Broker',
   'Saldo Inicial',
   'Saldo Final',
@@ -44,6 +45,10 @@ const _formatData = (data) => {
       })
     }
 
+    const wireTransferAmount = !!account.wireTransferAmount
+      ? account.wireTransferAmount.replace('-', '')
+      : 0.0
+
     return {
       Usuario: account.user.username,
       Nombre: account.user.firstName,
@@ -51,6 +56,7 @@ const _formatData = (data) => {
       'Tipo de Cuenta': account.account.name,
       Comisión: `${account.account.percentage}%`,
       'Valor de la Cuenta': FormatCurrency.format(account.accountValue),
+      'Wire Transfer Activo': FormatCurrency.format(wireTransferAmount),
       Broker: brokerName,
       'Saldo Inicial': FormatCurrency.format(account.balanceInitial),
       'Saldo Final': FormatCurrency.format(account.balanceInitial),
