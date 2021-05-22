@@ -634,339 +634,339 @@ module.exports = {
               throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
             }
 
-            await Promise.all(
-              allOperations.map(async (marketOperation) => {
-                /**
-                 * Run some basic validations
-                 */
-                if (!marketOperation) {
-                  throw new Error('Ocurrió un error al momento de buscar la operación')
-                }
+            for (let marketOperation of allOperations) {
+              /**
+               * Run some basic validations
+               */
+              if (!marketOperation) {
+                throw new Error('Ocurrió un error al momento de buscar la operación')
+              }
 
-                if (marketOperation.status !== 1) {
-                  throw new Error(
-                    `Una o más operaciones seleccionadas no se encuentran Activas. [Operación = ${marketOperation.id}]`
-                  )
-                }
-
-                /**
-                 * Define base information
-                 */
-                const gpAmount = Number(_.get(updateValue, 'gpAmount', 0).replace(/\,/g, ''))
-                const marketPrice = Number(_.get(updateValue, 'marketPrice', 0).replace(/\,/g, ''))
-                const commoditiesTotal = Number(marketOperation.commoditiesTotal)
-                const amount = Number(marketOperation.amount)
-                let calculatedValue = 0
-                /**
-                 * Start product price update based on market
-                 */
-
-                switch (updateType) {
-                  /**
-                   * STOCKS
-                   */
-                  case 'stocks':
-                    if (marketOperation.commodityId === 1) {
-                      calculatedValue = gpAmount * commoditiesTotal
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al mercados de Stocks. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-                  /**
-                   * GOLD FU | OP
-                   */
-                  case 'gold-FU-OP':
-                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
-                      calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-                  /**
-                   * GOLD FU | OP
-                   */
-                  case 'gold-CFD-Ounces':
-                  case 'platinum-CFD-Ounces':
-                  case 'silver-CFD-Ounces':
-                    if (marketOperation.assetClassId === 11) {
-                      calculatedValue = gpAmount * commoditiesTotal // 1 FT = $1
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * GOLD Spot XAU/USD
-                   */
-                  case 'gold-Spot-XAU':
-                    if (marketOperation.assetClassId === 14) {
-                      calculatedValue = gpAmount * commoditiesTotal // 1 FT = $1
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * SILVER FT | OP
-                   */
-                  case 'silver-FT-OP':
-                    if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                      calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $5000
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-
-                    break
-
-                  /**
-                   * PLATINUM FT | OP
-                   */
-                  case 'platinum-FT-OP':
-                    if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                      calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * CRUDE OIL FT | OP
-                   */
-                  case 'crudeOil-FT-OP':
-                    if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                      calculatedValue = 500 * gpAmount * commoditiesTotal // 1 FT = $500
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * CRUDE CFDs Barrels
-                   */
-                  case 'crude-CFDs-Barrels':
-                    if (marketOperation.assetClassId === 12) {
-                      calculatedValue = commoditiesTotal * gpAmount // 1 Barrel = $1
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * US Wheat Contract FT
-                   */
-                  case 'us-Wheat-Contract':
-                    if (marketOperation.assetClassId === 2) {
-                      calculatedValue = 25 * gpAmount * commoditiesTotal // 1 FT = $25
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * COOPER FT | OP
-                   */
-                  case 'cooper-FT-OP':
-                    if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                      calculatedValue = 1250 * gpAmount * commoditiesTotal
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * CBO FT | OP
-                   */
-                  case 'cbo-FT-OP':
-                    if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                      calculatedValue = 10 * gpAmount * commoditiesTotal
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * ORANGE FT | OP
-                   */
-                  case 'orange-FT-OP':
-                    if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                      calculatedValue = 150 * gpAmount * commoditiesTotal
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * NATURAL FT
-                   */
-                  case 'natural-FT':
-                    if (marketOperation.assetClassId === 2) {
-                      calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $1000
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * COCOA FU | OP
-                   */
-                  case 'cocoa-FU-OP':
-                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
-                      calculatedValue = 10 * gpAmount * commoditiesTotal // 1 FT = $10
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * LUMBER  FT
-                   */
-                  case 'lumber-FT':
-                    if (marketOperation.assetClassId === 2) {
-                      calculatedValue = 110 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * SOYBEAN OIL US  FT
-                   */
-                  case 'soybean-oil-FT':
-                    if (marketOperation.assetClassId === 2) {
-                      calculatedValue = 600 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * COFFEE US FT OP
-                   */
-                  case 'coffee-FT-OP':
-                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
-                      calculatedValue = 375 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * GASOLINE FT OP
-                   */
-                  case 'gasoline-FT-OP':
-                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
-                      calculatedValue = 420 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * AVENA FT OP
-                   */
-                  case 'avena-FT-OP':
-                    if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
-                      calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * AZUCAR FT OP
-                   */
-                  case 'sugar-FT':
-                    if (
-                      marketOperation.assetClassId === 2 ||
-                      marketOperation.assetClassId === 12 ||
-                      marketOperation.assetClassId === 15
-                    ) {
-                      calculatedValue = 1120 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  /**
-                   * AZUCAR FT OP
-                   */
-                  case 'sugar-CFD':
-                    if (
-                      marketOperation.assetClassId === 2 ||
-                      marketOperation.assetClassId === 12 ||
-                      marketOperation.assetClassId === 15
-                    ) {
-                      calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
-                    } else {
-                      throw new Error(
-                        `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
-                      )
-                    }
-                    break
-
-                  default:
-                }
-
-                /**
-                 * End product price update based on market
-                 */
-                return await MarketMovement.create(
-                  {
-                    gpInversion: ToFixNumber(calculatedValue + amount),
-                    marketOperationId: marketOperation.id,
-                    gpAmount: ToFixNumber(calculatedValue),
-                    marketPrice,
-                    status: 1,
-                    createdAt: moment(new Date()).tz('America/New_York').format(),
-                    updatedAt: moment(new Date()).tz('America/New_York').format(),
-                  },
-                  { transaction: t }
+              if (marketOperation.status !== 1) {
+                throw new Error(
+                  `Una o más operaciones seleccionadas no se encuentran Activas. [Operación = ${marketOperation.id}]`
                 )
-              })
-            )
+              }
+
+              /**
+               * Define base information
+               */
+              const gpAmount = Number(_.get(updateValue, 'gpAmount', 0).replace(/\,/g, ''))
+              const marketPrice = Number(_.get(updateValue, 'marketPrice', 0).replace(/\,/g, ''))
+              const commoditiesTotal = Number(marketOperation.commoditiesTotal)
+              const amount = Number(marketOperation.amount)
+              let calculatedValue = 0
+              /**
+               * Start product price update based on market
+               */
+
+              switch (updateType) {
+                /**
+                 * STOCKS
+                 */
+                case 'stocks':
+                  if (marketOperation.commodityId === 1) {
+                    calculatedValue = gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al mercados de Stocks. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+                /**
+                 * GOLD FU | OP
+                 */
+                case 'gold-FU-OP':
+                  if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                    calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+                /**
+                 * GOLD FU | OP
+                 */
+                case 'gold-CFD-Ounces':
+                case 'platinum-CFD-Ounces':
+                case 'silver-CFD-Ounces':
+                  if (marketOperation.assetClassId === 11) {
+                    calculatedValue = gpAmount * commoditiesTotal // 1 FT = $1
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * GOLD Spot XAU/USD
+                 */
+                case 'gold-Spot-XAU':
+                  if (marketOperation.assetClassId === 14) {
+                    calculatedValue = gpAmount * commoditiesTotal // 1 FT = $1
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * SILVER FT | OP
+                 */
+                case 'silver-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $5000
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+
+                  break
+
+                /**
+                 * PLATINUM FT | OP
+                 */
+                case 'platinum-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * CRUDE OIL FT | OP
+                 */
+                case 'crudeOil-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 500 * gpAmount * commoditiesTotal // 1 FT = $500
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * CRUDE CFDs Barrels
+                 */
+                case 'crude-CFDs-Barrels':
+                  if (marketOperation.assetClassId === 12) {
+                    calculatedValue = commoditiesTotal * gpAmount // 1 Barrel = $1
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * US Wheat Contract FT
+                 */
+                case 'us-Wheat-Contract':
+                  if (marketOperation.assetClassId === 2) {
+                    calculatedValue = 25 * gpAmount * commoditiesTotal // 1 FT = $25
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * COOPER FT | OP
+                 */
+                case 'cooper-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 1250 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * CBO FT | OP
+                 */
+                case 'cbo-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 10 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * ORANGE FT | OP
+                 */
+                case 'orange-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 150 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * NATURAL FT
+                 */
+                case 'natural-FT':
+                  if (marketOperation.assetClassId === 2) {
+                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $1000
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * COCOA FU | OP
+                 */
+                case 'cocoa-FU-OP':
+                  if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                    calculatedValue = 10 * gpAmount * commoditiesTotal // 1 FT = $10
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * LUMBER  FT
+                 */
+                case 'lumber-FT':
+                  if (marketOperation.assetClassId === 2) {
+                    calculatedValue = 110 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * SOYBEAN OIL US  FT
+                 */
+                case 'soybean-oil-FT':
+                  if (marketOperation.assetClassId === 2) {
+                    calculatedValue = 600 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * COFFEE US FT OP
+                 */
+                case 'coffee-FT-OP':
+                  if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                    calculatedValue = 375 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * GASOLINE FT OP
+                 */
+                case 'gasoline-FT-OP':
+                  if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                    calculatedValue = 420 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * AVENA FT OP
+                 */
+                case 'avena-FT-OP':
+                  if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                    calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * AZUCAR FT OP
+                 */
+                case 'sugar-FT':
+                  if (
+                    marketOperation.assetClassId === 2 ||
+                    marketOperation.assetClassId === 12 ||
+                    marketOperation.assetClassId === 15
+                  ) {
+                    calculatedValue = 1120 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * AZUCAR FT OP
+                 */
+                case 'sugar-CFD':
+                  if (
+                    marketOperation.assetClassId === 2 ||
+                    marketOperation.assetClassId === 12 ||
+                    marketOperation.assetClassId === 15
+                  ) {
+                    calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                default:
+              }
+
+              /**
+               * End product price update based on market
+               */
+              await MarketMovement.create(
+                {
+                  gpInversion: ToFixNumber(calculatedValue + amount),
+                  marketOperationId: marketOperation.id,
+                  gpAmount: ToFixNumber(calculatedValue),
+                  marketPrice,
+                  status: 1,
+                  createdAt: moment(new Date()).tz('America/New_York').format(),
+                  updatedAt: moment(new Date()).tz('America/New_York').format(),
+                },
+                { transaction: t }
+              )
+            }
+
             break
           case 'create-operation':
             let nextOrderId = 0
+            let index = 0
             const userAccounts = await UserAccount.findAll(
               {
                 where: {
@@ -981,100 +981,101 @@ module.exports = {
             }
             // In this case operationsIds refers to User Accounts Ids
 
-            await Promise.all(
-              userAccounts.map(async (userAccount, index) => {
-                const snapShotAccount = JSON.stringify(userAccount)
+            for (let userAccount of userAccounts) {
+              const snapShotAccount = JSON.stringify(userAccount)
 
-                try {
-                  if (index === 0) {
-                    const lastMarketOperationEntry = await MarketOperation.findAll({
+              try {
+                if (index === 0) {
+                  const lastMarketOperationEntry = await MarketOperation.findAll(
+                    {
                       limit: 1,
                       attributes: ['orderId'],
                       order: [['id', 'DESC']],
-                    })
-                    nextOrderId = Number(lastMarketOperationEntry[0].orderId) + 1
-                  } else {
-                    nextOrderId = nextOrderId + 1
-                  }
-
-                  const marketOperation = await MarketOperation.create(
-                    {
-                      longShort: updateValue.longShort,
-                      userAccountId: userAccount.id,
-                      brokerId: userAccount.brokerId,
-                      productId: _.get(updateValue, 'product.id', 0),
-                      commoditiesTotal: updateValue.commoditiesTotal,
-                      commodityId: _.get(updateValue, 'commodity.id', 1),
-                      assetClassId: _.get(updateValue, 'assetClass.id', 1),
-                      buyPrice: updateValue.buyPrice,
-                      takingProfit: updateValue.takingProfit,
-                      stopLost: updateValue.stopLost,
-                      maintenanceMargin: updateValue.maintenanceMargin,
-                      amount: updateValue.amount,
-                      initialAmount: updateValue.amount,
-                      holdStatusCommission: updateValue.holdStatusCommission || 0,
-                      orderId: nextOrderId,
-                      status: _.get(updateValue, 'status', 1),
-                      createdAt: moment(updateValue.createdAt || new Date())
-                        .tz('America/New_York')
-                        .format(),
-                      updatedAt: moment(new Date()).tz('America/New_York').format(),
                     },
                     { transaction: t }
                   )
-
-                  await MarketMovement.create(
-                    {
-                      gpInversion: updateValue.amount,
-                      marketOperationId: Number(marketOperation.id),
-                      gpAmount: 0,
-                      marketPrice: 0,
-                      status: _.get(updateValue, 'status', 1),
-                      createdAt: moment(updateValue.createdAt || new Date())
-                        .tz('America/New_York')
-                        .format(),
-                      updatedAt: moment(new Date()).tz('America/New_York').format(),
-                    },
-                    { transaction: t }
-                  )
-
-                  const marginOperation = ToFixNumber(
-                    (Number(updateValue.maintenanceMargin) + Number(updateValue.amount)) * 0.1
-                  )
-                  const guaranteeOperation = ToFixNumber(
-                    Number(userAccount.guaranteeOperation) -
-                      (Number(updateValue.maintenanceMargin) +
-                        Number(updateValue.amount) +
-                        marginOperation)
-                  )
-
-                  const updatedUserAccount = await userAccount.update(
-                    {
-                      guaranteeOperation,
-                      marginUsed: ToFixNumber(
-                        Number(userAccount.marginUsed || 0) + marginOperation
-                      ), // Margen Utilizado 10%
-                      updatedAt: moment(new Date()).tz('America/New_York').format(),
-                    },
-                    { transaction: t }
-                  )
-
-                  Log({
-                    userId,
-                    userAccountId: userAccount.id,
-                    tableUpdated: 'userAccount',
-                    action: 'update',
-                    type: 'createOperation',
-                    snapShotBeforeAction: snapShotAccount,
-                    snapShotAfterAction: JSON.stringify(updatedUserAccount),
-                  })
-                } catch (e) {
-                  throw new Error(
-                    `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${e}`
-                  )
+                  nextOrderId = Number(lastMarketOperationEntry[0].orderId) + 1
+                } else {
+                  nextOrderId = nextOrderId + 1
                 }
-              })
-            )
+
+                const marketOperation = await MarketOperation.create(
+                  {
+                    longShort: updateValue.longShort,
+                    userAccountId: userAccount.id,
+                    brokerId: userAccount.brokerId,
+                    productId: _.get(updateValue, 'product.id', 0),
+                    commoditiesTotal: updateValue.commoditiesTotal,
+                    commodityId: _.get(updateValue, 'commodity.id', 1),
+                    assetClassId: _.get(updateValue, 'assetClass.id', 1),
+                    buyPrice: updateValue.buyPrice,
+                    takingProfit: updateValue.takingProfit,
+                    stopLost: updateValue.stopLost,
+                    maintenanceMargin: updateValue.maintenanceMargin,
+                    amount: updateValue.amount,
+                    initialAmount: updateValue.amount,
+                    holdStatusCommission: updateValue.holdStatusCommission || 0,
+                    orderId: nextOrderId,
+                    status: _.get(updateValue, 'status', 1),
+                    createdAt: moment(updateValue.createdAt || new Date())
+                      .tz('America/New_York')
+                      .format(),
+                    updatedAt: moment(new Date()).tz('America/New_York').format(),
+                  },
+                  { transaction: t }
+                )
+
+                await MarketMovement.create(
+                  {
+                    gpInversion: updateValue.amount,
+                    marketOperationId: Number(marketOperation.id),
+                    gpAmount: 0,
+                    marketPrice: 0,
+                    status: _.get(updateValue, 'status', 1),
+                    createdAt: moment(updateValue.createdAt || new Date())
+                      .tz('America/New_York')
+                      .format(),
+                    updatedAt: moment(new Date()).tz('America/New_York').format(),
+                  },
+                  { transaction: t }
+                )
+
+                const marginOperation = ToFixNumber(
+                  (Number(updateValue.maintenanceMargin) + Number(updateValue.amount)) * 0.1
+                )
+                const guaranteeOperation = ToFixNumber(
+                  Number(userAccount.guaranteeOperation) -
+                    (Number(updateValue.maintenanceMargin) +
+                      Number(updateValue.amount) +
+                      marginOperation)
+                )
+
+                const updatedUserAccount = await userAccount.update(
+                  {
+                    guaranteeOperation,
+                    marginUsed: ToFixNumber(Number(userAccount.marginUsed || 0) + marginOperation), // Margen Utilizado 10%
+                    updatedAt: moment(new Date()).tz('America/New_York').format(),
+                  },
+                  { transaction: t }
+                )
+
+                Log({
+                  userId,
+                  userAccountId: userAccount.id,
+                  tableUpdated: 'userAccount',
+                  action: 'update',
+                  type: 'createOperation',
+                  snapShotBeforeAction: snapShotAccount,
+                  snapShotAfterAction: JSON.stringify(updatedUserAccount),
+                })
+              } catch (e) {
+                throw new Error(
+                  `Ocurrió un error al momento de actualizar la cuenta del usuario. Error: ${e}`
+                )
+              }
+              index++
+            }
+
             break
           default:
         }
