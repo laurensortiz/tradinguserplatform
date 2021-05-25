@@ -56,12 +56,13 @@ class ReferralForm extends PureComponent {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         const saveState = _.omit(this.state, ['confirmDirty', 'isValid', 'fileList'])
-        const { accountId, user } = this.props.userAccount
+        const { accountId, user, broker } = this.props.userAccount
         this.props.onAddReferral({
           ...saveState,
           userAccountId: accountId,
           username: user.username,
           phoneNumber: `${this.state.phoneAreaCode} ${this.state.phoneNumber}`,
+          brokerName: broker.name,
         })
       }
     })
@@ -97,7 +98,7 @@ class ReferralForm extends PureComponent {
     const { t } = this.props
     const { getFieldDecorator } = this.props.form
     const { fileList } = this.state
-    const { user } = this.props.userAccount
+    const { user, broker } = this.props.userAccount
 
     const prefixSelector = getFieldDecorator('prefix', {
       initialValue: 'Costa Rica (+506)',
@@ -270,9 +271,10 @@ class ReferralForm extends PureComponent {
             </Form.Item>
             <Form.Item label={t('brokerName')}>
               {getFieldDecorator('brokerName', {
+                initialValue: broker.name || '',
                 rules: [
                   {
-                    required: true,
+                    required: false,
                     message: `${t('requiredFieldMessage')} ${t('brokerName')}`,
                   },
                 ],
@@ -281,6 +283,7 @@ class ReferralForm extends PureComponent {
                   placeholder={t('brokerName')}
                   name="brokerName"
                   onChange={this._handleChange}
+                  disabled
                 />
               )}
             </Form.Item>

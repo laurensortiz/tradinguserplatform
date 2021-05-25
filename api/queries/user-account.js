@@ -96,7 +96,7 @@ const queries = {
       order: [['createdAt', 'DESC']],
     }
   },
-  getByUser: ({ req, User, Account, UserAccountMovement }) => {
+  getByUser: ({ req, User, Account, UserAccountMovement, Broker }) => {
     return {
       where: {
         status: 1,
@@ -119,6 +119,11 @@ const queries = {
           as: 'userAccountMovement',
           order: [['createdAt', 'ASC']],
         },
+        {
+          model: Broker,
+          as: 'broker',
+          attributes: ['name'],
+        },
       ],
       order: [['createdAt', 'DESC']],
     }
@@ -131,8 +136,6 @@ const queries = {
     MarketMovement,
     Product,
     Broker,
-    Commodity,
-    AssetClass,
     sequelize,
   }) => {
     return {
@@ -140,7 +143,6 @@ const queries = {
         userAccountId: req.body.id,
         status: conditionalStatus(req, sequelize),
       },
-
       include: [
         {
           model: UserAccount,
@@ -163,26 +165,21 @@ const queries = {
           model: MarketMovement,
           as: 'marketMovement',
           limit: 1,
+          attributes: ['gpInversion', 'gpAmount'],
           order: [['createdAt', 'DESC']],
         },
         {
           model: Product,
           as: 'product',
+          attributes: ['name', 'code'],
         },
         {
           model: Broker,
           as: 'broker',
-        },
-        {
-          model: Commodity,
-          as: 'commodity',
-        },
-        {
-          model: AssetClass,
-          as: 'assetClass',
+          attributes: ['name'],
         },
       ],
-      order: [['guaranteeOperationValueEndOperation', 'ASC']],
+      order: [['id', 'ASC']],
       silence: true,
     }
   },
