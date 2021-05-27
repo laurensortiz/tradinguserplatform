@@ -1,19 +1,21 @@
-import moment from "moment-timezone";
+import moment from 'moment-timezone'
 
 module.exports = (Sequelize, DataTypes) => {
-  const MarketMovement = Sequelize.define( 'MarketMovement', {
+  const MarketMovement = Sequelize.define(
+    'MarketMovement',
+    {
       gpInversion: {
-        type: DataTypes.DECIMAL( 10, 2 ),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
         unique: false,
       },
       gpAmount: {
-        type: DataTypes.DECIMAL( 10, 2 ),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         unique: false,
       },
       marketPrice: {
-        type: DataTypes.DECIMAL( 10, 2 ),
+        type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
         unique: false,
       },
@@ -21,8 +23,10 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
         type: DataTypes.DATE,
         get() {
-          return moment.tz(this.getDataValue('createdAt'), 'America/New_York').format();
-        }
+          return moment
+            .tz(this.getDataValue('createdAt'), 'America/New_York')
+            .format('YYYY-MM-DD HH:mm:ss')
+        },
       },
       status: {
         type: DataTypes.INTEGER,
@@ -36,16 +40,15 @@ module.exports = (Sequelize, DataTypes) => {
     },
     {
       timestamps: false,
-    } );
+    }
+  )
 
-  MarketMovement.associate = models => {
-
-    MarketMovement.belongsTo( models.MarketOperation, {
+  MarketMovement.associate = (models) => {
+    MarketMovement.belongsTo(models.MarketOperation, {
       foreignKey: 'marketOperationId',
       as: 'marketOperation',
-    } );
+    })
+  }
 
-  };
-
-  return MarketMovement;
-};
+  return MarketMovement
+}
