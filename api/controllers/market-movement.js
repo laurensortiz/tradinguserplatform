@@ -60,8 +60,8 @@ module.exports = {
         where: {
           marketPrice,
           createdAt: {
-            [Op.gt]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 00:00'),
-            [Op.lte]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 23:59'),
+            [Op.gt]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 00:00:00'),
+            [Op.lte]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 23:59:59'),
           },
         },
       })
@@ -83,8 +83,8 @@ module.exports = {
         where: {
           marketPrice,
           createdAt: {
-            [Op.gt]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD'),
-            [Op.lte]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD'),
+            [Op.gt]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 00:00:00'),
+            [Op.lte]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 23:59:59'),
           },
         },
       })
