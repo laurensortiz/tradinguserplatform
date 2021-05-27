@@ -148,6 +148,8 @@ module.exports = (app) => {
   app.get('/api/market-movement/market-operation/:id', marketMovement.list)
   app.get('/api/market-movement/:id', marketMovement.get)
   app.post('/api/market-movement', marketMovement.create)
+  app.post('/api/market-movement/count', marketMovement.count)
+  app.post('/api/market-movement/bulk-delete', marketMovement.bulkDelete)
   app.put('/api/market-movement/:id', marketMovement.update)
   app.delete('/api/market-movement/:id', marketMovement.delete)
 

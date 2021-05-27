@@ -999,7 +999,7 @@ module.exports = {
                   nextOrderId = nextOrderId + 1
                 }
 
-                const marketOperation = await MarketOperation.create(
+                await MarketOperation.create(
                   {
                     longShort: updateValue.longShort,
                     userAccountId: userAccount.id,
@@ -1016,21 +1016,6 @@ module.exports = {
                     initialAmount: updateValue.amount,
                     holdStatusCommission: updateValue.holdStatusCommission || 0,
                     orderId: nextOrderId,
-                    status: _.get(updateValue, 'status', 1),
-                    createdAt: moment(updateValue.createdAt || new Date())
-                      .tz('America/New_York')
-                      .format(),
-                    updatedAt: moment(new Date()).tz('America/New_York').format(),
-                  },
-                  { transaction: t }
-                )
-
-                await MarketMovement.create(
-                  {
-                    gpInversion: updateValue.amount,
-                    marketOperationId: Number(marketOperation.id),
-                    gpAmount: 0,
-                    marketPrice: 0,
                     status: _.get(updateValue, 'status', 1),
                     createdAt: moment(updateValue.createdAt || new Date())
                       .tz('America/New_York')

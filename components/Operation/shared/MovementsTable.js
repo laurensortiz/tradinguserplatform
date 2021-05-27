@@ -16,6 +16,7 @@ import { FormatCurrency, FormatDate, GetGP, getGPInversion } from '../../../comm
 
 import { investmentMovementOperations } from '../../../state/modules/investmentMovement'
 import { Export } from './index'
+import DeleteMovements from './DeleteMovements'
 
 momentDurationFormat(moment)
 extendMoment(moment)
@@ -34,7 +35,7 @@ const sortedData = (data) => {
     if (_.isNil(start)) start = '00-00-0000'
     if (_.isNil(end)) end = '00-00-0000'
 
-    return moment(end).add(1, 'seconds').unix() - moment(start).add(1, 'seconds').unix()
+    return moment(end).unix() - moment(start).unix()
   })
 }
 
@@ -434,19 +435,26 @@ class MovementsTable extends Component {
     return (
       <div>
         <Row style={{ marginBottom: 30, marginTop: 30 }}>
-          <Col sm={12}>
+          <Col sm={18}>
             {this.props.isAdmin ? (
-              <Button
-                onClick={this.handleAdd}
-                type="primary"
-                style={{ marginBottom: 16 }}
-                disabled={!_.isEmpty(this.state.tempDataSource) || disableAddBtn}
-              >
-                <Icon type="dollar" /> Agregar Movimiento
-              </Button>
+              <Row>
+                <Col sm={8}>
+                  <Button
+                    onClick={this.handleAdd}
+                    type="primary"
+                    style={{ marginBottom: 16 }}
+                    disabled={!_.isEmpty(this.state.tempDataSource) || disableAddBtn}
+                  >
+                    <Icon type="dollar" /> Agregar Movimiento
+                  </Button>
+                </Col>
+                <Col sm={16}>
+                  <DeleteMovements />
+                </Col>
+              </Row>
             ) : null}
           </Col>
-          <Col sm={12}>
+          <Col sm={6}>
             <Export
               currentOperation={this.props.currentOperation}
               exportData={this.state.exportData}
