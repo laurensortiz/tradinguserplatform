@@ -83,7 +83,8 @@ module.exports = {
         where: {
           marketPrice,
           createdAt: {
-            [Op.between]: [createdAt, createdAt],
+            [Op.gt]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 00:00:00'),
+            [Op.lte]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 23:59:59'),
           },
         },
       })
