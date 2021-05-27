@@ -16,6 +16,9 @@ module.exports = {
       //prevent sequelize from pluralizing table names
       freezeTableName: true,
     },
+    dialectOptions: {
+      useUTC: false,
+    },
     logging: false,
   },
   stage: {
@@ -27,6 +30,7 @@ module.exports = {
     dialect: 'postgres',
     dialectOptions: {
       ssl: true,
+      useUTC: false,
     },
     define: {
       //prevent sequelize from pluralizing table names
@@ -43,6 +47,7 @@ module.exports = {
     dialect: 'postgres',
     dialectOptions: {
       ssl: true,
+      useUTC: false,
     },
     define: {
       //prevent sequelize from pluralizing table names
