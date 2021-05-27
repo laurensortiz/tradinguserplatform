@@ -16,7 +16,8 @@ module.exports = {
       //prevent sequelize from pluralizing table names
       freezeTableName: true,
     },
-    logging: false,
+    logging: true,
+    timezone: '-06:00',
   },
   stage: {
     username: process.env.DB_STAGE_USERNAME,
@@ -32,7 +33,8 @@ module.exports = {
       //prevent sequelize from pluralizing table names
       freezeTableName: true,
     },
-    logging: false,
+    logging: true,
+    timezone: '-06:00',
   },
   production: {
     username: process.env.DB_PRODUCTION_USERNAME,
@@ -49,6 +51,7 @@ module.exports = {
       freezeTableName: true,
     },
     logging: false,
+    timezone: '-06:00',
   },
   /**
    * Heroku config

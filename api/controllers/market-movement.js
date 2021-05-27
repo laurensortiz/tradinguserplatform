@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { MarketMovement, sequelize } from '../models'
+import { MarketMovement, sequelize, ORM } from '../models'
 import { marketMovementQuery } from '../queries'
 import moment from 'moment-timezone'
 
@@ -56,17 +56,16 @@ module.exports = {
     const Op = sequelize.Op
     const { marketPrice, createdAt } = req.body
     try {
-      const { count } = await MarketMovement.findAndCountAll({
-        where: {
-          marketPrice,
-          createdAt: {
-            [Op.gt]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 00:00:00'),
-            [Op.lte]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 23:59:59'),
-          },
-        },
-      })
+      const count = await ORM.query(
+        `SELECT count(*) FROM public."MarketMovement" where "marketPrice" = ${marketPrice} and "createdAt"::date ='${createdAt}'`,
+        {
+          raw: true,
+          plain: true,
+          type: sequelize.QueryTypes.SELECT,
+        }
+      )
 
-      return res.status(200).send({ count })
+      return res.status(200).send(count)
     } catch (err) {
       return res.status(500).send({
         message: err.message,
@@ -79,15 +78,14 @@ module.exports = {
     const Op = sequelize.Op
     const { marketPrice, createdAt } = req.body
     try {
-      await MarketMovement.destroy({
-        where: {
-          marketPrice,
-          createdAt: {
-            [Op.gt]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 00:00:00'),
-            [Op.lte]: moment(createdAt).tz('America/New_York').format('YYYY-MM-DD 23:59:59'),
-          },
-        },
-      })
+      await ORM.query(
+        `DELETE FROM public."MarketMovement" where "marketPrice" = ${marketPrice} and "createdAt"::date ='${createdAt}'`,
+        {
+          raw: true,
+          plain: true,
+          type: sequelize.QueryTypes.SELECT,
+        }
+      )
 
       return res.status(200).send('Done Deletion')
     } catch (err) {
