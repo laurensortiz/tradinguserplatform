@@ -83,10 +83,7 @@ module.exports = {
         where: {
           marketPrice,
           createdAt: {
-            [Op.between]: [
-              moment(createdAt).format('YYYY-MM-DD'),
-              moment(createdAt).format('YYYY-MM-DD'),
-            ],
+            [Op.between]: [createdAt, createdAt],
           },
         },
       })
