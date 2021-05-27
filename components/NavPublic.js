@@ -31,11 +31,28 @@ class NavPublic extends PureComponent {
             </span>
           </Link>
         </li>
-        {/*<li>*/}
-        {/*  <Link className="menu-item" href="/daily-technical-report">*/}
-        {/*    <Icon type="global" /> <span>{t('mainMenu dailyTechnicalReport')}</span>*/}
-        {/*  </Link>*/}
-        {/*</li>*/}
+        <li>
+          <Link className="menu-item" href="/daily-technical-report">
+            <Icon type="global" />{' '}
+            <span>
+              {t('mainMenu dailyTechnicalReport')}
+
+              <Badge
+                count="Nuevo"
+                style={{
+                  backgroundColor: '#1653d1',
+                  fontSize: 10,
+                  height: 18,
+                  lineHeight: 2,
+                  top: -3,
+                  left: 5,
+                  color: '#fff',
+                  letterSpacing: 1,
+                }}
+              />
+            </span>
+          </Link>
+        </li>
         <li>
           <Link className="menu-item" href="/market">
             <Icon type="stock" /> <span>{t('mainMenu market')}</span>
