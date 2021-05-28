@@ -62,6 +62,7 @@ module.exports = {
             maintenanceMargin: req.body.maintenanceMargin,
             amount: req.body.amount,
             initialAmount: req.body.amount,
+            behavior: 0,
             holdStatusCommission: req.body.holdStatusCommission || 0,
             orderId,
             status: _.get(req, 'body.status', 1),
