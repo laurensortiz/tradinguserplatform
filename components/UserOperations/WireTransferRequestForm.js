@@ -192,7 +192,7 @@ class WireTransferRequestForm extends PureComponent {
             </span>
           </Button>
           <div className="handle" style={{ textAlign: 'center' }}>
-            <h2>Wire Transfer Request</h2>
+            <h2>Withdraw Dividends Request</h2>
             <h3>
               {user.username || ''} <span className="status-online"></span>
             </h3>

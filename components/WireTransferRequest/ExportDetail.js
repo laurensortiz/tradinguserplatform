@@ -83,7 +83,7 @@ const _formatData = (data) => {
 }
 
 const _getAccountTemplateMarket = (data) => {
-  return [['Reporte de Wire Transfer Request'], ['']]
+  return [['Reporte de Withdraw Dividends Request'], ['']]
 }
 
 function exportDetail(exportData) {
@@ -125,7 +125,7 @@ function exportDetail(exportData) {
   const displayTemplate = _getAccountTemplateMarket(_.first(exportData))
 
   XLSX.utils.sheet_add_aoa(ws, displayTemplate, { origin: 'A1' })
-  XLSX.utils.book_append_sheet(wb, ws, 'Wire Transfer Request')
+  XLSX.utils.book_append_sheet(wb, ws, 'Withdraw Dividends Request')
   const wopts = { bookType: 'xlsx', bookSST: false, type: 'array' }
   const html = XLSX.utils.sheet_to_html(ws)
 
