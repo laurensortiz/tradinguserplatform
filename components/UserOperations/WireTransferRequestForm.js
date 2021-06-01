@@ -93,7 +93,7 @@ class WireTransferRequestForm extends PureComponent {
     const { associatedOperation, percentage } = this.props.userAccount.account
     const isOTCAccount = associatedOperation === 1
 
-    const { accountValue, guaranteeOperation } = this.props.userAccount
+    const { accountValue, guaranteeOperation, brokerId } = this.props.userAccount
 
     const is10percent = moment(userStartedDay).isBefore('2020-12-15', 'day')
 
@@ -110,6 +110,10 @@ class WireTransferRequestForm extends PureComponent {
     return new Promise((resolve, reject) => {
       if (!_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
+      }
+
+      if (brokerId === 39) {
+        resolve()
       }
 
       if (parseFloat(value) == 0) {
@@ -137,11 +141,15 @@ class WireTransferRequestForm extends PureComponent {
   handleCommission = (rule, value, callback) => {
     const regex = /^[1-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
 
-    const { commissionByReference } = this.props.userAccount
+    const { commissionByReference, brokerId } = this.props.userAccount
 
     return new Promise((resolve, reject) => {
       if (!_.isEmpty(value) && !regex.test(value)) {
         reject('Formato inválido del monto') // reject with error message
+      }
+
+      if (brokerId === 39) {
+        resolve()
       }
 
       if (parseFloat(value) == 0) {
@@ -159,11 +167,12 @@ class WireTransferRequestForm extends PureComponent {
   render() {
     const { t } = this.props
     const { getFieldDecorator, resetFields } = this.props.form
-    const { user, account } = this.props.userAccount
+    const { user, account, brokerId } = this.props.userAccount
     const isOTCAccount = account.associatedOperation === 1
     const currentAccountType = isOTCAccount
       ? `OTC - ${account.name}`
       : `ProfitMonth - ${account.name}`
+    const isPortfolioClose = brokerId === 39
 
     if (
       !_.isNaN(Number(this.state.commissionsCharge)) &&
@@ -279,6 +288,7 @@ class WireTransferRequestForm extends PureComponent {
                     rules: [
                       {
                         required:
+                          !isPortfolioClose &&
                           !_.isNaN(Number(this.state.commissionsCharge)) &&
                           Number(this.state.commissionsCharge) <= 0,
                         message: `${t('requiredFieldGeneralMessage')}`,
@@ -303,6 +313,7 @@ class WireTransferRequestForm extends PureComponent {
                       rules: [
                         {
                           required:
+                            !isPortfolioClose &&
                             !_.isNaN(Number(this.state.commissionsCharge)) &&
                             Number(this.state.commissionsCharge) > 0,
                           message: `${t('requiredFieldMessage')} ${t('commissionsCharge')} USD`,
