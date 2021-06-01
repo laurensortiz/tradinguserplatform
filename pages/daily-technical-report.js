@@ -21,7 +21,8 @@ function Page({ lng }) {
 
   const handshakeURL = () => {
     const key = 'bhkj0c53uLMUDApy7vR@^W3V'
-    const gtm = moment.tz(new Date().toUTCString(), 'GMT')
+    const date = moment(new Date().toUTCString()).tz('America/New_York')
+    const gtm = moment.tz(date, 'GMT')
     const aci = moment(gtm).format('YYYYMMDDHHmmss')
     const lang = currentLang.split('-')[0]
     const usi = username
