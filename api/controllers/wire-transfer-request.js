@@ -30,9 +30,6 @@ module.exports = {
         if (!userAccount) {
           throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
         }
-        console.log('[=====  ACCC  =====>')
-        console.log(userAccount)
-        console.log('<=====  /ACCC  =====]')
 
         let percentageFromAccount
 
