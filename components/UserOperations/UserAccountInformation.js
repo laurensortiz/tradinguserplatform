@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react'
-import { Row, Col, Descriptions, Card, Icon, Button, Modal, Tooltip } from 'antd'
+import { Row, Col, Descriptions, Card, Icon, Button, Modal, Tooltip, Tag } from 'antd'
 import _ from 'lodash'
 import { withNamespaces } from 'react-i18next'
 import moment from 'moment-timezone'
+import styled from 'styled-components'
 
 import { FormatCurrency, IsOperationPositive, StaticAmountBox } from '../../common/utils'
 import ReferralForm from './ReferralForm'
@@ -12,6 +13,10 @@ import { ExportUserAccountsPDF } from './Operation/shared'
 import { bindActionCreators } from 'redux'
 import { wireTransferRequestOperations } from '../../state/modules/wireTransferRequests'
 import { connect } from 'react-redux'
+
+const TagDate = styled(Tag)`
+  margin-left: 15px;
+`
 
 const getTotalMonthsFromDate = (date) => {
   const userStartDate = moment(new Date(date)).add(-1, 'days')
@@ -131,14 +136,28 @@ class AccountInformation extends PureComponent {
     }
   }
 
+  _getLastRequestInfo = () =>
+    !!this.state.lastWireTransferRequestDate && (
+      <TagDate>
+        {`  ${this.props.t('wt lastRequestDate')}:  `}
+
+        {moment(this.state.lastWireTransferRequestDate)
+          .tz('America/New_York')
+          .format('DD-MM-YYYY hh:mm a')}
+      </TagDate>
+    )
+
   _getHeaderCard = () => {
     const wireTransferBtn = (
-      <Button
-        onClick={this._onHandleShowWireTransferForm}
-        disabled={IS_WEEKEND || !!this._isWireTransferBtnDisabled()}
-      >
-        <Icon type="dollar" /> Wire Transfer Request
-      </Button>
+      <>
+        <Button
+          onClick={this._onHandleShowWireTransferForm}
+          disabled={IS_WEEKEND || !!this._isWireTransferBtnDisabled()}
+        >
+          <Icon type="dollar" /> Withdraw Dividends Request
+        </Button>
+        {this._getLastRequestInfo()}
+      </>
     )
     const disableText = IS_WEEKEND
       ? this.props.t('wt disabledWeekendBtn')
@@ -157,7 +176,7 @@ class AccountInformation extends PureComponent {
     return (
       <Tooltip placement="leftTop" title={this.props.t('wt disabledBtnHoliday')}>
         <Button disabled>
-          <Icon type="dollar" /> Wire Transfer Request
+          <Icon type="dollar" /> Withdraw Dividends Request
         </Button>
       </Tooltip>
     )
@@ -165,11 +184,14 @@ class AccountInformation extends PureComponent {
 
   _getHeaderCardAfterHours = () => {
     return (
-      <Tooltip placement="leftTop" title={this.props.t('wt disabledBtnAfterHours')}>
-        <Button disabled>
-          <Icon type="dollar" /> Wire Transfer Request
-        </Button>
-      </Tooltip>
+      <>
+        <Tooltip placement="leftTop" title={this.props.t('wt disabledBtnAfterHours')}>
+          <Button disabled>
+            <Icon type="dollar" /> Withdraw Dividends Request
+          </Button>
+        </Tooltip>
+        {this._getLastRequestInfo()}
+      </>
     )
   }
 
