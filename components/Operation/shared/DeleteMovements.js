@@ -23,11 +23,11 @@ export default function DeleteMovements() {
     createdAt,
     enabled: shouldDelete,
   })
+
   const hasMovements = dataCount && dataCount.count > 0
 
   const handleMPChange = (e) => {
     const currentValue = e.target.value === '' ? 0 : e.target.value.replace(',', '')
-    console.log(currentValue)
     setMarketPrice(Number(currentValue))
   }
 

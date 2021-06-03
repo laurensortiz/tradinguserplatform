@@ -258,7 +258,7 @@ class Export extends PureComponent {
                   fontSize: 18,
                   text:
                     wt.transferMethod === 'Banco'
-                      ? 'Wire Transfer Request'
+                      ? 'Withdraw Dividends Request'
                       : 'Transfer by International Remittance',
                   bold: true,
                   alignment: 'left',

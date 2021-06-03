@@ -131,6 +131,7 @@
   "wt bank": "Banco",
   "wt bankName": "Nome do banco",
   "wt remittance": "Remessa",
+  "wt localBank": "Banco Local",
   "wt currencyType": "Moeda de transferência",
   "wt accountWithdrawalRequest": "A conta de retirada de fundos",
   "wt accountDetail": "Detalhes da conta",

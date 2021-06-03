@@ -131,6 +131,7 @@
   "wt bank": "Bank",
   "wt bankName": "Bank name",
   "wt remittance": "Remittance",
+  "wt localBank": "Local Bank",
   "wt currencyType": "Transfer currency",
   "wt accountWithdrawalRequest": "The fund withdrawal account",
   "wt accountDetail": "Account Detail",

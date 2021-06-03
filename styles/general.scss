@@ -435,3 +435,17 @@ body > div:first-of-type:not(#__next) {
 .iframe-page .ant-layout{
   background: #0E0E0E;
 }
+
+.overlay-modal:before {
+  content: "";
+  background: rgba(0,0,0,0.9);
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+.t-a-j {
+  text-align: justify;
+}

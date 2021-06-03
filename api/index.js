@@ -17,6 +17,7 @@ import {
   setting,
   referral,
   wireTransferRequest,
+  lead,
 } from './controllers'
 
 const authMiddleware = (req, res, next) => {
@@ -192,4 +193,11 @@ module.exports = (app) => {
   app.post('/api/wire-transfer-request/create', wireTransferRequest.create)
   app.put('/api/wire-transfer-request/:id', wireTransferRequest.update)
   app.delete('/api/wire-transfer-request/:id', wireTransferRequest.delete)
+
+  // Lead
+  app.get('/api/leads/list/:status', lead.list)
+  app.get('/api/leads/:id', lead.get)
+  app.post('/api/leads', lead.create)
+  app.put('/api/leads/:id', lead.update)
+  app.delete('/api/leads/:id', lead.delete)
 }

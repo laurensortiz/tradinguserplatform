@@ -22,7 +22,7 @@ import classNames from 'classnames'
 import momentDurationFormat from 'moment-duration-format'
 import moment from 'moment-timezone'
 import { extendMoment } from 'moment-range'
-import ExportWireTransferPDF from './ExportWireTransferPDF'
+import ExportLeadDetail from './ExportLeadDetail'
 
 const FORMAT_DATE = 'DD-MM-YYYY'
 const { Option } = Select
@@ -32,9 +32,9 @@ momentDurationFormat(moment)
 extendMoment(moment)
 moment.locale('es') // Set Lang to Spanish
 
-class DetailTable extends Component {
+class LeadsTable extends Component {
   state = {
-    wireTransferRequests: [],
+    leads: [],
     searchText: '',
     searchedColumn: '',
     isMenuFold: true,
@@ -49,20 +49,18 @@ class DetailTable extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
-    if (!_.isEqual(nextProps.wireTransferRequests, prevState.wireTransferRequests)) {
+    if (!_.isEqual(nextProps.leads, prevState.leads)) {
       _.assignIn(updatedState, {
-        wireTransferRequests: nextProps.wireTransferRequests,
+        leads: nextProps.leads,
       })
     }
     return updatedState
   }
 
-  _handleExportHistory = (wireTransferRequestId) => {
-    const selectedWireTransferRequest = _.find(this.state.wireTransferRequests, {
-      id: wireTransferRequestId,
-    })
+  _handleExportHistory = (referralId) => {
+    const selectedReferral = _.find(this.state.leads, { id: referralId })
 
-    this.props.onReqeuestExportWireTransferRequestReport([selectedWireTransferRequest])
+    this.props.onReqeuestExportReferralReport([selectedReferral])
   }
 
   onSelectOperation = (selectedRowKeys) => {
@@ -70,8 +68,8 @@ class DetailTable extends Component {
   }
 
   onSelectAllOperation = (isSelected) => {
-    const { currentDataSource, wireTransferRequests } = this.state
-    const dataSource = !_.isEmpty(currentDataSource) ? currentDataSource : wireTransferRequests
+    const { currentDataSource, leads } = this.state
+    const dataSource = !_.isEmpty(currentDataSource) ? currentDataSource : leads
     const allOperationsIds = isSelected ? dataSource.map((ope) => ope.id) : []
     this.setState({ selectedRowKeys: allOperationsIds })
   }
@@ -96,11 +94,9 @@ class DetailTable extends Component {
     } else {
       return (
         <div className="cta-container">
-          <ExportWireTransferPDF wireTransfer={row} />
-
-          <Button type="secondary" onClick={() => this.props.onEdit(row.id)}>
-            <Icon type="hdd" />
-            <span>Detalle</span>
+          <Button type="secondary" onClick={() => this.props.onSelectedLead(row.id)}>
+            <Icon type="edit" />
+            <span>Editar</span>
           </Button>
           <Popconfirm
             okText="Si"
@@ -173,10 +169,7 @@ class DetailTable extends Component {
       <Icon type="filter" theme="filled" style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
     onFilter: (value, record) => {
-      const filterData = _.get(record, dataIndex)
-      if (filterData) {
-        return filterData.toString().toLowerCase().includes(value.toLowerCase())
-      }
+      return _.get(record, dataIndex).toString().toLowerCase().includes(value.toLowerCase())
     },
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
@@ -184,10 +177,7 @@ class DetailTable extends Component {
       }
     },
     render: (text) => {
-      const displayText =
-        dataIndex === 'initialAmount' || dataIndex === 'amount'
-          ? this._displayTableAmount(text)
-          : text || ''
+      const displayText = dataIndex === 'initialAmount' ? this._displayTableAmount(text) : text
       return this.state.searchedColumn === dataIndex ? (
         <Highlighter
           highlightStyle={{ backgroundColor: '#ffc069', padding: 0 }}
@@ -230,13 +220,13 @@ class DetailTable extends Component {
 
   _onSelectBulkReport = () => {
     const exportData = _.isEmpty(this.state.currentDataSource)
-      ? this.state.wireTransferRequests
+      ? this.state.leads
       : this.state.currentDataSource
-    const selectedWireTransferRequests = _.filter(exportData, (wireTransferRequest) =>
-      _.includes(this.state.selectedRowKeys, wireTransferRequest.id)
+    const selectedReferrals = _.filter(exportData, (referral) =>
+      _.includes(this.state.selectedRowKeys, referral.id)
     )
 
-    this.props.onReqeuestExportWireTransferRequestReport(selectedWireTransferRequests)
+    ExportLeadDetail(selectedReferrals)
   }
   onCancelBulkProcess = () => {
     this.setState({
@@ -252,9 +242,6 @@ class DetailTable extends Component {
       <Col sm={12}>
         <Radio.Group defaultValue={1} buttonStyle="solid" onChange={this.props.onTabChange}>
           <Radio.Button value={1}>Activos</Radio.Button>
-          <Radio.Button value={2}>Liberación Local</Radio.Button>
-          <Radio.Button value={4}>Cancelado</Radio.Button>
-          <Radio.Button value={5}>Anudado</Radio.Button>
           <Radio.Button value={0}>Eliminados</Radio.Button>
         </Radio.Group>
       </Col>
@@ -282,7 +269,7 @@ class DetailTable extends Component {
             style={{ float: 'right' }}
             onClick={() => this.setState({ isBulkActive: true })}
           >
-            <Icon type="interaction" /> <span>Generar Reporte</span>
+            <Icon type="interaction" /> <span>Generar Reporte de Referrals</span>
           </Button>
         )}
       </Col>
@@ -293,9 +280,9 @@ class DetailTable extends Component {
     <Row>
       <Col>
         <h3>
-          Total de WireTransferRequests:{' '}
+          Total de Referrals:{' '}
           <Tag color="#1b1f21" style={{ fontSize: 14, marginLeft: 10 }}>
-            {_.size(this.state.wireTransferRequests)}
+            {_.size(this.state.leads)}
           </Tag>
         </h3>
       </Col>
@@ -423,9 +410,7 @@ class DetailTable extends Component {
   })
 
   render() {
-    const datesInTimes = _.map(this.state.wireTransferRequests, (record) =>
-        moment(record.createdAt)
-      ),
+    const datesInTimes = _.map(this.state.leads, (record) => moment(record.createdAt)),
       maxDatesInTimes = moment.max(datesInTimes).add(1, 'days'),
       minDatesInTimes = moment.min(datesInTimes).subtract(1, 'days')
 
@@ -441,85 +426,46 @@ class DetailTable extends Component {
         ...this.getColumnSearchProps('id'),
       },
       {
-        title: 'Creado por el Usuario',
-        dataIndex: 'username',
-        key: 'username',
-        sorter: (a, b) => Sort(a.username, b.username),
-        sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('username'),
-      },
-      {
         title: 'Nombre',
-        dataIndex: 'userAccount.user.firstName',
-        key: 'userAccount.user.firstName',
-        sorter: (a, b) => Sort(a.userAccount.user.firstName, b.userAccount.user.firstName),
+        dataIndex: 'firstName',
+        key: 'firstName',
+        sorter: (a, b) => Sort(a.firstName, b.firstName),
         sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('userAccount.user.firstName'),
+        ...this.getColumnSearchProps('firstName'),
       },
       {
         title: 'Apellido',
-        dataIndex: 'userAccount.user.lastName',
-        key: 'userAccount.user.lastName',
-        sorter: (a, b) => Sort(a.userAccount.user.lastName, b.userAccount.user.lastName),
+        dataIndex: 'lastName',
+        key: 'lastName',
+        sorter: (a, b) => Sort(a.lastName, b.lastName),
         sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('userAccount.user.lastName'),
+        ...this.getColumnSearchProps('lastName'),
+      },
+      {
+        title: 'Email',
+        dataIndex: 'email',
+        key: 'email',
+        sorter: (a, b) => Sort(a.email, b.email),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('email'),
+      },
+      {
+        title: 'Teléfono',
+        dataIndex: 'phoneNumber',
+        key: 'phoneNumber',
+        sorter: (a, b) => Sort(a.phoneNumber, b.phoneNumber),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('phoneNumber'),
       },
       {
         title: 'País',
-        dataIndex: 'userAccount.user.country',
-        key: 'userAccount.user.country',
-        sorter: (a, b) => Sort(a.userAccount.user.country, b.userAccount.user.country),
+        dataIndex: 'country',
+        key: 'country',
+        sorter: (a, b) => Sort(a.country, b.country),
         sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('userAccount.user.country'),
+        ...this.getColumnSearchProps('country'),
       },
-      {
-        title: 'Referido',
-        dataIndex: 'userAccount.user.referred',
-        key: 'userAccount.user.referred',
-        sorter: (a, b) => Sort(a.userAccount.user.referred, b.userAccount.user.referred),
-        sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('userAccount.user.referred'),
-      },
-      {
-        title: 'Moneda',
-        dataIndex: 'currencyType',
-        key: 'currencyType',
-        sorter: (a, b) => Sort(a.currencyType, b.currencyType),
-        sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('currencyType'),
-      },
-      {
-        title: 'Monto USD',
-        dataIndex: 'amount',
-        key: 'amount',
-        render: (amount) => DisplayTableAmount(amount),
-        sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('amount'),
-      },
-      {
-        title: 'Comisiones',
-        dataIndex: 'commissionsCharge',
-        key: 'commissionsCharge',
-        render: (commissionsCharge) => DisplayTableAmount(commissionsCharge),
-        sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('commissionsCharge'),
-      },
-      {
-        title: 'Tipo de Cuenta',
-        dataIndex: 'accountWithdrawalRequest',
-        key: 'accountWithdrawalRequest',
-        sorter: (a, b) => Sort(a.accountWithdrawalRequest, b.accountWithdrawalRequest),
-        sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('accountWithdrawalRequest'),
-      },
-      {
-        title: 'RCM Cuenta',
-        dataIndex: 'accountRCM',
-        key: 'accountRCM',
-        sorter: (a, b) => Sort(a.accountRCM, b.accountRCM),
-        sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('accountRCM'),
-      },
+
       {
         title: 'Fecha de Creación',
         dataIndex: 'createdAt',
@@ -553,23 +499,6 @@ class DetailTable extends Component {
         ...this._getColumnDateProps('updatedAt', minDatesInTimes, maxDatesInTimes),
       },
       {
-        title: 'Fecha de Cancelación',
-        dataIndex: 'closedAt',
-        key: 'closedAt',
-        render: (value) =>
-          value ? moment(value).tz('America/New_York').format('DD-MM-YYYY') : ' - ',
-        editable: true,
-        inputType: 'date',
-        required: false,
-        rowKey: (d) => {
-          return FormatDate(d.closedAt)
-        },
-        sorter: (a, b) => {
-          return this._sortDates(a.closedAt, b.closedAt)
-        },
-        ...this._getColumnDateProps('updatedAt', minDatesInTimes, maxDatesInTimes),
-      },
-      {
         title: this._handleActionTitle,
         key: 'actions',
         render: this._getCTA,
@@ -589,7 +518,7 @@ class DetailTable extends Component {
         rowSelection={isBulkActive ? rowSelection : null}
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={this.state.wireTransferRequests}
+        dataSource={this.state.leads}
         loading={this.props.isLoading}
         scroll={{ x: true }}
         title={this._displayTableHeader}
@@ -607,4 +536,4 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(DetailTable)
+export default connect(mapStateToProps, mapDispatchToProps)(LeadsTable)

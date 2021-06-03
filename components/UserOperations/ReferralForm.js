@@ -29,7 +29,7 @@ class ReferralForm extends PureComponent {
     fileName: '',
     confirmDirty: false,
     isInvalid: true,
-    phoneAreaCode: '+506',
+    phoneAreaCode: '+1',
     fileList: [],
   }
 
@@ -101,7 +101,7 @@ class ReferralForm extends PureComponent {
     const { user, broker } = this.props.userAccount
 
     const prefixSelector = getFieldDecorator('prefix', {
-      initialValue: 'Costa Rica (+506)',
+      initialValue: 'USA (+1)',
     })(
       <Select style={{ width: 200 }} showSearch={true} onChange={this._handlePhoneAreaCode}>
         {_.map(PhoneAreaCode.countries, ({ code, name }) => (
