@@ -24,12 +24,6 @@ const getTotalMonthsFromDate = (date) => {
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
 }
 
-const isSameRequestedDay = (date) => {
-  const userStartDate = moment(new Date(date))
-  const today = moment()
-  return today.format('DD') === userStartDate.format('DD')
-}
-
 const IS_WEEKEND =
   moment(new Date()).tz('America/New_York').day() === 6 ||
   moment(new Date()).tz('America/New_York').day() === 0
@@ -148,26 +142,28 @@ class AccountInformation extends PureComponent {
 
   _getHeaderCard = () => {
     const wireTransferBtn = (
-      <>
-        <Button
-          onClick={this._onHandleShowWireTransferForm}
-          disabled={IS_WEEKEND || !!this._isWireTransferBtnDisabled()}
-        >
-          <Icon type="dollar" /> Withdraw Dividends Request
-        </Button>
-        {this._getLastRequestInfo()}
-      </>
+      <Button
+        onClick={this._onHandleShowWireTransferForm}
+        disabled={IS_WEEKEND || !!this._isWireTransferBtnDisabled()}
+      >
+        <Icon type="dollar" /> Withdraw Dividends Request
+      </Button>
     )
     const disableText = IS_WEEKEND
       ? this.props.t('wt disabledWeekendBtn')
       : this.props.t('wt disabledBtn')
 
     return !IS_WEEKEND && !this._isWireTransferBtnDisabled() ? (
-      wireTransferBtn
+      <>
+        {wireTransferBtn} {this._getLastRequestInfo()}
+      </>
     ) : (
-      <Tooltip placement="leftTop" title={disableText}>
-        {wireTransferBtn}
-      </Tooltip>
+      <>
+        <Tooltip placement="leftTop" title={disableText}>
+          {wireTransferBtn}
+        </Tooltip>
+        {this._getLastRequestInfo()}
+      </>
     )
   }
 
