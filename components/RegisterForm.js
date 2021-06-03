@@ -36,11 +36,11 @@ const AlertMessage = styled(Alert)`
   margin-bottom: 15px;
 `
 
-const TIMEOUT_MODAL = 300000 // 5 minutes
+const TIMEOUT_MODAL = 60000 // 5 minutes
 
 function RegisterForm({ lng, form, t }) {
   const [isRegisterFormActive, setIsRegisterFormActive] = useState(false)
-  const [phoneAreaCode, setPhoneAreaCode] = useState('+506')
+  const [phoneAreaCode, setPhoneAreaCode] = useState('+1')
   const [dataForm, setDataForm] = useState({
     firstName: '',
     lastName: '',
@@ -90,7 +90,7 @@ function RegisterForm({ lng, form, t }) {
   }
 
   const prefixSelector = getFieldDecorator('prefix', {
-    initialValue: 'Costa Rica (+506)',
+    initialValue: 'United States (+1)',
   })(
     <Select style={{ width: 200 }} showSearch={true} onChange={handlePhoneAreaCode}>
       {PhoneAreaCode.countries.map(({ code, name }) => (

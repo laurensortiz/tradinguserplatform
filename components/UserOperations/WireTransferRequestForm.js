@@ -222,6 +222,7 @@ class WireTransferRequestForm extends PureComponent {
                 >
                   <Option value="Banco">{t('wt bank')}</Option>
                   <Option value="Remesa">{t('wt remittance')}</Option>
+                  <Option value="Banco Local">{t('wt localBank')}</Option>
                 </Select>
               )}
             </Form.Item>
@@ -444,10 +445,11 @@ class WireTransferRequestForm extends PureComponent {
                     </div>
                   )}
                 </Form.Item>
-                <Divider orientation="left">{`${t('wt bank')} ${t('wt beneficiary')}`}</Divider>
+
                 {/*Starts condition section*/}
                 {this.state.transferMethod === 'Banco' && (
                   <React.Fragment>
+                    <Divider orientation="left">{`${t('wt bank')} ${t('wt beneficiary')}`}</Divider>
                     <p>{t('wt beneficiaryBankMessage')}}</p>
                     <Form.Item label={t('wt bankName')}>
                       {getFieldDecorator('beneficiaryBankName')(

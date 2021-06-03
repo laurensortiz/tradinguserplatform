@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
 
 import Document from '../components/Document'
 import LeadsTable from '../components/Lead/LeadsTable'

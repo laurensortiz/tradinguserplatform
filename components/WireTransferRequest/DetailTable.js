@@ -97,15 +97,7 @@ class DetailTable extends Component {
       return (
         <div className="cta-container">
           <ExportWireTransferPDF wireTransfer={row} />
-          {/*<Button*/}
-          {/*  type="primary"*/}
-          {/*  onClick={() => this._handleExportHistory(row.id)}*/}
-          {/*  data-testid="export-button"*/}
-          {/*  className="export-excel-cta"*/}
-          {/*  style={ { float: 'right' } }*/}
-          {/*>*/}
-          {/*  <Icon type="file-excel"/> <span>Exportar</span>*/}
-          {/*</Button>*/}
+
           <Button type="secondary" onClick={() => this.props.onEdit(row.id)}>
             <Icon type="hdd" />
             <span>Detalle</span>
@@ -260,6 +252,7 @@ class DetailTable extends Component {
       <Col sm={12}>
         <Radio.Group defaultValue={1} buttonStyle="solid" onChange={this.props.onTabChange}>
           <Radio.Button value={1}>Activos</Radio.Button>
+          <Radio.Button value={2}>Liberación Local</Radio.Button>
           <Radio.Button value={4}>Cancelado</Radio.Button>
           <Radio.Button value={5}>Anudado</Radio.Button>
           <Radio.Button value={0}>Eliminados</Radio.Button>

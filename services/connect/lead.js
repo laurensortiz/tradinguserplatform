@@ -30,9 +30,6 @@ function useGetLead(leadId) {
         method: 'get',
         url: `leads/${leadId}`,
       })
-      console.log('[=====  jjjj  =====>')
-      console.log(data)
-      console.log('<=====  /jjjj  =====]')
       return data
     },
     {
@@ -49,9 +46,6 @@ function useDeleteLead() {
   return useMutation(
     ['connect:useDeleteLead'],
     async (id) => {
-      console.log('[=====  id  =====>')
-      console.log(id)
-      console.log('<=====  /id  =====]')
       if (!!id) {
         const { data } = await fetch({
           method: 'delete',
@@ -71,9 +65,6 @@ function useDeleteLead() {
 }
 
 function useCreateLead(leadData) {
-  console.log('[=====  create  =====>')
-  console.log(leadData)
-  console.log('<=====  /create  =====]')
   return useMutation(
     ['connect:useCreateLead'],
     async () => {
@@ -99,10 +90,6 @@ function useUpdateLead() {
   return useMutation(
     ['connect:useUpdateLead'],
     async ({ id, ...leadData }) => {
-      console.log('[=====  HERE  =====>')
-      console.log(id)
-      console.log(leadData)
-      console.log('<=====  /HERE  =====]')
       if (!!id) {
         const { data } = await fetch({
           method: 'put',

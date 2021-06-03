@@ -899,6 +899,7 @@ class AddOrEditForm extends PureComponent {
                   showArrow
                 >
                   <Option value={1}>Activo</Option>
+                  <Option value={2}>Liberación Local</Option>
                   <Option value={4}>Cancelado</Option>
                   <Option value={5}>Anulado</Option>
                 </Select>
