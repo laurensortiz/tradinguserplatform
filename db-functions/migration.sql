@@ -2082,3 +2082,28 @@ alter table public."User" add "createdByUserId" integer NULL;
 * End Changes Abr 25, 2021
 */
 
+
+/*
+* Start Changes Jun 2, 2021
+*/
+-- Drop table
+
+-- DROP TABLE public."Lead";
+
+create TABLE public."Lead" (
+	id serial NOT NULL,
+ 	"firstName" varchar(255) NULL,
+ 	"lastName" varchar(255) NULL,
+ 	email varchar(255) NULL,
+ 	"phoneNumber" varchar(255) NULL,
+ 	"country" varchar(255) NULL,
+ 	"notes" varchar(500) NULL,
+ 	status int4 NOT NULL,
+ 	"createdAt" timestamptz NOT NULL,
+ 	"updatedAt" timestamptz NOT null,
+	CONSTRAINT "Lead_pkey" PRIMARY KEY (id)
+);
+
+/*
+* End Changes Jun 2, 2021
+*/

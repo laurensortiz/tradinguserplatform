@@ -1,8 +1,10 @@
 import App, { Container } from 'next/app'
 import React from 'react'
 import { QueryClient, QueryClientProvider, QueryCache } from 'react-query'
+import { ThemeProvider } from 'styled-components'
 
 import connect from '../common/connect'
+import theme from '../styles/theme'
 
 import { Provider } from 'react-redux'
 
@@ -17,12 +19,14 @@ class MyApp extends App {
 
     return (
       <QueryClientProvider client={queryClient}>
-        <Container>
-          <NextNProgress />
-          <Provider store={reduxStore}>
-            <Component {...pageProps} />
-          </Provider>
-        </Container>
+        <ThemeProvider theme={theme}>
+          <Container>
+            <NextNProgress />
+            <Provider store={reduxStore}>
+              <Component {...pageProps} />
+            </Provider>
+          </Container>
+        </ThemeProvider>
       </QueryClientProvider>
     )
   }
