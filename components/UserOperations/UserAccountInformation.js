@@ -18,7 +18,7 @@ const TagDate = styled(Tag)`
   margin-left: 15px;
 `
 
-const getTotalMonthsFromDate = (date = '2021-05-04T13:27:32-04:00') => {
+const getTotalMonthsFromDate = (date) => {
   const userStartDate = moment(date).utc(0).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
   const today = moment().utc(0).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
