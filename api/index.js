@@ -193,6 +193,7 @@ module.exports = (app) => {
   app.post('/api/wire-transfer-request/create', wireTransferRequest.create)
   app.put('/api/wire-transfer-request/:id', wireTransferRequest.update)
   app.delete('/api/wire-transfer-request/:id', wireTransferRequest.delete)
+  app.get('/api/wire-transfer-request/check/migration', wireTransferRequest.check)
 
   // Lead
   app.get('/api/leads/list/:status', lead.list)
