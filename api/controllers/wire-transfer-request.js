@@ -372,4 +372,76 @@ module.exports = {
       })
     }
   },
+
+  async check(req, res) {
+    try {
+      const wireTransferRequests = await WireTransferRequest.findAll({
+        where: {
+          status: 1,
+        },
+      })
+
+      if (!wireTransferRequests) {
+        return res.status(404).send({
+          message: '404 on WireTransferRequest get List',
+        })
+      }
+      let ids = []
+
+      wireTransferRequests.map((el) => ids.push(el.userAccountId))
+
+      console.log('[=====  IIIIIII  =====>')
+      console.log(ids)
+      console.log('<=====  /IIIIIII  =====]')
+
+      await UserAccount.update(
+        {
+          wireTransferAmount: 0,
+        },
+        {
+          where: {
+            id: ids,
+          },
+        }
+      )
+
+      let diff = []
+
+      for (let wt of wireTransferRequests) {
+        const { userAccountId, amount } = wt
+        const userAccount = await UserAccount.findByPk(userAccountId)
+
+        if (userAccount.wireTransferAmount != amount) {
+          diff.push(userAccount.id)
+
+          const wtAmount =
+            userAccount.wireTransferAmount == 'NaN' ? 0 : userAccount.wireTransferAmount
+
+          await userAccount.update({
+            wireTransferAmount: Number(wtAmount) + Number(amount),
+          })
+        }
+      }
+
+      for (let wt of wireTransferRequests) {
+        const { userAccountId } = wt
+        const userAccount = await UserAccount.findByPk(userAccountId)
+
+        await userAccount.update({
+          guaranteeOperationNet:
+            Number(userAccount.guaranteeOperation) - Number(userAccount.wireTransferAmount),
+        })
+      }
+
+      return res.status(200).send(diff)
+    } catch (err) {
+      console.log('[=====  ERR  =====>')
+      console.log(err)
+      console.log('<=====  /ERR  =====]')
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
+  },
 }
