@@ -943,6 +943,22 @@ module.exports = {
                     )
                   }
                   break
+                /**
+                 * CORN BUSHELS
+                 */
+                case 'bushels-CFD':
+                  if (
+                    marketOperation.assetClassId === 2 ||
+                    marketOperation.assetClassId === 12 ||
+                    marketOperation.assetClassId === 15
+                  ) {
+                    calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
 
                 default:
               }
