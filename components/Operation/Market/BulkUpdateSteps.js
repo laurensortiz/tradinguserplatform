@@ -141,6 +141,11 @@ const BULK_UPDATE_TYPES = [
     name: "Sugar #11 Jul '21 (SBN21) - CFDs",
     scope: 'price',
   },
+  {
+    code: 'bushels-CFD',
+    name: 'Corn Bushels - CFDs',
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({
