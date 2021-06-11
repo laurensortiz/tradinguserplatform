@@ -140,12 +140,16 @@ class AccountInformation extends PureComponent {
       </TagDate>
     )
 
-  _getHeaderCard = () => {
-    const wireTransferBtn = (
+  _getHeaderCard = (isUserBlocked) => {
+    const wireTransferBtn = !isUserBlocked ? (
       <Button
         onClick={this._onHandleShowWireTransferForm}
         disabled={IS_WEEKEND || !!this._isWireTransferBtnDisabled()}
       >
+        <Icon type="dollar" /> Withdraw Dividends Request
+      </Button>
+    ) : (
+      <Button disabled={true}>
         <Icon type="dollar" /> Withdraw Dividends Request
       </Button>
     )
@@ -177,8 +181,8 @@ class AccountInformation extends PureComponent {
     )
   }
 
-  _getHeaderCardAfterHours = () => {
-    return (
+  _getHeaderCardAfterHours = (isUserBlocked) => {
+    return !isUserBlocked ? (
       <>
         <Tooltip placement="leftTop" title={this.props.t('wt disabledBtnAfterHours')}>
           <Button disabled>
@@ -187,6 +191,10 @@ class AccountInformation extends PureComponent {
         </Tooltip>
         {this._getLastRequestInfo()}
       </>
+    ) : (
+      <Button disabled>
+        <Icon type="dollar" /> Withdraw Dividends Request
+      </Button>
     )
   }
 
@@ -218,6 +226,10 @@ class AccountInformation extends PureComponent {
 
     const isOutBusinessHours = isBetweenAfterHours()
 
+    const isUserBlocked = ['eflores1807818098', 'iflores180781685', 'lflores180781636'].includes(
+      username
+    )
+
     return (
       <>
         <ExportUserAccountsPDF userAccount={this.props.userAccount} />
@@ -231,7 +243,11 @@ class AccountInformation extends PureComponent {
           <Row style={{ marginBottom: 20 }}>
             <Col>
               <Descriptions
-                title={isOutBusinessHours ? this._getHeaderCardAfterHours() : this._getHeaderCard()}
+                title={
+                  isOutBusinessHours
+                    ? this._getHeaderCardAfterHours(isUserBlocked)
+                    : this._getHeaderCard(isUserBlocked)
+                }
               >
                 <Descriptions.Item label={t('accountType')}>{accountName}</Descriptions.Item>
                 {_.isEqual(accountType, 1) ? (
