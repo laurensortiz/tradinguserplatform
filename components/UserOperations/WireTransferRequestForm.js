@@ -222,7 +222,7 @@ class WireTransferRequestForm extends PureComponent {
                 >
                   <Option value="Banco">{t('wt bank')}</Option>
                   <Option value="Remesa">{t('wt remittance')}</Option>
-                  <Option value="Banco Local">{t('wt localBank')}</Option>
+                  <Option value="Banco Local">{t('wt localBank')} (USA / CR)</Option>
                 </Select>
               )}
             </Form.Item>
@@ -358,42 +358,6 @@ class WireTransferRequestForm extends PureComponent {
                   'wt beneficiary'
                 )})`}</Divider>
                 <p>{t('wt beneficiaryMessage')}</p>
-                {this.state.transferMethod === 'Banco' ? (
-                  <Form.Item label={t('account')}>
-                    {getFieldDecorator('beneficiaryPersonAccountNumber', {
-                      rules: [
-                        {
-                          required: true,
-                          message: `${t('requiredFieldGeneralMessage')}`,
-                        },
-                      ],
-                    })(
-                      <Input
-                        placeholder={t('account')}
-                        name="beneficiaryPersonAccountNumber"
-                        onChange={this._handleChange}
-                      />
-                    )}
-                  </Form.Item>
-                ) : (
-                  <Form.Item label={t('personIDNumber')}>
-                    {getFieldDecorator('beneficiaryPersonID', {
-                      rules: [
-                        {
-                          required: true,
-                          message: `${t('requiredFieldGeneralMessage')}`,
-                        },
-                      ],
-                    })(
-                      <Input
-                        placeholder={t('personIDNumber')}
-                        name="beneficiaryPersonID"
-                        onChange={this._handleChange}
-                      />
-                    )}
-                  </Form.Item>
-                )}
-
                 <Form.Item label={t('firstName')}>
                   {getFieldDecorator('beneficiaryPersonFirstName', {
                     rules: [
@@ -426,6 +390,76 @@ class WireTransferRequestForm extends PureComponent {
                     />
                   )}
                 </Form.Item>
+                {this.state.transferMethod === 'Remesa' ||
+                  (this.state.transferMethod === 'Banco Local' && (
+                    <Form.Item label={t('personIDNumber')}>
+                      {getFieldDecorator('beneficiaryPersonID', {
+                        rules: [
+                          {
+                            required: true,
+                            message: `${t('requiredFieldGeneralMessage')}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={t('personIDNumber')}
+                          name="beneficiaryPersonID"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                  ))}
+                {/*Local Bank Block*/}
+                {this.state.transferMethod === 'Banco Local' ? (
+                  <>
+                    <Form.Item label={t('account')}>
+                      {getFieldDecorator('beneficiaryPersonAccountNumber', {
+                        rules: [
+                          {
+                            required: true,
+                            message: `${t('requiredFieldGeneralMessage')}`,
+                          },
+                        ],
+                      })(
+                        <Input
+                          placeholder={t('account')}
+                          name="beneficiaryPersonAccountNumber"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                    <Form.Item label={t('wt bankName')}>
+                      {getFieldDecorator('beneficiaryBankName')(
+                        <Input
+                          placeholder={t('wt bankName')}
+                          name="beneficiaryBankName"
+                          onChange={this._handleChange}
+                        />
+                      )}
+                    </Form.Item>
+                  </>
+                ) : null}
+                {/*Local Bank Block*/}
+
+                {this.state.transferMethod === 'Banco' && (
+                  <Form.Item label={t('account')}>
+                    {getFieldDecorator('beneficiaryPersonAccountNumber', {
+                      rules: [
+                        {
+                          required: true,
+                          message: `${t('requiredFieldGeneralMessage')}`,
+                        },
+                      ],
+                    })(
+                      <Input
+                        placeholder={t('account')}
+                        name="beneficiaryPersonAccountNumber"
+                        onChange={this._handleChange}
+                      />
+                    )}
+                  </Form.Item>
+                )}
+
                 <Form.Item label={t('address')}>
                   {getFieldDecorator('beneficiaryPersonAddress', {
                     rules: [
@@ -490,6 +524,7 @@ class WireTransferRequestForm extends PureComponent {
                         </div>
                       )}
                     </Form.Item>
+
                     <Divider orientation="left">{`${t('wt bank')} ${t(
                       'wt intermediary'
                     )}`}</Divider>
