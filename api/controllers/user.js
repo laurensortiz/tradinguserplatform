@@ -73,9 +73,7 @@ module.exports = {
           : `${Number(lastUserIDConsecutive) + 1}-${getFirstWord(
               firstName
             ).toUpperCase()}${getFirstWord(lastName).toUpperCase()}`
-        const password = isAdmin
-          ? `forex@${new Date().getFullYear()}`
-          : `${composedUsername}@${new Date().getFullYear()}` // eg. jperez@2021
+        const password = isAdmin ? `w3btr4d3r` : `${composedUsername}@${new Date().getFullYear()}` // eg. jperez@2021
 
         const user = await User.create(
           {
