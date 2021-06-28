@@ -950,7 +950,8 @@ module.exports = {
                   if (
                     marketOperation.assetClassId === 2 ||
                     marketOperation.assetClassId === 12 ||
-                    marketOperation.assetClassId === 15
+                    marketOperation.assetClassId === 15 ||
+                    marketOperation.assetClassId === 16
                   ) {
                     calculatedValue = 0.01 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
                   } else {
