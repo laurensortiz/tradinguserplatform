@@ -146,6 +146,11 @@ const BULK_UPDATE_TYPES = [
     name: 'Corn Bushels - CFDs',
     scope: 'price',
   },
+  {
+    code: 'soybeans-CFD',
+    name: 'US Soybeans - CFDs',
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({

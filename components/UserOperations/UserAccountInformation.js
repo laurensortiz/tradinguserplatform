@@ -230,6 +230,8 @@ class AccountInformation extends PureComponent {
       username
     )
 
+    const isUserReferralBlocked = ['pjijon180781942', 'pablojijol807810185'].includes(username)
+
     return (
       <>
         <ExportUserAccountsPDF userAccount={this.props.userAccount} />
@@ -282,6 +284,7 @@ class AccountInformation extends PureComponent {
                         type="tertiary"
                         style={{ marginLeft: 10, fontSize: 15 }}
                         onClick={this._onHandleShowForm}
+                        disabled={isUserReferralBlocked}
                       >
                         <Icon type="solution" /> {t('btn referral')}
                       </Button>
