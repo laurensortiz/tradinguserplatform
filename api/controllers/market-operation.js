@@ -861,8 +861,8 @@ module.exports = {
                 /**
                  * SOYBEAN OIL US  FT
                  */
-                case 'soybean-oil-FT':
-                  if (marketOperation.assetClassId === 2) {
+                case 'soybean-oil-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
                     calculatedValue = 600 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                   } else {
                     throw new Error(

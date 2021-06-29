@@ -112,8 +112,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'soybean-oil-FT',
-    name: 'Soybean Oil US FT ',
+    code: 'soybean-oil-FT-OP',
+    name: 'Soybean Oil US FT OP',
     scope: 'price',
   },
   {
