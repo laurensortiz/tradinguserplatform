@@ -770,8 +770,8 @@ module.exports = {
                 /**
                  * US Wheat Contract FT
                  */
-                case 'us-Wheat-Contract':
-                  if (marketOperation.assetClassId === 2) {
+                case 'us-Wheat-Contract-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
                     calculatedValue = 25 * gpAmount * commoditiesTotal // 1 FT = $25
                   } else {
                     throw new Error(
@@ -822,8 +822,8 @@ module.exports = {
                 /**
                  * NATURAL FT
                  */
-                case 'natural-FT':
-                  if (marketOperation.assetClassId === 2) {
+                case 'natural-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
                     calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $1000
                   } else {
                     throw new Error(
@@ -848,8 +848,8 @@ module.exports = {
                 /**
                  * LUMBER  FT
                  */
-                case 'lumber-FT':
-                  if (marketOperation.assetClassId === 2) {
+                case 'lumber-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
                     calculatedValue = 110 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                   } else {
                     throw new Error(

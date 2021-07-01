@@ -77,8 +77,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'us-Wheat-Contract',
-    name: 'US Wheat Contract',
+    code: 'us-Wheat-Contract-FT-OP',
+    name: 'US Wheat Contract FT OP',
     scope: 'price',
   },
   {
@@ -97,8 +97,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'natural-FT',
-    name: 'Natural',
+    code: 'natural-FT-OP',
+    name: 'Natural FT OP',
     scope: 'price',
   },
   {
@@ -107,8 +107,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'lumber-FT',
-    name: 'Lumber FT ',
+    code: 'lumber-FT-OP',
+    name: 'Lumber FT OP',
     scope: 'price',
   },
   {
