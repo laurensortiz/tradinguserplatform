@@ -390,10 +390,6 @@ module.exports = {
 
       wireTransferRequests.map((el) => ids.push(el.userAccountId))
 
-      console.log('[=====  IIIIIII  =====>')
-      console.log(ids)
-      console.log('<=====  /IIIIIII  =====]')
-
       await UserAccount.update(
         {
           wireTransferAmount: 0,

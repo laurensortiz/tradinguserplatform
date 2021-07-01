@@ -19,7 +19,11 @@ const TagDate = styled(Tag)`
 `
 
 const getTotalMonthsFromDate = (date) => {
-  const userStartDate = moment(date).utc(0).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+  const dayBetween = moment(date).daysInMonth() < 31 ? -1 : 0
+  const userStartDate = moment(date)
+    .add(dayBetween, 'days')
+    .utc(0)
+    .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
   const today = moment().utc(0).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
 }

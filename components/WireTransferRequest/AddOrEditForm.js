@@ -130,6 +130,9 @@ class AddOrEditForm extends PureComponent {
     ])
 
     this.props.form.validateFields((err, values) => {
+      console.log('[=====  ERR  =====>')
+      console.log(err)
+      console.log('<=====  /ERR  =====]')
       if (!err) {
         const { id, guaranteeOperation } = this.state.userAccount
 
@@ -287,16 +290,16 @@ class AddOrEditForm extends PureComponent {
   render() {
     const { getFieldDecorator, resetFields } = this.props.form
 
-    if (
-      (!this.state.commissionsCharge && Number(this.state.commissionsCharge) <= 0) ||
-      !this.state.isAmountValidationActive
-    ) {
-      resetFields(['commissionsCharge'])
-    }
-
-    if (!this.state.isAmountValidationActive) {
-      resetFields(['amount'])
-    }
+    // if (
+    //   (!this.state.commissionsCharge && Number(this.state.commissionsCharge) <= 0) ||
+    //   !this.state.isAmountValidationActive
+    // ) {
+    //   resetFields(['commissionsCharge'])
+    // }
+    //
+    // if (!this.state.isAmountValidationActive) {
+    //   resetFields(['amount'])
+    // }
 
     // Default values for edit action
     const statusInitValue = !_.isNil(this.state.status) ? this.state.status : undefined
