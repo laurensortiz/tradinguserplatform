@@ -979,6 +979,40 @@ module.exports = {
                   }
                   break
 
+                /**
+                 * EUR USD FOREX
+                 */
+                case 'eur-usd':
+                  if (
+                    marketOperation.assetClassId === 1 ||
+                    marketOperation.assetClassId === 2 ||
+                    marketOperation.assetClassId === 12
+                  ) {
+                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * GBP USD FOREX
+                 */
+                case 'gbp-usd':
+                  if (
+                    marketOperation.assetClassId === 1 ||
+                    marketOperation.assetClassId === 2 ||
+                    marketOperation.assetClassId === 12
+                  ) {
+                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
                 default:
               }
 

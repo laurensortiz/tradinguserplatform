@@ -151,6 +151,16 @@ const BULK_UPDATE_TYPES = [
     name: 'US Soybeans - CFDs',
     scope: 'price',
   },
+  {
+    code: 'eur-usd',
+    name: 'EUR/USD',
+    scope: 'price',
+  },
+  {
+    code: 'gbp-usd',
+    name: 'GBP/USD ',
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({
