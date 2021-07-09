@@ -83,7 +83,7 @@ function Page() {
           <video id="video" ref={onVideo} className="video-js" width="100%" height="500">
             <source
               type="application/x-mpegURL"
-              src="https://liveproduseast.global.ssl.fastly.net/btv/desktop/us_live.m3u8"
+              src="https://liveproduseast.akamaized.net/us/Channel-USTV-AWS-virginia-1/Source-USTV-440-1_live.m3u8"
             />
           </video>
         </div>
