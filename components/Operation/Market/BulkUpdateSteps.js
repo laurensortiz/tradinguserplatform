@@ -183,9 +183,6 @@ function BulkUpdateSteps({
     setBehaviorClass('')
     setUpdateValue(null)
   }, [updateType])
-  console.log('[=====  kkkk  =====>')
-  console.log(updateType)
-  console.log('<=====  /kkkk  =====]')
 
   const _isValidAmount = (amount) => {
     if (updateType === 'eur-usd' || updateType === 'gbp-usd') {
