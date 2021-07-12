@@ -183,8 +183,14 @@ function BulkUpdateSteps({
     setBehaviorClass('')
     setUpdateValue(null)
   }, [updateType])
+  console.log('[=====  kkkk  =====>')
+  console.log(updateType)
+  console.log('<=====  /kkkk  =====]')
 
   const _isValidAmount = (amount) => {
+    if (updateType === 'eur-usd' || updateType === 'gbp-usd') {
+      return true
+    }
     const regex = /^-?[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
     const isValid = regex.test(amount)
     setIsValidAmount(isValid)

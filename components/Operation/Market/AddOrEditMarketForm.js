@@ -148,6 +148,8 @@ class AddOrEditMarketForm extends PureComponent {
       const brokerName = _.get(selectedOperation, 'broker.name', '')
       const commodityName = _.get(selectedOperation, 'commodity.name', '')
       const assetClassName = _.get(selectedOperation, 'assetClass.name', '')
+      const commodityId = _.get(selectedOperation, 'commodity.id', null)
+      const assetClassId = _.get(selectedOperation, 'assetClass.id', null)
       const status = _.get(selectedOperation, 'status', 1)
       this.setState({
         ...this.state,
@@ -158,6 +160,14 @@ class AddOrEditMarketForm extends PureComponent {
         brokerName,
         commodityName,
         assetClassName,
+        commodity: {
+          id: commodityId,
+          name: commodityName,
+        },
+        assetClass: {
+          id: assetClassId,
+          name: assetClassName,
+        },
         isOperationClosed: status === 4,
       })
     }
@@ -505,7 +515,10 @@ class AddOrEditMarketForm extends PureComponent {
             rules: [
               { required: false, message: 'Por favor indique el monto de la compra' },
               {
-                validator: (rule, amount) => AmountFormatValidation(rule, amount),
+                validator:
+                  this.state.assetClass.id !== 10 || this.state.commodity.id === 4
+                    ? (rule, amount) => AmountFormatValidation(rule, amount)
+                    : null,
               },
             ],
           })(
