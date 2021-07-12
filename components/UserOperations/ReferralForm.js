@@ -30,6 +30,7 @@ class ReferralForm extends PureComponent {
     confirmDirty: false,
     isInvalid: true,
     phoneAreaCode: '+1',
+    initialBrokerName2:'',
     fileList: [],
   }
 
@@ -284,6 +285,22 @@ class ReferralForm extends PureComponent {
                   name="brokerName"
                   onChange={this._handleChange}
                   disabled
+                />
+              )}
+            </Form.Item>
+            <Form.Item label={t('brokerName2')}>
+              {getFieldDecorator('brokerName2', {
+                rules: [
+                  {
+                    required: false,
+                    message: `${t('requiredFieldMessage')} ${t('brokerName')}`,
+                  },
+                ],
+              })(
+                <Input
+                  placeholder={t('brokerName2')}
+                  name="brokerName2"
+                  onChange={this._handleChange}
                 />
               )}
             </Form.Item>

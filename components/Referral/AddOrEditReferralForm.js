@@ -23,6 +23,7 @@ class AddOrEditReferralForm extends PureComponent {
     initialAmount: 0.0,
     hasBrokerGuarantee: 0,
     brokerName: '',
+    brokerName2: '',
     brokerGuaranteeCode: '',
     quantity: 0,
     personalIdDocument: '',
@@ -118,6 +119,9 @@ class AddOrEditReferralForm extends PureComponent {
     const hasBrokerGuaranteeInitValue = this.state.hasBrokerGuarantee === 1 ? 'checked' : null
     const brokerNameInitValue = !_.isEmpty(this.state.brokerName)
       ? this.state.brokerName
+      : undefined
+    const brokerName2InitValue = !_.isEmpty(this.state.brokerName2)
+      ? this.state.brokerName2
       : undefined
     const brokerGuaranteeCodeInitValue = !_.isEmpty(this.state.brokerGuaranteeCode)
       ? this.state.brokerGuaranteeCode
@@ -341,6 +345,20 @@ class AddOrEditReferralForm extends PureComponent {
           </Col>
         </Row>
         <Row gutter={16}>
+          <Col xs={24} sm={12}>
+            <Form.Item label="Nombre del segundo corredor asignado">
+              {getFieldDecorator('brokerName2', {
+                initialValue: brokerName2InitValue,
+
+              })(
+                <Input
+                  placeholder="Nombre del segundo corredor asignado"
+                  name="brokerName2"
+                  onChange={this._handleChange}
+                />
+              )}
+            </Form.Item>
+          </Col>
           <Col xs={24} sm={12}>
             <Form.Item label="Compra Broker Guarantee">
               {getFieldDecorator('hasBrokerGuarantee', {

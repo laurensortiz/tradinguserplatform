@@ -95,7 +95,7 @@ class UsersTable extends Component {
                 <span>Eliminar</span>
               </Button>
             </Popconfirm>
-            <Button type="secondary" onClick={() => this.props.onEdit(row.id)}>
+            <Button type="secondary" onClick={() => this.props.onEdit(row)}>
               <Icon type="edit" />
               <span>Editar</span>
             </Button>
