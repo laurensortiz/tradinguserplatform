@@ -1,8 +1,8 @@
 import get from 'lodash/get'
 const queries = {
   list: ({ req, Role }) => {
-    const status = get(req, 'body.status', 1)
-    const roleId = get(req, 'body.roleId', 2)
+    const status = get(req, 'params.status', 1)
+    const roleId = get(req, 'params.role', 2)
 
     return {
       where: {
@@ -12,12 +12,6 @@ const queries = {
       attributes: {
         exclude: ['salt', 'password'],
       },
-      include: [
-        {
-          model: Role,
-          as: 'role',
-        },
-      ],
       order: [['createdAt', 'DESC']],
     }
   },

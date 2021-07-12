@@ -1,269 +1,199 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
-
-import { Row, Col, Button, Drawer, Tabs, notification, Icon, Radio } from 'antd'
+import React, { useState, useEffect } from 'react'
+import { Button, Drawer, Icon, notification, Radio, Row } from 'antd'
 import _ from 'lodash'
 
 import Document from '../components/Document'
+import connect from '../services/connect'
 
 import UsersTable from '../components/User/UsersTable'
-import AddOrEditUserForm from '../components/User/AddOrEditUserForm'
 import Detail from '../components/User/Detail'
-
-import { userOperations } from '../state/modules/users'
+import AddOrEditUserForm from '../components/User/AddOrEditUserForm'
 import ExportUserDetail from '../components/User/ExportUserDetail'
 
-const { TabPane } = Tabs
+function Users() {
+  const [status, setStatus] = useState(1)
+  const [role, setRole] = useState(2)
+  const [actionType, setActionType] = useState('add')
+  const [isShowDetailActive, setIsShowDetailActive] = useState(false)
+  const [isShowFormActive, setIsShowFormActive] = useState(false)
+  const [selectedUser, setSelectedUser] = useState({})
 
-class Users extends Component {
-  state = {
-    isVisibleAddOrEditUser: false,
-    isVisibleUserDetail: false,
-    actionType: 'add',
-    selectedUser: {},
-    currentUser: {},
-    status: 1,
-    roleId: 2,
+  const { isLoading: isLoadingUsers, data: usersData, refetch } = connect.useGetUsers({
+    status,
+    role,
+  })
+  const { mutateAsync: mutateDelete, isSuccess: isSuccessDelete } = connect.useDeleteUser()
+  const { mutateAsync: mutateUser, isLoading: isUserUpdateLoading } = connect.useUpdateUser()
+  const { mutateAsync: mutateUserCreate, isLoading: isUserCreateLoading } = connect.useCreateUser()
+
+  const onSelectedUser = (id) => {
+    setIsShowDetailActive(true)
+    setSelectedUser(id)
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.isSuccess && !_.isEmpty(nextProps.message)) {
-      let message = 'Usuario Creado'
+  const onTabChange = ({ target }) => setStatus(target.value)
+  const onUserRoleChange = ({ target }) => setRole(target.value)
 
-      if (_.isEqual(prevState.actionType, 'edit')) {
-        message = 'Usuario Modificado'
-      }
+  useEffect(() => {
+    refetch()
+  }, [status, isSuccessDelete, role])
 
-      if (_.isEqual(prevState.actionType, 'delete')) {
-        message = 'Usuario Eliminado'
-      }
+  const onAddUser = () => {
+    setActionType('add')
+    setIsShowFormActive(true)
+  }
 
-      if (_.isEqual(prevState.actionType, 'active')) {
-        message = 'Usuario Activado'
-      }
+  const onEdit = (userSelected) => {
+    setActionType('edit')
+    setIsShowFormActive(true)
+    setSelectedUser(userSelected)
+  }
 
-      prevState.isVisibleAddOrEditUser = false
+  const onClose = () => {
+    setActionType('add')
+    setIsShowFormActive(false)
+    setIsShowDetailActive(false)
+    setSelectedUser({})
+  }
 
+  const onDetail = (userSelected) => {
+    setIsShowDetailActive(true)
+    setSelectedUser(userSelected)
+  }
+
+  const handleAddUser = async (userData) => {
+    try {
+      await mutateUserCreate(userData)
+      onClose()
+      refetch()
       notification.success({
-        message,
-        onClose: () => {
-          prevState.actionType = 'add' // default value
-
-          nextProps.fetchGetUsers()
-          nextProps.resetAfterRequest()
-        },
+        message: 'Usuario guardado',
+        duration: 1,
+      })
+    } catch (e) {
+      notification.error({
+        message: 'Ocurrió un error. Por favor intente de nuevo',
         duration: 1,
       })
     }
-    if (nextProps.isFailure && !_.isEmpty(nextProps.message)) {
+  }
+
+  const handleEditUser = async (userUpdated) => {
+    try {
+      await mutateUser({
+        ...userUpdated,
+      })
+      onClose()
+      refetch()
+      notification.success({
+        message: 'Usuario Modificado',
+        duration: 1,
+      })
+    } catch (e) {
       notification.error({
-        message: 'Ha ocurrido un error',
-        description: nextProps.message,
-        onClose: () => {
-          nextProps.resetAfterRequest()
-        },
-        duration: 3,
-      })
-    }
-    return null
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      !_.isEqual(prevState.status, this.state.status) ||
-      !_.isEqual(prevState.roleId, this.state.roleId)
-    ) {
-      this.props.fetchGetUsers({
-        roleId: this.state.roleId,
-        status: this.state.status,
+        message: 'Ocurrió un error. Por favor intente de nuevo',
+        duration: 1,
       })
     }
   }
 
-  componentDidMount() {
-    this.props.fetchGetUsers()
+  const handleDeleteUser = async (userId) => {
+    try {
+      await mutateDelete(userId)
+      onClose()
+      refetch()
+      notification.success({
+        message: 'Usuario Eliminado',
+        duration: 1,
+      })
+    } catch (e) {
+      notification.error({
+        message: 'Ocurrió un error. Por favor intente de nuevo',
+        duration: 1,
+      })
+    }
   }
 
-  _addUser = () => {
-    this.setState({
-      actionType: 'add',
-      isVisibleAddOrEditUser: true,
-    })
+  const handleActiveUser = async (id) => {
+    try {
+      await mutateUser({
+        id,
+        status: 1,
+      })
+      onClose()
+      refetch()
+      notification.success({
+        message: 'Usuario Activado',
+        duration: 1,
+      })
+    } catch (e) {
+      notification.error({
+        message: 'Ocurrió un error. Por favor intente de nuevo',
+        duration: 1,
+      })
+    }
   }
 
-  _onClose = () => {
-    this._handleTableOnChange()
-    this.setState({
-      isVisibleAddOrEditUser: false,
-      selectedUser: {},
-    })
-  }
-
-  _handleAddNewUser = (user) => {
-    this.props.fetchAddUser(user)
-  }
-
-  _handleEditUser = (user) => {
-    this.props.fetchEditUser(user)
-  }
-
-  _onSelectActive = (userId) => {
-    this.props.fetchEditUser({
-      id: userId,
-      status: 1,
-    })
-    this.setState({
-      actionType: 'active',
-    })
-  }
-
-  _handleDeleteUser = (userId) => {
-    this.setState({
-      actionType: 'delete',
-    })
-    this.props.fetchDeleteUser(userId)
-  }
-
-  _onSelectEdit = (userId) => {
-    this.setState({
-      actionType: 'edit',
-    })
-    this._handleSelectEditUser(userId)
-  }
-
-  _handleSelectEditUser = (userId) => {
-    const selectedUser = _.find(this.props.users, { id: userId })
-    this.setState({
-      selectedUser,
-      isVisibleAddOrEditUser: true,
-    })
-  }
-
-  _onCloseUserDetail = () => {
-    this._handleTableOnChange()
-    this.setState({
-      isVisibleUserDetail: false,
-      currentUser: {},
-    })
-  }
-
-  _setCurrentUser = (user) => {
-    this.setState({
-      isVisibleUserDetail: true,
-      currentUser: user,
-    })
-  }
-
-  _handleSelectUserType = ({ target }) => {
-    this.setState({
-      roleId: target.value,
-    })
-  }
-
-  _handleTabChange = ({ target }) => {
-    this.setState({
-      status: target.value,
-    })
-  }
-
-  _handleTableOnChange = () => {
-    this.props.fetchGetUsers()
-  }
-
-  _handleExportDetail = (userSelected) => {
+  const handleExportDetail = (userSelected) => {
     ExportUserDetail(userSelected)
   }
 
-  render() {
-    const modalTitle = _.isEqual(this.state.actionType, 'add')
-      ? 'Agregar Usuario'
-      : 'Editar Usuario'
-    return (
-      <Document id="users-page">
-        <Row style={{ marginBottom: 30 }}>
-          <Radio.Group
-            onChange={this._handleSelectUserType}
-            defaultValue={2}
-            buttonStyle="solid"
-            size="large"
-          >
-            <Radio.Button value={2}>
-              <Icon type="user" /> Clientes
-            </Radio.Button>
-            <Radio.Button value={1}>
-              <Icon type="crown" /> Administradores
-            </Radio.Button>
-          </Radio.Group>
-          <Button style={{ float: 'right' }} type="primary" onClick={this._addUser} size="large">
-            <Icon type="user-add" /> Agregar Usuario
-          </Button>
-        </Row>
-        <Row>
-          <Col>
-            <UsersTable
-              users={this.props.users}
-              isLoading={this.props.isLoading}
-              onActive={this._onSelectActive}
-              onEdit={this._onSelectEdit}
-              onDelete={this._handleDeleteUser}
-              onDetail={this._setCurrentUser}
-              onTabChange={this._handleTabChange}
-              dataStatus={this.state.status}
-              onRequestUpdateTable={this._handleTableOnChange}
-              onRequestExportDetail={this._handleExportDetail}
-            />
-          </Col>
-        </Row>
-        <Drawer
-          title={modalTitle}
-          width="40%"
-          onClose={this._onClose}
-          visible={this.state.isVisibleAddOrEditUser}
-          destroyOnClose={true}
-        >
-          <AddOrEditUserForm
-            onAddNew={this._handleAddNewUser}
-            onEdit={this._handleEditUser}
-            isLoading={this.props.isLoading}
-            selectedProject={this.state.selectedUser}
-            actionType={this.state.actionType}
-          />
-        </Drawer>
-        <Drawer
-          title="Detalle de Usuario"
-          width="40%"
-          onClose={this._onCloseUserDetail}
-          visible={this.state.isVisibleUserDetail}
-          destroyOnClose={true}
-        >
-          <Detail currentUser={this.state.currentUser} />
-        </Drawer>
-      </Document>
-    )
-  }
-}
+  const modalTitle = _.isEqual(actionType, 'add') ? 'Agregar Usuario' : 'Editar Usuario'
 
-function mapStateToProps(state) {
-  return {
-    users: state.usersState.list,
-    isLoading: state.usersState.isLoading,
-    isSuccess: state.usersState.isSuccess,
-    isFailure: state.usersState.isFailure,
-    message: state.usersState.message,
-  }
-}
-
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      fetchGetUsers: userOperations.fetchGetUsers,
-      fetchAddUser: userOperations.fetchAddUser,
-      fetchEditUser: userOperations.fetchEditUser,
-      fetchDeleteUser: userOperations.fetchDeleteUser,
-      resetAfterRequest: userOperations.resetAfterRequest,
-    },
-    dispatch
+  return (
+    <Document id="users-page">
+      <Row style={{ marginBottom: 30 }}>
+        <Radio.Group onChange={onUserRoleChange} defaultValue={2} buttonStyle="solid" size="large">
+          <Radio.Button value={2}>
+            <Icon type="user" /> Clientes
+          </Radio.Button>
+          <Radio.Button value={1}>
+            <Icon type="crown" /> Administradores
+          </Radio.Button>
+        </Radio.Group>
+        <Button style={{ float: 'right' }} type="primary" onClick={onAddUser} size="large">
+          <Icon type="user-add" /> Agregar Usuario
+        </Button>
+      </Row>
+      <UsersTable
+        users={usersData}
+        isLoading={isLoadingUsers}
+        onSelectedUser={onSelectedUser}
+        onRequestUpdateTable={() => refetch()}
+        onTabChange={onTabChange}
+        onDetail={onDetail}
+        onDelete={handleDeleteUser}
+        onEdit={onEdit}
+        dataStatus={status}
+        onActive={handleActiveUser}
+        onRequestExportDetail={handleExportDetail}
+      />
+      <Drawer
+        title={modalTitle}
+        width="40%"
+        onClose={onClose}
+        visible={isShowFormActive}
+        destroyOnClose={true}
+      >
+        <AddOrEditUserForm
+          onAddNew={handleAddUser}
+          onEdit={handleEditUser}
+          selectedUser={selectedUser}
+          actionType={actionType}
+          isLoading={isUserUpdateLoading || isUserCreateLoading}
+        />
+      </Drawer>
+      <Drawer
+        title="Detalle del Usuario"
+        width="40%"
+        onClose={onClose}
+        visible={isShowDetailActive}
+        destroyOnClose={true}
+      >
+        <Detail currentUser={selectedUser} />
+      </Drawer>
+    </Document>
   )
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Users)
+export default Users

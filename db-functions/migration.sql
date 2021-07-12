@@ -2107,3 +2107,11 @@ create TABLE public."Lead" (
 /*
 * End Changes Jun 2, 2021
 */
+
+/*
+* Start Changes Jul 10, 2021
+*/
+alter table public."Referral" add "brokerName2" varchar(255) DEFAULT '';
+/*
+* End Changes Jul 10, 2021
+*/

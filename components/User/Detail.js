@@ -1,91 +1,53 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import React from 'react'
 
 import { Descriptions, Tag } from 'antd'
-import _ from 'lodash'
 
-import { FormatStatus, FormatDate } from '../../common/utils'
+import { FormatDate } from '../../common/utils'
 
-class Detail extends Component {
-  state = {
-    currentOperation: {
-      id: null,
-      amount: 0,
-    },
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    let updatedState = {}
-
-    return !_.isEmpty(updatedState) ? updatedState : null
-  }
-
-  render() {
-    const userName = _.get(this.props, 'currentUser.username', '')
-    const firstName = _.get(this.props, 'currentUser.firstName', '')
-    const lastName = _.get(this.props, 'currentUser.lastName', '')
-    const firstName2 = _.get(this.props, 'currentUser.firstName2', '')
-    const lastName2 = _.get(this.props, 'currentUser.lastName2', '')
-    const firstName3 = _.get(this.props, 'currentUser.firstName3', '')
-    const lastName3 = _.get(this.props, 'currentUser.lastName3', '')
-    const firstName4 = _.get(this.props, 'currentUser.firstName4', '')
-    const lastName4 = _.get(this.props, 'currentUser.lastName4', '')
-    const userID = _.get(this.props, 'currentUser.userID', '')
-    const email = _.get(this.props, 'currentUser.email', '')
-    const country = _.get(this.props, 'currentUser.country', '')
-    const referred = _.get(this.props, 'currentUser.referred', '')
-    const phoneNumber = _.get(this.props, 'currentUser.phoneNumber', '')
-    const startDate = _.get(this.props, 'currentUser.startDate', null)
-    const signDate = _.get(this.props, 'currentUser.signDate', null)
-    const createdByUsername = _.get(this.props, 'currentUser.createdByUsername', '')
-
-    const status = _.get(this.props, 'currentUser.status', 1)
-    const { name, color } = FormatStatus(status)
-
-    return (
-      <>
-        <Descriptions title="" column={1} size="small">
-          <Descriptions.Item label="Usuario">{userName}</Descriptions.Item>
+function UserDetail({ currentUser }) {
+  return (
+    currentUser && (
+      <Descriptions title="" column={1} size="small">
+        <Descriptions.Item label="Usuario">{currentUser.userName || ''}</Descriptions.Item>
+        <Descriptions.Item label="Nombre Completo">
+          {currentUser.firstName || ''} {currentUser.lastName || ''}{' '}
+          <Tag color="#e29524">Principal</Tag>
+        </Descriptions.Item>
+        {currentUser.firstName2 && currentUser.firstName2 !== '' ? (
           <Descriptions.Item label="Nombre Completo">
-            {firstName} {lastName} <Tag color="#e29524">Principal</Tag>
+            {currentUser.firstName2} {currentUser.lastName2 || ''} <Tag>Adicional</Tag>
           </Descriptions.Item>
-          {!_.isEmpty(firstName2) ? (
-            <Descriptions.Item label="Nombre Completo">
-              {firstName2} {lastName2} <Tag>Adicional</Tag>
-            </Descriptions.Item>
-          ) : null}
-          {!_.isEmpty(firstName3) ? (
-            <Descriptions.Item label="Nombre Completo">
-              {firstName3} {lastName3} <Tag>Adicional</Tag>
-            </Descriptions.Item>
-          ) : null}
-          {!_.isEmpty(firstName4) ? (
-            <Descriptions.Item label="Nombre Completo">
-              {firstName4} {lastName4} <Tag>Adicional</Tag>
-            </Descriptions.Item>
-          ) : null}
+        ) : null}
+        {currentUser.firstName3 && currentUser.firstName3 !== '' ? (
+          <Descriptions.Item label="Nombre Completo">
+            {currentUser.firstName3} {currentUser.lastName3 || ''} <Tag>Adicional</Tag>
+          </Descriptions.Item>
+        ) : null}
+        {currentUser.firstName4 && currentUser.firstName4 !== '' ? (
+          <Descriptions.Item label="Nombre Completo">
+            {currentUser.firstName4} {currentUser.lastName4 || ''} <Tag>Adicional</Tag>
+          </Descriptions.Item>
+        ) : null}
 
-          <Descriptions.Item label="Usuario ID">{userID}</Descriptions.Item>
-          <Descriptions.Item label="Correo Electrónico">{email}</Descriptions.Item>
-          <Descriptions.Item label="Número de Teléfono">{phoneNumber}</Descriptions.Item>
-          <Descriptions.Item label="País">{country}</Descriptions.Item>
-          <Descriptions.Item label="Referido">{referred}</Descriptions.Item>
-          <Descriptions.Item label="Fecha de Inicio">{FormatDate(startDate)}</Descriptions.Item>
-          <Descriptions.Item label="Fecha de Firma">{FormatDate(signDate)}</Descriptions.Item>
-          <Descriptions.Item label="Creado por Usuario">
-            <Tag color="#1b1f21">{createdByUsername}</Tag>
-          </Descriptions.Item>
-        </Descriptions>
-      </>
+        <Descriptions.Item label="Usuario ID">{currentUser.userID || ''}</Descriptions.Item>
+        <Descriptions.Item label="Correo Electrónico">{currentUser.email || ''}</Descriptions.Item>
+        <Descriptions.Item label="Número de Teléfono">
+          {currentUser.phoneNumber || ''}
+        </Descriptions.Item>
+        <Descriptions.Item label="País">{currentUser.country || ''}</Descriptions.Item>
+        <Descriptions.Item label="Referido">{currentUser.referred || ''}</Descriptions.Item>
+        <Descriptions.Item label="Fecha de Inicio">
+          {currentUser.startDate && FormatDate(currentUser.startDate)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Fecha de Firma">
+          {currentUser.signDate && FormatDate(currentUser.signDate)}
+        </Descriptions.Item>
+        <Descriptions.Item label="Creado por Usuario">
+          <Tag color="#1b1f21">{currentUser.createdByUsername}</Tag>
+        </Descriptions.Item>
+      </Descriptions>
     )
-  }
+  )
 }
 
-function mapStateToProps(state) {
-  return {}
-}
-
-const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch)
-
-export default connect(mapStateToProps, mapDispatchToProps)(Detail)
+export default UserDetail

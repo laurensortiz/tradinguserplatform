@@ -41,7 +41,7 @@ module.exports = {
       const startDate = req.body.startDate
       const signDate = req.body.signDate
       const phoneNumber = req.body.phoneNumber
-      const roleId = _.get(req, 'body.role.id', 2)
+      const roleId = req.body.roleId
       const status = req.body.status || 1
       const createdByUsername = currentUser.username
       const createdByUserId = currentUser.id
@@ -199,8 +199,10 @@ module.exports = {
         startDate: req.body.startDate || user.startDate,
         signDate: req.body.signDate || user.signDate,
         endDate: req.body.endDate || user.endDate,
-        roleId: _.get(req, 'body.role.id', user.roleId),
+        roleId: req.body.roleId || user.roleId,
         status: req.body.status || user.status,
+        createdByUsername: req.body.createdByUsername || user.createdByUsername,
+        createdByUserId: req.body.createdByUserId || user.createdByUserId,
         phoneNumber: req.body.phoneNumber || user.phoneNumber,
         password: req.body.password ? hashPassword(req.body.password) : user.password,
         salt: req.body.password ? salt : user.salt,

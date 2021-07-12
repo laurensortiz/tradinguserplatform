@@ -41,6 +41,10 @@ module.exports = (Sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    brokerName2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     brokerGuaranteeCode: {
       type: DataTypes.STRING,
       allowNull: true,
