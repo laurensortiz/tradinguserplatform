@@ -104,7 +104,7 @@ class AddOrEditUserAccountForm extends PureComponent {
       this.props.fetchGetAccounts()
     }
     if (_.isEmpty(this.state.users)) {
-      this.props.fetchGetUsers()
+      this.props.fetchGetUsers({ status: 1, role: 2 })
     }
     if (_.isEmpty(this.state.brokers)) {
       this.props.fetchGetBrokers()
