@@ -144,7 +144,14 @@ class AccountInformation extends PureComponent {
       </TagDate>
     )
 
-  _getHeaderCard = (isUserBlocked) => {
+  _getHeaderCard = (isUserBlocked, forceEnableUserWT) => {
+    if (forceEnableUserWT) {
+      return (
+        <Button onClick={this._onHandleShowWireTransferForm}>
+          <Icon type="dollar" /> Withdraw Dividends Request
+        </Button>
+      )
+    }
     const wireTransferBtn = !isUserBlocked ? (
       <Button
         onClick={this._onHandleShowWireTransferForm}
@@ -234,6 +241,8 @@ class AccountInformation extends PureComponent {
       username
     )
 
+    const forceEnableUserWT = ['rmolina180781653'].includes(username)
+
     const isUserReferralBlocked = ['pjijon180781942', 'pablojijol807810185'].includes(username)
 
     return (
@@ -252,7 +261,7 @@ class AccountInformation extends PureComponent {
                 title={
                   isOutBusinessHours
                     ? this._getHeaderCardAfterHours(isUserBlocked)
-                    : this._getHeaderCard(isUserBlocked)
+                    : this._getHeaderCard(isUserBlocked, forceEnableUserWT)
                 }
               >
                 <Descriptions.Item label={t('accountType')}>{accountName}</Descriptions.Item>
