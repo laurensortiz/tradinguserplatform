@@ -241,7 +241,11 @@ class AccountInformation extends PureComponent {
       username
     )
 
-    const forceEnableUserWT = ['lsalas1807818178', 'gsolarteama8078140'].includes(username)
+    const forceEnableUserWT = [
+      'lsalas1807818178',
+      'gsolarteama8078140',
+      'efranmg180781461',
+    ].includes(username)
 
     const isUserReferralBlocked = ['pjijon180781942', 'pablojijol807810185'].includes(username)
 
