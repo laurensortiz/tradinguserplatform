@@ -25,6 +25,7 @@ const getTotalMonthsFromDate = (date) => {
     .utc(0)
     .set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
   const today = moment().utc(0).set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+
   return parseInt(moment.duration(today.diff(userStartDate)).asMonths())
 }
 
@@ -78,7 +79,12 @@ class AccountInformation extends PureComponent {
     }
 
     if (nextProps.userAccount && prevState.isUserWireTransferAvailable) {
-      const getTotalMonths = getTotalMonthsFromDate(nextProps.userAccount.user.startDate)
+      const userDate =
+        moment(nextProps.userAccount.user.startDate).format('M') < 3
+          ? moment(nextProps.userAccount.user.startDate).add(-1, 'days').format()
+          : nextProps.userAccount.user.startDate
+      const getTotalMonths = getTotalMonthsFromDate(userDate)
+
       const isProfitMonthAccount = nextProps.userAccount.account.associatedOperation === 2
       const isOldUser = moment(nextProps.userAccount.user.startDate).isBefore('2020-12-15', 'day')
       const requiredHoldTime = isProfitMonthAccount ? 1 : isOldUser ? 0 : 6
