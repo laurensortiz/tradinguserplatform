@@ -6,7 +6,7 @@ import _ from 'lodash'
 import { Button, Icon, Popconfirm, Table, Tag, Input, Radio, Row, Col, Tooltip } from 'antd'
 import Highlighter from 'react-highlight-words'
 
-import { Sort, SortDate, FormatDate } from '../../common/utils'
+import { Sort } from '../../common/utils'
 import classNames from 'classnames'
 import BulkUpdateSteps from './BulkUpdateSteps'
 
@@ -22,7 +22,7 @@ class UsersTable extends Component {
 
   onSelectAllOperation = (isSelected) => {
     const { currentDataSource, userAccounts } = this.state
-    const dataSource = !_.isEmpty(currentDataSource) ? currentDataSource : userAccounts
+    const dataSource = !_.isEmpty(currentDataSource) ? currentDataSource : this.props.users
     const allOperationsIds = isSelected ? dataSource.map((ope) => ope.id) : []
     this.setState({ selectedRowKeys: allOperationsIds })
   }

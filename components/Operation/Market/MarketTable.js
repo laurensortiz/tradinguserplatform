@@ -735,6 +735,11 @@ class MarketTable extends Component {
           onChange={this.onTableChange}
           title={this.tableHeader}
           footer={this._displayTableFooter}
+          pagination={{
+            defaultPageSize: 10,
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '30', '50'],
+          }}
         />
       </>
     )
