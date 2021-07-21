@@ -507,12 +507,20 @@ class ReferralsTable extends Component {
         ...this.getColumnSearchProps('username'),
       },
       {
-        title: 'Broker',
+        title: 'Broker Principal',
         dataIndex: 'brokerName',
         key: 'brokerName',
         sorter: (a, b) => Sort(a.brokerName, b.brokerName),
         sortDirections: ['descend', 'ascend'],
         ...this.getColumnSearchProps('brokerName'),
+      },
+      {
+        title: 'Broker Adicional',
+        dataIndex: 'brokerName2',
+        key: 'brokerName2',
+        sorter: (a, b) => Sort(a.brokerName2, b.brokerName2),
+        sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('brokerName2'),
       },
       {
         title: 'Fecha de Creación',
