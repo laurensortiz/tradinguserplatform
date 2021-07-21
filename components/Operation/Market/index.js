@@ -209,7 +209,7 @@ class Market extends Component {
   }
 
   _handleSelectEditUserOperation = (operationId) => {
-    const selectedOperation = _.find(this.props.marketOperations, { id: operationId })
+    const selectedOperation = _.find(this.props.marketOperations.rows, { id: operationId })
     this.setState({
       selectedOperation,
       isVisibleAddOrEditOperation: true,
@@ -297,9 +297,7 @@ class Market extends Component {
     this.setState({
       pagination: paginationState,
     })
-    console.log('[=====  ttttt  =====>')
-    console.log(this.state.dataStatus)
-    console.log('<=====  /ttttt  =====]')
+
     this.props.fetchGetMarketOperations({
       pagination: paginationState,
       status: this.state.dataStatus,
@@ -327,6 +325,10 @@ class Market extends Component {
       ''
     )
     const modalDetailTitle = `${currentUsername} - ${currentUserFirstName} ${currentUserLastName}`
+
+    console.log('[=====  oppe  =====>')
+    console.log(this.state.selectedOperation)
+    console.log('<=====  /oppe  =====]')
 
     return (
       <>
