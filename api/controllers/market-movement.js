@@ -98,7 +98,7 @@ module.exports = {
 
   async get(req, res) {
     try {
-      const marketMovement = await MarketMovement.findByPk(req.params.id)
+      const marketMovement = await MarketMovement.findByPk(req.params.id || -1)
 
       if (!marketMovement) {
         return res.status(404).send({
@@ -118,7 +118,7 @@ module.exports = {
   async getLastMovement(movementId) {
     return await MarketMovement.findAll({
       where: {
-        marketOperationId: movementId,
+        marketOperationId: movementId || -1,
       },
       limit: 1,
       order: [['createdAt', 'DESC']],

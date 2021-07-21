@@ -1,9 +1,14 @@
 import fetch from '../../../common/fetch'
 
-export const getMarketOperations = async (status = 1, userAccountId = 0) => {
+export const getMarketOperations = async (pagination, userAccountId = 0) => {
   return fetch({
     method: 'get',
-    url: `market-operation/${status}/${userAccountId}`,
+    url: `market-operation/`,
+    params: {
+      ...pagination,
+      userAccountId,
+      status: pagination.status,
+    },
   })
 }
 

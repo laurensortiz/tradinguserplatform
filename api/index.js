@@ -137,7 +137,7 @@ module.exports = (app) => {
   app.delete('/api/investment-movement/:id', investmentMovement.delete)
 
   // Market Operation
-  app.get('/api/market-operation/:status/:userAccountId/', marketOperation.list)
+  app.get('/api/market-operation', marketOperation.list)
   app.get('/api/market-operation/:id', marketOperation.get)
   app.post('/api/market-operation/accountReport', marketOperation.accountReport)
   app.post('/api/market-operation', marketOperation.create)

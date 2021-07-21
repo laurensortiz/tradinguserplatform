@@ -19,6 +19,21 @@ import Log from '../../common/log'
 import ToFixNumber from '../../common/to-fix-number'
 import GetHoldCommissionAmount from '../../common/get-hold-commission-amount'
 
+const getPagingData = (data, page, limit) => {
+  const { count: totalItems, rows } = data
+  const currentPage = page ? +page : 0
+  const totalPages = Math.ceil(totalItems / limit)
+
+  return { totalItems, rows, totalPages, currentPage }
+}
+
+const getPagination = (page, size) => {
+  const limit = size ? +size : 10
+  const offset = page ? page * limit : 0
+
+  return { limit, offset }
+}
+
 module.exports = {
   async create(req, res) {
     const userId = _.get(req, 'user.id', 0)
@@ -127,19 +142,47 @@ module.exports = {
   },
 
   async list(req, res) {
+    //TODO: All these logic should be refactored
+    const userRoleId = _.get(req, 'user.roleId', 0)
+    const isAdmin = userRoleId === 1
+
+    let adminResponse
     try {
-      const marketOperation = await MarketOperation.findAll(
-        marketOperationQuery.list({
-          req,
-          sequelize,
-          UserAccount,
-          User,
-          Product,
-          Broker,
-          AssetClass,
-          Commodity,
-        })
-      )
+      let marketOperation
+      if (isAdmin) {
+        const { current, pageSize } = req.query.pagination
+        const { limit, offset } = getPagination(current, pageSize)
+
+        marketOperation = await MarketOperation.findAndCountAll(
+          marketOperationQuery.list({
+            req,
+            limit,
+            offset,
+            sequelize,
+            UserAccount,
+            User,
+            Product,
+            Broker,
+            AssetClass,
+            Commodity,
+          })
+        )
+
+        adminResponse = getPagingData(marketOperation, current, limit)
+      } else {
+        marketOperation = await MarketOperation.findAndCountAll(
+          marketOperationQuery.list({
+            req,
+            sequelize,
+            UserAccount,
+            User,
+            Product,
+            Broker,
+            AssetClass,
+            Commodity,
+          })
+        )
+      }
 
       if (!marketOperation) {
         return res.status(404).send({
@@ -147,7 +190,9 @@ module.exports = {
         })
       }
 
-      return res.status(200).send(marketOperation)
+      const response = isAdmin ? adminResponse : marketOperation.rows
+
+      return res.status(200).send(response)
     } catch (err) {
       return res.status(500).send({
         message: err.message,

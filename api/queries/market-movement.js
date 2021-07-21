@@ -2,7 +2,7 @@ const queries = {
   list: ({ req }) => {
     return {
       where: {
-        marketOperationId: req.params.id,
+        marketOperationId: req.params.id || -1,
         status: 1,
       },
       order: [['createdAt', 'DESC']],

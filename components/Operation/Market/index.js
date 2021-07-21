@@ -30,13 +30,25 @@ class Market extends Component {
     isBulkSuccess: false,
     isBulkProcessCompleted: false,
     dataStatus: 1,
+    pagination: {
+      current: 1,
+      pageSize: 10,
+      defaultPageSize: 10,
+      total: 0,
+      showSizeChanger: true,
+      pageSizeOptions: ['10', '30', '50'],
+    },
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
-    if (!_.isEqual(nextProps.marketOperations, prevState.marketOperations)) {
+    if (!_.isEqual(nextProps.marketOperations.rows, prevState.marketOperations)) {
       _.assignIn(updatedState, {
-        marketOperations: nextProps.marketOperations,
+        marketOperations: nextProps.marketOperations.rows,
+        pagination: {
+          ...prevState.pagination,
+          total: nextProps.marketOperations.totalItems,
+        },
       })
     }
 
@@ -55,7 +67,10 @@ class Market extends Component {
         nextProps.fetchGetMarketMovements(prevState.currentOperationDetail.id)
       }
 
-      nextProps.fetchGetMarketOperations(1)
+      nextProps.fetchGetMarketOperations({
+        pagination: prevState.pagination,
+        status: prevState.dataStatus,
+      })
       nextProps.resetAfterMovementRequest()
     }
 
@@ -76,7 +91,10 @@ class Market extends Component {
         onClose: () => {
           prevState.actionType = 'add' // default value
           nextProps.resetAfterRequest()
-          nextProps.fetchGetMarketOperations(1)
+          nextProps.fetchGetMarketOperations({
+            pagination: prevState.pagination,
+            status: prevState.dataStatus,
+          })
           nextProps.onClose(false)
         },
         duration: 1,
@@ -105,7 +123,10 @@ class Market extends Component {
           onClose: () => {
             prevState.actionType = 'add' // default value
 
-            nextProps.fetchGetMarketOperations(1)
+            nextProps.fetchGetMarketOperations({
+              pagination: prevState.pagination,
+              status: prevState.dataStatus,
+            })
             nextProps.resetAfterRequest()
             nextProps.onClose(false)
           },
@@ -140,7 +161,10 @@ class Market extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchGetMarketOperations(1)
+    this.props.fetchGetMarketOperations({
+      pagination: this.state.pagination,
+      status: this.state.dataStatus,
+    })
   }
 
   _onClose = () => {
@@ -206,14 +230,20 @@ class Market extends Component {
       isDetailViewVisible: false,
       currentOperationDetail: {},
     })
-    this.props.fetchGetMarketOperations(this.state.dataStatus)
+    this.props.fetchGetMarketOperations({
+      pagination: this.state.pagination,
+      status: this.state.dataStatus,
+    })
   }
 
   _onTabChange = ({ target }) => {
     this.setState({
       dataStatus: target.value,
     })
-    this.props.fetchGetMarketOperations(target.value)
+    this.props.fetchGetMarketOperations({
+      pagination: this.state.pagination,
+      status: target.value,
+    })
   }
 
   /**
@@ -258,6 +288,24 @@ class Market extends Component {
     this.props.fetchBulkUpdateMarketOperation(bulkData)
   }
 
+  handlePaginationChange = (pagination) => {
+    const paginationState = {
+      ...this.state.pagination,
+      ...pagination,
+    }
+
+    this.setState({
+      pagination: paginationState,
+    })
+    console.log('[=====  ttttt  =====>')
+    console.log(this.state.dataStatus)
+    console.log('<=====  /ttttt  =====]')
+    this.props.fetchGetMarketOperations({
+      pagination: paginationState,
+      status: this.state.dataStatus,
+    })
+  }
+
   render() {
     const modalTitle = _.isEqual(this.state.actionType, 'add')
       ? 'Agregar Operación de Bolsa'
@@ -297,10 +345,10 @@ class Market extends Component {
               isBulkSuccess={this.props.isBulkSuccess}
               isBulkCompleted={this.props.isBulkProcessCompleted}
               onTabChange={this._onTabChange}
-              onRequestUpdateTable={() =>
-                this.props.fetchGetMarketOperations(this.state.dataStatus)
-              }
+              onRequestUpdateTable={this.handlePaginationChange}
               dataStatus={this.state.dataStatus}
+              pagination={this.state.pagination}
+              onChangePagination={this.handlePaginationChange}
             />
           </Col>
         </Row>
