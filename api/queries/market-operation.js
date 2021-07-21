@@ -7,26 +7,26 @@ function getWhereConditions(req, sequelize) {
   let whereConditions = {}
 
   if (isAdmin) {
-    if (req.params.status === '1') {
+    if (req.query.status === '1') {
       whereConditions.status = {
         [Op.gt]: 0,
         [Op.lt]: 4,
       }
     } else {
-      whereConditions.status = req.params.status
+      whereConditions.status = req.query.status
     }
   } else {
-    if (req.params.status === '1') {
+    if (req.query.status === '1') {
       whereConditions = {
         status: {
           [Op.gt]: 0,
         },
-        userAccountId: req.params.userAccountId,
+        userAccountId: req.query.userAccountId,
       }
     } else {
       whereConditions = {
-        status: req.params.status,
-        userAccountId: req.params.userAccountId,
+        status: req.query.status,
+        userAccountId: req.query.userAccountId,
       }
     }
   }
@@ -34,8 +34,23 @@ function getWhereConditions(req, sequelize) {
   return whereConditions
 }
 const queries = {
-  list: ({ req, sequelize, UserAccount, User, Product, Broker, AssetClass, Commodity }) => {
+  list: ({
+    req,
+    limit,
+    offset,
+    sequelize,
+    UserAccount,
+    User,
+    Product,
+    Broker,
+    AssetClass,
+    Commodity,
+  }) => {
+    const userRoleId = _.get(req, 'user.roleId', 0)
+    const isAdmin = userRoleId === 1
+    const config = isAdmin && req.query.status == 4 ? { limit, offset } : null
     return {
+      ...config,
       where: getWhereConditions(req, sequelize),
       attributes: [
         'id',
