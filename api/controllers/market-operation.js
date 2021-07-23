@@ -364,7 +364,7 @@ module.exports = {
           const accountValueBeforeEndOperation = `${userAccount.accountValue}`
           const { initialAmount, amount, maintenanceMargin, assetClassId } = marketOperation
           const { percentage } = marketOperation.userAccount.account
-          const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12
+          const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12 || userAccount.accountId === 17 || userAccount.accountId === 18
 
           const maintenanceMarginAmount =
             assetClassId === 8 ||
