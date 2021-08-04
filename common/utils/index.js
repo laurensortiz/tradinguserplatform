@@ -1,6 +1,7 @@
 export { default as Sort } from './sort-text'
 export { default as SortDate } from './sort-date'
 export { default as FormatCurrency } from './format-currency'
+export { default as FormatCurrency4 } from './format-currency-4'
 export { default as FormatDate } from './format-date'
 export { default as FormatStatus } from './format-status'
 export { default as FormatStatusLang } from './format-status-lang'

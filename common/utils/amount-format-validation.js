@@ -1,22 +1,19 @@
-import { isEmpty } from 'lodash';
+import { isEmpty } from 'lodash'
 
 const amountFormatValidation = (rule, amount) => {
-  const regex = /^[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/;
+  const regex = /^[0-9]\d*(((,\d{3}){1})?(\.\d{0,4})?)$/
 
-  return new Promise( (resolve, reject) => {
-
-    if (!isEmpty( amount ) && amount != 0) {
+  return new Promise((resolve, reject) => {
+    if (!isEmpty(amount) && amount != 0) {
       if (regex.test(amount)) {
-        resolve();
+        resolve()
       } else {
-        reject( "Formato inválido del monto" );  // reject with error message
+        reject('Formato inválido del monto') // reject with error message
       }
     } else {
-      resolve();
+      resolve()
     }
-
-  } );
-
+  })
 }
 
-export default amountFormatValidation;
+export default amountFormatValidation

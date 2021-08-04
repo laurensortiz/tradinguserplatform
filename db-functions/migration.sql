@@ -2115,3 +2115,11 @@ alter table public."Referral" add "brokerName2" varchar(255) DEFAULT '';
 /*
 * End Changes Jul 10, 2021
 */
+
+/*
+* Start Changes Aug 4, 2021
+*/
+ALTER TABLE public."MarketOperation" ALTER COLUMN "buyPrice" TYPE numeric(10,4) USING "buyPrice"::numeric;
+/*
+* End Changes Aug 4, 2021
+*/
