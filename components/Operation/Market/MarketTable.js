@@ -64,6 +64,14 @@ class MarketTable extends Component {
     isMenuFold: true,
     filteredInfo: {},
     sortedInfo: {},
+    pagination: {
+      current: 1,
+      pageSize: 10,
+      defaultPageSize: 10,
+      total: 0,
+      showSizeChanger: true,
+      pageSizeOptions: ['10', '30', '50'],
+    },
   }
 
   dateMode = 0
@@ -92,6 +100,15 @@ class MarketTable extends Component {
 
       _.assignIn(updatedState, {
         products,
+      })
+    }
+
+    if (!_.isEqual(nextProps.pagination.total, prevState.pagination.total)) {
+      _.assignIn(updatedState, {
+        pagination: {
+          ...prevState.pagination,
+          ...nextProps.pagination,
+        },
       })
     }
 
@@ -736,7 +753,10 @@ class MarketTable extends Component {
           onChange={this.onTableChange}
           title={this.tableHeader}
           footer={this._displayTableFooter}
-          pagination={this.props.pagination}
+          pagination={{
+            ...this.props.pagination,
+            total: _.size(this.state.currentDataSource || []),
+          }}
         />
       </>
     )

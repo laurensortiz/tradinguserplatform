@@ -326,10 +326,6 @@ class Market extends Component {
     )
     const modalDetailTitle = `${currentUsername} - ${currentUserFirstName} ${currentUserLastName}`
 
-    console.log('[=====  oppe  =====>')
-    console.log(this.state.selectedOperation)
-    console.log('<=====  /oppe  =====]')
-
     return (
       <>
         <Row>
