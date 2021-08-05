@@ -34,6 +34,7 @@ const IS_WEEKEND =
   moment(new Date()).tz('America/New_York').day() === 0
 
 const isBetweenAfterHours = () => {
+  return false
   let start = moment('19:00', 'H:mm')
   let end = moment('07:30', 'H:mm')
   let serverHours = moment().tz('America/New_York').format('H:mm')

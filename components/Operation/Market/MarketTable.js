@@ -634,6 +634,14 @@ class MarketTable extends Component {
         sortDirections: ['descend', 'ascend'],
       },
       {
+        title: 'Precio de Compra',
+        dataIndex: 'buyPrice',
+        key: 'buyPrice',
+        render: (buyPrice) => <span key={buyPrice}>{DisplayTableAmount(buyPrice)}</span>,
+        sorter: (a, b) => Sort(a.buyPrice, b.buyPrice),
+        sortDirections: ['descend', 'ascend'],
+      },
+      {
         title: 'Inversión',
         dataIndex: 'initialAmount',
         key: 'initialAmount',
