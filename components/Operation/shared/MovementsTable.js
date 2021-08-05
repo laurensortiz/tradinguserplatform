@@ -12,7 +12,13 @@ import { extendMoment } from 'moment-range'
 import { EditableProvider, EditableConsumer } from './editable/editableContext'
 import EditableCell from './editable/editableCell'
 
-import { FormatCurrency, FormatDate, GetGP, getGPInversion } from '../../../common/utils'
+import {
+  FormatCurrency,
+  FormatCurrency4,
+  FormatDate,
+  GetGP,
+  getGPInversion,
+} from '../../../common/utils'
 
 import { investmentMovementOperations } from '../../../state/modules/investmentMovement'
 import { Export } from './index'
@@ -157,15 +163,16 @@ class MovementsTable extends Component {
 
   _onChangeInput = (value) => {
     if (!_.isNumber(this.state.editingKey)) {
+      const fractionDigits = this.props.isForex ? 4 : 2
       const currentAmount = getGPInversion(
         this.props.currentOperation.amount || 0,
-        _.isNumber(value) ? parseFloat(value).toFixed(2) : 0
+        _.isNumber(value) ? parseFloat(value).toFixed(fractionDigits) : 0
       )
       const tempData = _.first(this.state.tempDataSource)
 
       const tempDataSourceUpdate = {
         ...tempData,
-        gpInversion: parseFloat(currentAmount).toFixed(2),
+        gpInversion: parseFloat(currentAmount).toFixed(fractionDigits),
       }
 
       this.setState({
@@ -291,6 +298,9 @@ class MovementsTable extends Component {
     },
   })
 
+  getCurrencyFormatted = (value) =>
+    this.props.isForex ? FormatCurrency4.format(value) : FormatCurrency.format(value)
+
   _getColumns = () => {
     const datesInTimes = _.map(this.state.dataSource, (record) => moment(record.createdAt)),
       maxDatesInTimes = moment.max(datesInTimes).add(1, 'days'),
@@ -302,7 +312,7 @@ class MovementsTable extends Component {
         title: 'G/P',
         dataIndex: 'gpInversion',
         key: 'gpInversion',
-        render: (value) => FormatCurrency.format(value),
+        render: (value) => this.getCurrencyFormatted(value),
         editable: true,
         required: false,
         inputType: 'number',
@@ -311,7 +321,7 @@ class MovementsTable extends Component {
         title: 'G/P',
         dataIndex: 'gpAmount',
         key: 'gpAmount',
-        render: (value) => FormatCurrency.format(value),
+        render: (value) => this.getCurrencyFormatted(value),
         editable: true,
         required: true,
         inputType: 'number',
@@ -320,7 +330,7 @@ class MovementsTable extends Component {
         title: 'MP',
         dataIndex: 'marketPrice',
         key: 'marketPrice',
-        render: (value) => FormatCurrency.format(value),
+        render: (value) => this.getCurrencyFormatted(value),
         editable: true,
         required: false,
         inputType: 'number-mp',

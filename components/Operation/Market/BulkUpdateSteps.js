@@ -185,7 +185,7 @@ function BulkUpdateSteps({
   }, [updateType])
 
   const _isValidAmount = (amount) => {
-    const regex = /^-?[0-9]\d*(((,\d{3}){1})?(\.\d{0,2})?)$/
+    const regex = /^-?[0-9]\d*(((,\d{3}){1})?(\.\d{0,4})?)$/
     const isValid = regex.test(amount)
     setIsValidAmount(isValid)
     if (!isValid) {

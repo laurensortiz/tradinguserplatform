@@ -38,6 +38,7 @@ class Market extends Component {
       showSizeChanger: true,
       pageSizeOptions: ['10', '30', '50'],
     },
+    isForex: false,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -52,9 +53,17 @@ class Market extends Component {
       })
     }
 
-    if (!_.isEqual(nextProps.currentOperationDetail, prevState.currentOperationDetail)) {
+    if (
+      nextProps.currentOperationDetail &&
+      !_.isEqual(nextProps.currentOperationDetail, prevState.currentOperationDetail)
+    ) {
+      console.log('[=====  here  =====>')
+      console.log(nextProps.currentOperationDetail.commodity)
+      console.log()
+      console.log('<=====  /here  =====]')
       _.assignIn(updatedState, {
         currentOperationDetail: nextProps.currentOperationDetail,
+        isForex: _.get(nextProps, 'currentOperationDetail.commodity.id', 0) === 4,
       })
     }
 
@@ -326,6 +335,10 @@ class Market extends Component {
     )
     const modalDetailTitle = `${currentUsername} - ${currentUserFirstName} ${currentUserLastName}`
 
+    console.log('[=====  jjjj  =====>')
+    console.log(this.state.currentOperationDetail)
+    console.log('<=====  /jjjj  =====]')
+
     return (
       <>
         <Row>
@@ -386,6 +399,7 @@ class Market extends Component {
             isAdmin={this.props.isAdmin}
             isLoading={this.props.isLoading}
             isMarketMovement={true}
+            isForex={this.state.isForex}
           />
         </Drawer>
       </>

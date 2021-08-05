@@ -364,7 +364,11 @@ module.exports = {
           const accountValueBeforeEndOperation = `${userAccount.accountValue}`
           const { initialAmount, amount, maintenanceMargin, assetClassId } = marketOperation
           const { percentage } = marketOperation.userAccount.account
-          const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12 || userAccount.accountId === 17 || userAccount.accountId === 18
+          const isBrokerGuarantee =
+            userAccount.accountId === 10 ||
+            userAccount.accountId === 12 ||
+            userAccount.accountId === 17 ||
+            userAccount.accountId === 18
 
           const maintenanceMarginAmount =
             assetClassId === 8 ||
@@ -1031,9 +1035,12 @@ module.exports = {
                   if (
                     marketOperation.assetClassId === 1 ||
                     marketOperation.assetClassId === 2 ||
+                    marketOperation.assetClassId === 10 ||
                     marketOperation.assetClassId === 12
                   ) {
-                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    const pips = commoditiesTotal.toString()[0] * 10
+
+                    calculatedValue = pips * gpAmount + commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -1048,9 +1055,12 @@ module.exports = {
                   if (
                     marketOperation.assetClassId === 1 ||
                     marketOperation.assetClassId === 2 ||
+                    marketOperation.assetClassId === 10 ||
                     marketOperation.assetClassId === 12
                   ) {
-                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    const pips = commoditiesTotal.toString()[0] * 10
+
+                    calculatedValue = pips * gpAmount + commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`

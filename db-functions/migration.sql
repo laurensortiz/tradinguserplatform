@@ -2120,6 +2120,9 @@ alter table public."Referral" add "brokerName2" varchar(255) DEFAULT '';
 * Start Changes Aug 4, 2021
 */
 ALTER TABLE public."MarketOperation" ALTER COLUMN "buyPrice" TYPE numeric(10,4) USING "buyPrice"::numeric;
+ALTER TABLE public."MarketOperation" ALTER COLUMN "buyPrice" TYPE numeric(10,4) USING "buyPrice"::numeric;
+ALTER TABLE public."MarketMovement" ALTER COLUMN "gpAmount" TYPE numeric(10,4) USING "gpAmount"::numeric;
+ALTER TABLE public."MarketMovement" ALTER COLUMN "marketPrice" TYPE numeric(10,4) USING "marketPrice"::numeric;
 /*
 * End Changes Aug 4, 2021
 */

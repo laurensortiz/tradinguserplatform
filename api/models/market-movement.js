@@ -5,17 +5,17 @@ module.exports = (Sequelize, DataTypes) => {
     'MarketMovement',
     {
       gpInversion: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(10, 4),
         allowNull: true,
         unique: false,
       },
       gpAmount: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(10, 4),
         allowNull: false,
         unique: false,
       },
       marketPrice: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(10, 4),
         allowNull: true,
         unique: false,
       },

@@ -1,6 +1,5 @@
-const toFixNumber = (number) => {
+const toFixNumber = (number, fractionDigit = 2) => {
+  return parseFloat(number.toFixed(fractionDigit))
+}
 
-  return parseFloat((number).toFixed(2))
-};
-
-export default toFixNumber;
+export default toFixNumber
