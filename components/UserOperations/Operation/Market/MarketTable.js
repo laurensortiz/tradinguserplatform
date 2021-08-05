@@ -465,14 +465,6 @@ class MarketTable extends Component {
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: t('buyPrice'),
-        dataIndex: 'buyPrice',
-        key: 'buyPrice',
-        render: (buyPrice) => <span key={buyPrice}>{DisplayTableAmount(buyPrice)}</span>,
-        sorter: (a, b) => Sort(a.buyPrice, b.buyPrice),
-        sortDirections: ['descend', 'ascend'],
-      },
-      {
         title: t('investment'),
         dataIndex: 'initialAmount',
         key: 'initialAmount',
@@ -490,6 +482,14 @@ class MarketTable extends Component {
           <span key={maintenanceMargin}>{DisplayTableAmount(maintenanceMargin)}</span>
         ),
         sorter: (a, b) => Sort(a.maintenanceMargin, b.maintenanceMargin),
+        sortDirections: ['descend', 'ascend'],
+      },
+      {
+        title: t('buyPrice'),
+        dataIndex: 'buyPrice',
+        key: 'buyPrice',
+        render: (buyPrice) => <span key={buyPrice}>{DisplayTableAmount(buyPrice)}</span>,
+        sorter: (a, b) => Sort(a.buyPrice, b.buyPrice),
         sortDirections: ['descend', 'ascend'],
       },
       {
