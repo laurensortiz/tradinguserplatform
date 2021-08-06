@@ -90,6 +90,21 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE,
     },
+    isProcess1Completed: {
+      allowNull: true,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    isProcess2Completed: {
+      allowNull: true,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+    isProcess3Completed: {
+      allowNull: true,
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
   })
   Referral.associate = (models) => {
     Referral.belongsTo(models.UserAccount, {

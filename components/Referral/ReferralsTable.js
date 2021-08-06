@@ -434,6 +434,38 @@ class ReferralsTable extends Component {
         ...this.getColumnSearchProps('id'),
       },
       {
+        title: 'Estado',
+        children: [
+          {
+            title: 'Presentación enviada',
+            dataIndex: 'isProcess1Completed',
+            key: 'isProcess1Completed',
+            width: 135,
+            render: (isCompleted) => {
+              return <span className={`status-indicator ${isCompleted ? 'completed' : ''}`}></span>
+            },
+          },
+          {
+            title: 'Pendiente contrato Broker',
+            dataIndex: 'isProcess2Completed',
+            key: 'isProcess2Completed',
+            width: 135,
+            render: (isCompleted) => {
+              return <span className={`status-indicator ${isCompleted ? 'completed' : ''}`}></span>
+            },
+          },
+          {
+            title: 'Cliente ya ingresó',
+            dataIndex: 'isProcess3Completed',
+            key: 'isProcess3Completed',
+            width: 135,
+            render: (isCompleted) => {
+              return <span className={`status-indicator ${isCompleted ? 'completed' : ''}`}></span>
+            },
+          },
+        ],
+      },
+      {
         title: 'Nombre',
         dataIndex: 'firstName',
         key: 'firstName',
