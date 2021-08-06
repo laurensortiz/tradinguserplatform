@@ -8,6 +8,9 @@ moment.locale('es') // Set Lang to Spanish
 
 const EXCEL_HEADER_MARKET = [
   'ID',
+  'Presentación enviada',
+  'Pendiente contrato Broker',
+  'Cliente ya ingresó',
   'Nombre',
   'Apellido',
   'Email',
@@ -45,6 +48,9 @@ const _formatData = (data) => {
   return _.map(data, (account) => {
     return {
       ID: account.id,
+      'Presentación enviada': account.isProcess1Completed === 1 ? 'Sí' : 'No',
+      'Pendiente contrato Broker': account.isProcess2Completed === 1 ? 'Sí' : 'No',
+      'Cliente ya ingresó': account.isProcess3Completed === 1 ? 'Sí' : 'No',
       Nombre: account.firstName,
       Apellido: account.lastName,
       Email: account.email,

@@ -2115,3 +2115,18 @@ alter table public."Referral" add "brokerName2" varchar(255) DEFAULT '';
 /*
 * End Changes Jul 10, 2021
 */
+
+/*
+* Start Changes Aug 4, 2021
+*/
+ALTER TABLE public."MarketOperation" ALTER COLUMN "buyPrice" TYPE numeric(10,4) USING "buyPrice"::numeric;
+ALTER TABLE public."MarketOperation" ALTER COLUMN "buyPrice" TYPE numeric(10,4) USING "buyPrice"::numeric;
+ALTER TABLE public."MarketMovement" ALTER COLUMN "gpAmount" TYPE numeric(10,4) USING "gpAmount"::numeric;
+ALTER TABLE public."MarketMovement" ALTER COLUMN "marketPrice" TYPE numeric(10,4) USING "marketPrice"::numeric;
+
+alter table public."Referral" add "isProcess1Completed" integer DEFAULT 0;
+alter table public."Referral" add "isProcess2Completed" integer DEFAULT 0;
+alter table public."Referral" add "isProcess3Completed" integer DEFAULT 0;
+/*
+* End Changes Aug 4, 2021
+*/
