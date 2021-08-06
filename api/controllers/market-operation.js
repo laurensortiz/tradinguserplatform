@@ -364,7 +364,11 @@ module.exports = {
           const accountValueBeforeEndOperation = `${userAccount.accountValue}`
           const { initialAmount, amount, maintenanceMargin, assetClassId } = marketOperation
           const { percentage } = marketOperation.userAccount.account
-          const isBrokerGuarantee = userAccount.accountId === 10 || userAccount.accountId === 12 || userAccount.accountId === 17 || userAccount.accountId === 18
+          const isBrokerGuarantee =
+            userAccount.accountId === 10 ||
+            userAccount.accountId === 12 ||
+            userAccount.accountId === 17 ||
+            userAccount.accountId === 18
 
           const maintenanceMarginAmount =
             assetClassId === 8 ||
@@ -660,6 +664,16 @@ module.exports = {
             await MarketOperation.update(
               {
                 takingProfit: updateValue,
+              },
+              { where: { id: operationsIds } },
+              { transaction: t }
+            )
+            return res.status(200).send('Completed')
+
+          case 'buyPrice':
+            await MarketOperation.update(
+              {
+                buyPrice: updateValue,
               },
               { where: { id: operationsIds } },
               { transaction: t }
