@@ -27,6 +27,11 @@ const BULK_UPDATE_TYPES = [
     scope: 'takingProfit',
   },
   {
+    code: 'buyPrice',
+    name: 'Precio de Compra',
+    scope: 'buyPrice',
+  },
+  {
     code: 'stocks',
     name: 'Stocks',
     scope: 'price',
@@ -273,6 +278,20 @@ function BulkUpdateSteps({
               name="takingProfit"
               onChange={_handleSingleInputChange}
               placeholder="Taking Profit"
+            />
+          </>
+        )
+      case 'buyPrice':
+        return (
+          <>
+            <Input
+              size="large"
+              className={`m-r-20 ${behaviorClass}`}
+              addonBefore="Price $"
+              style={{ width: 200 }}
+              name="buyPrice"
+              onChange={_handleSingleInputChange}
+              placeholder="Precio de Compra"
             />
           </>
         )
