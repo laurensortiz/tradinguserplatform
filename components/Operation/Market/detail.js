@@ -38,6 +38,8 @@ class Detail extends PureComponent {
     const status = _.get(this.props, 'currentOperation.status', 1)
     const { name: statusName, color: statusColor } = FormatStatus(status)
 
+    const isFX = _.get(this.props, 'currentOperation.commodity.id', 0) === 4
+
     return (
       <>
         <Row>
@@ -74,10 +76,10 @@ class Detail extends PureComponent {
                 </Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Precio de Compra">
-                {FormatCurrency4.format(buyPrice)}
+                {isFX ? FormatCurrency4.format(buyPrice) : FormatCurrency.format(buyPrice)}
               </Descriptions.Item>
               <Descriptions.Item label="Taking Profit">
-                {FormatCurrency.format(takingProfit)}
+                {isFX ? FormatCurrency4.format(takingProfit) : FormatCurrency.format(takingProfit)}
               </Descriptions.Item>
               <Descriptions.Item label="S/L">{stopLost}%</Descriptions.Item>
               <Descriptions.Item label="Número de Orden">{orderId}</Descriptions.Item>

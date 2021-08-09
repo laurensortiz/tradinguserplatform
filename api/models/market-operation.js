@@ -22,7 +22,7 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
       },
       takingProfit: {
-        type: DataTypes.DECIMAL(10, 2),
+        type: DataTypes.DECIMAL(10, 4),
         allowNull: true,
       },
       stopLost: {

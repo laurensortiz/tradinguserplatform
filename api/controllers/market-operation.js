@@ -1048,9 +1048,21 @@ module.exports = {
                     marketOperation.assetClassId === 10 ||
                     marketOperation.assetClassId === 12
                   ) {
+                    /**
+                     *
+                     * La ganancia por Pip es de 10 dólares para un lotaje de 100,000 unidades de moneda
+                     100,000 x 0.0001 = 10
+
+                     Ejemplo:
+                     Compra: 1.1900
+                     Venta: 1.1920
+                     Diferencia: 20 pips
+                     Ganancia: 200 dólares.
+
+                     */
                     const pips = commoditiesTotal.toString()[0] * 10
 
-                    calculatedValue = pips * gpAmount + commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    calculatedValue = pips * gpAmount
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -1070,7 +1082,7 @@ module.exports = {
                   ) {
                     const pips = commoditiesTotal.toString()[0] * 10
 
-                    calculatedValue = pips * gpAmount + commoditiesTotal // 1 FT = $50  (0.05 dollars per cent)
+                    calculatedValue = pips * gpAmount // 1 FT = $50  (0.05 dollars per cent)
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
