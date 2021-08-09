@@ -458,7 +458,15 @@ body > div:first-of-type:not(#__next) {
   background: $gray-414;
   border-radius: 50%;
 
+  &.danger {
+    background: $red;
+  }
+
+  &.warning {
+    background: $yellow;
+  }
+
   &.completed {
-    background: $green-excel;
+    background: $green-excel!important;
   }
 }

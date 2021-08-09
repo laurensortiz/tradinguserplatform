@@ -437,30 +437,38 @@ class ReferralsTable extends Component {
         title: 'Estado',
         children: [
           {
-            title: 'Presentación enviada',
+            title: 'Presentación Enviada',
             dataIndex: 'isProcess1Completed',
             key: 'isProcess1Completed',
-            width: 135,
+            width: 80,
             render: (isCompleted) => {
               return <span className={`status-indicator ${isCompleted ? 'completed' : ''}`}></span>
             },
           },
           {
-            title: 'Pendiente contrato Broker',
+            title: 'Pendiente Contacto Broker',
             dataIndex: 'isProcess2Completed',
             key: 'isProcess2Completed',
-            width: 135,
+            width: 80,
             render: (isCompleted) => {
-              return <span className={`status-indicator ${isCompleted ? 'completed' : ''}`}></span>
+              return (
+                <span
+                  className={`status-indicator danger ${isCompleted ? 'completed' : ''}`}
+                ></span>
+              )
             },
           },
           {
-            title: 'Cliente ya ingresó',
+            title: 'Cliente ya Ingresó',
             dataIndex: 'isProcess3Completed',
             key: 'isProcess3Completed',
-            width: 135,
+            width: 100,
             render: (isCompleted) => {
-              return <span className={`status-indicator ${isCompleted ? 'completed' : ''}`}></span>
+              return (
+                <span
+                  className={`status-indicator warning ${isCompleted ? 'completed' : ''}`}
+                ></span>
+              )
             },
           },
         ],
