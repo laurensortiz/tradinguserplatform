@@ -670,6 +670,16 @@ module.exports = {
             )
             return res.status(200).send('Completed')
 
+          case 'buyPrice':
+            await MarketOperation.update(
+              {
+                buyPrice: updateValue,
+              },
+              { where: { id: operationsIds } },
+              { transaction: t }
+            )
+            return res.status(200).send('Completed')
+
           case 'price':
             const allOperations = await MarketOperation.findAll(
               {

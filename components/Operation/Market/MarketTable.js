@@ -655,6 +655,14 @@ class MarketTable extends Component {
         ...this.getColumnSearchProps('maintenanceMargin'),
       },
       {
+        title: 'Precio de Compra',
+        dataIndex: 'buyPrice',
+        key: 'buyPrice',
+        render: (buyPrice) => <span key={buyPrice}>{DisplayTableAmount(buyPrice)}</span>,
+        sorter: (a, b) => Sort(a.buyPrice, b.buyPrice),
+        sortDirections: ['descend', 'ascend'],
+      },
+      {
         title: 'Taking Profit',
         dataIndex: 'takingProfit',
         key: 'takingProfit',

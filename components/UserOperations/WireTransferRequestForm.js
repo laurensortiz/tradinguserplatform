@@ -92,6 +92,7 @@ class WireTransferRequestForm extends PureComponent {
     const userStartedDay = this.props.userAccount.user.startDate
     const { associatedOperation, percentage } = this.props.userAccount.account
     const isOTCAccount = associatedOperation === 1
+    const isRemesa = this.state.transferMethod === 'Remesa'
 
     const { accountValue, guaranteeOperation, brokerId } = this.props.userAccount
 
@@ -118,6 +119,12 @@ class WireTransferRequestForm extends PureComponent {
 
       if (parseFloat(value) == 0) {
         reject('El monto solicitado debe ser mayor a 0')
+      }
+
+      if (isRemesa) {
+        if (parseFloat(value) > 900) {
+          reject('El monto máximo permitido $900.00')
+        }
       }
 
       // Next validation only applies to OTC accounts

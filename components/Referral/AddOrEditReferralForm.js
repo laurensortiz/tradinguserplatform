@@ -36,6 +36,9 @@ class AddOrEditReferralForm extends PureComponent {
     username: '',
     personalIdDocumentDownloadType: 'pdf',
     downloadDocumentName: '',
+    isProcess1Completed: 0,
+    isProcess2Completed: 0,
+    isProcess3Completed: 0,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -349,7 +352,6 @@ class AddOrEditReferralForm extends PureComponent {
             <Form.Item label="Nombre del segundo corredor asignado">
               {getFieldDecorator('brokerName2', {
                 initialValue: brokerName2InitValue,
-
               })(
                 <Input
                   placeholder="Nombre del segundo corredor asignado"
@@ -458,17 +460,90 @@ class AddOrEditReferralForm extends PureComponent {
         {/*</Form.Item>*/}
 
         <hr />
-        <Form.Item label="Notas Administrativas">
-          {getFieldDecorator('notes', {
-            initialValue: notesInitValue,
-            rules: [
-              {
-                required: false,
-                message: 'Por favor ingrese su nota',
-              },
-            ],
-          })(<TextArea rows={8} placeholder="" name="notes" onChange={this._handleChange} />)}
-        </Form.Item>
+        <Row>
+          <Form.Item label="Notas Administrativas">
+            {getFieldDecorator('notes', {
+              initialValue: notesInitValue,
+              rules: [
+                {
+                  required: false,
+                  message: 'Por favor ingrese su nota',
+                },
+              ],
+            })(<TextArea rows={8} placeholder="" name="notes" onChange={this._handleChange} />)}
+          </Form.Item>
+        </Row>
+        <Row>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Presentación enviada">
+              {getFieldDecorator('isProcess1Completed', {
+                valuePropName: 'checked',
+                initialValue: this.state.isProcess1Completed,
+              })(
+                <Switch
+                  name="isProcess1Completed"
+                  onChange={(e) =>
+                    this._handleChange({
+                      target: {
+                        type: 'checkbox',
+                        checked: e,
+                        name: 'isProcess1Completed',
+                      },
+                    })
+                  }
+                  checkedChildren="Sí"
+                  unCheckedChildren="No"
+                />
+              )}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Pendiente contrato Broker">
+              {getFieldDecorator('isProcess2Completed', {
+                valuePropName: 'checked',
+                initialValue: this.state.isProcess2Completed,
+              })(
+                <Switch
+                  name="isProcess2Completed"
+                  onChange={(e) =>
+                    this._handleChange({
+                      target: {
+                        type: 'checkbox',
+                        checked: e,
+                        name: 'isProcess2Completed',
+                      },
+                    })
+                  }
+                  checkedChildren="Sí"
+                  unCheckedChildren="No"
+                />
+              )}
+            </Form.Item>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Form.Item label="Cliente ya ingresó">
+              {getFieldDecorator('isProcess3Completed', {
+                valuePropName: 'checked',
+                initialValue: this.state.isProcess3Completed,
+              })(
+                <Switch
+                  name="isProcess3Completed"
+                  onChange={(e) =>
+                    this._handleChange({
+                      target: {
+                        type: 'checkbox',
+                        checked: e,
+                        name: 'isProcess3Completed',
+                      },
+                    })
+                  }
+                  checkedChildren="Sí"
+                  unCheckedChildren="No"
+                />
+              )}
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item>
           <Button
             style={{ width: '100%' }}

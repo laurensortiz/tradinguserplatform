@@ -180,8 +180,8 @@ strong {
 .ant-table-bordered .ant-table-tbody > tr > td, .ant-table-thead > tr > th, .ant-table-tbody > tr {
   white-space: nowrap;
 
-  @media screen and (min-width: $lg) {
-    //white-space: normal;
+  @media screen and (min-width: $md) {
+    white-space: normal;
   }
 }
 
@@ -448,4 +448,17 @@ body > div:first-of-type:not(#__next) {
 
 .t-a-j {
   text-align: justify;
+}
+
+.status-indicator {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: auto;
+  background: $gray-414;
+  border-radius: 50%;
+
+  &.completed {
+    background: $green-excel;
+  }
 }
