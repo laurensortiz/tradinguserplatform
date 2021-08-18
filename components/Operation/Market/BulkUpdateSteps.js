@@ -37,6 +37,11 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
+    code: 'index',
+    name: 'Index',
+    scope: 'price',
+  },
+  {
     code: 'gold-FU-OP',
     name: 'GOLD Futures - Options',
     scope: 'price',
@@ -54,6 +59,11 @@ const BULK_UPDATE_TYPES = [
   {
     code: 'silver-FT-OP',
     name: 'SILVER Futures - Options',
+    scope: 'price',
+  },
+  {
+    code: 'index-FT-OP',
+    name: 'Index Futures - Options',
     scope: 'price',
   },
   {
