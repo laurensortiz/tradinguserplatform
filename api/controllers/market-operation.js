@@ -723,8 +723,10 @@ module.exports = {
               switch (updateType) {
                 /**
                  * STOCKS
+                 * INDEX
                  */
                 case 'stocks':
+                case 'index':
                   if (marketOperation.commodityId === 1) {
                     calculatedValue = gpAmount * commoditiesTotal
                   } else {
@@ -775,8 +777,10 @@ module.exports = {
 
                 /**
                  * SILVER FT | OP
+                 * INDEX  FT | OP
                  */
                 case 'silver-FT-OP':
+                case 'index-FT-OP':
                   if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
                     calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $5000
                   } else {
