@@ -1093,6 +1093,66 @@ module.exports = {
                     )
                   }
                   break
+                /**
+                 * Bitcoin FT CME
+                 */
+                case 'bitcoin-FT-CME':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+                /**
+                 * Bitcoin FT CME 5 Contract
+                 */
+                case 'bitcoin-FT-CME-5-contract':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 5 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+                /**
+                 * BTC/USD
+                 */
+                case 'bct-usd-FX':
+                  if (marketOperation.assetClassId === 10) {
+                    calculatedValue = gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+                /**
+                 * BTC/USD
+                 */
+                case 'soybean-meal-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 100 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+                /**
+                 * BTC/USD
+                 */
+                case 'soybean-FT-OP':
+                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                    calculatedValue = 50 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
 
                 default:
               }

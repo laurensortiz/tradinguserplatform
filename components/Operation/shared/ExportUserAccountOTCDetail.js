@@ -49,6 +49,9 @@ const _formatData = (data) => {
       })
     }
 
+    const guaranteeOperationNet =
+      Number(account.guaranteeOperation) - Number(account.wireTransferAmount)
+
     return {
       Usuario: account.user.username,
       Nombre: account.user.firstName,
@@ -58,7 +61,7 @@ const _formatData = (data) => {
       'Valor de la Cuenta': FormatCurrency.format(account.accountValue),
       'Garantías Disponibles': FormatCurrency.format(account.guaranteeOperation),
       'Wire Transfer Activo': FormatCurrency.format(account.wireTransferAmount),
-      'Garantías Disponibles Netas': FormatCurrency.format(account.guaranteeOperationNet),
+      'Garantías Disponibles Netas': FormatCurrency.format(guaranteeOperationNet),
       Colocación: _.isEmpty(products) ? 'Nuevo' : products.toString(),
       Broker: brokerName,
       'Saldo Inicial': FormatCurrency.format(account.balanceInitial),
