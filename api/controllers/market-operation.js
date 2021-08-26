@@ -1077,7 +1077,7 @@ module.exports = {
                 /**
                  * GBP USD FOREX
                  */
-                case 'gbp-usd':
+                case 'gbp-usd-fx':
                   if (marketOperation.assetClassId === 50 || marketOperation.assetClassId === 51) {
                     const pips = commoditiesTotal.toString()[0] * 10
 
@@ -1115,9 +1115,22 @@ module.exports = {
                 /**
                  * BTC/USD
                  */
-                case 'bct-usd-FX':
-                  if (marketOperation.assetClassId === 50 || marketOperation.assetClassId === 51) {
+                case 'btc-usd-fx':
+                  if (marketOperation.assetClassId === 10) {
                     calculatedValue = 100 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * BTC/USD CFX
+                 */
+                case 'btc-usd-cfx':
+                  if (marketOperation.assetClassId === 50 || marketOperation.assetClassId === 51) {
+                    calculatedValue = gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
