@@ -42,7 +42,7 @@ class Detail extends PureComponent {
     const { name: statusName, color: statusColor } = FormatStatusLang(status)
     const langStatus = (status) => t(`status ${status}`)
 
-    const isFX = _.get(this.props, 'currentOperation.commodity.id', 0) === 4
+    const isFX = _.get(this.props, 'currentOperation.assetClass.id', 0) === 10
 
     return (
       <>

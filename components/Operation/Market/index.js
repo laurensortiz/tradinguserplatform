@@ -57,13 +57,11 @@ class Market extends Component {
       nextProps.currentOperationDetail &&
       !_.isEqual(nextProps.currentOperationDetail, prevState.currentOperationDetail)
     ) {
-      console.log('[=====  here  =====>')
-      console.log(nextProps.currentOperationDetail.commodity)
-      console.log()
-      console.log('<=====  /here  =====]')
       _.assignIn(updatedState, {
         currentOperationDetail: nextProps.currentOperationDetail,
-        isForex: _.get(nextProps, 'currentOperationDetail.commodity.id', 0) === 4,
+        isForex:
+          _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 50 ||
+          _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 51,
       })
     }
 

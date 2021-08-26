@@ -198,7 +198,7 @@ const BULK_UPDATE_TYPES = [
   },
   {
     code: 'bct-usd-FX',
-    name: 'BTC/USD',
+    name: 'BTC / USD',
     scope: 'price',
   },
 ]
