@@ -59,9 +59,7 @@ class Market extends Component {
     ) {
       _.assignIn(updatedState, {
         currentOperationDetail: nextProps.currentOperationDetail,
-        isForex:
-          _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 50 ||
-          _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 51,
+        isForex: _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 10,
       })
     }
 
