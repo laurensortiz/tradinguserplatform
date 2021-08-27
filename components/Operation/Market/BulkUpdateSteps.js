@@ -132,6 +132,16 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
+    code: 'soybean-meal-FT-OP',
+    name: 'Soybean Meal FT',
+    scope: 'price',
+  },
+  {
+    code: 'soybean-FT-OP',
+    name: 'Soybean FT',
+    scope: 'price',
+  },
+  {
     code: 'coffee-FT-OP',
     name: 'Coffee US FT OP',
     scope: 'price',
@@ -163,7 +173,7 @@ const BULK_UPDATE_TYPES = [
   },
   {
     code: 'soybeans-CFD',
-    name: 'US Soybeans - CFDs',
+    name: 'Soybeans US - CFDs',
     scope: 'price',
   },
   {
@@ -174,6 +184,26 @@ const BULK_UPDATE_TYPES = [
   {
     code: 'gbp-usd',
     name: 'GBP/USD ',
+    scope: 'price',
+  },
+  {
+    code: 'bitcoin-FT-CME',
+    name: 'BITCOIN FT CME',
+    scope: 'price',
+  },
+  {
+    code: 'bitcoin-FT-CME-5-contract',
+    name: 'BITCOIN FT CME 5 Contract',
+    scope: 'price',
+  },
+  {
+    code: 'btc-usd-fx',
+    name: 'BTC / USD - FX',
+    scope: 'price',
+  },
+  {
+    code: 'btc-usd-cfx',
+    name: 'BTC / USD - CFX',
     scope: 'price',
   },
 ]
