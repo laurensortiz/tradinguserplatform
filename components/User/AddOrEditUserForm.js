@@ -11,7 +11,7 @@ moment.locale('es') // Set Lang to Spanish
 
 const { Option } = Select
 
-const MAX_NUMBER_USERS = 3
+const MAX_NUMBER_USERS = 5
 
 function AddOrEditUserForm({ form, selectedUser, actionType, onAddNew, onEdit, isLoading }) {
   const {
