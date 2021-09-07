@@ -35,6 +35,10 @@ module.exports = {
       const lastName3 = _.get(req, 'body.lastName3', '')
       const firstName4 = _.get(req, 'body.firstName4', '')
       const lastName4 = _.get(req, 'body.lastName4', '')
+      const firstName5 = _.get(req, 'body.firstName5', '')
+      const lastName5 = _.get(req, 'body.lastName5', '')
+      const firstName6 = _.get(req, 'body.firstName6', '')
+      const lastName6 = _.get(req, 'body.lastName6', '')
       const country = _.get(req, 'body.country', '')
       const referred = _.get(req, 'body.referred', '')
       const email = req.body.email
@@ -88,6 +92,10 @@ module.exports = {
             lastName3,
             firstName4,
             lastName4,
+            firstName5,
+            lastName5,
+            firstName6,
+            lastName6,
             country,
             referred,
             salt,
@@ -193,6 +201,10 @@ module.exports = {
         lastName3: req.body.lastName3,
         firstName4: req.body.firstName4,
         lastName4: req.body.lastName4,
+        firstName5: req.body.firstName5,
+        lastName5: req.body.lastName5,
+        firstName6: req.body.firstName6,
+        lastName6: req.body.lastName6,
         country: req.body.country || user.country,
         referred: req.body.referred || user.referred,
         userID: req.body.userID || user.userID,

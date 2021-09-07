@@ -2130,3 +2130,14 @@ alter table public."Referral" add "isProcess3Completed" integer DEFAULT 0;
 /*
 * End Changes Aug 4, 2021
 */
+
+/*
+* Start Changes Aug 7, 2021
+*/
+ALTER TABLE public."User" ADD "firstName5" varchar(255) DEFAULT '';
+ALTER TABLE public."User" ADD "lastName5" varchar(255) DEFAULT '';
+ALTER TABLE public."User" ADD "firstName6" varchar(255) DEFAULT '';
+ALTER TABLE public."User" ADD "lastName6" varchar(255) DEFAULT '';
+/*
+* End Changes Aug 7, 2021
+*/

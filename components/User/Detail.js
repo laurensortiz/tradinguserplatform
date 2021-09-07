@@ -28,6 +28,16 @@ function UserDetail({ currentUser }) {
             {currentUser.firstName4} {currentUser.lastName4 || ''} <Tag>Adicional</Tag>
           </Descriptions.Item>
         ) : null}
+        {currentUser.firstName5 && currentUser.firstName5 !== '' ? (
+          <Descriptions.Item label="Nombre Completo">
+            {currentUser.firstName5} {currentUser.lastName5 || ''} <Tag>Adicional</Tag>
+          </Descriptions.Item>
+        ) : null}
+        {currentUser.firstName6 && currentUser.firstName6 !== '' ? (
+          <Descriptions.Item label="Nombre Completo">
+            {currentUser.firstName6} {currentUser.lastName6 || ''} <Tag>Adicional</Tag>
+          </Descriptions.Item>
+        ) : null}
 
         <Descriptions.Item label="Usuario ID">{currentUser.userID || ''}</Descriptions.Item>
         <Descriptions.Item label="Correo Electrónico">{currentUser.email || ''}</Descriptions.Item>
