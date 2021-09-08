@@ -115,6 +115,10 @@ class UserAccount extends PureComponent {
       lastName3,
       firstName4,
       lastName4,
+      firstName5,
+      lastName5,
+      firstName6,
+      lastName6,
       userID,
       username,
     } = this.props.currentUser
@@ -130,6 +134,8 @@ class UserAccount extends PureComponent {
               {!_.isEmpty(firstName2) ? ` | ${firstName2} ${lastName2}` : null}
               {!_.isEmpty(firstName3) ? ` | ${firstName3} ${lastName3}` : null}
               {!_.isEmpty(firstName4) ? ` | ${firstName4} ${lastName4}` : null}
+              {!_.isEmpty(firstName5) ? ` | ${firstName5} ${lastName5}` : null}
+              {!_.isEmpty(firstName6) ? ` | ${firstName6} ${lastName6}` : null}
               <br />
               <Tag style={{ fontSize: 14 }}> {username}</Tag>
             </Title>
