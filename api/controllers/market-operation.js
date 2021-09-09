@@ -1,5 +1,4 @@
-import get from 'lodash/get'
-import isNil from 'lodash/isNil'
+import _ from 'lodash'
 import {
   MarketOperation,
   UserAccount,
@@ -37,13 +36,13 @@ const getPagination = (page, size) => {
 
 module.exports = {
   async create(req, res) {
-    const userId = get(req, 'user.id', 0)
+    const userId = _.get(req, 'user.id', 0)
     try {
       await ORM.transaction(async (t) => {
         const userAccount = await UserAccount.findOne(
           {
             where: {
-              id: get(req, 'body.userAccount.id', 0),
+              id: _.get(req, 'body.userAccount.id', 0),
             },
           },
           { transaction: t }
@@ -66,12 +65,12 @@ module.exports = {
         const marketOperation = await MarketOperation.create(
           {
             longShort: req.body.longShort,
-            userAccountId: get(req, 'body.userAccount.id', 0),
-            brokerId: get(req, 'body.broker.id', 0),
-            productId: get(req, 'body.product.id', 0),
+            userAccountId: _.get(req, 'body.userAccount.id', 0),
+            brokerId: _.get(req, 'body.broker.id', 0),
+            productId: _.get(req, 'body.product.id', 0),
             commoditiesTotal: req.body.commoditiesTotal,
-            commodityId: get(req, 'body.commodity.id', 1),
-            assetClassId: get(req, 'body.assetClass.id', 1),
+            commodityId: _.get(req, 'body.commodity.id', 1),
+            assetClassId: _.get(req, 'body.assetClass.id', 1),
             buyPrice: req.body.buyPrice,
             takingProfit: req.body.takingProfit,
             stopLost: req.body.stopLost,
@@ -81,7 +80,7 @@ module.exports = {
             behavior: 0,
             holdStatusCommission: req.body.holdStatusCommission || 0,
             orderId,
-            status: get(req, 'body.status', 1),
+            status: _.get(req, 'body.status', 1),
             createdAt: moment(req.body.createdAt || new Date())
               .tz('America/New_York')
               .format(),
@@ -96,7 +95,7 @@ module.exports = {
         //     marketOperationId: Number(marketOperation.id),
         //     gpAmount: 0,
         //     marketPrice: 0,
-        //     status: get(req, 'body.status', 1),
+        //     status: _.get(req, 'body.status', 1),
         //     createdAt: moment(req.body.createdAt || new Date())
         //       .tz('America/New_York')
         //       .format(),
@@ -144,7 +143,7 @@ module.exports = {
 
   async list(req, res) {
     //TODO: All these logic should be refactored
-    const userRoleId = get(req, 'user.roleId', 0)
+    const userRoleId = _.get(req, 'user.roleId', 0)
     const isAdmin = userRoleId === 1
 
     let adminResponse
@@ -170,7 +169,6 @@ module.exports = {
         )
 
         adminResponse = getPagingData(marketOperation, current, limit)
-        //adminResponse = marketOperation
       } else {
         marketOperation = await MarketOperation.findAndCountAll(
           marketOperationQuery.list({
@@ -265,7 +263,7 @@ module.exports = {
   },
 
   async update(req, res) {
-    const userId = get(req, 'user.id', 0)
+    const userId = _.get(req, 'user.id', 0)
     await ORM.transaction(async (t) => {
       const marketOperation = await MarketOperation.findOne(
         {
@@ -298,19 +296,19 @@ module.exports = {
 
       const marketOperationSnapShot = JSON.stringify(marketOperation)
 
-      if (marketOperation.status === 4 && isNil(req.body.endDate)) {
+      if (marketOperation.status === 4 && _.isNil(req.body.endDate)) {
         return res.status(401).send({
           message:
             'Esta operación ya se encuentra cerrada. Sólo es permitido cambiar la fecha de cierre',
         })
       }
 
-      if (marketOperation.status === 4 && !isNil(req.body.endDate)) {
+      if (marketOperation.status === 4 && !_.isNil(req.body.endDate)) {
         try {
           await marketOperation.update(
             {
               updatedAt: moment(new Date()).tz('America/New_York').format(),
-              endDate: !isNil(req.body.endDate)
+              endDate: !_.isNil(req.body.endDate)
                 ? moment(req.body.endDate).tz('America/New_York').format()
                 : marketOperation.endDate,
             },
@@ -339,10 +337,10 @@ module.exports = {
             amount: req.body.amount || marketOperation.amount,
             initialAmount: req.body.initialAmount || marketOperation.initialAmount,
             orderId: req.body.orderId || marketOperation.orderId,
-            status: get(req, 'body.status', 1) || marketOperation.status,
+            status: _.get(req, 'body.status', 1) || marketOperation.status,
             holdStatusCommission:
               req.body.holdStatusCommission || marketOperation.holdStatusCommission,
-            createdAt: !isNil(req.body.createdAt)
+            createdAt: !_.isNil(req.body.createdAt)
               ? moment(req.body.createdAt).tz('America/New_York').format()
               : marketOperation.createdAt,
             updatedAt: moment(new Date()).tz('America/New_York').format(),
@@ -439,7 +437,7 @@ module.exports = {
               commissionValueEndOperation: commission,
               guaranteeOperationValueEndOperation: guaranteeOperationProduct,
               holdStatusCommissionEndOperation: hold,
-              endDate: !isNil(req.body.endDate)
+              endDate: !_.isNil(req.body.endDate)
                 ? moment(req.body.endDate).tz('America/New_York').format()
                 : marketOperation.endDate,
             },
@@ -468,7 +466,7 @@ module.exports = {
   },
 
   async bulkUpdate(req, res) {
-    const userId = get(req, 'user.id', 0)
+    const userId = _.get(req, 'user.id', 0)
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body
 
@@ -713,8 +711,8 @@ module.exports = {
               /**
                * Define base information
                */
-              const gpAmount = Number(get(updateValue, 'gpAmount', 0).replace(/\,/g, ''))
-              const marketPrice = Number(get(updateValue, 'marketPrice', 0).replace(/\,/g, ''))
+              const gpAmount = Number(_.get(updateValue, 'gpAmount', 0).replace(/\,/g, ''))
+              const marketPrice = Number(_.get(updateValue, 'marketPrice', 0).replace(/\,/g, ''))
               const commoditiesTotal = Number(marketOperation.commoditiesTotal)
               const amount = Number(marketOperation.amount)
               let calculatedValue = 0
@@ -1225,10 +1223,10 @@ module.exports = {
                     longShort: updateValue.longShort,
                     userAccountId: userAccount.id,
                     brokerId: userAccount.brokerId,
-                    productId: get(updateValue, 'product.id', 0),
+                    productId: _.get(updateValue, 'product.id', 0),
                     commoditiesTotal: updateValue.commoditiesTotal,
-                    commodityId: get(updateValue, 'commodity.id', 1),
-                    assetClassId: get(updateValue, 'assetClass.id', 1),
+                    commodityId: _.get(updateValue, 'commodity.id', 1),
+                    assetClassId: _.get(updateValue, 'assetClass.id', 1),
                     buyPrice: updateValue.buyPrice,
                     takingProfit: updateValue.takingProfit,
                     stopLost: updateValue.stopLost,
@@ -1238,7 +1236,7 @@ module.exports = {
                     behavior: 0,
                     holdStatusCommission: updateValue.holdStatusCommission || 0,
                     orderId: nextOrderId,
-                    status: get(updateValue, 'status', 1),
+                    status: _.get(updateValue, 'status', 1),
                     createdAt: moment(updateValue.createdAt || new Date())
                       .tz('America/New_York')
                       .format(),

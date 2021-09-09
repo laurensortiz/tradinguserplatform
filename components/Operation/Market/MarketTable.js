@@ -714,6 +714,22 @@ class MarketTable extends Component {
         ...this._getColumnDateProps('updatedAt', minDatesInTimes, maxDatesInTimes),
       },
       {
+        title: 'Fecha de Cierre',
+        dataIndex: 'endDate',
+        key: 'endDate',
+        render: (value) => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
+        editable: true,
+        inputType: 'date',
+        required: false,
+        rowKey: (d) => {
+          return FormatDate(d.endDate)
+        },
+        sorter: (a, b) => {
+          return this._sortDates(a.endDate, b.endDate)
+        },
+        ...this._getColumnDateProps('endDate', minDatesInTimes, maxDatesInTimes),
+      },
+      {
         title: 'Corredor',
         dataIndex: 'broker.name',
         key: 'broker.name',
@@ -763,7 +779,10 @@ class MarketTable extends Component {
           footer={this._displayTableFooter}
           pagination={{
             ...this.props.pagination,
-            total: this.props.pagination.total,
+            total:
+              this.props.dataStatus === 4
+                ? this.props.pagination.total
+                : _.size(this.state.currentDataSource || []),
           }}
         />
       </>
