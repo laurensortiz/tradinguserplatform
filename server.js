@@ -22,7 +22,7 @@ const nextRequestHandler = app.getRequestHandler()
 var options = {
   // Optional. This will be the default timeout for all endpoints.
   // If omitted there is no default timeout on endpoints
-  timeout: 480000,
+  timeout: 300000,
 
   // Optional. This function will be called on a timeout and it MUST
   // terminate the request.

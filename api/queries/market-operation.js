@@ -1,8 +1,8 @@
 import _ from 'lodash'
 
-function getWhereConditions(req, sequelize) {
+function getWhereConditions(req, sequelize, userRoleId) {
   const Op = sequelize.Op
-  const userRoleId = _.get(req, 'user.roleId', 0)
+
   const isAdmin = userRoleId === 1
   let whereConditions = {}
 
@@ -46,13 +46,13 @@ const queries = {
     AssetClass,
     Commodity,
   }) => {
-    const userRoleId = _.get(req, 'user.roleId', 0)
+    const userRoleId = req.user.roleId || 0
     const isAdmin = userRoleId === 1
     // const config = isAdmin && req.query.status == 4 ? { limit, offset } : null
     const config = isAdmin && req.query.status == 4 ? null : null
     return {
       ...config,
-      where: getWhereConditions(req, sequelize),
+      where: getWhereConditions(req, sequelize, userRoleId),
       attributes: [
         'id',
         'status',
