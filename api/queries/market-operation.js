@@ -110,6 +110,7 @@ const queries = {
       order: [
         ['createdAt', 'DESC'],
         ['endDate', 'DESC'],
+        ['id', 'DESC'],
       ],
       silence: true,
     }

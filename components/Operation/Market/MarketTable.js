@@ -50,7 +50,7 @@ const FORMAT_DATE = 'DD-MM-YYYY'
 
 class MarketTable extends Component {
   state = {
-    marketOperations: [],
+    marketOperations: [{ id: 0 }],
     assetClasses: [],
     brokers: [],
     products: [],
@@ -80,9 +80,12 @@ class MarketTable extends Component {
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
-    if (!_.isEqual(nextProps.marketOperations, prevState.marketOperations)) {
+    if (
+      nextProps.marketOperations &&
+      nextProps.marketOperations[0].id !== prevState.marketOperations[0].id
+    ) {
       _.assignIn(updatedState, {
-        marketOperations: _.orderBy(nextProps.marketOperations, ['id'], ['desc']),
+        marketOperations: nextProps.marketOperations,
       })
     }
     if (!_.isEqual(nextProps.assetClasses, prevState.assetClasses)) {
@@ -103,14 +106,14 @@ class MarketTable extends Component {
       })
     }
 
-    if (!_.isEqual(nextProps.pagination.total, prevState.pagination.total)) {
-      _.assignIn(updatedState, {
-        pagination: {
-          ...prevState.pagination,
-          ...nextProps.pagination,
-        },
-      })
-    }
+    // if (!_.isEqual(nextProps.pagination.total, prevState.pagination.total)) {
+    //   _.assignIn(updatedState, {
+    //     pagination: {
+    //       ...prevState.pagination,
+    //       ...nextProps.pagination,
+    //     },
+    //   })
+    // }
 
     return !_.isEmpty(updatedState) ? updatedState : null
   }
