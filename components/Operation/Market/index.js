@@ -235,10 +235,13 @@ class Market extends Component {
       isDetailViewVisible: false,
       currentOperationDetail: {},
     })
-    this.props.fetchGetMarketOperations({
-      pagination: this.state.pagination,
-      status: this.state.dataStatus,
-    })
+
+    if (this.state.dataStatus !== 4) {
+      this.props.fetchGetMarketOperations({
+        pagination: this.state.pagination,
+        status: this.state.dataStatus,
+      })
+    }
   }
 
   _onTabChange = ({ target }) => {
@@ -303,10 +306,12 @@ class Market extends Component {
       pagination: paginationState,
     })
 
-    this.props.fetchGetMarketOperations({
-      pagination: paginationState,
-      status: this.state.dataStatus,
-    })
+    if (this.state.dataStatus !== 4) {
+      this.props.fetchGetMarketOperations({
+        pagination: paginationState,
+        status: this.state.dataStatus,
+      })
+    }
   }
 
   render() {
