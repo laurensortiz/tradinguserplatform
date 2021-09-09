@@ -763,7 +763,10 @@ class MarketTable extends Component {
           footer={this._displayTableFooter}
           pagination={{
             ...this.props.pagination,
-            total: this.props.pagination.total,
+            total:
+              this.props.dataStatus === 4
+                ? this.props.pagination.total
+                : _.size(this.state.currentDataSource || []),
           }}
         />
       </>
