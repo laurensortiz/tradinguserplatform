@@ -306,12 +306,16 @@ class Market extends Component {
       pagination: paginationState,
     })
 
-    if (this.state.dataStatus !== 4) {
-      this.props.fetchGetMarketOperations({
-        pagination: paginationState,
-        status: this.state.dataStatus,
-      })
-    }
+    // if (this.state.dataStatus !== 4) {
+    //   this.props.fetchGetMarketOperations({
+    //     pagination: paginationState,
+    //     status: this.state.dataStatus,
+    //   })
+    // }
+    this.props.fetchGetMarketOperations({
+      pagination: paginationState,
+      status: this.state.dataStatus,
+    })
   }
 
   render() {

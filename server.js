@@ -52,7 +52,7 @@ app.prepare().then(() => {
   const server = express()
 
   if (!dev) {
-    server.use(timeout.handler(options))
+    //server.use(timeout.handler(options))
     server.use(compression())
   }
 

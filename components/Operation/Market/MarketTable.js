@@ -257,7 +257,7 @@ class MarketTable extends Component {
       filteredInfo: filters,
       sortedInfo: sorter,
     })
-    //this.props.onChangePagination(pagination)
+    this.props.onChangePagination(pagination)
     if (this.props.isAdmin) {
       this.props.onRequestUpdateTable(pagination)
     }
@@ -763,7 +763,7 @@ class MarketTable extends Component {
           footer={this._displayTableFooter}
           pagination={{
             ...this.props.pagination,
-            total: _.size(this.state.currentDataSource || []),
+            total: this.props.pagination.total,
           }}
         />
       </>
