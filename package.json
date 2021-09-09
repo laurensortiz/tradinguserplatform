@@ -44,6 +44,7 @@
     "emotion": "^10.0.9",
     "emotion-server": "^10.0.9",
     "express": "^4.16.4",
+    "express-timeout-handler": "^2.2.2",
     "file-saver": "^2.0.2",
     "group-array": "^1.0.0",
     "has-flag": "^3.0.0",
