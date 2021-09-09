@@ -169,8 +169,8 @@ module.exports = {
           })
         )
 
-        //adminResponse = getPagingData(marketOperation, current, limit)
-        adminResponse = marketOperation
+        adminResponse = getPagingData(marketOperation, current, limit)
+        //adminResponse = marketOperation
       } else {
         marketOperation = await MarketOperation.findAndCountAll(
           marketOperationQuery.list({

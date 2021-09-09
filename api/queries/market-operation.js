@@ -48,8 +48,8 @@ const queries = {
   }) => {
     const userRoleId = req.user.roleId || 0
     const isAdmin = userRoleId === 1
-    // const config = isAdmin && req.query.status == 4 ? { limit, offset } : null
-    const config = isAdmin && req.query.status == 4 ? null : null
+    const config = isAdmin && req.query.status == 4 ? { limit, offset } : null
+    //const config = isAdmin && req.query.status == 4 ? null : null
     return {
       ...config,
       where: getWhereConditions(req, sequelize, userRoleId),
