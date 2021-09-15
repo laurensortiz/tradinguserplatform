@@ -1,6 +1,6 @@
 import fetch from '../../../common/fetch'
 
-export const getMarketOperations = async (pagination, userAccountId = 0) => {
+export const getMarketOperations = async (pagination, userAccountId = 0, filters) => {
   return fetch({
     method: 'get',
     url: `market-operation/`,
@@ -8,6 +8,7 @@ export const getMarketOperations = async (pagination, userAccountId = 0) => {
       ...pagination,
       userAccountId,
       status: pagination.status,
+      filters: pagination.filters,
     },
   })
 }

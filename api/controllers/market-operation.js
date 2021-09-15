@@ -151,6 +151,14 @@ module.exports = {
       let marketOperation
       if (isAdmin) {
         const { current, pageSize } = req.query.pagination
+
+        const filters = {
+          'userAccount.user.username': [],
+          'userAccount.user.firstName': [],
+          'userAccount.user.lastName': [],
+          ...req.query.filters,
+        }
+
         const { limit, offset } = getPagination(current, pageSize)
 
         marketOperation = await MarketOperation.findAndCountAll(
@@ -158,6 +166,7 @@ module.exports = {
             req,
             limit,
             offset,
+            filters,
             sequelize,
             UserAccount,
             User,

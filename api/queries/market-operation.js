@@ -13,7 +13,9 @@ function getWhereConditions(req, sequelize, userRoleId) {
         [Op.lt]: 4,
       }
     } else {
-      whereConditions.status = req.query.status
+      whereConditions = {
+        status: req.query.status,
+      }
     }
   } else {
     if (req.query.status === '1') {
@@ -38,6 +40,7 @@ const queries = {
     req,
     limit,
     offset,
+    filters,
     sequelize,
     UserAccount,
     User,
@@ -48,11 +51,36 @@ const queries = {
   }) => {
     const userRoleId = req.user.roleId || 0
     const isAdmin = userRoleId === 1
-    const config = isAdmin && req.query.status == 4 ? { limit, offset } : null
+    const isSoldOperation = req.query.status == 4
+    const config = isAdmin && isSoldOperation ? { limit, offset } : null
     //const config = isAdmin && req.query.status == 4 ? null : null
+
+    let filterSold = {}
+
+    if (isAdmin && isSoldOperation) {
+      const filterUsername = filters['userAccount.user.username'][0] || ''
+      const filterFirstName = filters['userAccount.user.firstName'][0] || ''
+      const filterLastName = filters['userAccount.user.lastName'][0] || ''
+      const Op = sequelize.Op
+      filterSold = {
+        where: {
+          username: {
+            [Op.like]: `%${filterUsername}%`,
+          },
+          firstName: {
+            [Op.like]: `%${filterFirstName}%`,
+          },
+          lastName: {
+            [Op.like]: `%${filterLastName}%`,
+          },
+        },
+        right: true,
+        required: false,
+      }
+    }
     return {
       ...config,
-      where: getWhereConditions(req, sequelize, userRoleId),
+      where: getWhereConditions(req, sequelize, userRoleId, filters),
       attributes: [
         'id',
         'status',
@@ -83,6 +111,7 @@ const queries = {
               model: User,
               as: 'user',
               attributes: ['username', 'firstName', 'lastName'],
+              ...filterSold,
             },
           ],
         },
