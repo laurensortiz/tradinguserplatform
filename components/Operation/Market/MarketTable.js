@@ -254,7 +254,6 @@ class MarketTable extends Component {
   }
 
   onTableChange = (pagination, filters, sorter, extra) => {
-    console.log('1')
     const { currentDataSource } = extra
     this.setState({
       currentDataSource,
