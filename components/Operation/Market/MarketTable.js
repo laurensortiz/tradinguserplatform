@@ -201,7 +201,10 @@ class MarketTable extends Component {
     ),
     onFilter: (value, record) => {
       const valueFormatted = value.toLowerCase().replace(',', '')
-      return _.get(record, dataIndex).toString().toLowerCase().includes(valueFormatted)
+      const recordFind = _.get(record, dataIndex)
+      if (recordFind) {
+        return recordFind.toString().toLowerCase().includes(valueFormatted)
+      }
     },
     onFilterDropdownVisibleChange: (visible) => {
       if (visible) {
@@ -251,15 +254,16 @@ class MarketTable extends Component {
   }
 
   onTableChange = (pagination, filters, sorter, extra) => {
+    console.log('1')
     const { currentDataSource } = extra
     this.setState({
       currentDataSource,
       filteredInfo: filters,
       sortedInfo: sorter,
     })
-    this.props.onChangePagination(pagination)
+    this.props.onChangePagination({ pagination, filters })
     if (this.props.isAdmin) {
-      this.props.onRequestUpdateTable(pagination)
+      this.props.onRequestUpdateTable({ pagination, filters })
     }
   }
 

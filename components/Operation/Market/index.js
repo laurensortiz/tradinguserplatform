@@ -296,7 +296,7 @@ class Market extends Component {
     this.props.fetchBulkUpdateMarketOperation(bulkData)
   }
 
-  handlePaginationChange = (pagination) => {
+  handlePaginationChange = ({ pagination, filters }) => {
     const paginationState = {
       ...this.state.pagination,
       ...pagination,
@@ -312,9 +312,11 @@ class Market extends Component {
     //     status: this.state.dataStatus,
     //   })
     // }
+
     this.props.fetchGetMarketOperations({
       pagination: paginationState,
       status: this.state.dataStatus,
+      filters,
     })
   }
 
