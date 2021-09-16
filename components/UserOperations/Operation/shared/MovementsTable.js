@@ -236,7 +236,7 @@ class MovementsTable extends Component {
   })
 
   getCurrencyFormatted = (value) =>
-    this.props.isForex ? FormatCurrency4.format(value) : FormatCurrency.format(value)
+    this.props.is4Decimal ? FormatCurrency4.format(value) : FormatCurrency.format(value)
 
   _getColumns = () => {
     const datesInTimes = _.map(this.state.dataSource, (record) => moment(record.createdAt)),

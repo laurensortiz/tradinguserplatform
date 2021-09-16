@@ -38,7 +38,7 @@ class Market extends Component {
       showSizeChanger: true,
       pageSizeOptions: ['10', '30', '50'],
     },
-    isForex: false,
+    is4Decimal: false,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -59,7 +59,11 @@ class Market extends Component {
     ) {
       _.assignIn(updatedState, {
         currentOperationDetail: nextProps.currentOperationDetail,
-        isForex: _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 10,
+        is4Decimal:
+          _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 10 ||
+          _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 13 ||
+          _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 2 ||
+          _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 48,
       })
     }
 
@@ -402,7 +406,7 @@ class Market extends Component {
             isAdmin={this.props.isAdmin}
             isLoading={this.props.isLoading}
             isMarketMovement={true}
-            isForex={this.state.isForex}
+            is4Decimal={this.state.is4Decimal}
           />
         </Drawer>
       </>

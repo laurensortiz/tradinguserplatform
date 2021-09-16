@@ -163,7 +163,7 @@ class MovementsTable extends Component {
 
   _onChangeInput = (value) => {
     if (!_.isNumber(this.state.editingKey)) {
-      const fractionDigits = this.props.isForex ? 4 : 2
+      const fractionDigits = this.props.is4Decimal ? 4 : 2
       const currentAmount = getGPInversion(
         this.props.currentOperation.amount || 0,
         _.isNumber(value) ? parseFloat(value).toFixed(fractionDigits) : 0
@@ -299,7 +299,7 @@ class MovementsTable extends Component {
   })
 
   getCurrencyFormatted = (value) =>
-    this.props.isForex ? FormatCurrency4.format(value) : FormatCurrency.format(value)
+    this.props.is4Decimal ? FormatCurrency4.format(value) : FormatCurrency.format(value)
 
   _getColumns = () => {
     const datesInTimes = _.map(this.state.dataSource, (record) => moment(record.createdAt)),

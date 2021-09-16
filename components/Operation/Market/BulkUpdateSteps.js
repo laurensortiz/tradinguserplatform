@@ -97,8 +97,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'cooper-FT-OP',
-    name: 'Cooper',
+    code: 'copper-FT-OP',
+    name: 'Copper',
     scope: 'price',
   },
   {
@@ -137,8 +137,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'soybean-FT-OP',
-    name: 'Soybean FT',
+    code: 'soybean-soja-FT-OP',
+    name: 'Soybean Soja FT',
     scope: 'price',
   },
   {
@@ -204,6 +204,11 @@ const BULK_UPDATE_TYPES = [
   {
     code: 'btc-usd-cfx',
     name: 'BTC / USD - CFX',
+    scope: 'price',
+  },
+  {
+    code: 'milk-class-3-FT-OP',
+    name: 'Class III Milk FT',
     scope: 'price',
   },
 ]
