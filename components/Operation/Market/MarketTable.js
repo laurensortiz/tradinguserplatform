@@ -353,7 +353,10 @@ class MarketTable extends Component {
         <Row>
           <Col xs={12} style={{ textAlign: 'left' }}>
             <Tooltip placement="top" title="Sincronizar Datos">
-              <Button type="primary" onClick={() => this.props.onRequestUpdateTable()}>
+              <Button
+                type="primary"
+                onClick={() => this.props.onRequestUpdateTable(this.props.pagination)}
+              >
                 <Icon type="history" />
               </Button>
             </Tooltip>
