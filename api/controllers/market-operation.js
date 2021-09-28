@@ -816,7 +816,7 @@ module.exports = {
                  */
                 case 'silver-FT-OP':
                 case 'index-FT-OP':
-                  if (marketOperation.assetClassId === 60) {
+                  if (marketOperation.assetClassId === 52 || marketOperation.assetClassId === 60) {
                     calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $5000
                   } else {
                     throw new Error(
