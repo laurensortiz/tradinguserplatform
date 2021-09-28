@@ -42,7 +42,7 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'gold-FU-OP',
+    code: 'gold-FT-OP',
     name: 'GOLD Futures - Options',
     scope: 'price',
   },
@@ -84,6 +84,16 @@ const BULK_UPDATE_TYPES = [
   {
     code: 'crudeOil-FT-OP',
     name: 'CRUDE OIL WTI Futures - Options',
+    scope: 'price',
+  },
+  {
+    code: 'crudeOil-wti-FT-OP',
+    name: 'CRUDE OIL WTI Futures - Options',
+    scope: 'price',
+  },
+  {
+    code: 'crudeOil-brent-FT-OP',
+    name: 'CRUDE OIL Brent Futures - Options',
     scope: 'price',
   },
   {
@@ -137,8 +147,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'soybean-FT-OP',
-    name: 'Soybean FT',
+    code: 'soybean-corn-FT-OP',
+    name: 'Soybean Corn FT',
     scope: 'price',
   },
   {
@@ -204,6 +214,16 @@ const BULK_UPDATE_TYPES = [
   {
     code: 'btc-usd-cfx',
     name: 'BTC / USD - CFX',
+    scope: 'price',
+  },
+  {
+    code: 'dollar-index-FT',
+    name: 'US Dollar Index FT',
+    scope: 'price',
+  },
+  {
+    code: 'palladium-FT',
+    name: 'Palladium FT',
     scope: 'price',
   },
 ]

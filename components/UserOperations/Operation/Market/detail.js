@@ -5,11 +5,11 @@ import _ from 'lodash'
 
 import {
   FormatCurrency,
-  FormatCurrency4,
   FormatStatusLang,
   FormatDate,
   IsOperationPositive,
   AssetClassColor,
+  CurrencyType,
 } from '../../../../common/utils'
 
 class Detail extends PureComponent {
@@ -42,7 +42,7 @@ class Detail extends PureComponent {
     const { name: statusName, color: statusColor } = FormatStatusLang(status)
     const langStatus = (status) => t(`status ${status}`)
 
-    const isFX = _.get(this.props, 'currentOperation.assetClass.id', 0) === 10
+    const assetClassId = _.get(this.props, 'currentOperation.assetClass.id', 0)
 
     return (
       <>
@@ -78,10 +78,10 @@ class Detail extends PureComponent {
                 </Tag>
               </Descriptions.Item>
               <Descriptions.Item label={t('buyPrice')}>
-                {isFX ? FormatCurrency4.format(buyPrice) : FormatCurrency.format(buyPrice)}
+                {CurrencyType(assetClassId, buyPrice)}
               </Descriptions.Item>
               <Descriptions.Item label={t('takingProfit')}>
-                {isFX ? FormatCurrency4.format(takingProfit) : FormatCurrency.format(takingProfit)}
+                {CurrencyType(assetClassId, takingProfit)}
               </Descriptions.Item>
               <Descriptions.Item label={t('stopLost')}>{stopLost}%</Descriptions.Item>
               <Descriptions.Item label={t('orderNumber')}>{orderId}</Descriptions.Item>

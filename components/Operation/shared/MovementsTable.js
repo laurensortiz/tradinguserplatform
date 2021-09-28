@@ -14,10 +14,10 @@ import EditableCell from './editable/editableCell'
 
 import {
   FormatCurrency,
-  FormatCurrency4,
   FormatDate,
   GetGP,
   getGPInversion,
+  CurrencyType,
 } from '../../../common/utils'
 
 import { investmentMovementOperations } from '../../../state/modules/investmentMovement'
@@ -298,15 +298,14 @@ class MovementsTable extends Component {
     },
   })
 
-  getCurrencyFormatted = (value) =>
-    this.props.isForex ? FormatCurrency4.format(value) : FormatCurrency.format(value)
-
   _getColumns = () => {
     const datesInTimes = _.map(this.state.dataSource, (record) => moment(record.createdAt)),
       maxDatesInTimes = moment.max(datesInTimes).add(1, 'days'),
       minDatesInTimes = moment.min(datesInTimes).subtract(1, 'days')
     const showBasedAdmin = this.props.isAdmin ? 'show' : 'hidden'
     const isMarketMovement = _.get(this.props, 'isMarketMovement', false)
+    const assetClassId = _.get(this.props, 'currentOperation.assetClass.id', 0)
+
     return [
       {
         title: 'G/P',
@@ -330,7 +329,7 @@ class MovementsTable extends Component {
         title: 'MP',
         dataIndex: 'marketPrice',
         key: 'marketPrice',
-        render: (value) => this.getCurrencyFormatted(value),
+        render: (value) => CurrencyType(assetClassId, value),
         editable: true,
         required: false,
         inputType: 'number-mp',
