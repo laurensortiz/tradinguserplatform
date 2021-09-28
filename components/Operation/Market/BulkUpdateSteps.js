@@ -107,8 +107,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'cooper-FT-OP',
-    name: 'Cooper',
+    code: 'copper-FT-OP',
+    name: 'Copper',
     scope: 'price',
   },
   {
@@ -137,6 +137,11 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
+    code: 'soybean-FT-OP',
+    name: 'Soybean Soja FT',
+    scope: 'price',
+  },
+  {
     code: 'soybean-oil-FT-OP',
     name: 'Soybean Oil US FT OP',
     scope: 'price',
@@ -147,8 +152,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'soybean-corn-FT-OP',
-    name: 'Soybean Corn FT',
+    code: 'corn-FT-OP',
+    name: 'Corn FT',
     scope: 'price',
   },
   {
@@ -158,7 +163,7 @@ const BULK_UPDATE_TYPES = [
   },
   {
     code: 'gasoline-FT-OP',
-    name: 'Gasoline FT OP',
+    name: 'RBOB Gasoline FT OP',
     scope: 'price',
   },
   {
