@@ -9,6 +9,7 @@ import {
   FormatDate,
   IsOperationPositive,
   AssetClassColor,
+  CurrencyType,
 } from '../../../common/utils'
 
 class Detail extends PureComponent {
@@ -38,7 +39,7 @@ class Detail extends PureComponent {
     const status = _.get(this.props, 'currentOperation.status', 1)
     const { name: statusName, color: statusColor } = FormatStatus(status)
 
-    const isFX = _.get(this.props, 'currentOperation.assetClass.id', 0) === 10
+    const assetClassId = _.get(this.props, 'currentOperation.assetClass.id', 0)
 
     return (
       <>
@@ -76,10 +77,10 @@ class Detail extends PureComponent {
                 </Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Precio de Compra">
-                {isFX ? FormatCurrency4.format(buyPrice) : FormatCurrency.format(buyPrice)}
+                {CurrencyType(assetClassId, buyPrice)}
               </Descriptions.Item>
               <Descriptions.Item label="Taking Profit">
-                {isFX ? FormatCurrency4.format(takingProfit) : FormatCurrency.format(takingProfit)}
+                {CurrencyType(assetClassId, takingProfit)}
               </Descriptions.Item>
               <Descriptions.Item label="S/L">{stopLost}%</Descriptions.Item>
               <Descriptions.Item label="Número de Orden">{orderId}</Descriptions.Item>

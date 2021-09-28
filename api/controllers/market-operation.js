@@ -999,7 +999,7 @@ module.exports = {
                  * GASOLINE FT OP
                  */
                 case 'gasoline-FT-OP':
-                  if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
+                  if (marketOperation.assetClassId === 56) {
                     calculatedValue = 420 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
                   } else {
                     throw new Error(
