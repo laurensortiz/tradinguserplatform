@@ -840,6 +840,19 @@ module.exports = {
                   break
 
                 /**
+                 * Heating Oil FT | OP
+                 */
+                case 'heating-oil-FT-OP':
+                  if (marketOperation.assetClassId === 57) {
+                    calculatedValue = 42000 * gpAmount * commoditiesTotal // 1 FT = $50
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
                  * CRUDE OIL WTI FT | OP
                  */
                 case 'crudeOil-wti-FT-OP':
@@ -883,7 +896,7 @@ module.exports = {
                  */
                 case 'us-Wheat-Contract-FT-OP':
                   if (marketOperation.assetClassId === 68) {
-                    calculatedValue = 25 * gpAmount * commoditiesTotal // 1 FT = $25
+                    calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $25
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -896,7 +909,7 @@ module.exports = {
                  */
                 case 'copper-FT-OP':
                   if (marketOperation.assetClassId === 61) {
-                    calculatedValue = 1250 * gpAmount * commoditiesTotal
+                    calculatedValue = 25000 * gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -935,7 +948,7 @@ module.exports = {
                  */
                 case 'natural-FT-OP':
                   if (marketOperation.assetClassId === 58) {
-                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $1000
+                    calculatedValue = 10000 * gpAmount * commoditiesTotal // 1 FT = $1000
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`

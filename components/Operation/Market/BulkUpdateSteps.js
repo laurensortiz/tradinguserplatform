@@ -231,6 +231,11 @@ const BULK_UPDATE_TYPES = [
     name: 'Palladium FT',
     scope: 'price',
   },
+  {
+    code: 'heating-oil-FT-OP',
+    name: 'Heating Oil FT',
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({
