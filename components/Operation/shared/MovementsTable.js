@@ -51,13 +51,16 @@ class MovementsTable extends Component {
     tempDataSource: [],
     count: 0,
     editingKey: '',
+    assetClassId: 0,
     currentOperationAmount: 0,
     initialOperationAmount: 0,
     operationPercentage: 0,
+    fundsPercentage: 0,
     filteredInfo: {},
     sortedInfo: {},
     searchText: '',
     exportData: [],
+    isFundProduct: false,
   }
 
   dateMode = 0
@@ -90,6 +93,8 @@ class MovementsTable extends Component {
             'currentOperation.userAccount.account.percentage',
             0
           ),
+          isFundProduct: _.get(nextProps, 'currentOperation.assetClass.id', 0) === 49,
+          assetClassId: _.get(nextProps, 'currentOperation.assetClass.id', 0),
         })
       }
     }
@@ -118,6 +123,7 @@ class MovementsTable extends Component {
       gpInversion: amount,
       gpAmount: DEFAULT_INPUT_TEXT,
       marketPrice: DEFAULT_INPUT_TEXT,
+      fundsPercentage: DEFAULT_INPUT_TEXT,
       createdAt: moment.parseZone(),
     }
     this.setState({
@@ -161,18 +167,39 @@ class MovementsTable extends Component {
     this.setState({ editingKey: key })
   }
 
-  _onChangeInput = (value) => {
+  _onChangeInput = (value, inputType) => {
     if (!_.isNumber(this.state.editingKey)) {
-      const fractionDigits = this.props.isForex ? 4 : 2
-      const currentAmount = getGPInversion(
-        this.props.currentOperation.amount || 0,
-        _.isNumber(value) ? parseFloat(value).toFixed(fractionDigits) : 0
-      )
+      let currentAmount = 0
+      let customFields = {}
+
+      if (inputType === 'number-percentage') {
+        const gpAmount = parseFloat(
+          (_.get(this.props, 'currentOperation.amount', 0) * value) / 100
+        ).toFixed(2)
+        currentAmount = getGPInversion(this.props.currentOperation.amount || 0, gpAmount)
+
+        customFields = {
+          gpInversion: currentAmount,
+          gpAmount,
+        }
+      } else {
+        currentAmount = getGPInversion(
+          this.props.currentOperation.amount || 0,
+          _.isNumber(value)
+            ? parseFloat(CurrencyType(this.state.assetClassId, value).replace('$', ''))
+            : 0
+        )
+
+        customFields = {
+          gpInversion: currentAmount,
+        }
+      }
+
       const tempData = _.first(this.state.tempDataSource)
 
       const tempDataSourceUpdate = {
         ...tempData,
-        gpInversion: parseFloat(currentAmount).toFixed(fractionDigits),
+        ...customFields,
       }
 
       this.setState({
@@ -333,7 +360,17 @@ class MovementsTable extends Component {
         editable: true,
         required: false,
         inputType: 'number-mp',
-        className: isMarketMovement ? 'show' : 'hidden',
+        className: isMarketMovement && !this.state.isFundProduct ? 'show' : 'hidden',
+      },
+      {
+        title: 'Percentage',
+        dataIndex: 'fundsPercentage',
+        key: 'fundsPercentage',
+        render: (value) => value,
+        editable: true,
+        required: false,
+        inputType: 'number-percentage',
+        className: isMarketMovement && this.state.isFundProduct ? 'show' : 'hidden',
       },
       {
         title: 'Fecha de movimiento',
@@ -433,7 +470,7 @@ class MovementsTable extends Component {
           editing: this.isEditing(record),
           inputType: col.inputType,
           required: col.required,
-          onChangeInput: this._onChangeInput,
+          onChangeInput: (value) => this._onChangeInput(value, col.inputType),
           onPressEnter: () => this.save(record.id),
         }),
       }
@@ -441,6 +478,7 @@ class MovementsTable extends Component {
 
     const disableAddBtn = !_.isEqual(_.get(this.props, 'currentOperation.status', 1), 1)
     const isMarketMovement = _.get(this.props, 'isMarketMovement', false)
+
     return (
       <div>
         <Row style={{ marginBottom: 30, marginTop: 30 }}>
