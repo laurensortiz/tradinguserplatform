@@ -1,20 +1,49 @@
-import React, { Component } from 'react';
-import moment from 'moment-timezone';
-import { EditableProvider, EditableConsumer } from './editableContext';
-import { Button, Input, Divider, Icon, Table, Form, Popconfirm, DatePicker, InputNumber } from 'antd';
+import React, { Component } from 'react'
+import moment from 'moment-timezone'
+import { EditableProvider, EditableConsumer } from './editableContext'
+import {
+  Button,
+  Input,
+  Divider,
+  Icon,
+  Table,
+  Form,
+  Popconfirm,
+  DatePicker,
+  InputNumber,
+} from 'antd'
 
 class EditableCell extends Component {
   getInput = () => {
     if (this.props.inputType === 'number') {
-      return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
+      return (
+        <InputNumber
+          onPressEnter={this.props.onPressEnter}
+          name={this.props.dataIndex}
+          onChange={this.props.onChangeInput}
+        />
+      )
     } else if (this.props.inputType === 'date') {
-      return <DatePicker format="DD-MM-YYYY"  />;
+      return <DatePicker format="DD-MM-YYYY" />
     } else if (this.props.inputType === 'number-mp') {
-      return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} />;
+      return <InputNumber onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} />
+    } else if (this.props.inputType === 'number-percentage') {
+      return (
+        <InputNumber
+          onPressEnter={this.props.onPressEnter}
+          name={this.props.dataIndex}
+          onChange={this.props.onChangeInput}
+        />
+      )
     }
-    return <Input onPressEnter={this.props.onPressEnter} name={this.props.dataIndex} onChange={this.props.onChangeInput} />;
-  };
-
+    return (
+      <Input
+        onPressEnter={this.props.onPressEnter}
+        name={this.props.dataIndex}
+        onChange={this.props.onChangeInput}
+      />
+    )
+  }
 
   renderCell = ({ getFieldDecorator }) => {
     const {
@@ -27,7 +56,7 @@ class EditableCell extends Component {
       children,
       required,
       ...restProps
-    } = this.props;
+    } = this.props
 
     return (
       <td {...restProps}>
@@ -40,15 +69,16 @@ class EditableCell extends Component {
                   message: `Por favor ingrese ${title}`,
                 },
               ],
-              initialValue: inputType === 'date' ? moment.parseZone(record[dataIndex]) : record[dataIndex],
+              initialValue:
+                inputType === 'date' ? moment.parseZone(record[dataIndex]) : record[dataIndex],
             })(this.getInput())}
           </Form.Item>
         ) : (
           children
         )}
       </td>
-    );
-  };
+    )
+  }
 
   render() {
     const {
@@ -60,11 +90,9 @@ class EditableCell extends Component {
       handleSave,
       children,
       ...restProps
-    } = this.props;
+    } = this.props
 
-    return (
-      <EditableConsumer>{ this.renderCell }</EditableConsumer>
-    );
+    return <EditableConsumer>{this.renderCell}</EditableConsumer>
   }
 }
 

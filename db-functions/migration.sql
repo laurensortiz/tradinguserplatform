@@ -2141,3 +2141,13 @@ ALTER TABLE public."User" ADD "lastName6" varchar(255) DEFAULT '';
 /*
 * End Changes Aug 7, 2021
 */
+
+
+/*
+* Start Changes Sep 28, 2021
+*/
+alter table public."MarketMovement" add "fundsPercentage" numeric(10,2) NULL;
+
+/*
+* End Changes Sep 28, 2021
+*/

@@ -747,15 +747,41 @@ module.exports = {
                 /**
                  * GOLD FU | OP
                  */
-                case 'gold-FU-OP':
-                  if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
-                    calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
+                case 'gold-FT-OP':
+                  if (marketOperation.assetClassId === 59) {
+                    calculatedValue = 100 * gpAmount * commoditiesTotal // 1 FT = $50
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
                     )
                   }
                   break
+                /**
+                 * US Dollar index FT
+                 */
+                case 'dollar-index-FT':
+                  if (marketOperation.assetClassId === 53) {
+                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $1000
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * Palladium FT
+                 */
+                case 'palladium-FT':
+                  if (marketOperation.assetClassId === 63) {
+                    calculatedValue = 100 * gpAmount * commoditiesTotal // 1 FT = $1000
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
                 /**
                  * GOLD FU | OP
                  */
@@ -790,7 +816,7 @@ module.exports = {
                  */
                 case 'silver-FT-OP':
                 case 'index-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                  if (marketOperation.assetClassId === 52 || marketOperation.assetClassId === 60) {
                     calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $5000
                   } else {
                     throw new Error(
@@ -804,7 +830,7 @@ module.exports = {
                  * PLATINUM FT | OP
                  */
                 case 'platinum-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                  if (marketOperation.assetClassId === 62) {
                     calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $50
                   } else {
                     throw new Error(
@@ -814,11 +840,37 @@ module.exports = {
                   break
 
                 /**
-                 * CRUDE OIL FT | OP
+                 * Heating Oil FT | OP
                  */
-                case 'crudeOil-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                    calculatedValue = 500 * gpAmount * commoditiesTotal // 1 FT = $500
+                case 'heating-oil-FT-OP':
+                  if (marketOperation.assetClassId === 57) {
+                    calculatedValue = 42000 * gpAmount * commoditiesTotal // 1 FT = $50
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * CRUDE OIL WTI FT | OP
+                 */
+                case 'crudeOil-wti-FT-OP':
+                  if (marketOperation.assetClassId === 54) {
+                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $500
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * CRUDE OIL Brent FT | OP
+                 */
+                case 'crudeOil-brent-FT-OP':
+                  if (marketOperation.assetClassId === 55) {
+                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $500
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -843,8 +895,8 @@ module.exports = {
                  * US Wheat Contract FT
                  */
                 case 'us-Wheat-Contract-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                    calculatedValue = 25 * gpAmount * commoditiesTotal // 1 FT = $25
+                  if (marketOperation.assetClassId === 68) {
+                    calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $25
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -853,11 +905,11 @@ module.exports = {
                   break
 
                 /**
-                 * COOPER FT | OP
+                 * COPPER FT | OP
                  */
-                case 'cooper-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                    calculatedValue = 1250 * gpAmount * commoditiesTotal
+                case 'copper-FT-OP':
+                  if (marketOperation.assetClassId === 61) {
+                    calculatedValue = 25000 * gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -895,8 +947,8 @@ module.exports = {
                  * NATURAL FT
                  */
                 case 'natural-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
-                    calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $1000
+                  if (marketOperation.assetClassId === 58) {
+                    calculatedValue = 10000 * gpAmount * commoditiesTotal // 1 FT = $1000
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -934,7 +986,7 @@ module.exports = {
                  * SOYBEAN OIL US  FT
                  */
                 case 'soybean-oil-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                  if (marketOperation.assetClassId === 67) {
                     calculatedValue = 600 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                   } else {
                     throw new Error(
@@ -960,8 +1012,8 @@ module.exports = {
                  * GASOLINE FT OP
                  */
                 case 'gasoline-FT-OP':
-                  if (marketOperation.assetClassId === 2 || marketOperation.assetClassId === 1) {
-                    calculatedValue = 420 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
+                  if (marketOperation.assetClassId === 56) {
+                    calculatedValue = 42000 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
@@ -1150,7 +1202,7 @@ module.exports = {
                  * BTC/USD
                  */
                 case 'soybean-meal-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                  if (marketOperation.assetClassId === 66) {
                     calculatedValue = 100 * gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
@@ -1161,9 +1213,22 @@ module.exports = {
                 /**
                  * BTC/USD
                  */
-                case 'soybean-FT-OP':
-                  if (marketOperation.assetClassId === 1 || marketOperation.assetClassId === 2) {
+                case 'corn-FT-OP':
+                  if (marketOperation.assetClassId === 64) {
                     calculatedValue = 50 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 * BTC/USD
+                 */
+                case 'soybean-FT-OP':
+                  if (marketOperation.assetClassId === 65) {
+                    calculatedValue = 5000 * gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`

@@ -12,12 +12,17 @@ module.exports = {
         req.body.gpAmount === '' || req.body.gpAmount === 'NaN' ? 0 : req.body.gpAmount
       const marketPrice =
         req.body.marketPrice === '' || req.body.marketPrice === 'NaN' ? 0 : req.body.marketPrice
+      const fundsPercentage =
+        req.body.fundsPercentage === '' || req.body.fundsPercentage === 'NaN'
+          ? 0
+          : req.body.fundsPercentage
 
       const marketMovement = await MarketMovement.create({
         gpInversion: Number(`${gpInversion}`.replace(/\,/g, '')),
         gpAmount: Number(`${gpAmount}`.replace(/\,/g, '')),
         marketPrice: Number(`${marketPrice}`.replace(/\,/g, '')),
         marketOperationId: Number(req.body.marketOperationId),
+        fundsPercentage: Number(fundsPercentage),
         status: _.get(req, 'body.status', 1),
         createdAt:
           moment(req.body.createdAt).tz('America/New_York').format() ||
@@ -144,15 +149,22 @@ module.exports = {
         req.body.gpAmount === '' || req.body.gpAmount === 'NaN'
           ? 0
           : req.body.gpAmount || marketMovement.gpAmount
+
       const marketPrice =
         req.body.marketPrice === '' || req.body.marketPrice === 'NaN'
           ? 0
           : req.body.marketPrice || marketMovement.marketPrice
 
+      const fundsPercentage =
+        req.body.fundsPercentage === '' || req.body.fundsPercentage === 'NaN'
+          ? 0
+          : req.body.fundsPercentage || marketMovement.fundsPercentage
+
       const updatedMarketMovement = await marketMovement.update({
         gpInversion: Number(`${gpInversion}`.replace(/\,/g, '')),
         gpAmount: Number(`${gpAmount}`.replace(/\,/g, '')),
         marketPrice: Number(`${marketPrice}`.replace(/\,/g, '')),
+        fundsPercentage: Number(fundsPercentage),
         status: _.get(req, 'body.status', 1),
         createdAt: req.body.createdAt || marketMovement.createdAt,
         updatedAt: new Date(),

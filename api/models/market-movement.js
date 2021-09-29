@@ -19,6 +19,11 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: true,
         unique: false,
       },
+      fundsPercentage: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
+        unique: false,
+      },
       createdAt: {
         allowNull: true,
         type: DataTypes.DATE,

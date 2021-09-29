@@ -42,7 +42,7 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'gold-FU-OP',
+    code: 'gold-FT-OP',
     name: 'GOLD Futures - Options',
     scope: 'price',
   },
@@ -87,6 +87,16 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
+    code: 'crudeOil-wti-FT-OP',
+    name: 'CRUDE OIL WTI Futures - Options',
+    scope: 'price',
+  },
+  {
+    code: 'crudeOil-brent-FT-OP',
+    name: 'CRUDE OIL Brent Futures - Options',
+    scope: 'price',
+  },
+  {
     code: 'crude-CFDs-Barrels',
     name: 'CRUDE CFDs Barrels',
     scope: 'price',
@@ -97,8 +107,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'cooper-FT-OP',
-    name: 'Cooper',
+    code: 'copper-FT-OP',
+    name: 'Copper',
     scope: 'price',
   },
   {
@@ -127,6 +137,11 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
+    code: 'soybean-FT-OP',
+    name: 'Soybean Soja FT',
+    scope: 'price',
+  },
+  {
     code: 'soybean-oil-FT-OP',
     name: 'Soybean Oil US FT OP',
     scope: 'price',
@@ -137,8 +152,8 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'soybean-FT-OP',
-    name: 'Soybean FT',
+    code: 'corn-FT-OP',
+    name: 'Corn FT',
     scope: 'price',
   },
   {
@@ -148,7 +163,7 @@ const BULK_UPDATE_TYPES = [
   },
   {
     code: 'gasoline-FT-OP',
-    name: 'Gasoline FT OP',
+    name: 'RBOB Gasoline FT OP',
     scope: 'price',
   },
   {
@@ -204,6 +219,21 @@ const BULK_UPDATE_TYPES = [
   {
     code: 'btc-usd-cfx',
     name: 'BTC / USD - CFX',
+    scope: 'price',
+  },
+  {
+    code: 'dollar-index-FT',
+    name: 'US Dollar Index FT',
+    scope: 'price',
+  },
+  {
+    code: 'palladium-FT',
+    name: 'Palladium FT',
+    scope: 'price',
+  },
+  {
+    code: 'heating-oil-FT-OP',
+    name: 'Heating Oil FT',
     scope: 'price',
   },
 ]

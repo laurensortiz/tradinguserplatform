@@ -38,7 +38,6 @@ class Market extends Component {
       showSizeChanger: true,
       pageSizeOptions: ['10', '30', '50'],
     },
-    isForex: false,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -59,7 +58,6 @@ class Market extends Component {
     ) {
       _.assignIn(updatedState, {
         currentOperationDetail: nextProps.currentOperationDetail,
-        isForex: _.get(nextProps, 'currentOperationDetail.assetClass.id', 0) === 10,
       })
     }
 
@@ -273,12 +271,13 @@ class Market extends Component {
    * Edit Movements
    */
   _handleEditMovement = (newMovement) => {
-    const { gpInversion, gpAmount, marketPrice, createdAt, id } = newMovement
+    const { gpInversion, gpAmount, marketPrice, createdAt, id, fundsPercentage } = newMovement
     this.props.fetchEditMarketMovement({
       id,
       gpInversion: parseFloat(gpInversion).toFixed(2),
       gpAmount: parseFloat(gpAmount).toFixed(2),
       marketPrice: parseFloat(marketPrice).toFixed(2),
+      fundsPercentage: parseFloat(fundsPercentage).toFixed(2),
       createdAt: moment.parseZone(createdAt),
     })
   }
@@ -402,7 +401,6 @@ class Market extends Component {
             isAdmin={this.props.isAdmin}
             isLoading={this.props.isLoading}
             isMarketMovement={true}
-            isForex={this.state.isForex}
           />
         </Drawer>
       </>
