@@ -896,7 +896,7 @@ module.exports = {
                  */
                 case 'us-Wheat-Contract-FT-OP':
                   if (marketOperation.assetClassId === 68) {
-                    calculatedValue = 5000 * gpAmount * commoditiesTotal // 1 FT = $25
+                    calculatedValue = 50 * gpAmount * commoditiesTotal // 1 FT = $25
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
