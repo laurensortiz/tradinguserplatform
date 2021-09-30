@@ -84,6 +84,13 @@ module.exports = (Sequelize, DataTypes) => {
           return moment.tz(this.getDataValue('createdAt'), 'America/New_York').format()
         },
       },
+      expirationDate: {
+        allowNull: true,
+        type: DataTypes.DATE,
+        get() {
+          return moment.tz(this.getDataValue('expirationDate'), 'America/New_York').format()
+        },
+      },
       status: {
         type: DataTypes.INTEGER,
         allowNull: false,

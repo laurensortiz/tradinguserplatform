@@ -84,6 +84,9 @@ module.exports = {
             createdAt: moment(req.body.createdAt || new Date())
               .tz('America/New_York')
               .format(),
+            expirationDate: req.body.expirationDate
+              ? moment(req.body.expirationDate).tz('America/New_York').format()
+              : null,
             updatedAt: moment(new Date()).tz('America/New_York').format(),
           },
           { transaction: t }
@@ -352,6 +355,9 @@ module.exports = {
             createdAt: !_.isNil(req.body.createdAt)
               ? moment(req.body.createdAt).tz('America/New_York').format()
               : marketOperation.createdAt,
+            expirationDate: !_.isNil(req.body.expirationDate)
+              ? moment(req.body.expirationDate).tz('America/New_York').format()
+              : marketOperation.expirationDate,
             updatedAt: moment(new Date()).tz('America/New_York').format(),
           },
           { transaction: t }

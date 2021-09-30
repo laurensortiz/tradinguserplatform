@@ -16,6 +16,7 @@ import {
   DisplayTableAmount,
   MarketBehaviorStatus,
   IsOperationPositive,
+  CurrencyType,
 } from '../../../../common/utils'
 
 import { assetClassOperations } from '../../../../state/modules/assetClasses'
@@ -488,7 +489,10 @@ class MarketTable extends Component {
         title: t('buyPrice'),
         dataIndex: 'buyPrice',
         key: 'buyPrice',
-        render: (buyPrice) => <span key={buyPrice}>{DisplayTableAmount(buyPrice)}</span>,
+        render: (buyPrice, row) => {
+          const assetId = _.get(row, 'assetClass.id', 0)
+          return <span key={buyPrice}>{CurrencyType(assetId, buyPrice)}</span>
+        },
         sorter: (a, b) => Sort(a.buyPrice, b.buyPrice),
         sortDirections: ['descend', 'ascend'],
       },
@@ -496,9 +500,10 @@ class MarketTable extends Component {
         title: t('takingProfit'),
         dataIndex: 'takingProfit',
         key: 'takingProfit',
-        render: (takingProfit) => (
-          <span key={takingProfit}>{DisplayTableAmount(takingProfit)}</span>
-        ),
+        render: (takingProfit, row) => {
+          const assetId = _.get(row, 'assetClass.id', 0)
+          return <span key={takingProfit}>{CurrencyType(assetId, takingProfit)}</span>
+        },
         sorter: (a, b) => Sort(a.takingProfit, b.takingProfit),
         sortDirections: ['descend', 'ascend'],
         ...this.getColumnSearchProps('takingProfit'),

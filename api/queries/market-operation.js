@@ -277,6 +277,7 @@ const queries = {
         'orderId',
         'createdAt',
         'updatedAt',
+        'expirationDate',
         'holdStatusCommissionEndOperation',
       ],
       include: [

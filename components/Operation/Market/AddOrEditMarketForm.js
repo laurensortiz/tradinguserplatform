@@ -52,6 +52,7 @@ class AddOrEditMarketForm extends PureComponent {
     orderId: null,
     createdAt: null,
     endDate: null,
+    expirationDate: null,
     marginUsed: 0,
 
     confirmDirty: false,
@@ -141,6 +142,9 @@ class AddOrEditMarketForm extends PureComponent {
 
     if (!_.isEmpty(this.props.selectedOperation)) {
       const { selectedOperation } = this.props
+      console.log('[=====  upp  =====>')
+      console.log(selectedOperation)
+      console.log('<=====  /upp  =====]')
 
       const accountName = _.get(selectedOperation, 'userAccount.account.name', '')
       const accountGuarantee = _.get(selectedOperation, 'userAccount.guaranteeOperation', 0)
@@ -213,6 +217,12 @@ class AddOrEditMarketForm extends PureComponent {
   _setEndDate = (date) => {
     this.setState({
       endDate: moment.tz(date, 'America/New_York').format(),
+    })
+  }
+
+  _setExpirationDate = (date) => {
+    this.setState({
+      expirationDate: moment.tz(date, 'America/New_York').format(),
     })
   }
 
@@ -363,10 +373,17 @@ class AddOrEditMarketForm extends PureComponent {
       ? moment.tz(this.state.endDate, 'America/New_York')
       : undefined
 
+    const expirationDateInitValue = !_.isNull(this.state.expirationDate)
+      ? moment.tz(this.state.expirationDate, 'America/New_York')
+      : undefined
+
     const isDisableSubmitBtn =
       this.props.isLoading || (this.state.status === 4 && _.isNil(this.state.endDate))
     const dynamicRequiredField = !this.state.isBulkOperation // Disable regular required fields on bulk operation
 
+    console.log('[=====  state  =====>')
+    console.log(this.state)
+    console.log('<=====  /state  =====]')
     return (
       <Form
         onSubmit={this._handleSubmit}
@@ -634,6 +651,20 @@ class AddOrEditMarketForm extends PureComponent {
                 onChange={this._setEndDate}
                 defaultPickerValue={moment.parseZone()}
                 placeholder="Fecha de Cierre"
+              />
+            )}
+          </Form.Item>
+        ) : null}
+
+        {this.state.commodity.id === 7 ? (
+          <Form.Item label="Fecha de Expiración">
+            {getFieldDecorator('expirationDate', {
+              initialValue: expirationDateInitValue,
+            })(
+              <DatePicker
+                onChange={this._setExpirationDate}
+                defaultPickerValue={moment.parseZone()}
+                placeholder="Fecha de Expiración"
               />
             )}
           </Form.Item>
