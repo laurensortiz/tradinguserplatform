@@ -2151,3 +2151,12 @@ alter table public."MarketMovement" add "fundsPercentage" numeric(10,2) NULL;
 /*
 * End Changes Sep 28, 2021
 */
+
+/*
+* Start Changes Sep 29, 2021
+*/
+alter table public."MarketOperation" add "expirationDate" timestamptz NULL;
+
+/*
+* End Changes Sep 29, 2021
+*/

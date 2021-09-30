@@ -52,6 +52,7 @@ class AddOrEditMarketForm extends PureComponent {
     orderId: null,
     createdAt: null,
     endDate: null,
+    expirationDate: null,
     marginUsed: 0,
 
     confirmDirty: false,
@@ -216,6 +217,12 @@ class AddOrEditMarketForm extends PureComponent {
     })
   }
 
+  _setExpirationDate = (date) => {
+    this.setState({
+      expirationDate: moment.tz(date, 'America/New_York').format(),
+    })
+  }
+
   _handleChange = (e) => {
     const value = _.isEmpty(e.target.value) ? '0.00' : e.target.value
 
@@ -361,6 +368,10 @@ class AddOrEditMarketForm extends PureComponent {
       : undefined
     const endDateInitValue = !_.isNull(this.state.endDate)
       ? moment.tz(this.state.endDate, 'America/New_York')
+      : undefined
+
+    const expirationDateInitValue = !_.isNull(this.state.expirationDate)
+      ? moment.tz(this.state.expirationDate, 'America/New_York')
       : undefined
 
     const isDisableSubmitBtn =
@@ -634,6 +645,20 @@ class AddOrEditMarketForm extends PureComponent {
                 onChange={this._setEndDate}
                 defaultPickerValue={moment.parseZone()}
                 placeholder="Fecha de Cierre"
+              />
+            )}
+          </Form.Item>
+        ) : null}
+
+        {this.state.commodity.id === 7 ? (
+          <Form.Item label="Fecha de Expiración">
+            {getFieldDecorator('expirationDate', {
+              initialValue: expirationDateInitValue,
+            })(
+              <DatePicker
+                onChange={this._setExpirationDate}
+                defaultPickerValue={moment.parseZone()}
+                placeholder="Fecha de Expiración"
               />
             )}
           </Form.Item>
