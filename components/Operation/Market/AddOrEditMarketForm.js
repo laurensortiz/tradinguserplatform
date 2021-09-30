@@ -142,9 +142,6 @@ class AddOrEditMarketForm extends PureComponent {
 
     if (!_.isEmpty(this.props.selectedOperation)) {
       const { selectedOperation } = this.props
-      console.log('[=====  upp  =====>')
-      console.log(selectedOperation)
-      console.log('<=====  /upp  =====]')
 
       const accountName = _.get(selectedOperation, 'userAccount.account.name', '')
       const accountGuarantee = _.get(selectedOperation, 'userAccount.guaranteeOperation', 0)
