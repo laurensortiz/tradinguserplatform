@@ -378,9 +378,6 @@ class AddOrEditMarketForm extends PureComponent {
       this.props.isLoading || (this.state.status === 4 && _.isNil(this.state.endDate))
     const dynamicRequiredField = !this.state.isBulkOperation // Disable regular required fields on bulk operation
 
-    console.log('[=====  state  =====>')
-    console.log(this.state)
-    console.log('<=====  /state  =====]')
     return (
       <Form
         onSubmit={this._handleSubmit}
