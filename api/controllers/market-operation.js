@@ -72,6 +72,7 @@ module.exports = {
             commodityId: _.get(req, 'body.commodity.id', 1),
             assetClassId: _.get(req, 'body.assetClass.id', 1),
             buyPrice: req.body.buyPrice,
+            strikePrice: req.body.strikePrice,
             takingProfit: req.body.takingProfit,
             stopLost: req.body.stopLost,
             maintenanceMargin: req.body.maintenanceMargin,
@@ -344,6 +345,7 @@ module.exports = {
             assetClassId: req.body.assetClass.id || marketOperation.assetClassId,
             buyPrice: req.body.buyPrice || marketOperation.buyPrice,
             takingProfit: req.body.takingProfit || marketOperation.takingProfit,
+            strikePrice: req.body.strikePrice || marketOperation.strikePrice,
             stopLost: req.body.stopLost || marketOperation.stopLost,
             maintenanceMargin: req.body.maintenanceMargin || marketOperation.maintenanceMargin,
             amount: req.body.amount || marketOperation.amount,
@@ -355,9 +357,10 @@ module.exports = {
             createdAt: !_.isNil(req.body.createdAt)
               ? moment(req.body.createdAt).tz('America/New_York').format()
               : marketOperation.createdAt,
-            expirationDate: req.body.expirationDate
-              ? moment(req.body.expirationDate).tz('America/New_York').format()
-              : null,
+            expirationDate:
+              req.body.expirationDate && req.body.expirationDate !== 'Fecha inválida'
+                ? moment(req.body.expirationDate).tz('America/New_York').format()
+                : null,
             updatedAt: moment(new Date()).tz('America/New_York').format(),
           },
           { transaction: t }

@@ -30,6 +30,7 @@ class Detail extends PureComponent {
       '0.00'
     )
     const takingProfit = _.get(this.props, 'currentOperation.takingProfit', '0.00')
+    const strikePrice = _.get(this.props, 'currentOperation.strikePrice', '0.00')
     const maintenanceMargin = _.get(this.props, 'currentOperation.maintenanceMargin', '0.00')
     const stopLost = _.get(this.props, 'currentOperation.stopLost', '0')
     const orderId = _.get(this.props, 'currentOperation.orderId', '-')
@@ -83,6 +84,10 @@ class Detail extends PureComponent {
               <Descriptions.Item label={t('takingProfit')}>
                 {CurrencyType(assetClassId, takingProfit)}
               </Descriptions.Item>
+              <Descriptions.Item label={'Strike Price'}>
+                {CurrencyType(assetClassId, strikePrice)}
+              </Descriptions.Item>
+
               <Descriptions.Item label={t('stopLost')}>{stopLost}%</Descriptions.Item>
               <Descriptions.Item label={t('orderNumber')}>{orderId}</Descriptions.Item>
               <Descriptions.Item label={t('broker')}>{brokerName}</Descriptions.Item>

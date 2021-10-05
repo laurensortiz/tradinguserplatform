@@ -2160,3 +2160,12 @@ alter table public."MarketOperation" add "expirationDate" timestamptz NULL;
 /*
 * End Changes Sep 29, 2021
 */
+
+/*
+* Start Changes Oct 5, 2021
+*/
+alter table public."MarketOperation" add "strikePrice" numeric(10,4) NULL;
+
+/*
+* End Changes Oct 5, 2021
+*/

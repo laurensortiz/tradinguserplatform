@@ -21,6 +21,10 @@ module.exports = (Sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
       },
+      strikePrice: {
+        type: DataTypes.DECIMAL(10, 4),
+        allowNull: true,
+      },
       takingProfit: {
         type: DataTypes.DECIMAL(10, 4),
         allowNull: true,
