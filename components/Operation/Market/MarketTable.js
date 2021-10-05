@@ -693,6 +693,26 @@ class MarketTable extends Component {
         ellipsis: true,
       },
       {
+        title: 'Strike Price',
+        dataIndex: 'strikePrice',
+        key: 'strikePrice',
+        render: (strikePrice, row) => {
+          const assetId = _.get(row, 'assetClass.id', 0)
+          return <span key={strikePrice}>{CurrencyType(assetId, strikePrice)}</span>
+        },
+        sorter: (a, b) => Sort(a.strikePrice, b.strikePrice),
+        filters: tpList.map((value) => {
+          return {
+            text: value,
+            value,
+          }
+        }),
+        sortDirections: ['descend', 'ascend'],
+        filteredValue: filteredInfo['strikePrice'] || null,
+        onFilter: (value, record) => (record.strikePrice ? record.strikePrice === value : null),
+        ellipsis: true,
+      },
+      {
         title: 'Fecha de Apertura',
         dataIndex: 'createdAt',
         key: 'createdAt',

@@ -357,6 +357,9 @@ class AddOrEditMarketForm extends PureComponent {
     const takingProfitInitValue = !_.isEmpty(this.state.takingProfit)
       ? this.state.takingProfit
       : undefined
+    const strikePriceInitValue = !_.isEmpty(this.state.strikePrice)
+      ? this.state.strikePrice
+      : undefined
     const stopLostInitValue = !_.isEmpty(this.state.stopLost) ? this.state.stopLost : undefined
     const maintenanceMarginInitValue = !_.isEmpty(this.state.maintenanceMargin)
       ? this.state.maintenanceMargin
@@ -463,6 +466,12 @@ class AddOrEditMarketForm extends PureComponent {
               <Option key="long" value="Long">
                 Long
               </Option>
+              <Option key="call" value="Call">
+                Call
+              </Option>
+              <Option key="put" value="Put">
+                Put
+              </Option>
             </Select>
           )}
         </Form.Item>
@@ -532,6 +541,13 @@ class AddOrEditMarketForm extends PureComponent {
           })(
             <Input name="takingProfit" onChange={this._handleChange} placeholder="Taking Profit" />
           )}
+        </Form.Item>
+        <Form.Item label="Strike Price">
+          {getFieldDecorator('strikePrice', {
+            initialValue: strikePriceInitValue,
+            value: strikePriceInitValue,
+            rules: [{ required: false, message: 'Por favor indique el strikePrice' }],
+          })(<Input name="strikePrice" onChange={this._handleChange} placeholder="Strike Price" />)}
         </Form.Item>
         <Form.Item label="S/L">
           {getFieldDecorator('stopLost', {
