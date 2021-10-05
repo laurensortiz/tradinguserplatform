@@ -19,6 +19,7 @@ class Detail extends PureComponent {
     const amount = _.get(this.props, 'currentOperation.amount', '0.00')
     const initialAmount = _.get(this.props, 'currentOperation.initialAmount', '0.00')
     const startDate = _.get(this.props, 'currentOperation.createdAt', '')
+    const expirationDate = _.get(this.props, 'currentOperation.expirationDate', '')
     const longShort = _.get(this.props, 'currentOperation.longShort', '')
     const commoditiesTotal = _.get(this.props, 'currentOperation.commoditiesTotal', '0')
     const buyPrice = _.get(this.props, 'currentOperation.buyPrice', '0.00')
@@ -51,6 +52,9 @@ class Detail extends PureComponent {
               </Descriptions.Item>
               <Descriptions.Item label="Fecha de Apertura">
                 {FormatDate(startDate)}{' '}
+              </Descriptions.Item>
+              <Descriptions.Item label="Fecha de Expiración">
+                {FormatDate(expirationDate)}{' '}
               </Descriptions.Item>
               <Descriptions.Item label="Inversión">
                 {FormatCurrency.format(initialAmount)}{' '}

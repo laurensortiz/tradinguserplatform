@@ -725,6 +725,22 @@ class MarketTable extends Component {
         ...this._getColumnDateProps('updatedAt', minDatesInTimes, maxDatesInTimes),
       },
       {
+        title: 'Fecha de Expiración',
+        dataIndex: 'expirationDate',
+        key: 'expirationDate',
+        render: (value) => moment(value).tz('America/New_York').format('DD-MM-YYYY'),
+        editable: true,
+        inputType: 'date',
+        required: false,
+        rowKey: (d) => {
+          return FormatDate(d.expirationDate)
+        },
+        sorter: (a, b) => {
+          return this._sortDates(a.expirationDate, b.expirationDate)
+        },
+        ...this._getColumnDateProps('expirationDate', minDatesInTimes, maxDatesInTimes),
+      },
+      {
         title: 'Corredor',
         dataIndex: 'broker.name',
         key: 'broker.name',

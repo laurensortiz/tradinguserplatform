@@ -650,19 +650,17 @@ class AddOrEditMarketForm extends PureComponent {
           </Form.Item>
         ) : null}
 
-        {this.state.commodity.id === 7 ? (
-          <Form.Item label="Fecha de Expiración">
-            {getFieldDecorator('expirationDate', {
-              initialValue: expirationDateInitValue,
-            })(
-              <DatePicker
-                onChange={this._setExpirationDate}
-                defaultPickerValue={moment.parseZone()}
-                placeholder="Fecha de Expiración"
-              />
-            )}
-          </Form.Item>
-        ) : null}
+        <Form.Item label="Fecha de Expiración">
+          {getFieldDecorator('expirationDate', {
+            initialValue: expirationDateInitValue,
+          })(
+            <DatePicker
+              onChange={this._setExpirationDate}
+              defaultPickerValue={moment.parseZone()}
+              placeholder="Fecha de Expiración"
+            />
+          )}
+        </Form.Item>
         <div style={{ width: '100%', padding: 20 }}>
           {this.state.isBulkOperation ? (
             <Button

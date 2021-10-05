@@ -97,6 +97,7 @@ const queries = {
         'orderId',
         'createdAt',
         'updatedAt',
+        'expirationDate',
         'endDate',
         'guaranteeOperationValueEndOperation',
         'holdStatusCommissionEndOperation',
