@@ -1237,7 +1237,7 @@ module.exports = {
                  */
                 case 'soybean-FT-OP':
                   if (marketOperation.assetClassId === 65) {
-                    calculatedValue = 5000 * gpAmount * commoditiesTotal
+                    calculatedValue = 50 * gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
                       `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
