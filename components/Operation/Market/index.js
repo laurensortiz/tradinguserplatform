@@ -180,6 +180,9 @@ class Market extends Component {
   }
 
   _handleAddNewUserOperation = (userOperation) => {
+    console.log('[=====  NEW  =====>')
+    console.log(userOperation)
+    console.log('<=====  /NEW  =====]')
     this.props.fetchAddMarketOperation(userOperation)
   }
 
