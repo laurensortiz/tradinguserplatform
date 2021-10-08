@@ -236,6 +236,41 @@ const BULK_UPDATE_TYPES = [
     name: 'Heating Oil FT',
     scope: 'price',
   },
+  {
+    code: 'rough-rice-FT',
+    name: 'Rough Rice FT',
+    scope: 'price',
+  },
+  {
+    code: 'feeder-cattle-FT',
+    name: 'Feeder Cattle FT',
+    scope: 'price',
+  },
+  {
+    code: 'cotton-FT',
+    name: 'Cotton FT',
+    scope: 'price',
+  },
+  {
+    code: 'lean-hogs-FT',
+    name: 'Lean Hogs FT',
+    scope: 'price',
+  },
+  {
+    code: 'lumber-FT',
+    name: 'Lumber FT',
+    scope: 'price',
+  },
+  {
+    code: 'live-casttle-FT',
+    name: 'Live Casttle FT',
+    scope: 'price',
+  },
+  {
+    code: 'sp-500-vix-FT',
+    name: 'S&P 500 VIX FT',
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({

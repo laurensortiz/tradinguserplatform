@@ -1245,6 +1245,97 @@ module.exports = {
                   }
                   break
 
+                /**
+                 *
+                 */
+                case 'rough-rice-FT':
+                  if (marketOperation.assetClassId === 69) {
+                    calculatedValue = 20 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 *
+                 */
+                case 'feeder-cattle-FT':
+                  if (marketOperation.assetClassId === 70) {
+                    calculatedValue = 500 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 *
+                 */
+                case 'cotton-FT':
+                  if (marketOperation.assetClassId === 71) {
+                    calculatedValue = 500 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 *
+                 */
+                case 'lean-hogs-FT':
+                  if (marketOperation.assetClassId === 72) {
+                    calculatedValue = 400 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 *
+                 */
+                case 'lumber-FT':
+                  if (marketOperation.assetClassId === 73) {
+                    calculatedValue = 110 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 *
+                 */
+                case 'live-casttle-FT':
+                  if (marketOperation.assetClassId === 74) {
+                    calculatedValue = 400 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
+                /**
+                 *
+                 */
+                case 'sp-500-vix-FT':
+                  if (marketOperation.assetClassId === 75) {
+                    calculatedValue = 1000 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
                 default:
               }
 
