@@ -82,11 +82,6 @@ const BULK_UPDATE_TYPES = [
     scope: 'price',
   },
   {
-    code: 'crudeOil-FT-OP',
-    name: 'CRUDE OIL WTI Futures - Options',
-    scope: 'price',
-  },
-  {
     code: 'crudeOil-wti-FT-OP',
     name: 'CRUDE OIL WTI Futures - Options',
     scope: 'price',
