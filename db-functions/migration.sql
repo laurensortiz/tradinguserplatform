@@ -2223,6 +2223,7 @@ alter table public."FundMovement" add CONSTRAINT "FundMovement_fundOperationId_f
 INSERT INTO public."Account" ("name",percentage,status,"createdAt","updatedAt","associatedOperation","holdStatusCommissionAmount") VALUES
 	 ('Funds FND',0,1,'2021-10-12 11:51:34.023-06','2021-10-12 15:43:20.155-06',3,0.00);
 
+alter table public."FundOperation" add "productId" integer NULL;
 /*
 * End Changes Oct 11, 2021
 */
