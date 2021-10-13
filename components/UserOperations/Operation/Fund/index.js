@@ -11,46 +11,46 @@ import OperationMovementDetail from './detail'
 
 import { AccountInformation, MovementsTable } from '../shared'
 
-import { investmentOperationOperations } from '../../../../state/modules/investmentOperation'
-import { investmentMovementOperations } from '../../../../state/modules/investmentMovement'
+import { fundOperationOperations } from '../../../../state/modules/fundOperation'
+import { fundMovementOperations } from '../../../../state/modules/fundMovement'
 
 const { TabPane } = Tabs
 
-class Investment extends Component {
+class Fund extends Component {
   state = {
     isVisibleAddOrEditOperation: false,
     actionType: 'add',
     selectedOperation: {},
     isCreatingOperation: false,
-    operationType: 'investment',
-    investmentOperations: [],
+    operationType: 'fund',
+    fundOperations: [],
     userAccounts: [],
     isDetailViewVisible: false,
     currentOperationDetail: {},
-    investmentMovements: [],
+    fundMovements: [],
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
     let updatedState = {}
-    if (!_.isEqual(nextProps.investmentOperations, prevState.investmentOperations)) {
-      let investmentOperationsUser
+    if (!_.isEqual(nextProps.fundOperations, prevState.fundOperations)) {
+      let fundOperationsUser
 
       if (!nextProps.isAdmin) {
-        investmentOperationsUser = _.filter(nextProps.investmentOperations, [
+        fundOperationsUser = _.filter(nextProps.fundOperations, [
           'userAccount.userId',
           nextProps.currentUserId,
         ])
       } else {
-        investmentOperationsUser = nextProps.investmentOperations
+        fundOperationsUser = nextProps.fundOperations
       }
 
       _.assignIn(updatedState, {
-        investmentOperations: investmentOperationsUser,
+        fundOperations: fundOperationsUser,
       })
 
       if (prevState.isDetailViewVisible) {
         _.assignIn(updatedState, {
-          currentOperationDetail: _.find(nextProps.investmentOperations, {
+          currentOperationDetail: _.find(nextProps.fundOperations, {
             id: prevState.currentOperationDetail.id,
           }),
         })
@@ -60,16 +60,16 @@ class Investment extends Component {
     if (
       nextProps.isSuccessMovements &&
       !_.isEmpty(nextProps.messageMovements) &&
-      !_.isEmpty(prevState.investmentMovements)
+      !_.isEmpty(prevState.fundMovements)
     ) {
-      nextProps.fetchGetInvestmentMovements(prevState.currentOperationDetail.id)
-      nextProps.fetchGetInvestmentOperations()
+      nextProps.fetchGetFundMovements(prevState.currentOperationDetail.id)
+      nextProps.fetchGetFundOperations()
       nextProps.resetAfterMovementRequest()
     }
 
-    if (!_.isEqual(nextProps.investmentMovements, prevState.investmentMovements)) {
+    if (!_.isEqual(nextProps.fundMovements, prevState.fundMovements)) {
       _.assignIn(updatedState, {
-        investmentMovements: nextProps.investmentMovements,
+        fundMovements: nextProps.fundMovements,
       })
     }
 
@@ -77,17 +77,17 @@ class Investment extends Component {
   }
 
   componentDidMount() {
-    this.props.fetchGetInvestmentOperations()
+    this.props.fetchGetFundOperations()
   }
 
   _handleDetailUserOperation = (operationId) => {
-    const selectedOperation = _.find(this.props.investmentOperations, { id: operationId })
+    const selectedOperation = _.find(this.props.fundOperations, { id: operationId })
 
     this.setState({
       isDetailViewVisible: true,
       currentOperationDetail: selectedOperation,
     })
-    this.props.fetchGetInvestmentMovements(operationId)
+    this.props.fetchGetFundMovements(operationId)
   }
 
   _onCloseDetailView = () => {
@@ -95,7 +95,7 @@ class Investment extends Component {
       isDetailViewVisible: false,
       currentOperationDetail: {},
     })
-    this.props.fetchGetInvestmentOperations()
+    this.props.fetchGetFundOperations()
   }
 
   render() {
@@ -116,20 +116,22 @@ class Investment extends Component {
     )
     const modalDetailTitle = `${currentUsername} - ${currentUserFirstName} ${currentUserLastName}`
 
-    const activeInvestmentOperations = _.filter(
-      this.state.investmentOperations,
+    const activeFundOperations = _.filter(
+      this.state.fundOperations,
       ({ status }) => !_.isEqual(status, 0)
     )
+
+    console.log('[=====  TEST  =====>')
+    console.log(activeFundOperations)
+    console.log('<=====  /TEST  =====]')
     return (
       <>
         <Row>
           <Col>
             <>
-              {!_.isEmpty(activeInvestmentOperations) ? (
-                <h2>{this.props.t('title investmentOperations')}</h2>
-              ) : null}
+              {!_.isEmpty(activeFundOperations) ? <h2>Funds</h2> : null}
               <FundTable
-                investmentOperations={activeInvestmentOperations}
+                fundOperations={activeFundOperations}
                 isLoading={this.props.isLoading}
                 onEdit={this._onSelectEdit}
                 onDelete={this._handleDeleteUserOperation}
@@ -149,7 +151,7 @@ class Investment extends Component {
           <AccountInformation currentOperation={this.state.currentOperationDetail} />
           <OperationMovementDetail currentOperation={this.state.currentOperationDetail} />
           <MovementsTable
-            movements={this.state.investmentMovements}
+            movements={this.state.fundMovements}
             onAdd={this._handleAddMovement}
             onEdit={this._handleEditMovement}
             onDelete={this._handleDeleteMovement}
@@ -165,28 +167,28 @@ class Investment extends Component {
 
 function mapStateToProps(state) {
   return {
-    investmentOperations: state.investmentOperationsState.list,
-    isLoading: state.investmentOperationsState.isLoading,
-    isSuccess: state.investmentOperationsState.isSuccess,
-    isFailure: state.investmentOperationsState.isFailure,
-    message: state.investmentOperationsState.message,
+    fundOperations: state.fundOperationsState.list,
+    isLoading: state.fundOperationsState.isLoading,
+    isSuccess: state.fundOperationsState.isSuccess,
+    isFailure: state.fundOperationsState.isFailure,
+    message: state.fundOperationsState.message,
 
-    investmentMovements: state.investmentMovementsState.list,
-    isSuccessMovements: state.investmentMovementsState.isSuccess,
-    messageMovements: state.investmentMovementsState.message,
+    fundMovements: state.fundMovementsState.list,
+    isSuccessMovements: state.fundMovementsState.isSuccess,
+    messageMovements: state.fundMovementsState.message,
   }
 }
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchGetInvestmentOperations: investmentOperationOperations.fetchGetInvestmentOperations,
-      resetAfterRequest: investmentOperationOperations.resetAfterRequest,
+      fetchGetFundOperations: fundOperationOperations.fetchGetFundOperations,
+      resetAfterRequest: fundOperationOperations.resetAfterRequest,
 
-      fetchGetInvestmentMovements: investmentMovementOperations.fetchGetInvestmentMovements,
-      resetAfterMovementRequest: investmentMovementOperations.resetAfterRequest,
+      fetchGetFundMovements: fundMovementOperations.fetchGetFundMovements,
+      resetAfterMovementRequest: fundMovementOperations.resetAfterRequest,
     },
     dispatch
   )
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNamespaces()(Investment))
+export default connect(mapStateToProps, mapDispatchToProps)(withNamespaces()(Fund))
