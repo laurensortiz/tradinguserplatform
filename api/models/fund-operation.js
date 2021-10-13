@@ -43,6 +43,10 @@ module.exports = (Sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 1,
       },
+      productId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       updatedAt: {
         allowNull: true,
         type: DataTypes.DATE,
@@ -64,6 +68,11 @@ module.exports = (Sequelize, DataTypes) => {
     FundOperation.belongsTo(models.UserAccount, {
       foreignKey: 'userAccountId',
       as: 'userAccount',
+    })
+
+    FundOperation.belongsTo(models.Product, {
+      foreignKey: 'productId',
+      as: 'product',
     })
 
     FundOperation.hasMany(models.FundMovement, {

@@ -270,11 +270,11 @@ class TableFund extends Component {
         sortDirections: ['descend', 'ascend'],
       },
       {
-        title: 'Fecha de Salida',
-        dataIndex: 'endDate',
-        key: 'endDate',
+        title: 'Fecha de Expiración',
+        dataIndex: 'expirationDate',
+        key: 'expirationDate',
         render: (date, row) => <span className="date">{FormatDate(date)}</span>,
-        sorter: (a, b) => SortDate(a.endDate, b.endDate),
+        sorter: (a, b) => SortDate(a.expirationDate, b.expirationDate),
         sortDirections: ['descend', 'ascend'],
       },
       {

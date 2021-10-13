@@ -2197,7 +2197,7 @@ create TABLE public."FundOperation" (
 );
 
 alter table public."FundOperation" add CONSTRAINT "FundOperation_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
-
+alter table public."FundOperation" add "productId" integer NOT NULL;
 
 /*InvestmentMovement*/
 

@@ -1,6 +1,6 @@
 import { User, Account } from '../models'
 const queries = {
-  list: ({ UserAccount }) => {
+  list: ({ UserAccount, Product }) => {
     return {
       attributes: {
         exclude: [],
@@ -21,6 +21,11 @@ const queries = {
               attributes: ['name', 'percentage', 'associatedOperation'],
             },
           ],
+        },
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'id', 'code'],
         },
       ],
       order: [['createdAt', 'DESC']],
@@ -56,12 +61,17 @@ const queries = {
       order: [['createdAt', 'DESC']],
     }
   },
-  get: ({ UserAccount }) => {
+  get: ({ UserAccount, Product }) => {
     return {
       include: [
         {
           model: UserAccount,
           as: 'userAccount',
+        },
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'id', 'code'],
         },
       ],
       order: [['createdAt', 'DESC']],

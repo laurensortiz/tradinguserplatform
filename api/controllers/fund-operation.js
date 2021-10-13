@@ -1,7 +1,18 @@
 import _ from 'lodash'
 import moment from 'moment-timezone'
-import { FundOperation, UserAccount, FundMovement, ORM } from '../models'
-import { fundOperationQuery, userQuery } from '../queries'
+import {
+  FundOperation,
+  UserAccount,
+  FundMovement,
+  ORM,
+  Product,
+  User,
+  Account,
+  Broker,
+  Commodity,
+  AssetClass,
+} from '../models'
+import { fundOperationQuery } from '../queries'
 
 module.exports = {
   async create(req, res) {
@@ -9,7 +20,8 @@ module.exports = {
       await ORM.transaction(async (t) => {
         const fundOperation = await FundOperation.create(
           {
-            operationType: req.body.operationType,
+            operationType: req.body.productName,
+            productId: req.body.productId,
             userAccountId: _.get(req, 'body.userAccount.id', 0),
             amount: req.body.amount,
             initialAmount: req.body.amount,
@@ -48,7 +60,9 @@ module.exports = {
 
   async list(req, res) {
     try {
-      const fundOperation = await FundOperation.findAll(fundOperationQuery.list({ UserAccount }))
+      const fundOperation = await FundOperation.findAll(
+        fundOperationQuery.list({ UserAccount, Product })
+      )
 
       if (!fundOperation) {
         return res.status(404).send({
@@ -66,7 +80,14 @@ module.exports = {
 
   async get(req, res) {
     try {
-      const fundOperation = await FundOperation.findByPk(req.params.id)
+      const fundOperation = await FundOperation.findByPk(
+        req.params.id,
+        fundOperationQuery.get({
+          req,
+          UserAccount,
+          Product,
+        })
+      )
 
       if (!fundOperation) {
         return res.status(404).send({
@@ -92,19 +113,23 @@ module.exports = {
           message: '404 on FundOperation update',
         })
       }
-
       const updatedFundOperation = await fundOperation.update({
-        operationType: req.body.operationType || fundOperation.operationType,
+        operationType: req.body.productName || fundOperation.productName,
+        productId: req.body.productId || fundOperation.productId,
         userAccountId: _.get(req, 'body.userAccount.id', 0) || fundOperation.userAccountId,
         amount: fundOperation.amount,
         initialAmount: req.body.initialAmount || fundOperation.initialAmount,
         status: req.body.status || fundOperation.status,
         startDate:
           moment(req.body.startDate).tz('America/New_York').format() || fundOperation.startDate,
-        endDate: moment(req.body.endDate).tz('America/New_York').format() || fundOperation.endDate,
+        endDate:
+          req.body.endDate && req.body.endDate !== 'Fecha inválida'
+            ? moment(req.body.endDate).tz('America/New_York').format()
+            : null,
         expirationDate:
-          moment(req.body.expirationDate).tz('America/New_York').format() ||
-          fundOperation.expirationDate,
+          req.body.expirationDate && req.body.expirationDate !== 'Fecha inválida'
+            ? moment(req.body.expirationDate).tz('America/New_York').format()
+            : null,
         updatedAt: moment().tz('America/New_York').format(),
       })
 

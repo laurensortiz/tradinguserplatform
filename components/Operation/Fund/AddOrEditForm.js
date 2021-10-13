@@ -11,6 +11,7 @@ import { Input, Checkbox, Button, Form, Tag, Select, DatePicker, Icon } from 'an
 import { userAccountOperations } from '../../../state/modules/userAccounts'
 
 import { AmountFormatValidation, AmountOperationValidation } from '../../../common/utils'
+import { productOperations } from '../../../state/modules/products'
 
 const { Option, OptGroup } = Select
 
@@ -30,9 +31,12 @@ class AddOrEditForm extends PureComponent {
     isInvalid: true,
     status: 1,
     userAccounts: [],
+    products: [],
     accountName: '',
     accountPercentage: 0,
     accountAvailable: 0,
+    productId: 0,
+    productName: '',
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -40,6 +44,12 @@ class AddOrEditForm extends PureComponent {
     if (!_.isEqual(nextProps.userAccounts, prevState.userAccounts)) {
       _.assign(stateUpdated, {
         userAccounts: nextProps.userAccounts,
+      })
+    }
+
+    if (!_.isEqual(nextProps.products, prevState.products)) {
+      _.assign(stateUpdated, {
+        products: nextProps.products.filter(({ code }) => code.toUpperCase() === 'FND'),
       })
     }
 
@@ -52,14 +62,23 @@ class AddOrEditForm extends PureComponent {
         associatedOperation: 3,
       })
     }
+    if (_.isEmpty(this.state.products)) {
+      this.props.fetchGetProducts()
+    }
 
     if (!_.isEmpty(this.props.selectedOperation)) {
       const { selectedOperation } = this.props
       const accountName = _.get(selectedOperation, 'userAccount.account.name', '')
+      const operationType = _.get(selectedOperation, 'operationType', '')
+      const productName = _.get(selectedOperation, 'product.name', '')
+      const productId = _.get(selectedOperation, 'product.id', 0)
       this.setState({
         ...this.state,
         ...selectedOperation,
         accountName,
+        operationType,
+        productName,
+        productId,
       })
     }
   }
@@ -92,10 +111,8 @@ class AddOrEditForm extends PureComponent {
       })
     } else {
       this.setState({
-        [fieldName]: {
-          id,
-          name,
-        },
+        productName: name,
+        productId: id,
       })
     }
   }
@@ -167,6 +184,12 @@ class AddOrEditForm extends PureComponent {
     this.setState({ confirmDirty: this.state.confirmDirty || !!value })
   }
 
+  _getProductSelectOption = (options) => {
+    return _.map(this.state.products, (product) => {
+      return <Option key={`${product.id}_${product.name}`}>{`${product.name}`}</Option>
+    })
+  }
+
   render() {
     const { getFieldDecorator } = this.props.form
     const isAddAction = _.isEqual(this.props.actionType, 'add')
@@ -195,6 +218,12 @@ class AddOrEditForm extends PureComponent {
       ? moment.parseZone(this.state.expirationDate)
       : undefined
 
+    const productInitValue = !_.isEmpty(this.state.productName) ? this.state.productName : undefined
+
+    console.log('[=====  products  =====>')
+    console.log(this.state)
+    console.log('<=====  /products  =====]')
+
     return (
       <Form onSubmit={this._handleSubmit} className="auth-form">
         {isAddAction && (
@@ -216,6 +245,22 @@ class AddOrEditForm extends PureComponent {
             )}
           </Form.Item>
         )}
+        <Form.Item label="Producto">
+          {getFieldDecorator('product', {
+            initialValue: productInitValue,
+            rules: [{ required: true, message: 'Por favor seleccione el producto ' }],
+          })(
+            <Select
+              showSearch={true}
+              name="product"
+              onChange={(value) => this._handleChangeSelect({ name: 'product', value })}
+              placeholder="Producto"
+              showArrow={isAddAction}
+            >
+              {this._getProductSelectOption(this.state.products)}
+            </Select>
+          )}
+        </Form.Item>
 
         {/*<Form.Item label="Tipo de Operación">*/}
         {/*  {getFieldDecorator('operationType', {*/}
@@ -291,17 +336,6 @@ class AddOrEditForm extends PureComponent {
           )}
         </Form.Item>
         <Form.Item>
-          {getFieldDecorator('endDate', {
-            initialValue: endDateInitValue,
-          })(
-            <DatePicker
-              onChange={this._setEndDate}
-              defaultPickerValue={moment.parseZone()}
-              placeholder="Fecha de Salida"
-            />
-          )}
-        </Form.Item>
-        <Form.Item>
           {getFieldDecorator('expirationDate', {
             initialValue: expirationDateInitValue,
           })(
@@ -331,6 +365,7 @@ class AddOrEditForm extends PureComponent {
 function mapStateToProps(state) {
   return {
     userAccounts: state.userAccountsState.list,
+    products: state.productsState.list,
   }
 }
 
@@ -338,6 +373,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
       fetchGetAllUserAccounts: userAccountOperations.fetchGetAllUserAccounts,
+      fetchGetProducts: productOperations.fetchGetProducts,
     },
     dispatch
   )
