@@ -38,7 +38,7 @@ class Detail extends PureComponent {
               <Descriptions.Item label="Fecha de Apertura">
                 {FormatDate(startDate)}{' '}
               </Descriptions.Item>
-              <Descriptions.Item label="Fecha de Cierre">{FormatDate(endDate)} </Descriptions.Item>
+              {/*<Descriptions.Item label="Fecha de Cierre">{FormatDate(endDate)} </Descriptions.Item>*/}
               <Descriptions.Item label="Fecha de Expiración">
                 {FormatDate(expirationDate)}{' '}
               </Descriptions.Item>
