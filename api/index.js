@@ -18,6 +18,8 @@ import {
   referral,
   wireTransferRequest,
   lead,
+  fundOperation,
+  fundMovement,
 } from './controllers'
 
 const authMiddleware = (req, res, next) => {
@@ -135,6 +137,21 @@ module.exports = (app) => {
   app.post('/api/investment-movement', investmentMovement.create)
   app.put('/api/investment-movement/:id', investmentMovement.update)
   app.delete('/api/investment-movement/:id', investmentMovement.delete)
+
+  // Fund Operation
+  app.get('/api/fund-operation', fundOperation.list)
+  app.get('/api/fund-operation/:id', fundOperation.get)
+  app.post('/api/fund-operation', fundOperation.create)
+  app.put('/api/fund-operation/:id', fundOperation.update)
+  app.delete('/api/fund-operation/:id', fundOperation.delete)
+
+  // Fund Movement
+  app.get('/api/fund-movement/fund-operation/:id', fundMovement.list)
+
+  app.get('/api/fund-movement/:id', fundMovement.get)
+  app.post('/api/fund-movement', fundMovement.create)
+  app.put('/api/fund-movement/:id', fundMovement.update)
+  app.delete('/api/fund-movement/:id', fundMovement.delete)
 
   // Market Operation
   app.get('/api/market-operation', marketOperation.list)

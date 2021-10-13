@@ -2169,3 +2169,60 @@ alter table public."MarketOperation" add "strikePrice" numeric(10,4) NULL;
 /*
 * End Changes Oct 5, 2021
 */
+
+
+/*
+* Start Changes Oct 11, 2021
+*/
+
+/*InvestmentOperation*/
+
+-- Drop table
+
+-- DROP TABLE public."InvestmentOperation";
+
+create TABLE public."FundOperation" (
+	id serial NOT NULL,
+	"operationType" varchar(255) NULL,
+	"userAccountId" int4 NOT NULL,
+	amount numeric(10,2) NULL,
+	"initialAmount" numeric(10,2) NULL,
+	status int4 NOT NULL,
+	"startDate" timestamptz NULL,
+	"endDate" timestamptz NULL,
+	"createdAt" timestamptz NOT NULL,
+	"updatedAt" timestamptz NOT NULL,
+	"expirationDate" timestamptz NULL,
+	CONSTRAINT "FundOperation_pkey" PRIMARY KEY (id)
+);
+
+alter table public."FundOperation" add CONSTRAINT "FundOperation_userAccountId_fkey" FOREIGN KEY ("userAccountId") REFERENCES "UserAccount"(id);
+
+
+/*InvestmentMovement*/
+
+-- Drop table
+
+-- DROP TABLE public."InvestmentMovement";
+
+create TABLE public."FundMovement" (
+	id serial NOT NULL,
+	"fundOperationId" int4 NOT NULL,
+	"gpInversion" numeric(10,2) NULL,
+	"gpAmount" numeric(10,2) NULL,
+	"percentage" numeric(10,2) NULL,
+	status int4 NOT NULL,
+	"createdAt" timestamptz NOT NULL,
+	"updatedAt" timestamptz NOT NULL,
+	CONSTRAINT "FundMovement_pkey" PRIMARY KEY (id)
+);
+
+alter table public."FundMovement" add CONSTRAINT "FundMovement_fundOperationId_fkey" FOREIGN KEY ("fundOperationId") REFERENCES "FundOperation"(id);
+
+
+INSERT INTO public."Account" ("name",percentage,status,"createdAt","updatedAt","associatedOperation","holdStatusCommissionAmount") VALUES
+	 ('Funds FND',0,1,'2021-10-12 11:51:34.023-06','2021-10-12 15:43:20.155-06',3,0.00);
+
+/*
+* End Changes Oct 11, 2021
+*/

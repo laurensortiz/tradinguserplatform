@@ -35,6 +35,8 @@ db.Referral = ORM.import(path.join(__dirname, 'referral.js'))
 db.WireTransferRequest = ORM.import(path.join(__dirname, 'wire-transfer-request.js'))
 db.Log = ORM.import(path.join(__dirname, 'log.js'))
 db.Lead = ORM.import(path.join(__dirname, 'lead.js'))
+db.FundOperation = ORM.import(path.join(__dirname, 'fund-operation.js'))
+db.FundMovement = ORM.import(path.join(__dirname, 'fund-movement.js'))
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db)

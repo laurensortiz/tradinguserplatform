@@ -257,13 +257,14 @@ class Market extends Component {
    */
   _handleAddMovement = (newMovement) => {
     const { id: marketOperationId } = this.state.currentOperationDetail
-    const { gpInversion, gpAmount } = newMovement
+    const { gpInversion, gpAmount, percentage } = newMovement
 
     this.props.fetchAddMarketMovement({
       ...newMovement,
       marketOperationId,
       gpInversion: parseFloat(gpInversion).toFixed(2),
       gpAmount: parseFloat(gpAmount).toFixed(2),
+      percentage: parseFloat(percentage).toFixed(2),
     })
   }
 
@@ -271,13 +272,13 @@ class Market extends Component {
    * Edit Movements
    */
   _handleEditMovement = (newMovement) => {
-    const { gpInversion, gpAmount, marketPrice, createdAt, id, fundsPercentage } = newMovement
+    const { gpInversion, gpAmount, marketPrice, createdAt, id, percentage } = newMovement
     this.props.fetchEditMarketMovement({
       id,
       gpInversion: parseFloat(gpInversion).toFixed(2),
       gpAmount: parseFloat(gpAmount).toFixed(2),
       marketPrice: parseFloat(marketPrice).toFixed(2),
-      fundsPercentage: parseFloat(fundsPercentage).toFixed(2),
+      percentage: parseFloat(percentage).toFixed(2),
       createdAt: moment.parseZone(createdAt),
     })
   }
