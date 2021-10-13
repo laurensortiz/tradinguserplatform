@@ -13,6 +13,7 @@ import { ExportUserAccountsPDF } from './Operation/shared'
 import { bindActionCreators } from 'redux'
 import { wireTransferRequestOperations } from '../../state/modules/wireTransferRequests'
 import { connect } from 'react-redux'
+import FundTable from './Operation/Fund/FundTable'
 
 const TagDate = styled(Tag)`
   margin-left: 15px;
@@ -369,15 +370,19 @@ class AccountInformation extends PureComponent {
             </Col>
           </Row>
           <Row>
-            {_.isEqual(accountType, 1) ? (
+            {_.isEqual(accountType, 1) && (
               <Market
                 isAdmin={false}
                 currentUserId={userId}
                 userAccountId={userAccountId}
                 onRequestStandardOperationsReport={this.props.onRequestStandardOperationsReport}
               />
-            ) : (
+            )}
+            {_.isEqual(accountType, 2) && (
               <Investment isAdmin={false} currentUserId={userId} userAccountId={userAccountId} />
+            )}
+            {_.isEqual(accountType, 3) && (
+              <FundTable isAdmin={false} currentUserId={userId} userAccountId={userAccountId} />
             )}
           </Row>
         </Card>

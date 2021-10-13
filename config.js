@@ -6,18 +6,19 @@ const Sequelize = require('sequelize')
 
 module.exports = {
   development: {
-    username: 'webtrader_user',
-    password: 'w3bTr4d3r!@#',
-    database: 'webtrader_db',
-    host: '127.0.0.1',
-    port: 5432,
+    username: 'webtraderdb',
+    password: 'bpyvc6ci68pa31kt',
+    database: 'webtraderdb',
+    host: 'app-c13e41e9-67ec-4ae4-bd1e-5af7780f9835-do-user-8208959-0.a.db.ondigitalocean.com',
+    port: 25060,
     dialect: 'postgres',
+    dialectOptions: {
+      ssl: true,
+    },
     define: {
       //prevent sequelize from pluralizing table names
       freezeTableName: true,
     },
-    logging: true,
-    timezone: '-06:00',
   },
   stage: {
     username: process.env.DB_STAGE_USERNAME,
