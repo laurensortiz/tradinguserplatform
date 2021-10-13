@@ -311,7 +311,10 @@ class Accounts extends Component {
             </Radio.Button>
             <Radio.Button value={2}>
               {' '}
-              <Icon type="fund" /> Profit Month
+              <Icon type="bank" /> Profit Month
+            </Radio.Button>
+            <Radio.Button value={3}>
+              <Icon type="fund" /> Funds FND
             </Radio.Button>
           </Radio.Group>
           <Button

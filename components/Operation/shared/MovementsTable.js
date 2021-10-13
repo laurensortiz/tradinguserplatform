@@ -55,7 +55,7 @@ class MovementsTable extends Component {
     currentOperationAmount: 0,
     initialOperationAmount: 0,
     operationPercentage: 0,
-    fundsPercentage: 0,
+    percentage: 0,
     filteredInfo: {},
     sortedInfo: {},
     searchText: '',
@@ -93,7 +93,7 @@ class MovementsTable extends Component {
             'currentOperation.userAccount.account.percentage',
             0
           ),
-          isFundProduct: _.get(nextProps, 'currentOperation.assetClass.id', 0) === 49,
+          isFundProduct: _.get(nextProps, 'currentOperation.userAccount.accountId', 0) === 19,
           assetClassId: _.get(nextProps, 'currentOperation.assetClass.id', 0),
         })
       }
@@ -123,7 +123,7 @@ class MovementsTable extends Component {
       gpInversion: amount,
       gpAmount: DEFAULT_INPUT_TEXT,
       marketPrice: DEFAULT_INPUT_TEXT,
-      fundsPercentage: DEFAULT_INPUT_TEXT,
+      percentage: DEFAULT_INPUT_TEXT,
       createdAt: moment.parseZone(),
     }
     this.setState({
@@ -160,6 +160,9 @@ class MovementsTable extends Component {
       } else {
         this.props.onEdit(newData)
       }
+      this.setState({
+        editingKey: '',
+      })
     })
   }
 
@@ -181,6 +184,7 @@ class MovementsTable extends Component {
         customFields = {
           gpInversion: currentAmount,
           gpAmount,
+          percentage: value,
         }
       } else {
         currentAmount = getGPInversion(
@@ -364,13 +368,13 @@ class MovementsTable extends Component {
       },
       {
         title: 'Percentage',
-        dataIndex: 'fundsPercentage',
-        key: 'fundsPercentage',
+        dataIndex: 'percentage',
+        key: 'percentage',
         render: (value) => value,
         editable: true,
         required: false,
         inputType: 'number-percentage',
-        className: isMarketMovement && this.state.isFundProduct ? 'show' : 'hidden',
+        className: this.state.isFundProduct ? 'show' : 'hidden',
       },
       {
         title: 'Fecha de movimiento',

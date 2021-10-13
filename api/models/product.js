@@ -22,16 +22,14 @@ module.exports = (Sequelize, DataTypes) => {
       allowNull: true,
       type: DataTypes.DATE,
     },
-  });
+  })
 
-  Product.associate = models => {
-
+  Product.associate = (models) => {
     Product.hasMany(models.MarketOperation, {
       foreignKey: 'productId',
       as: 'product',
-    });
+    })
+  }
 
-  };
-
-  return Product;
-};
+  return Product
+}
