@@ -182,9 +182,6 @@ class FundTable extends Component {
   )
 
   render() {
-    console.log('[=====  FFKFKF  =====>')
-    console.log()
-    console.log('<=====  /FFKFKF  =====]')
     const { t } = this.props
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden'
     const langStatus = (status) => t(`status ${status}`)
@@ -288,11 +285,11 @@ class FundTable extends Component {
       <Table
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={this.props.investmentOperations}
+        dataSource={this.props.fundOperations}
         loading={this.props.isLoading}
         scroll={{ x: true }}
         className={classNames({
-          'hidden-table': !this.props.isAdmin && _.isEmpty(this.props.investmentOperations),
+          'hidden-table': !this.props.isAdmin && _.isEmpty(this.props.fundOperations),
           'is-menu-fold': this.state.isMenuFold,
         })}
         footer={this._displayTableFooter}

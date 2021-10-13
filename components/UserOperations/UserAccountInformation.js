@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { FormatCurrency, IsOperationPositive, StaticAmountBox } from '../../common/utils'
 import ReferralForm from './ReferralForm'
 import WireTransferRequestForm from './WireTransferRequestForm'
-import { Investment, Market } from './Operation'
+import { Investment, Market, Fund } from './Operation'
 import { ExportUserAccountsPDF } from './Operation/shared'
 import { bindActionCreators } from 'redux'
 import { wireTransferRequestOperations } from '../../state/modules/wireTransferRequests'
@@ -276,11 +276,11 @@ class AccountInformation extends PureComponent {
                   <Descriptions.Item label={t('profitCommission')}>
                     {accountPercentage} %
                   </Descriptions.Item>
-                ) : (
+                ) : _.isEqual(accountType, 2) ? (
                   <Descriptions.Item label={t('interestType')}>
                     {accountPercentage} %
                   </Descriptions.Item>
-                )}
+                ) : null}
 
                 {_.isEqual(accountType, 1) ? (
                   <Descriptions.Item label={t('availableGuarantees')}>
@@ -382,7 +382,7 @@ class AccountInformation extends PureComponent {
               <Investment isAdmin={false} currentUserId={userId} userAccountId={userAccountId} />
             )}
             {_.isEqual(accountType, 3) && (
-              <FundTable isAdmin={false} currentUserId={userId} userAccountId={userAccountId} />
+              <Fund isAdmin={false} currentUserId={userId} userAccountId={userAccountId} />
             )}
           </Row>
         </Card>
