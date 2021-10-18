@@ -266,9 +266,11 @@ class AccountInformation extends PureComponent {
             <Col>
               <Descriptions
                 title={
-                  isOutBusinessHours
-                    ? this._getHeaderCardAfterHours(isUserBlocked)
-                    : this._getHeaderCard(isUserBlocked, forceEnableUserWT)
+                  !_.isEqual(accountType, 3)
+                    ? isOutBusinessHours
+                      ? this._getHeaderCardAfterHours(isUserBlocked)
+                      : this._getHeaderCard(isUserBlocked, forceEnableUserWT)
+                    : null
                 }
               >
                 <Descriptions.Item label={t('accountType')}>{accountName}</Descriptions.Item>

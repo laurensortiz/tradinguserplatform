@@ -121,9 +121,6 @@ class Fund extends Component {
       ({ status }) => !_.isEqual(status, 0)
     )
 
-    console.log('[=====  TEST  =====>')
-    console.log(activeFundOperations)
-    console.log('<=====  /TEST  =====]')
     return (
       <>
         <Row>
