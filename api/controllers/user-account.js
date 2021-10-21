@@ -276,8 +276,9 @@ module.exports = {
 
       const updatedUserAccount = await userAccount.update({
         userId: _.get(req, 'body.user.id', userAccount.userId),
-        accountId: accountShouldByValidated ? getAccountTypeFromAmount(accountValue) : accountId,
+        //accountId: accountShouldByValidated ? getAccountTypeFromAmount(accountValue) : accountId,
         brokerId: _.get(req, 'body.broker.id', userAccount.brokerId),
+        accountId,
         accountValue,
         guaranteeOperation: req.body.guaranteeOperation || userAccount.guaranteeOperation,
         guaranteeCredits: req.body.guaranteeCredits || userAccount.guaranteeCredits,

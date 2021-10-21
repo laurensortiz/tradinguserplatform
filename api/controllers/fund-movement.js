@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment-timezone'
-import { FundMovement, MarketMovement } from '../models'
+import { FundMovement, FundOperation } from '../models'
 import { fundMovementQuery } from '../queries'
 
 module.exports = {
@@ -18,6 +18,12 @@ module.exports = {
           moment(req.body.createdAt).tz('America/New_York').format() ||
           moment().tz('America/New_York').format(),
         updatedAt: moment().tz('America/New_York').format(),
+      })
+
+      const fundOperation = await FundOperation.findByPk(req.body.fundOperationId)
+
+      await fundOperation.update({
+        amount: req.body.gpInversion || fundOperation.amount,
       })
 
       return res.status(200).send(fundMovement)
