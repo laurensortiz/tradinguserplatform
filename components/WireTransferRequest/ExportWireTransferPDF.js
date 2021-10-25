@@ -25,6 +25,73 @@ class Export extends PureComponent {
   _downloadFile = () => {
     const { wireTransfer: wt } = this.props
 
+    const transferMethodLocalBank =
+      wt.transferMethod === 'Banco Local'
+        ? [
+            { text: '', margin: [0, 5] },
+            {
+              layout: 'noBorders',
+              table: {
+                // headers are automatically repeated if the table spans over multiple pages
+                // you can declare how many rows should be treated as headers
+                headerRows: 1,
+                widths: ['100%'],
+
+                body: [
+                  [
+                    {
+                      fontSize: 16,
+                      text: `Banco Beneficiario`,
+                      bold: true,
+                      alignment: 'left',
+                      margin: [0, 5, 0, 5],
+                    },
+                  ],
+                ],
+              },
+            },
+            { text: '', margin: [0, 5] },
+            {
+              layout: 'noBorders',
+              table: {
+                // headers are automatically repeated if the table spans over multiple pages
+                // you can declare how many rows should be treated as headers
+                headerRows: 0,
+                margin: [0, 25],
+                widths: ['50%', '50%'],
+                body: [
+                  [
+                    {
+                      text: `Nombre:`,
+                      bold: true,
+                      fontSize: 13,
+                    },
+                    { text: `${wt.beneficiaryBankName}`, fontSize: 13 },
+                  ],
+                  [
+                    {
+                      text: `Swift:`,
+                      bold: true,
+                      fontSize: 13,
+                    },
+                    { text: `${wt.beneficiaryBankSwift}`, fontSize: 13 },
+                  ],
+
+                  [
+                    {
+                      text: `Dirección:`,
+                      bold: true,
+                      fontSize: 13,
+                    },
+                    { text: `${wt.beneficiaryBankAddress}`, fontSize: 13 },
+                  ],
+                ],
+              },
+            },
+            { text: '', margin: [0, 5] },
+          ]
+        : []
+
     const bodyTransferMethod =
       wt.transferMethod === 'Banco'
         ? [
@@ -165,6 +232,25 @@ class Export extends PureComponent {
           ]
         : []
 
+    const localBankUserInfo =
+      wt.transferMethod === 'Banco Local'
+        ? [
+            {
+              text: `País:`,
+              bold: true,
+              fontSize: 13,
+            },
+            { text: `${wt.userAccount.user.country}`, fontSize: 13 },
+          ]
+        : [
+            {
+              text: ``,
+              bold: true,
+              fontSize: 13,
+            },
+            { text: ``, fontSize: 13 },
+          ]
+
     const docDefinition = {
       pageSize: 'LETTER',
       pageMargins: [15, 80, 15, 40],
@@ -297,6 +383,7 @@ class Export extends PureComponent {
                 },
                 { text: `${wt.currencyType}`, fontSize: 13 },
               ],
+              localBankUserInfo,
               [
                 {
                   text: `RCM Cuenta:`,
@@ -409,6 +496,7 @@ class Export extends PureComponent {
           },
         },
         ...bodyTransferMethod,
+        ...transferMethodLocalBank,
       ],
       styles: {
         header: {
