@@ -266,6 +266,11 @@ const BULK_UPDATE_TYPES = [
     name: 'S&P 500 VIX FT',
     scope: 'price',
   },
+  {
+    code: 'london-sugar-FT',
+    name: 'London Sugar FT',
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({

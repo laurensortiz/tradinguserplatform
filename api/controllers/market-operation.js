@@ -1336,6 +1336,19 @@ module.exports = {
                   }
                   break
 
+                /**
+                 *
+                 */
+                case 'london-sugar-FT':
+                  if (marketOperation.assetClassId === 76) {
+                    calculatedValue = 50 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
                 default:
               }
 
