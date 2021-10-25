@@ -273,7 +273,7 @@ class WireTransferRequestForm extends PureComponent {
                     />
                   )}
                 </Form.Item>
-                <Form.Item label={`RCM ${t('account')}`}>
+                <Form.Item label={`RC ${t('account')}`}>
                   {getFieldDecorator('accountRCM', {
                     initialValue: user.userID || '',
                     rules: [
