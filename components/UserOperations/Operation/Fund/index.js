@@ -118,7 +118,8 @@ class Fund extends Component {
 
     const activeFundOperations = _.filter(
       this.state.fundOperations,
-      ({ status }) => !_.isEqual(status, 0)
+      ({ status, userAccountId }) =>
+        !_.isEqual(status, 0) && userAccountId === this.props.userAccountId
     )
 
     return (
