@@ -865,7 +865,7 @@ module.exports = {
                  * CRUDE OIL WTI FT | OP
                  */
                 case 'crudeOil-wti-FT-OP':
-                  if (marketOperation.assetClassId === 54) {
+                  if (marketOperation.assetClassId === 54 || marketOperation.assetClassId === 1) {
                     calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $500
                   } else {
                     throw new Error(
@@ -878,7 +878,7 @@ module.exports = {
                  * CRUDE OIL Brent FT | OP
                  */
                 case 'crudeOil-brent-FT-OP':
-                  if (marketOperation.assetClassId === 55) {
+                  if (marketOperation.assetClassId === 55 || marketOperation.assetClassId === 1) {
                     calculatedValue = 1000 * gpAmount * commoditiesTotal // 1 FT = $500
                   } else {
                     throw new Error(
