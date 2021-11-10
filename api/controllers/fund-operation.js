@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment-timezone'
-import {
+import Log, {
   FundOperation,
   UserAccount,
   FundMovement,
@@ -11,8 +11,12 @@ import {
   Broker,
   Commodity,
   AssetClass,
+  MarketOperation,
+  MarketMovement,
 } from '../models'
 import { fundOperationQuery } from '../queries'
+import ToFixNumber from '../../common/to-fix-number'
+import GetHoldCommissionAmount from '../../common/get-hold-commission-amount'
 
 module.exports = {
   async create(req, res) {
@@ -135,6 +139,47 @@ module.exports = {
 
       return res.status(200).send(updatedFundOperation)
     } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
+  },
+
+  async bulkUpdate(req, res) {
+    const userId = _.get(req, 'user.id', 0)
+    try {
+      const { operationsIds, updateType, updateValue, updateScope } = req.body
+
+      await ORM.transaction(async (t) => {
+        switch (updateScope) {
+          case 'percentage':
+            await MarketOperation.update(
+              {
+                takingProfit: updateValue,
+              },
+              { where: { id: operationsIds } },
+              { transaction: t }
+            )
+            Log({
+              userId,
+              userAccountId: userAccount.id,
+              tableUpdated: 'userAccount',
+              action: 'update',
+              type: 'createOperation',
+              snapShotBeforeAction: snapShotAccount,
+              snapShotAfterAction: JSON.stringify(updatedUserAccount),
+            })
+            return res.status(200).send('Completed')
+
+          default:
+        }
+        return res.status(200).send('Completed')
+      })
+    } catch (err) {
+      console.log('[=====  ERROR on BULK  =====>')
+      console.log(err)
+      console.log('<=====  /ERROR on BULK  =====]')
       return res.status(500).send({
         message: err.message,
         name: err.name,

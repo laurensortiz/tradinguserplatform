@@ -8,11 +8,10 @@ import _ from 'lodash'
 import Document from '../components/Document'
 
 import { Investment, Market, Fund } from '../components/Operation'
-import { userAccountOperations } from '../state/modules/userAccounts'
 
 class Operations extends Component {
   state = {
-    operationType: 'market',
+    operationType: 'fund',
     isFormVisible: false,
   }
 

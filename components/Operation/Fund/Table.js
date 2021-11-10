@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
 
-import { Button, Col, Icon, Input, Popconfirm, Row, Table, Tag, Tooltip } from 'antd'
+import { Button, Col, Icon, Input, Popconfirm, Radio, Row, Table, Tag, Tooltip } from 'antd'
 import {
   Sort,
   FormatCurrency,
@@ -15,17 +15,26 @@ import {
 } from '../../../common/utils'
 import classNames from 'classnames'
 import Highlighter from 'react-highlight-words'
+import BulkUpdateSteps from './BulkUpdateSteps'
+import { ExportMarkerOperationReport } from '../shared'
 
 class TableFund extends Component {
   state = {
     operations: [],
     isMenuFold: true,
+    searchText: '',
+    searchedColumn: '',
+    selectedRowKeys: [],
+    currentDataSource: [],
+    selectedBulkUpdateType: 'status',
+    bulkUpdateValue: null,
+    isBulkUpdateActive: false,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual(nextProps.operations, prevState.operations)) {
+    if (!_.isEqual(nextProps.fundOperations, prevState.operations)) {
       return {
-        users: _.orderBy(nextProps.operations, ['id'], ['desc']),
+        operations: _.orderBy(nextProps.fundOperations, ['id'], ['desc']),
       }
     }
     return null
@@ -175,40 +184,124 @@ class TableFund extends Component {
         <h3>
           Total de Operaciones:{' '}
           <Tag color="#1b1f21" style={{ fontSize: 14, marginLeft: 10 }}>
-            {_.size(this.props.fundOperations)}
+            {_.size(this.state.operations)}
           </Tag>
         </h3>
       </Col>
     </Row>
   )
 
+  tableHeader = () => (
+    <>
+      <Row>
+        <Col sm={12}></Col>
+        <Col sm={12} style={{ textAlign: 'right' }}>
+          <Button
+            type="secondary"
+            className={classNames({ hidden: this.state.isBulkUpdateActive })}
+            onClick={() => this.setState({ isBulkUpdateActive: true })}
+            size="large"
+          >
+            <Icon type="retweet" /> Actualización Masiva
+          </Button>
+          <Button
+            type="danger"
+            className={classNames({ hidden: !this.state.isBulkUpdateActive })}
+            onClick={this.onCancelBulkProcess}
+          >
+            <Icon type="close-circle" /> Cerrar
+          </Button>
+        </Col>
+      </Row>
+      {this.state.isBulkUpdateActive ? (
+        <Row>
+          <Col>
+            <div className="multiple-actualization-module">
+              <BulkUpdateSteps
+                selectedElements={this.state.selectedRowKeys.length}
+                onClickUpdate={this._handleClickBulkUpdate}
+                isProcessComplete={this.props.isBulkCompleted}
+                isBulkLoading={this.props.isBulkLoading}
+                isBulkSuccess={this.props.isBulkSuccess}
+              />
+            </div>
+          </Col>
+        </Row>
+      ) : null}
+    </>
+  )
+
+  onSelectOperation = (selectedRowKeys) => {
+    this.setState({ selectedRowKeys })
+  }
+
+  onSelectAllOperation = (isSelected) => {
+    const { currentDataSource, operations } = this.state
+    const dataSource = !_.isEmpty(currentDataSource) ? currentDataSource : operations
+    const allOperationsIds = isSelected ? dataSource.map((ope) => ope.id) : []
+    this.setState({ selectedRowKeys: allOperationsIds })
+  }
+
+  onTableChange = (pagination, filters, sorter, extra) => {
+    const { currentDataSource } = extra
+    this.setState({
+      currentDataSource,
+      filteredInfo: filters,
+      sortedInfo: sorter,
+    })
+    this.props.onChangePagination({ pagination, filters })
+    if (this.props.isAdmin) {
+      this.props.onRequestUpdateTable({ pagination, filters })
+    }
+  }
+
+  onCancelBulkProcess = () => {
+    this.setState({
+      isBulkUpdateActive: false,
+      selectedRowKeys: [],
+      selectedBulkUpdateType: 'status',
+      bulkUpdateValue: null,
+    })
+    this.props.onRequestUpdateTable()
+  }
+
+  _handleClickBulkUpdate = (bulkOperation) => {
+    const operationsIds = this.state.selectedRowKeys
+
+    console.log('[=====  test  =====>')
+    console.log(bulkOperation)
+    console.log(operationsIds)
+    console.log('<=====  /test  =====]')
+    return
+    this.props.onFetchBulkUpdate({
+      ...bulkOperation,
+      operationsIds,
+    })
+  }
+
   render() {
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden'
+    const {
+      selectedRowKeys,
+      isBulkUpdateActive,
+      operations,
+      filteredInfo,
+      assetClasses,
+      brokers,
+      products,
+    } = this.state
+
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectOperation,
+      onSelectAll: this.onSelectAllOperation,
+    }
 
     const columns = [
       {
         title: 'ID',
         dataIndex: 'id',
         key: 'id',
-      },
-      {
-        title: 'Estado',
-        dataIndex: 'status',
-        key: 'status',
-        filters: [
-          { text: 'Activo', value: 1 },
-          { text: 'Cerrado', value: 2 },
-          { text: 'Hold', value: 3 },
-          { text: 'Vendido', value: 4 },
-        ],
-        onFilter: (value, record) => record.status === value,
-        filterMultiple: false,
-        render: (status) => {
-          const { name, color } = FormatStatus(status, true)
-          return <Tag color={color}>{name}</Tag>
-        },
-        sorter: (a, b) => Sort(a.status, b.status),
-        sortDirections: ['descend', 'ascend'],
       },
       {
         title: 'Usuario',
@@ -288,16 +381,19 @@ class TableFund extends Component {
 
     return (
       <Table
+        rowSelection={isBulkUpdateActive ? rowSelection : null}
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={this.props.fundOperations}
+        dataSource={this.state.operations}
         loading={this.props.isLoading}
         scroll={{ x: true }}
         className={classNames({
-          'hidden-table': !this.props.isAdmin && _.isEmpty(this.props.fundOperations),
+          'hidden-table': !this.props.isAdmin && _.isEmpty(this.state.operations),
           'is-menu-fold': this.state.isMenuFold,
         })}
+        onChange={this.onTableChange}
         footer={this._displayTableFooter}
+        title={this.tableHeader}
       />
     )
   }

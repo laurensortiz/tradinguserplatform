@@ -76,44 +76,77 @@ class Fund extends Component {
       })
     }
 
-    if (nextProps.isSuccess && !_.isEmpty(nextProps.message)) {
-      let message = 'Operación de Fund Creada'
-
-      if (_.isEqual(prevState.actionType, 'edit')) {
-        message = 'Operación de Fund Modificado'
-      }
-
-      if (_.isEqual(prevState.actionType, 'delete')) {
-        message = 'Operación de Fund Eliminado'
-      }
-
-      if (_.isEqual(prevState.actionType, 'active')) {
-        message = 'Operación de Fund Activado'
-      }
-
-      prevState.isVisibleAddOrEditOperation = false
+    if (nextProps.isBulkSuccess && nextProps.isBulkProcessCompleted) {
+      const message = 'Actualización exitosa!'
+      _.assignIn(updatedState, {
+        isVisibleAddOrEditOperation: false,
+      })
 
       notification.success({
         message,
         onClose: () => {
           prevState.actionType = 'add' // default value
-
-          nextProps.fetchGetFundOperations()
           nextProps.resetAfterRequest()
+          nextProps.fetchGetMarketOperations({
+            pagination: prevState.pagination,
+            status: prevState.dataStatus,
+          })
           nextProps.onClose(false)
         },
         duration: 1,
       })
+    } else {
+      if (nextProps.isSuccess && !_.isEmpty(nextProps.message)) {
+        let message = 'Operación de Fund Creada'
+
+        if (_.isEqual(prevState.actionType, 'edit')) {
+          message = 'Operación de Fund Modificado'
+        }
+
+        if (_.isEqual(prevState.actionType, 'delete')) {
+          message = 'Operación de Fund Eliminado'
+        }
+
+        if (_.isEqual(prevState.actionType, 'active')) {
+          message = 'Operación de Fund Activado'
+        }
+
+        prevState.isVisibleAddOrEditOperation = false
+
+        notification.success({
+          message,
+          onClose: () => {
+            prevState.actionType = 'add' // default value
+
+            nextProps.fetchGetFundOperations()
+            nextProps.resetAfterRequest()
+            nextProps.onClose(false)
+          },
+          duration: 1,
+        })
+      }
     }
-    if (nextProps.isFailure && !_.isEmpty(nextProps.message)) {
+
+    if (nextProps.isBulkFailure && nextProps.isBulkProcessCompleted) {
       notification.error({
-        message: 'Ha ocurrido un error',
+        message: 'Ha ocurrido un error en el proceso de actualización',
         description: nextProps.message,
         onClose: () => {
           nextProps.resetAfterRequest()
         },
         duration: 3,
       })
+    } else {
+      if (nextProps.isFailure && !_.isEmpty(nextProps.message)) {
+        notification.error({
+          message: 'Ha ocurrido un error',
+          description: nextProps.message,
+          onClose: () => {
+            nextProps.resetAfterRequest()
+          },
+          duration: 3,
+        })
+      }
     }
 
     return !_.isEmpty(updatedState) ? updatedState : null
@@ -235,6 +268,13 @@ class Fund extends Component {
     this.props.fetchDeleteFundMovement(movementId)
   }
 
+  /**
+   * Bulk Update
+   */
+  _handleBulkUpdate = (bulkData) => {
+    this.props.fetchBulkUpdateFundOperation(bulkData)
+  }
+
   render() {
     const modalTitle = _.isEqual(this.state.actionType, 'add')
       ? 'Agregar Operación de Fund'
@@ -276,6 +316,10 @@ class Fund extends Component {
                     onEdit={this._onSelectEdit}
                     onDelete={this._handleDeleteUserOperation}
                     onDetail={this._handleDetailUserOperation}
+                    onFetchBulkUpdate={this._handleBulkUpdate}
+                    isBulkLoading={this.props.isBulkLoading}
+                    isBulkSuccess={this.props.isBulkSuccess}
+                    isBulkCompleted={this.props.isBulkProcessCompleted}
                     isAdmin={true}
                   />
                 </TabPane>
@@ -291,7 +335,7 @@ class Fund extends Component {
               </Tabs>
             ) : (
               <>
-                {!_.isEmpty(activeFundOperations) ? <h2>Operaciones Fondo de Interés</h2> : null}
+                {!_.isEmpty(activeFundOperations) ? <h2>Operaciones Founds</h2> : null}
                 <Table
                   fundOperations={activeFundOperations}
                   isLoading={this.props.isLoading}
@@ -352,6 +396,11 @@ function mapStateToProps(state) {
     isFailure: state.fundOperationsState.isFailure,
     message: state.fundOperationsState.message,
 
+    isBulkLoading: state.fundOperationsState.isBulkLoading,
+    isBulkSuccess: state.fundOperationsState.isBulkSuccess,
+    isBulkFailure: state.fundOperationsState.isBulkFailure,
+    isBulkProcessCompleted: state.fundOperationsState.isBulkProcessCompleted,
+
     fundMovements: state.fundMovementsState.list,
     isSuccessMovements: state.fundMovementsState.isSuccess,
     messageMovements: state.fundMovementsState.message,
@@ -371,6 +420,7 @@ const mapDispatchToProps = (dispatch) =>
       fetchAddFundMovement: fundMovementOperations.fetchAddFundMovement,
       fetchEditFundMovement: fundMovementOperations.fetchEditFundMovement,
       fetchDeleteFundMovement: fundMovementOperations.fetchDeleteFundMovement,
+      fetchBulkUpdateFundOperation: fundMovementOperations.fetchBulkUpdateFundOperation,
       resetAfterMovementRequest: fundMovementOperations.resetAfterRequest,
     },
     dispatch

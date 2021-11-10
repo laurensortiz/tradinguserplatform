@@ -1,6 +1,7 @@
 import { getFundOperations, addFundOperation, editFundOperation, deleteFundOperation } from './api'
 import types from './types'
 import { formatAxiosError } from '../../../common/utils'
+import { bulkUpdateFundOperation } from '../marketOperation/api'
 
 // List FundOperations
 export const fetchGetFundOperations = () => async (dispatch) => {
@@ -126,6 +127,37 @@ const requestDeleteFundOperationError = (error) => {
   }
 }
 
+// Bulk Update
+export const fetchBulkUpdateFundOperation = (bulkUpdateBatch) => async (dispatch) => {
+  dispatch(requestBulkUpdateFundOperation())
+  try {
+    const res = await bulkUpdateFundOperation(bulkUpdateBatch)
+    dispatch(requestBulkUpdateFundOperationSuccess(res.data))
+  } catch (error) {
+    dispatch(requestBulkUpdateFundOperationError(error.response))
+  }
+}
+
+const requestBulkUpdateFundOperation = () => {
+  return {
+    type: types.FUND_OPERATION_BULK_UPDATE_REQUEST,
+  }
+}
+
+const requestBulkUpdateFundOperationSuccess = (update) => {
+  return {
+    type: types.FUND_OPERATION_BULK_UPDATE_SUCCESS,
+    payload: update,
+  }
+}
+
+const requestBulkUpdateFundOperationError = (error) => {
+  return {
+    type: types.FUND_OPERATION_BULK_UPDATE_ERROR,
+    payload: formatAxiosError(error),
+  }
+}
+
 // Reset After any request
 export const resetAfterRequest = () => {
   return {
@@ -138,5 +170,6 @@ export default {
   fetchAddFundOperation,
   fetchEditFundOperation,
   fetchDeleteFundOperation,
+  fetchBulkUpdateFundOperation,
   resetAfterRequest,
 }
