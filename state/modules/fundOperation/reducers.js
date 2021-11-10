@@ -141,6 +141,7 @@ export function fundOperation(state = initialStateInvestmentOperation, action) {
         isBulkSuccess: false,
         isBulkFailure: true,
         isBulkLoading: false,
+
         isBulkProcessCompleted: true,
         message: action.payload,
       }
@@ -151,6 +152,9 @@ export function fundOperation(state = initialStateInvestmentOperation, action) {
         isSuccess: false,
         isFailure: false,
         isLoading: false,
+        isBulkFailure: false,
+        isBulkLoading: false,
+        isBulkProcessCompleted: false,
         message: '',
       }
     default:

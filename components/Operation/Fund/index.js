@@ -67,7 +67,7 @@ class Fund extends Component {
     ) {
       nextProps.fetchGetFundMovements(prevState.currentOperationDetail.id)
       nextProps.fetchGetFundOperations()
-      nextProps.resetAfterMovementRequest()
+      nextProps.resetAfterRequest()
     }
 
     if (!_.isEqual(nextProps.fundMovements, prevState.fundMovements)) {
@@ -81,16 +81,13 @@ class Fund extends Component {
       _.assignIn(updatedState, {
         isVisibleAddOrEditOperation: false,
       })
-
+      nextProps.resetAfterRequest()
       notification.success({
         message,
         onClose: () => {
           prevState.actionType = 'add' // default value
-          nextProps.resetAfterRequest()
-          nextProps.fetchGetMarketOperations({
-            pagination: prevState.pagination,
-            status: prevState.dataStatus,
-          })
+
+          nextProps.fetchGetFundOperations()
           nextProps.onClose(false)
         },
         duration: 1,
@@ -112,14 +109,14 @@ class Fund extends Component {
         }
 
         prevState.isVisibleAddOrEditOperation = false
-
+        nextProps.resetAfterRequest()
         notification.success({
           message,
           onClose: () => {
             prevState.actionType = 'add' // default value
 
             nextProps.fetchGetFundOperations()
-            nextProps.resetAfterRequest()
+
             nextProps.onClose(false)
           },
           duration: 1,
@@ -415,13 +412,13 @@ const mapDispatchToProps = (dispatch) =>
       fetchEditFundOperation: fundOperationOperations.fetchEditFundOperation,
       fetchDeleteFundOperation: fundOperationOperations.fetchDeleteFundOperation,
       resetAfterRequest: fundOperationOperations.resetAfterRequest,
+      fetchBulkUpdateFundOperation: fundOperationOperations.fetchBulkUpdateFundOperation,
 
       fetchGetFundMovements: fundMovementOperations.fetchGetFundMovements,
       fetchAddFundMovement: fundMovementOperations.fetchAddFundMovement,
       fetchEditFundMovement: fundMovementOperations.fetchEditFundMovement,
       fetchDeleteFundMovement: fundMovementOperations.fetchDeleteFundMovement,
-      fetchBulkUpdateFundOperation: fundMovementOperations.fetchBulkUpdateFundOperation,
-      resetAfterMovementRequest: fundMovementOperations.resetAfterRequest,
+      //resetAfterRequest: fundOperationOperations.resetAfterRequest,
     },
     dispatch
   )

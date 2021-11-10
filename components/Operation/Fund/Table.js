@@ -249,7 +249,7 @@ class TableFund extends Component {
       filteredInfo: filters,
       sortedInfo: sorter,
     })
-    this.props.onChangePagination({ pagination, filters })
+    //this.props.onChangePagination({ pagination, filters })
     if (this.props.isAdmin) {
       this.props.onRequestUpdateTable({ pagination, filters })
     }
@@ -268,11 +268,6 @@ class TableFund extends Component {
   _handleClickBulkUpdate = (bulkOperation) => {
     const operationsIds = this.state.selectedRowKeys
 
-    console.log('[=====  test  =====>')
-    console.log(bulkOperation)
-    console.log(operationsIds)
-    console.log('<=====  /test  =====]')
-    return
     this.props.onFetchBulkUpdate({
       ...bulkOperation,
       operationsIds,
@@ -337,14 +332,16 @@ class TableFund extends Component {
         render: (text) => <span key={text}>{text}</span>,
         sorter: (a, b) => Sort(a.operationType, b.operationType),
         sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('operationType'),
       },
       {
         title: 'Cuenta de Usuario',
-        dataIndex: 'userAccount',
+        dataIndex: 'userAccount.account.name',
         key: 'account',
         render: (text) => <span key={text.accountId}>{text.account.name}</span>,
         sorter: (a, b) => Sort(a.userAccount.account.name, b.userAccount.account.name),
         sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('userAccount.account.name'),
       },
       {
         title: 'Saldo Actual',

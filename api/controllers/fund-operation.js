@@ -15,8 +15,6 @@ import Log, {
   MarketMovement,
 } from '../models'
 import { fundOperationQuery } from '../queries'
-import ToFixNumber from '../../common/to-fix-number'
-import GetHoldCommissionAmount from '../../common/get-hold-commission-amount'
 
 module.exports = {
   async create(req, res) {
@@ -151,25 +149,61 @@ module.exports = {
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body
 
+      const percentage = Number(updateValue)
+
       await ORM.transaction(async (t) => {
         switch (updateScope) {
           case 'percentage':
-            await MarketOperation.update(
+            const fundOperations = await FundOperation.findAll(
               {
-                takingProfit: updateValue,
+                where: {
+                  id: operationsIds,
+                },
+                order: [['id', 'ASC']],
               },
-              { where: { id: operationsIds } },
               { transaction: t }
             )
-            Log({
-              userId,
-              userAccountId: userAccount.id,
-              tableUpdated: 'userAccount',
-              action: 'update',
-              type: 'createOperation',
-              snapShotBeforeAction: snapShotAccount,
-              snapShotAfterAction: JSON.stringify(updatedUserAccount),
-            })
+
+            if (!fundOperations) {
+              throw new Error('Ocurrió un error al momento de buscar la operación')
+            }
+
+            for (let fundOperation of fundOperations) {
+              const operationAmount = Number(_.get(fundOperation, 'amount', 0))
+              const gpAmount = Number(parseFloat((operationAmount * percentage) / 100).toFixed(2))
+
+              const gpInversion = operationAmount + gpAmount
+
+              await FundMovement.create(
+                {
+                  gpInversion,
+                  fundOperationId: Number(fundOperation.id),
+                  gpAmount,
+                  percentage,
+                  status: 1,
+                  createdAt: moment(new Date()).tz('America/New_York').format(),
+                  updatedAt: moment(new Date()).tz('America/New_York').format(),
+                },
+                { transaction: t }
+              )
+
+              await fundOperation.update(
+                {
+                  amount: gpInversion,
+                },
+                { transaction: t }
+              )
+            }
+
+            // Log({
+            //   userId,
+            //   userAccountId: userAccount.id,
+            //   tableUpdated: 'userAccount',
+            //   action: 'update',
+            //   type: 'createOperation',
+            //   snapShotBeforeAction: snapShotAccount,
+            //   snapShotAfterAction: JSON.stringify(updatedUserAccount),
+            // })
             return res.status(200).send('Completed')
 
           default:

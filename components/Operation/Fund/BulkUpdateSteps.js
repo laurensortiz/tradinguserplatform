@@ -202,8 +202,8 @@ function BulkUpdateSteps({
             onClick={() => setCurrentStep(currentStep + 1)}
             disabled={
               (updateType !== 'status' && !isValidAmount && isEmpty(updateValue)) ||
-              (updateType === 'status' && !Number.isInteger(updateValue)) ||
-              (updateType === 'create-operation' && !isValidOperation)
+              (currentStep === 1 && updateType === '') ||
+              (updateType === 'percentage' && !updateValue)
             }
           >
             Siguiente <Icon type="right-square" />

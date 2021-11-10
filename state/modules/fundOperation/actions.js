@@ -1,7 +1,12 @@
-import { getFundOperations, addFundOperation, editFundOperation, deleteFundOperation } from './api'
+import {
+  getFundOperations,
+  addFundOperation,
+  editFundOperation,
+  deleteFundOperation,
+  bulkUpdateFundOperation,
+} from './api'
 import types from './types'
 import { formatAxiosError } from '../../../common/utils'
-import { bulkUpdateFundOperation } from '../marketOperation/api'
 
 // List FundOperations
 export const fetchGetFundOperations = () => async (dispatch) => {
