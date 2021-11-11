@@ -22,6 +22,7 @@ class TableFund extends Component {
   state = {
     operations: [],
     isMenuFold: true,
+    filteredInfo: {},
     searchText: '',
     searchedColumn: '',
     selectedRowKeys: [],
@@ -274,6 +275,16 @@ class TableFund extends Component {
     })
   }
 
+  _getProductlist = (operations) => {
+    return _.chain(operations)
+      .reduce((result, operation) => {
+        result.push(operation.product.name)
+        return result
+      }, [])
+      .uniq()
+      .value()
+  }
+
   render() {
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden'
     const {
@@ -285,6 +296,8 @@ class TableFund extends Component {
       brokers,
       products,
     } = this.state
+
+    const productList = this._getProductlist(operations)
 
     const rowSelection = {
       selectedRowKeys,
@@ -332,7 +345,15 @@ class TableFund extends Component {
         render: (text) => <span key={text}>{text}</span>,
         sorter: (a, b) => Sort(a.operationType, b.operationType),
         sortDirections: ['descend', 'ascend'],
-        ...this.getColumnSearchProps('operationType'),
+        filters: productList.map((value) => {
+          return {
+            text: value,
+            value,
+          }
+        }),
+        filteredValue: filteredInfo['operationType'] || null,
+        onFilter: (value, record) => (record.operationType ? record.operationType === value : null),
+        ellipsis: true,
       },
       {
         title: 'Cuenta de Usuario',
