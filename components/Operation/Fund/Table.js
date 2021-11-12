@@ -278,7 +278,9 @@ class TableFund extends Component {
   _getProductlist = (operations) => {
     return _.chain(operations)
       .reduce((result, operation) => {
-        result.push(operation.product.name)
+        if (operation.product) {
+          result.push(operation.product.name)
+        }
         return result
       }, [])
       .uniq()
