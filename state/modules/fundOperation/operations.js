@@ -3,6 +3,7 @@ import {
   fetchAddFundOperation,
   fetchEditFundOperation,
   fetchDeleteFundOperation,
+  fetchBulkUpdateFundOperation,
   resetAfterRequest,
 } from './actions'
 
@@ -11,5 +12,6 @@ export default {
   fetchAddFundOperation,
   fetchEditFundOperation,
   fetchDeleteFundOperation,
+  fetchBulkUpdateFundOperation,
   resetAfterRequest,
 }

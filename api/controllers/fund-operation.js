@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment-timezone'
-import {
+import Log, {
   FundOperation,
   UserAccount,
   FundMovement,
@@ -11,6 +11,8 @@ import {
   Broker,
   Commodity,
   AssetClass,
+  MarketOperation,
+  MarketMovement,
 } from '../models'
 import { fundOperationQuery } from '../queries'
 
@@ -135,6 +137,83 @@ module.exports = {
 
       return res.status(200).send(updatedFundOperation)
     } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
+  },
+
+  async bulkUpdate(req, res) {
+    const userId = _.get(req, 'user.id', 0)
+    try {
+      const { operationsIds, updateType, updateValue, updateScope } = req.body
+
+      const percentage = Number(updateValue)
+
+      await ORM.transaction(async (t) => {
+        switch (updateScope) {
+          case 'percentage':
+            const fundOperations = await FundOperation.findAll(
+              {
+                where: {
+                  id: operationsIds,
+                },
+                order: [['id', 'ASC']],
+              },
+              { transaction: t }
+            )
+
+            if (!fundOperations) {
+              throw new Error('Ocurrió un error al momento de buscar la operación')
+            }
+
+            for (let fundOperation of fundOperations) {
+              const operationAmount = Number(_.get(fundOperation, 'amount', 0))
+              const gpAmount = Number(parseFloat((operationAmount * percentage) / 100).toFixed(2))
+
+              const gpInversion = operationAmount + gpAmount
+
+              await FundMovement.create(
+                {
+                  gpInversion,
+                  fundOperationId: Number(fundOperation.id),
+                  gpAmount,
+                  percentage,
+                  status: 1,
+                  createdAt: moment(new Date()).tz('America/New_York').format(),
+                  updatedAt: moment(new Date()).tz('America/New_York').format(),
+                },
+                { transaction: t }
+              )
+
+              await fundOperation.update(
+                {
+                  amount: gpInversion,
+                },
+                { transaction: t }
+              )
+            }
+
+            // Log({
+            //   userId,
+            //   userAccountId: userAccount.id,
+            //   tableUpdated: 'userAccount',
+            //   action: 'update',
+            //   type: 'createOperation',
+            //   snapShotBeforeAction: snapShotAccount,
+            //   snapShotAfterAction: JSON.stringify(updatedUserAccount),
+            // })
+            return res.status(200).send('Completed')
+
+          default:
+        }
+        return res.status(200).send('Completed')
+      })
+    } catch (err) {
+      console.log('[=====  ERROR on BULK  =====>')
+      console.log(err)
+      console.log('<=====  /ERROR on BULK  =====]')
       return res.status(500).send({
         message: err.message,
         name: err.name,

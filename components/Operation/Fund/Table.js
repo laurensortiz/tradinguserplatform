@@ -4,7 +4,20 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
 
-import { Button, Col, Icon, Input, Popconfirm, Row, Table, Tag, Tooltip } from 'antd'
+import {
+  Button,
+  Col,
+  DatePicker,
+  Icon,
+  Input,
+  Popconfirm,
+  Radio,
+  Row,
+  Select,
+  Table,
+  Tag,
+  Tooltip,
+} from 'antd'
 import {
   Sort,
   FormatCurrency,
@@ -15,17 +28,30 @@ import {
 } from '../../../common/utils'
 import classNames from 'classnames'
 import Highlighter from 'react-highlight-words'
+import BulkUpdateSteps from './BulkUpdateSteps'
+
+const { Option } = Select
+const { RangePicker } = DatePicker
+const FORMAT_DATE = 'DD-MM-YYYY'
 
 class TableFund extends Component {
   state = {
     operations: [],
     isMenuFold: true,
+    filteredInfo: {},
+    searchText: '',
+    searchedColumn: '',
+    selectedRowKeys: [],
+    currentDataSource: [],
+    selectedBulkUpdateType: 'status',
+    bulkUpdateValue: null,
+    isBulkUpdateActive: false,
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (!_.isEqual(nextProps.operations, prevState.operations)) {
+    if (!_.isEqual(nextProps.fundOperations, prevState.operations)) {
       return {
-        users: _.orderBy(nextProps.operations, ['id'], ['desc']),
+        operations: _.orderBy(nextProps.fundOperations, ['id'], ['desc']),
       }
     }
     return null
@@ -89,12 +115,12 @@ class TableFund extends Component {
           placeholder={`Buscar`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => this._handleSearch(selectedKeys, confirm, dataIndex)}
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
         <Button
           type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onClick={() => this._handleSearch(selectedKeys, confirm, dataIndex)}
           icon="search"
           size="small"
           style={{ width: 90, marginRight: 8 }}
@@ -131,7 +157,16 @@ class TableFund extends Component {
     },
   })
 
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
+  _handleReset = (selectedKeys, clearFilters) => {
+    if (!_.isEmpty(selectedKeys)) {
+      clearFilters()
+      this.setState({
+        searchText: '',
+      })
+    }
+  }
+
+  _handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
     this.setState({
       searchText: selectedKeys[0],
@@ -175,40 +210,233 @@ class TableFund extends Component {
         <h3>
           Total de Operaciones:{' '}
           <Tag color="#1b1f21" style={{ fontSize: 14, marginLeft: 10 }}>
-            {_.size(this.props.fundOperations)}
+            {_.size(this.state.operations)}
           </Tag>
         </h3>
       </Col>
     </Row>
   )
 
+  tableHeader = () => (
+    <>
+      <Row>
+        <Col sm={12}></Col>
+        <Col sm={12} style={{ textAlign: 'right' }}>
+          <Button
+            type="secondary"
+            className={classNames({ hidden: this.state.isBulkUpdateActive })}
+            onClick={() => this.setState({ isBulkUpdateActive: true })}
+            size="large"
+          >
+            <Icon type="retweet" /> Actualización Masiva
+          </Button>
+          <Button
+            type="danger"
+            className={classNames({ hidden: !this.state.isBulkUpdateActive })}
+            onClick={this.onCancelBulkProcess}
+          >
+            <Icon type="close-circle" /> Cerrar
+          </Button>
+        </Col>
+      </Row>
+      {this.state.isBulkUpdateActive ? (
+        <Row>
+          <Col>
+            <div className="multiple-actualization-module">
+              <BulkUpdateSteps
+                selectedElements={this.state.selectedRowKeys.length}
+                onClickUpdate={this._handleClickBulkUpdate}
+                isProcessComplete={this.props.isBulkCompleted}
+                isBulkLoading={this.props.isBulkLoading}
+                isBulkSuccess={this.props.isBulkSuccess}
+              />
+            </div>
+          </Col>
+        </Row>
+      ) : null}
+    </>
+  )
+
+  onSelectOperation = (selectedRowKeys) => {
+    this.setState({ selectedRowKeys })
+  }
+
+  onSelectAllOperation = (isSelected) => {
+    const { currentDataSource, operations } = this.state
+    const dataSource = !_.isEmpty(currentDataSource) ? currentDataSource : operations
+    const allOperationsIds = isSelected ? dataSource.map((ope) => ope.id) : []
+    this.setState({ selectedRowKeys: allOperationsIds })
+  }
+
+  onTableChange = (pagination, filters, sorter, extra) => {
+    const { currentDataSource } = extra
+    this.setState({
+      currentDataSource,
+      filteredInfo: filters,
+      sortedInfo: sorter,
+    })
+    //this.props.onChangePagination({ pagination, filters })
+    if (this.props.isAdmin) {
+      this.props.onRequestUpdateTable({ pagination, filters })
+    }
+  }
+
+  onCancelBulkProcess = () => {
+    this.setState({
+      isBulkUpdateActive: false,
+      selectedRowKeys: [],
+      selectedBulkUpdateType: 'status',
+      bulkUpdateValue: null,
+    })
+    this.props.onRequestUpdateTable()
+  }
+
+  _handleClickBulkUpdate = (bulkOperation) => {
+    const operationsIds = this.state.selectedRowKeys
+
+    this.props.onFetchBulkUpdate({
+      ...bulkOperation,
+      operationsIds,
+    })
+  }
+
+  _getProductlist = (operations) => {
+    return _.chain(operations)
+      .reduce((result, operation) => {
+        if (operation.product) {
+          result.push(operation.product.name)
+        }
+        return result
+      }, [])
+      .uniq()
+      .value()
+  }
+
+  _sortDates = (start, end) => {
+    if (_.isNil(start)) start = '00-00-0000'
+    if (_.isNil(end)) end = '00-00-0000'
+
+    return moment(start).unix() - moment(end).unix()
+  }
+
+  _handleDateFilterChange = (dateModeValue) => {
+    this.dateMode = dateModeValue
+    this.forceUpdate()
+    this.defaultDate = null
+  }
+
+  _datesInRange = (record, dataIndex) => {
+    const dateRange = this.timeDateRange
+    if (!_.isEmpty(dateRange)) {
+      return _.includes(dateRange, moment.parseZone(_.get(record, dataIndex)).format(FORMAT_DATE))
+    }
+  }
+
+  _createDateRange = (date, setSelectedKeys, minDate, maxDate, dataIndex) => {
+    this.defaultDate = moment.parseZone(date)
+
+    let dateRange = [],
+      range = ''
+
+    const dateMode = this.dateMode
+
+    switch (dateMode) {
+      case 'single':
+        range = moment.range(date, date)
+        break
+      case 'range':
+        range = moment.range(date[0], date[1])
+        break
+      default:
+    }
+
+    let arrayOfDates = _.toArray(range.by('days'))
+
+    _.map(arrayOfDates, (date) => {
+      dateRange.push(moment(date).format(FORMAT_DATE))
+    })
+
+    this.timeDateRange = dateRange
+
+    return setSelectedKeys(date ? [date] : [])
+  }
+
+  _getColumnDateProps = (dataIndex, minDate, maxDate) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div className="custom-filter-dropdown">
+        <Select
+          placeholder="Seleccione el tipo de filtro"
+          onChange={(e) => this._handleDateFilterChange(e)}
+        >
+          <Option value="single">Por día</Option>
+          <Option value="range">Rango de fechas</Option>
+        </Select>
+
+        {this.dateMode === 'range' ? (
+          <RangePicker
+            onChange={(e) => this._createDateRange(e, setSelectedKeys, minDate, maxDate, dataIndex)}
+            format={FORMAT_DATE}
+            allowClear={false}
+          />
+        ) : null}
+
+        {this.dateMode === 'single' ? (
+          <DatePicker
+            value={this.defaultDate}
+            onChange={(e) => this._createDateRange(e, setSelectedKeys, minDate, maxDate, dataIndex)}
+            format={FORMAT_DATE}
+            allowClear={false}
+          />
+        ) : null}
+        <Button
+          onClick={() => this._handleSearch(selectedKeys, confirm)}
+          icon="search"
+          size="small"
+        >
+          Filtrar
+        </Button>
+        <Button
+          ref={(e) => (this.clearFilterDatesBtn = e)}
+          onClick={() => this._handleReset(selectedKeys, clearFilters)}
+          size="small"
+        >
+          Limpiar
+        </Button>
+      </div>
+    ),
+    onFilter: (value, record) => {
+      return this._datesInRange(record, dataIndex)
+    },
+  })
+
   render() {
+    const datesInTimes = _.map(this.state.operations, (record) => moment(record.createdAt)),
+      maxDatesInTimes = moment.max(datesInTimes).add(1, 'days'),
+      minDatesInTimes = moment.min(datesInTimes).subtract(1, 'days')
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden'
+    const {
+      selectedRowKeys,
+      isBulkUpdateActive,
+      operations,
+      filteredInfo,
+      assetClasses,
+      brokers,
+      products,
+    } = this.state
+
+    const productList = this._getProductlist(operations)
+
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: this.onSelectOperation,
+      onSelectAll: this.onSelectAllOperation,
+    }
 
     const columns = [
       {
         title: 'ID',
         dataIndex: 'id',
         key: 'id',
-      },
-      {
-        title: 'Estado',
-        dataIndex: 'status',
-        key: 'status',
-        filters: [
-          { text: 'Activo', value: 1 },
-          { text: 'Cerrado', value: 2 },
-          { text: 'Hold', value: 3 },
-          { text: 'Vendido', value: 4 },
-        ],
-        onFilter: (value, record) => record.status === value,
-        filterMultiple: false,
-        render: (status) => {
-          const { name, color } = FormatStatus(status, true)
-          return <Tag color={color}>{name}</Tag>
-        },
-        sorter: (a, b) => Sort(a.status, b.status),
-        sortDirections: ['descend', 'ascend'],
       },
       {
         title: 'Usuario',
@@ -244,14 +472,24 @@ class TableFund extends Component {
         render: (text) => <span key={text}>{text}</span>,
         sorter: (a, b) => Sort(a.operationType, b.operationType),
         sortDirections: ['descend', 'ascend'],
+        filters: productList.map((value) => {
+          return {
+            text: value,
+            value,
+          }
+        }),
+        filteredValue: filteredInfo['operationType'] || null,
+        onFilter: (value, record) => (record.operationType ? record.operationType === value : null),
+        ellipsis: true,
       },
       {
         title: 'Cuenta de Usuario',
-        dataIndex: 'userAccount',
+        dataIndex: 'userAccount.account.name',
         key: 'account',
         render: (text) => <span key={text.accountId}>{text.account.name}</span>,
         sorter: (a, b) => Sort(a.userAccount.account.name, b.userAccount.account.name),
         sortDirections: ['descend', 'ascend'],
+        ...this.getColumnSearchProps('userAccount.account.name'),
       },
       {
         title: 'Saldo Actual',
@@ -266,16 +504,30 @@ class TableFund extends Component {
         dataIndex: 'startDate',
         key: 'startDate',
         render: (date, row) => <span className="date">{FormatDate(date)}</span>,
-        sorter: (a, b) => SortDate(a.startDate, b.startDate),
         sortDirections: ['descend', 'ascend'],
+        inputType: 'date',
+        rowKey: (d) => {
+          return FormatDate(d.startDate)
+        },
+        sorter: (a, b) => {
+          return this._sortDates(a.startDate, b.startDate)
+        },
+        ...this._getColumnDateProps('startDate', minDatesInTimes, maxDatesInTimes),
       },
       {
         title: 'Fecha de Expiración',
         dataIndex: 'expirationDate',
         key: 'expirationDate',
         render: (date, row) => <span className="date">{FormatDate(date)}</span>,
-        sorter: (a, b) => SortDate(a.expirationDate, b.expirationDate),
         sortDirections: ['descend', 'ascend'],
+        inputType: 'date',
+        rowKey: (d) => {
+          return FormatDate(d.expirationDate)
+        },
+        sorter: (a, b) => {
+          return this._sortDates(a.expirationDate, b.expirationDate)
+        },
+        ...this._getColumnDateProps('expirationDate', minDatesInTimes, maxDatesInTimes),
       },
       {
         title: this._handleActionTitle,
@@ -288,16 +540,19 @@ class TableFund extends Component {
 
     return (
       <Table
+        rowSelection={isBulkUpdateActive ? rowSelection : null}
         rowKey={(record) => record.id}
         columns={columns}
-        dataSource={this.props.fundOperations}
+        dataSource={this.state.operations}
         loading={this.props.isLoading}
         scroll={{ x: true }}
         className={classNames({
-          'hidden-table': !this.props.isAdmin && _.isEmpty(this.props.fundOperations),
+          'hidden-table': !this.props.isAdmin && _.isEmpty(this.state.operations),
           'is-menu-fold': this.state.isMenuFold,
         })}
+        onChange={this.onTableChange}
         footer={this._displayTableFooter}
+        title={this.tableHeader}
       />
     )
   }

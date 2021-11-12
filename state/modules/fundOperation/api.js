@@ -29,3 +29,11 @@ export const deleteFundOperation = async (fundOperationId) => {
     url: `fund-operation/${fundOperationId}`,
   })
 }
+
+export const bulkUpdateFundOperation = async (bulkUpdateBatch) => {
+  return fetch({
+    method: 'post',
+    url: `fund-operation/bulk-update`,
+    data: bulkUpdateBatch,
+  })
+}

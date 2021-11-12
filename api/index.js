@@ -144,6 +144,7 @@ module.exports = (app) => {
   app.post('/api/fund-operation', fundOperation.create)
   app.put('/api/fund-operation/:id', fundOperation.update)
   app.delete('/api/fund-operation/:id', fundOperation.delete)
+  app.post('/api/fund-operation/bulk-update', fundOperation.bulkUpdate)
 
   // Fund Movement
   app.get('/api/fund-movement/fund-operation/:id', fundMovement.list)
