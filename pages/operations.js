@@ -11,7 +11,7 @@ import { Investment, Market, Fund } from '../components/Operation'
 
 class Operations extends Component {
   state = {
-    operationType: 'market',
+    operationType: 'fund',
     isFormVisible: false,
   }
 

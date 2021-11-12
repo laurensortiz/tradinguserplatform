@@ -4,7 +4,20 @@ import { connect } from 'react-redux'
 import moment from 'moment'
 import _ from 'lodash'
 
-import { Button, Col, Icon, Input, Popconfirm, Radio, Row, Table, Tag, Tooltip } from 'antd'
+import {
+  Button,
+  Col,
+  DatePicker,
+  Icon,
+  Input,
+  Popconfirm,
+  Radio,
+  Row,
+  Select,
+  Table,
+  Tag,
+  Tooltip,
+} from 'antd'
 import {
   Sort,
   FormatCurrency,
@@ -16,7 +29,10 @@ import {
 import classNames from 'classnames'
 import Highlighter from 'react-highlight-words'
 import BulkUpdateSteps from './BulkUpdateSteps'
-import { ExportMarkerOperationReport } from '../shared'
+
+const { Option } = Select
+const { RangePicker } = DatePicker
+const FORMAT_DATE = 'DD-MM-YYYY'
 
 class TableFund extends Component {
   state = {
@@ -99,12 +115,12 @@ class TableFund extends Component {
           placeholder={`Buscar`}
           value={selectedKeys[0]}
           onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-          onPressEnter={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onPressEnter={() => this._handleSearch(selectedKeys, confirm, dataIndex)}
           style={{ width: 188, marginBottom: 8, display: 'block' }}
         />
         <Button
           type="primary"
-          onClick={() => this.handleSearch(selectedKeys, confirm, dataIndex)}
+          onClick={() => this._handleSearch(selectedKeys, confirm, dataIndex)}
           icon="search"
           size="small"
           style={{ width: 90, marginRight: 8 }}
@@ -141,7 +157,16 @@ class TableFund extends Component {
     },
   })
 
-  handleSearch = (selectedKeys, confirm, dataIndex) => {
+  _handleReset = (selectedKeys, clearFilters) => {
+    if (!_.isEmpty(selectedKeys)) {
+      clearFilters()
+      this.setState({
+        searchText: '',
+      })
+    }
+  }
+
+  _handleSearch = (selectedKeys, confirm, dataIndex) => {
     confirm()
     this.setState({
       searchText: selectedKeys[0],
@@ -287,7 +312,107 @@ class TableFund extends Component {
       .value()
   }
 
+  _sortDates = (start, end) => {
+    if (_.isNil(start)) start = '00-00-0000'
+    if (_.isNil(end)) end = '00-00-0000'
+
+    return moment(start).unix() - moment(end).unix()
+  }
+
+  _handleDateFilterChange = (dateModeValue) => {
+    this.dateMode = dateModeValue
+    this.forceUpdate()
+    this.defaultDate = null
+  }
+
+  _datesInRange = (record, dataIndex) => {
+    const dateRange = this.timeDateRange
+    if (!_.isEmpty(dateRange)) {
+      return _.includes(dateRange, moment.parseZone(_.get(record, dataIndex)).format(FORMAT_DATE))
+    }
+  }
+
+  _createDateRange = (date, setSelectedKeys, minDate, maxDate, dataIndex) => {
+    this.defaultDate = moment.parseZone(date)
+
+    let dateRange = [],
+      range = ''
+
+    const dateMode = this.dateMode
+
+    switch (dateMode) {
+      case 'single':
+        range = moment.range(date, date)
+        break
+      case 'range':
+        range = moment.range(date[0], date[1])
+        break
+      default:
+    }
+
+    let arrayOfDates = _.toArray(range.by('days'))
+
+    _.map(arrayOfDates, (date) => {
+      dateRange.push(moment(date).format(FORMAT_DATE))
+    })
+
+    this.timeDateRange = dateRange
+
+    return setSelectedKeys(date ? [date] : [])
+  }
+
+  _getColumnDateProps = (dataIndex, minDate, maxDate) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+      <div className="custom-filter-dropdown">
+        <Select
+          placeholder="Seleccione el tipo de filtro"
+          onChange={(e) => this._handleDateFilterChange(e)}
+        >
+          <Option value="single">Por día</Option>
+          <Option value="range">Rango de fechas</Option>
+        </Select>
+
+        {this.dateMode === 'range' ? (
+          <RangePicker
+            onChange={(e) => this._createDateRange(e, setSelectedKeys, minDate, maxDate, dataIndex)}
+            format={FORMAT_DATE}
+            allowClear={false}
+          />
+        ) : null}
+
+        {this.dateMode === 'single' ? (
+          <DatePicker
+            value={this.defaultDate}
+            onChange={(e) => this._createDateRange(e, setSelectedKeys, minDate, maxDate, dataIndex)}
+            format={FORMAT_DATE}
+            allowClear={false}
+          />
+        ) : null}
+        <Button
+          onClick={() => this._handleSearch(selectedKeys, confirm)}
+          icon="search"
+          size="small"
+        >
+          Filtrar
+        </Button>
+        <Button
+          ref={(e) => (this.clearFilterDatesBtn = e)}
+          onClick={() => this._handleReset(selectedKeys, clearFilters)}
+          size="small"
+        >
+          Limpiar
+        </Button>
+      </div>
+    ),
+    onFilter: (value, record) => {
+      return this._datesInRange(record, dataIndex)
+    },
+  })
+
   render() {
+    const datesInTimes = _.map(this.state.operations, (record) => moment(record.createdAt)),
+      maxDatesInTimes = moment.max(datesInTimes).add(1, 'days'),
+      minDatesInTimes = moment.min(datesInTimes).subtract(1, 'days')
     const showHandleClass = this.props.isAdmin ? 'show' : 'hidden'
     const {
       selectedRowKeys,
@@ -379,16 +504,30 @@ class TableFund extends Component {
         dataIndex: 'startDate',
         key: 'startDate',
         render: (date, row) => <span className="date">{FormatDate(date)}</span>,
-        sorter: (a, b) => SortDate(a.startDate, b.startDate),
         sortDirections: ['descend', 'ascend'],
+        inputType: 'date',
+        rowKey: (d) => {
+          return FormatDate(d.startDate)
+        },
+        sorter: (a, b) => {
+          return this._sortDates(a.startDate, b.startDate)
+        },
+        ...this._getColumnDateProps('startDate', minDatesInTimes, maxDatesInTimes),
       },
       {
         title: 'Fecha de Expiración',
         dataIndex: 'expirationDate',
         key: 'expirationDate',
         render: (date, row) => <span className="date">{FormatDate(date)}</span>,
-        sorter: (a, b) => SortDate(a.expirationDate, b.expirationDate),
         sortDirections: ['descend', 'ascend'],
+        inputType: 'date',
+        rowKey: (d) => {
+          return FormatDate(d.expirationDate)
+        },
+        sorter: (a, b) => {
+          return this._sortDates(a.expirationDate, b.expirationDate)
+        },
+        ...this._getColumnDateProps('expirationDate', minDatesInTimes, maxDatesInTimes),
       },
       {
         title: this._handleActionTitle,
