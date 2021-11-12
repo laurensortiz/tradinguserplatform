@@ -757,7 +757,7 @@ module.exports = {
                  * GOLD FU | OP
                  */
                 case 'gold-FT-OP':
-                  if (marketOperation.assetClassId === 59) {
+                  if (marketOperation.assetClassId === 59 || marketOperation.assetClassId === 1) {
                     calculatedValue = 100 * gpAmount * commoditiesTotal // 1 FT = $50
                   } else {
                     throw new Error(
