@@ -956,7 +956,7 @@ module.exports = {
                  * NATURAL FT
                  */
                 case 'natural-FT-OP':
-                  if (marketOperation.assetClassId === 58) {
+                  if (marketOperation.assetClassId === 58 || marketOperation.assetClassId === 1) {
                     calculatedValue = 10000 * gpAmount * commoditiesTotal // 1 FT = $1000
                   } else {
                     throw new Error(
@@ -995,7 +995,7 @@ module.exports = {
                  * SOYBEAN OIL US  FT
                  */
                 case 'soybean-oil-FT-OP':
-                  if (marketOperation.assetClassId === 67) {
+                  if (marketOperation.assetClassId === 67 || marketOperation.assetClassId === 1) {
                     calculatedValue = 600 * gpAmount * commoditiesTotal // 1 FT = $375  (3.75 dollars per cent)
                   } else {
                     throw new Error(
@@ -1021,7 +1021,7 @@ module.exports = {
                  * GASOLINE FT OP
                  */
                 case 'gasoline-FT-OP':
-                  if (marketOperation.assetClassId === 56) {
+                  if (marketOperation.assetClassId === 56 || marketOperation.assetClassId === 1) {
                     calculatedValue = 42000 * gpAmount * commoditiesTotal // 1 FT = $420  (4.20 dollars per cent)
                   } else {
                     throw new Error(
@@ -1211,7 +1211,7 @@ module.exports = {
                  * BTC/USD
                  */
                 case 'soybean-meal-FT-OP':
-                  if (marketOperation.assetClassId === 66) {
+                  if (marketOperation.assetClassId === 66 || marketOperation.assetClassId === 1) {
                     calculatedValue = 100 * gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
@@ -1223,7 +1223,7 @@ module.exports = {
                  * BTC/USD
                  */
                 case 'corn-FT-OP':
-                  if (marketOperation.assetClassId === 64) {
+                  if (marketOperation.assetClassId === 64 || marketOperation.assetClassId === 1) {
                     calculatedValue = 50 * gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
@@ -1236,7 +1236,7 @@ module.exports = {
                  * BTC/USD
                  */
                 case 'soybean-FT-OP':
-                  if (marketOperation.assetClassId === 65) {
+                  if (marketOperation.assetClassId === 65 || marketOperation.assetClassId === 1) {
                     calculatedValue = 50 * gpAmount * commoditiesTotal
                   } else {
                     throw new Error(
@@ -1349,6 +1349,20 @@ module.exports = {
                   }
                   break
 
+                /**
+                 * ULSD NY Harbor
+
+                 */
+                case 'ulsd-ny-harbor-FT-OP':
+                  if (marketOperation.assetClassId === 77 || marketOperation.assetClassId === 1) {
+                    calculatedValue = 42000 * gpAmount * commoditiesTotal
+                  } else {
+                    throw new Error(
+                      `Una o más operaciones seleccionadas no corresponde al Mercado y su Derivado de Inversión. [Operación = ${marketOperation.id}]`
+                    )
+                  }
+                  break
+
                 default:
               }
 
@@ -1420,6 +1434,7 @@ module.exports = {
                     maintenanceMargin: updateValue.maintenanceMargin,
                     amount: updateValue.amount,
                     initialAmount: updateValue.amount,
+                    strikePrice: updateValue.strikePrice,
                     behavior: 0,
                     holdStatusCommission: updateValue.holdStatusCommission || 0,
                     orderId: nextOrderId,
@@ -1427,6 +1442,9 @@ module.exports = {
                     createdAt: moment(updateValue.createdAt || new Date())
                       .tz('America/New_York')
                       .format(),
+                    expirationDate: updateValue.expirationDate
+                      ? moment(updateValue.expirationDate).tz('America/New_York').format()
+                      : null,
                     updatedAt: moment(new Date()).tz('America/New_York').format(),
                   },
                   { transaction: t }

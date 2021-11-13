@@ -14,7 +14,7 @@ import { AccountInformation, MovementsTable } from '../shared'
 import { fundOperationOperations } from '../../../state/modules/fundOperation'
 import { fundMovementOperations } from '../../../state/modules/fundMovement'
 import { FormatDate, GetGP } from '../../../common/utils'
-import MarketTable from '../Market/MarketTable'
+import ExportOperationReport from './ExportOperationReport'
 import moment from 'moment'
 
 const { TabPane } = Tabs
@@ -265,11 +265,20 @@ class Fund extends Component {
     this.props.fetchDeleteFundMovement(movementId)
   }
 
+  _getSelectedOperations = (bulkData) => {
+    return _.filter(this.state.fundOperations, (account) => _.includes(bulkData, account.id))
+  }
+
   /**
    * Bulk Update
    */
   _handleBulkUpdate = (bulkData) => {
-    this.props.fetchBulkUpdateFundOperation(bulkData)
+    if (bulkData.updateType === 'report') {
+      const selectedOperations = this._getSelectedOperations(bulkData.operationsIds)
+      ExportOperationReport(selectedOperations)
+    } else {
+      this.props.fetchBulkUpdateFundOperation(bulkData)
+    }
   }
 
   render() {

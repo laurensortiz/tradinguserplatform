@@ -11,6 +11,11 @@ const BULK_UPDATE_TYPES = [
     name: 'Porcenge',
     scope: 'percentage',
   },
+  {
+    code: 'report',
+    name: 'Generar reporte de operaciones',
+    scope: 'report',
+  },
 ]
 
 function BulkUpdateSteps({

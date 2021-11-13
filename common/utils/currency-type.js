@@ -4,7 +4,7 @@ import FormatCurrencyFour from './format-currency-4'
 
 const assetsWithTwoDigits = [54, 55, 59, 62, 63, 64, 66, 67, 68]
 const assetsWithThreeDigits = [53, 58, 60, 65, 69]
-const assetsWithFourDigits = [10, 56, 57, 61]
+const assetsWithFourDigits = [10, 56, 57, 61, 77]
 
 const currencyType = (assetId, amount) => {
   if (assetsWithThreeDigits.includes(assetId)) {
