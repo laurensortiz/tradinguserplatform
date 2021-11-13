@@ -271,6 +271,11 @@ const BULK_UPDATE_TYPES = [
     name: 'London Sugar FT',
     scope: 'price',
   },
+  {
+    code: 'ulsd-ny-harbor-FT-OP',
+    name: 'ULSD NY Harbor FT',
+    scope: 'price',
+  },
 ]
 
 function BulkUpdateSteps({
