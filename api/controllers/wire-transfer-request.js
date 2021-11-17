@@ -41,7 +41,7 @@ module.exports = {
 
         const amountAvailable = (userAccount.accountValue / 100) * percentageFromAccount
 
-        if (isOTCAccount) {
+        if (isOTCAccount && userAccount.brokerId !== 39) {
           if (parseFloat(userAccount.guaranteeOperation) < 0) {
             throw new Error(NO_MONEY_ERROR_MESSAGE)
           }
@@ -50,7 +50,7 @@ module.exports = {
           }
         }
 
-        if (parseFloat(amountAvailable) - parseFloat(amount) < 0) {
+        if ((parseFloat(amountAvailable) - parseFloat(amount) < 0) && userAccount.brokerId !== 39) {
           throw new Error(NO_MONEY_ERROR_MESSAGE)
         }
 
