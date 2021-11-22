@@ -21,7 +21,7 @@ class Detail extends PureComponent {
     const expirationDate = _.get(this.props, 'currentOperation.expirationDate', '')
 
     const status = _.get(this.props, 'currentOperation.status', 1)
-    const { name: statusName, color: statusColor } = FormatStatusLang(status)
+    const { name: statusName, color: statusColor } = FormatStatusLang(status, 'fund')
     const langStatus = (status) => t(`status ${status}`)
     return (
       <>

@@ -439,6 +439,23 @@ class TableFund extends Component {
         key: 'id',
       },
       {
+        title: 'Estado',
+        dataIndex: 'status',
+        key: 'status',
+        filters: [
+          { text: 'Activo', value: 1 },
+          { text: 'Cerrado', value: 2 },
+        ],
+        defaultSortOrder: 'ascend',
+        onFilter: (value, record) => record.status === value,
+        render: (status) => {
+          const { name, color } = FormatStatus(status, 'fund')
+          return <Tag color={color}>{name}</Tag>
+        },
+        sorter: (a, b) => Sort(a.status, b.status),
+        sortDirections: ['descend', 'ascend'],
+      },
+      {
         title: 'Usuario',
         dataIndex: 'userAccount.user.username',
         key: 'userAccount.user.username',

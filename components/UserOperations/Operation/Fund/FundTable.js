@@ -192,14 +192,12 @@ class FundTable extends Component {
         key: 'status',
         filters: [
           { text: `${t('status active')}`, value: 1 },
-          { text: `${t('status marketClose')}`, value: 2 },
-          { text: `${t('status hold')}`, value: 3 },
-          { text: `${t('status sold')}`, value: 4 },
+          { text: `${t('status close')}`, value: 2 },
         ],
         onFilter: (value, record) => record.status === value,
         filterMultiple: false,
         render: (status) => {
-          const { name, color } = FormatStatusLang(status)
+          const { name, color } = FormatStatusLang(status, 'fund')
           return <Tag color={color}>{langStatus(name.toLowerCase())}</Tag>
         },
         sorter: (a, b) => Sort(a.status, b.status),

@@ -319,12 +319,11 @@ class AddOrEditForm extends PureComponent {
               showArrow={isAddAction}
             >
               <Option value={1}>Activo</Option>
-              <Option value={2}>Market Close</Option>
-              <Option value={3}>En Pausa</Option>
+              <Option value={2}>Cerrado</Option>
             </Select>
           )}
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Fecha Inicio">
           {getFieldDecorator('startDate', {
             initialValue: startDateInitValue,
           })(
@@ -335,7 +334,7 @@ class AddOrEditForm extends PureComponent {
             />
           )}
         </Form.Item>
-        <Form.Item>
+        <Form.Item label="Fecha Expiración">
           {getFieldDecorator('expirationDate', {
             initialValue: expirationDateInitValue,
           })(
