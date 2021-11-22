@@ -27,7 +27,7 @@ class Detail extends PureComponent {
       '0'
     )
     const status = _.get(this.props, 'currentOperation.status', 1)
-    const { name: statusName, color: statusColor } = FormatStatus(status)
+    const { name: statusName, color: statusColor } = FormatStatus(status, 'fund')
 
     return (
       <>
