@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { isEmpty, split } from 'lodash'
-import { Steps, Button, Icon, Tag, Select, Input, Result, Radio } from 'antd'
+import { Steps, Button, Icon, Tag, Select, Input, Result, Row, Col, DatePicker, Form } from 'antd'
 import classNames from 'classnames'
+import moment from "moment";
 const { Step } = Steps
 const { Option } = Select
 
@@ -27,6 +28,7 @@ function BulkUpdateSteps({
 }) {
   const [currentStep, setCurrentStep] = useState(0)
   const [updateType, setUpdateType] = useState('')
+  const [updateDate, setUpdateDate] = useState(null)
   const [updateScope, setUpdateScope] = useState('')
   const [updateValue, setUpdateValue] = useState({})
   const [behaviorClass, setBehaviorClass] = useState('')
@@ -39,37 +41,13 @@ function BulkUpdateSteps({
     setUpdateValue(null)
   }, [updateType])
 
-  const _isValidAmount = (amount) => {
-    const regex = /^-?[0-9]\d*(((,\d{3}){1})?(\.\d{0,4})?)$/
-    const isValid = regex.test(amount)
-    setIsValidAmount(isValid)
-    if (!isValid) {
-      setBehaviorClass('')
-    }
-    return isValid
-  }
-
-  const _isPositiveAmount = (amount) => {
-    const isPositive = Math.sign(amount) >= 0
-    setBehaviorClass(isPositive ? 'positive-amount' : 'negative-amount')
-    return isPositive
-  }
-
-  const _handlePriceInputChange = ({ target }) => {
-    if (target.name !== 'marketPrice') {
-      _isPositiveAmount(target.value)
-    }
-
-    _isValidAmount(target.value)
-
-    setUpdateValue({
-      ...updateValue,
-      [target.name]: target.value,
-    })
-  }
 
   const _handleSingleInputChange = ({ target }) => {
     setUpdateValue(target.value)
+  }
+
+  const _handleDateChange = (value) => {
+    setUpdateDate(moment.parseZone(value).format())
   }
 
   const _onSelectActionType = (value) => {
@@ -79,25 +57,35 @@ function BulkUpdateSteps({
     setUpdateScope(operationValue[1])
   }
 
-  const _onRequestSaveOperation = (operationInfo) => {
-    setIsValidOperation(true)
-    setUpdateValue(operationInfo)
-  }
 
   const _bulkUpdateValue = () => {
     switch (updateScope) {
       case 'percentage':
         return (
           <>
-            <Input
-              size="large"
-              className={`m-r-20 ${behaviorClass}`}
-              addonBefore="%"
-              style={{ width: 200 }}
-              name="percentage"
-              onChange={_handleSingleInputChange}
-              placeholder="Porcentage"
-            />
+            <Row type="flex" justify="center">
+              <Col span={4}>
+                <Input
+                  size="large"
+                  className={`m-r-20 ${behaviorClass}`}
+                  addonBefore="%"
+                  style={{ width: 200 }}
+                  name="percentage"
+                  onChange={_handleSingleInputChange}
+                  placeholder="Porcentage"
+                />
+              </Col>
+              <Col span={4}>
+                <DatePicker
+
+                  name="createdAt"
+                  onChange={_handleDateChange}
+                  defaultPickerValue={moment.parseZone()}
+                  placeholder="Fecha de Creación"
+                />
+              </Col>
+            </Row>
+
           </>
         )
 
@@ -156,7 +144,7 @@ function BulkUpdateSteps({
             size="large"
             type="primary"
             key="console"
-            onClick={() => onClickUpdate({ updateType, updateValue, updateScope })}
+            onClick={() => onClickUpdate({ updateType, updateValue, updateScope, updateDate })}
             loading={isBulkLoading}
             className={classNames({ 'no-visible': isProcessComplete })}
           >

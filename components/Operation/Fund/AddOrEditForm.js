@@ -220,10 +220,6 @@ class AddOrEditForm extends PureComponent {
 
     const productInitValue = !_.isEmpty(this.state.productName) ? this.state.productName : undefined
 
-    console.log('[=====  products  =====>')
-    console.log(this.state)
-    console.log('<=====  /products  =====]')
-
     return (
       <Form onSubmit={this._handleSubmit} className="auth-form">
         {isAddAction && (

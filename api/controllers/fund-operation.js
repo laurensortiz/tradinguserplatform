@@ -147,7 +147,7 @@ module.exports = {
   async bulkUpdate(req, res) {
     const userId = _.get(req, 'user.id', 0)
     try {
-      const { operationsIds, updateType, updateValue, updateScope } = req.body
+      const { operationsIds, updateType, updateValue, updateScope, updateDate } = req.body
 
       const percentage = Number(updateValue)
 
@@ -181,7 +181,9 @@ module.exports = {
                   gpAmount,
                   percentage,
                   status: 1,
-                  createdAt: moment(new Date()).tz('America/New_York').format(),
+                  createdAt:
+                    updateDate ? moment(updateDate).tz('America/New_York').format() :
+                    moment(new Date()).tz('America/New_York').format(),
                   updatedAt: moment(new Date()).tz('America/New_York').format(),
                 },
                 { transaction: t }
