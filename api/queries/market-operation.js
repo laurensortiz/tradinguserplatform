@@ -49,7 +49,7 @@ const queries = {
     AssetClass,
     Commodity,
   }) => {
-    const userRoleId = req.user.roleId || 0
+    const userRoleId = _.get(req, 'user.roleId', 0)
     const isAdmin = userRoleId === 1
     const isSoldOperation = req.query.status == 4
     const config = isAdmin && isSoldOperation ? { limit, offset } : null

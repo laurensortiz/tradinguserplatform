@@ -214,6 +214,59 @@ module.exports = {
     }
   },
 
+  async listTest(req, res) {
+    try {
+     const response = await MarketOperation.findAndCountAll({
+        where: {
+          status: 1,
+        },
+       include: [
+         {
+           model: UserAccount,
+           as: 'userAccount',
+           attributes: ['userId'],
+           include: [
+             {
+               model: User,
+               as: 'user',
+               attributes: ['username', 'firstName', 'lastName'],
+             },
+           ],
+         },
+         {
+           model: Product,
+           as: 'product',
+           attributes: ['name', 'id', 'code'],
+         },
+         {
+           model: Broker,
+           as: 'broker',
+           attributes: ['name', 'id'],
+         },
+         {
+           model: AssetClass,
+           as: 'assetClass',
+           attributes: ['name', 'id'],
+         },
+         {
+           model: Commodity,
+           as: 'commodity',
+           attributes: ['name', 'id'],
+         },
+       ],
+        }
+
+      )
+
+      return res.status(200).send(response)
+    } catch (err) {
+      return res.status(500).send({
+        message: err.message,
+        name: err.name,
+      })
+    }
+  },
+
   async accountReport(req, res) {
     try {
       const marketOperation = await MarketOperation.findAll(
