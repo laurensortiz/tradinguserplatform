@@ -215,10 +215,14 @@ module.exports = {
   },
 
   async listTest(req, res) {
+    const Op = sequelize.Op
     try {
      const response = await MarketOperation.findAndCountAll({
         where: {
-          status: 1,
+          status: {
+            [Op.gt]: 0,
+            [Op.lt]: 4,
+          },
         },
        include: [
          {
