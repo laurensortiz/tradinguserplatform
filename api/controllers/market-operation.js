@@ -217,50 +217,48 @@ module.exports = {
   async listTest(req, res) {
     const Op = sequelize.Op
     try {
-     const response = await MarketOperation.findAndCountAll({
+      const response = await MarketOperation.findAndCountAll({
         where: {
           status: {
             [Op.gt]: 0,
             [Op.lt]: 4,
           },
         },
-       include: [
-         {
-           model: UserAccount,
-           as: 'userAccount',
-           attributes: ['userId'],
-           include: [
-             {
-               model: User,
-               as: 'user',
-               attributes: ['username', 'firstName', 'lastName'],
-             },
-           ],
-         },
-         {
-           model: Product,
-           as: 'product',
-           attributes: ['name', 'id', 'code'],
-         },
-         {
-           model: Broker,
-           as: 'broker',
-           attributes: ['name', 'id'],
-         },
-         {
-           model: AssetClass,
-           as: 'assetClass',
-           attributes: ['name', 'id'],
-         },
-         {
-           model: Commodity,
-           as: 'commodity',
-           attributes: ['name', 'id'],
-         },
-       ],
-        }
-
-      )
+        include: [
+          {
+            model: UserAccount,
+            as: 'userAccount',
+            attributes: ['userId'],
+            include: [
+              {
+                model: User,
+                as: 'user',
+                attributes: ['username', 'firstName', 'lastName'],
+              },
+            ],
+          },
+          {
+            model: Product,
+            as: 'product',
+            attributes: ['name', 'id', 'code'],
+          },
+          {
+            model: Broker,
+            as: 'broker',
+            attributes: ['name', 'id'],
+          },
+          {
+            model: AssetClass,
+            as: 'assetClass',
+            attributes: ['name', 'id'],
+          },
+          {
+            model: Commodity,
+            as: 'commodity',
+            attributes: ['name', 'id'],
+          },
+        ],
+      })
 
       return res.status(200).send(response)
     } catch (err) {
@@ -553,6 +551,9 @@ module.exports = {
                * Close Operation
                */
               let pivotUserAccountTable = []
+              /**
+               * Get All MarketOperation
+               */
               const marketOperations = await MarketOperation.findAll(
                 {
                   where: {
@@ -583,18 +584,21 @@ module.exports = {
                 const userAccount =
                   userAccountIndex >= 0
                     ? pivotUserAccountTable[userAccountIndex]
-                    : await UserAccount.findOne({
-                        where: {
-                          id: marketOperation.userAccountId,
-                        },
-                        include: [
-                          {
-                            model: Account,
-                            as: 'account',
-                            attributes: ['percentage'],
+                    : await UserAccount.findOne(
+                        {
+                          where: {
+                            id: marketOperation.userAccountId,
                           },
-                        ],
-                      })
+                          include: [
+                            {
+                              model: Account,
+                              as: 'account',
+                              attributes: ['percentage'],
+                            },
+                          ],
+                        },
+                        { transaction: t }
+                      )
 
                 if (!userAccount) {
                   throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
@@ -713,6 +717,8 @@ module.exports = {
                 }
               }
               pivotUserAccountTable = []
+
+              //End Logic for Close operation
             } else {
               await MarketOperation.update(
                 {
