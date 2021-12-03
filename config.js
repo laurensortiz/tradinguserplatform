@@ -50,6 +50,9 @@ module.exports = {
       //prevent sequelize from pluralizing table names
       freezeTableName: true,
     },
+    pool: {
+      acquire: process.env.DB_POOL_ACQUIRE || 60000,
+    },
     logging: false,
     timezone: '-06:00',
   },
