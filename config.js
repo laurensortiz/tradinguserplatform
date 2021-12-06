@@ -16,7 +16,7 @@ module.exports = {
       //prevent sequelize from pluralizing table names
       freezeTableName: true,
     },
-    logging: true,
+    logging: false,
     timezone: '-06:00',
   },
   stage: {

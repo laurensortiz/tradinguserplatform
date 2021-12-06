@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { performance } from 'perf_hooks'
 import {
   MarketOperation,
   UserAccount,
@@ -17,6 +18,8 @@ import { marketOperationQuery } from '../queries'
 import moment from 'moment-timezone'
 import Log from '../../common/log'
 import ToFixNumber from '../../common/to-fix-number'
+import logger from '../../common/logger'
+import millisecondsToSeconds from '../../common/utils/milliseconds-to-seconds'
 import GetHoldCommissionAmount from '../../common/get-hold-commission-amount'
 
 const getPagingData = (data, page, limit) => {
@@ -37,6 +40,7 @@ const getPagination = (page, size) => {
 module.exports = {
   async create(req, res) {
     const userId = _.get(req, 'user.id', 0)
+    const startTime = performance.now()
     try {
       await ORM.transaction(async (t) => {
         const userAccount = await UserAccount.findOne(
@@ -52,11 +56,14 @@ module.exports = {
           throw new Error('Ocurrió un error al momento de buscar la cuenta del usuario')
         }
 
-        const lastMarketOperationEntry = await MarketOperation.findAll({
-          limit: 1,
-          attributes: ['orderId'],
-          order: [['id', 'DESC']],
-        })
+        const lastMarketOperationEntry = await MarketOperation.findAll(
+          {
+            limit: 1,
+            attributes: ['orderId'],
+            order: [['id', 'DESC']],
+          },
+          { transaction: t }
+        )
 
         const orderId = Number(lastMarketOperationEntry[0].orderId) + 1
 
@@ -93,21 +100,6 @@ module.exports = {
           { transaction: t }
         )
 
-        // await MarketMovement.create(
-        //   {
-        //     gpInversion: req.body.amount,
-        //     marketOperationId: Number(marketOperation.id),
-        //     gpAmount: 0,
-        //     marketPrice: 0,
-        //     status: _.get(req, 'body.status', 1),
-        //     createdAt: moment(req.body.createdAt || new Date())
-        //       .tz('America/New_York')
-        //       .format(),
-        //     updatedAt: moment(new Date()).tz('America/New_York').format(),
-        //   },
-        //   { transaction: t }
-        // )
-
         const marginOperation = ToFixNumber(
           (Number(req.body.maintenanceMargin) + Number(req.body.amount)) * 0.1
         )
@@ -134,20 +126,28 @@ module.exports = {
           snapShotBeforeAction: snapShotAccount,
           snapShotAfterAction: JSON.stringify(updatedUserAccount),
         })
+        logger.error(`🔥 Create - Market Operation - User: ${userId}`)
 
         return res.status(200).send(marketOperation)
       })
     } catch (err) {
+      logger.error(`🔥 Create - Market Operation - User: ${userId} - Error: ${err}`)
       return res.status(500).send({
         message: err.message,
         name: err.name,
       })
+    } finally {
+      const endTime = performance.now()
+      logger.info(`⏰ Time: ${millisecondsToSeconds(endTime - startTime)} mi`)
     }
   },
 
   async list(req, res) {
     //TODO: All these logic should be refactored
+    const startTime = performance.now()
     const userRoleId = _.get(req, 'user.roleId', 0)
+    const userId = _.get(req, 'user.id', 0)
+
     const isAdmin = userRoleId === 1
 
     let adminResponse
@@ -204,18 +204,30 @@ module.exports = {
       }
 
       const response = isAdmin ? adminResponse : marketOperation.rows
+      logger.info(`🚀 List - Market Operation - User: ${userId}`)
 
       return res.status(200).send(response)
     } catch (err) {
+      logger.error(`🔥 List - Market Operation - User: ${userId} - Error: ${err}`)
+
       return res.status(500).send({
         message: err.message,
         name: err.name,
       })
+    } finally {
+      const endTime = performance.now()
+      logger.info(
+        `⏰  List - Market Operation - Time: ${millisecondsToSeconds(endTime - startTime)}`
+      )
     }
   },
 
   async listTest(req, res) {
     const Op = sequelize.Op
+    const startTime = performance.now()
+    const userId = _.get(req, 'user.id', 0)
+
+    logger.info(`🚀 ListTest - Market Operation - User: ${userId}`)
     try {
       const response = await MarketOperation.findAndCountAll({
         where: {
@@ -259,17 +271,28 @@ module.exports = {
           },
         ],
       })
-
+      logger.info(`🚀 ListTest - Market Operation - User: ${userId}`)
       return res.status(200).send(response)
     } catch (err) {
+      logger.error(`🔥 ListTest - Market Operation - User: ${userId} - Error: ${err}`)
+
       return res.status(500).send({
         message: err.message,
         name: err.name,
       })
+    } finally {
+      const endTime = performance.now()
+      logger.info(
+        `⏰ ListTest - Market Operation - Time: ${millisecondsToSeconds(endTime - startTime)}`
+      )
     }
   },
 
   async accountReport(req, res) {
+    const startTime = performance.now()
+    const userId = _.get(req, 'user.id', 0)
+
+    logger.info(`🚀 Account Report - Market Operation - User: ${userId}`)
     try {
       const marketOperation = await MarketOperation.findAll(
         marketOperationQuery.accountReport({
@@ -292,10 +315,15 @@ module.exports = {
       }
       return res.status(200).send(marketOperation)
     } catch (err) {
+      logger.error(`🔥 Account Report - Market Operation - User: ${userId} - Error: ${err}`)
+
       return res.status(500).send({
         message: err.message,
         name: err.name,
       })
+    } finally {
+      const endTime = performance.now()
+      logger.info(`⏰ Account Report - Time: ${millisecondsToSeconds(endTime - startTime)}`)
     }
   },
 
@@ -331,7 +359,11 @@ module.exports = {
   },
 
   async update(req, res) {
+    const startTime = performance.now()
     const userId = _.get(req, 'user.id', 0)
+
+    logger.info(`🚀 Update - Market Operation - User: ${userId}`)
+
     await ORM.transaction(async (t) => {
       const marketOperation = await MarketOperation.findOne(
         {
@@ -382,9 +414,17 @@ module.exports = {
             },
             { transaction: t }
           )
+
           return res.status(200).send(marketOperation)
-        } catch (e) {
-          return res.status(500).send(e)
+        } catch (err) {
+          logger.error(`🔥 Update - Market Operation - User: ${userId} - Error: ${err}`)
+
+          return res.status(500).send(err)
+        } finally {
+          const endTime = performance.now()
+          logger.info(
+            `⏰  Update - Market Operation - Time: ${millisecondsToSeconds(endTime - startTime)}`
+          )
         }
       }
 
@@ -530,16 +570,27 @@ module.exports = {
 
         return res.status(200).send(marketOperation)
       } catch (err) {
+        logger.error(`🔥 Update - Market Operation - User: ${userId} - Error: ${err}`)
+
         return res.status(500).send({
           message: err.message,
           name: err.name,
         })
+      } finally {
+        const endTime = performance.now()
+        logger.info(
+          `⏰  Update - Market Operation - Time: ${millisecondsToSeconds(endTime - startTime)}`
+        )
       }
     })
   },
 
   async bulkUpdate(req, res) {
+    const startTime = performance.now()
     const userId = _.get(req, 'user.id', 0)
+
+    logger.info(`🚀 Bulk Update - Market Operation - User: ${userId}`)
+
     try {
       const { operationsIds, updateType, updateValue, updateScope } = req.body
 
@@ -1552,16 +1603,21 @@ module.exports = {
             break
           default:
         }
+
         return res.status(200).send('Completed')
       })
     } catch (err) {
-      console.log('[=====  ERROR on BULK  =====>')
-      console.log(err)
-      console.log('<=====  /ERROR on BULK  =====]')
+      logger.error(`🔥 Bulk Update - Market Operation - User: ${userId} - Error: ${err}`)
+
       return res.status(500).send({
         message: err.message,
         name: err.name,
       })
+    } finally {
+      const endTime = performance.now()
+      logger.info(
+        `⏰  Bulk Update - Market Operation - Time: ${millisecondsToSeconds(endTime - startTime)}`
+      )
     }
   },
 

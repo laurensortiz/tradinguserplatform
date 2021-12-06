@@ -65,6 +65,7 @@
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pdfmake": "^0.1.68",
+    "perf_hooks": "^0.0.1",
     "pg": "^7.9.0",
     "pg-hstore": "^2.3.2",
     "print-html-element": "^0.5.1",
@@ -90,6 +91,7 @@
     "uuid": "^3.3.3",
     "video.js": "7.7.4",
     "webpack": "^4.29.6",
+    "winston": "^3.3.3",
     "xlsx": "^0.15.1"
   },
   "devDependencies": {
