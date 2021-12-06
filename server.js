@@ -31,7 +31,13 @@ app.prepare().then(() => {
   server.use(enforceSSL())
   server.use('/static', express.static(__dirname + '/static'))
   server.use(cookieParser())
-  server.use(morgan('dev'))
+  server.use(
+    morgan('tiny', {
+      skip: function (req, res) {
+        return res.statusCode < 400
+      },
+    })
+  )
   server.use(cors({ credentials: true, origin: true }))
   server.use(bodyParser.json({ limit: '50mb', extended: true }))
   server.use(
