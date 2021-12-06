@@ -45,6 +45,7 @@ module.exports = {
     dialect: 'postgres',
     dialectOptions: {
       ssl: true,
+      connectTimeout: process.env.DB_POOL_ACQUIRE || 60000,
     },
     define: {
       //prevent sequelize from pluralizing table names
@@ -52,6 +53,9 @@ module.exports = {
     },
     pool: {
       acquire: process.env.DB_POOL_ACQUIRE || 60000,
+      acquireTimeoutMillis: process.env.DB_POOL_ACQUIRE || 60000,
+      createTimeoutMillis: process.env.DB_POOL_ACQUIRE || 60000,
+      idleTimeoutMillis: process.env.DB_POOL_ACQUIRE || 60000,
     },
     logging: false,
     timezone: '-06:00',
