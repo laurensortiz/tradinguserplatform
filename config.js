@@ -2,8 +2,6 @@ if (process.env.NODE_ENV !== 'production') {
   require('now-env')
 }
 
-const Sequelize = require('sequelize')
-
 module.exports = {
   development: {
     username: 'webtrader_user',

@@ -274,7 +274,9 @@ class MarketTable extends Component {
       selectedBulkUpdateType: 'status',
       bulkUpdateValue: null,
     })
-    this.props.onRequestUpdateTable()
+    this.props.onRequestUpdateTable({
+      pagination: this.props.pagination,
+    })
   }
 
   _handleClickBulkUpdate = (bulkOperation) => {
