@@ -29,7 +29,6 @@ module.exports = {
             initialAmount: req.body.amount,
             status: _.get(req, 'body.status', 1),
             startDate: req.body.startDate,
-            endDate: req.body.endDate,
             createdAt: moment(new Date()).tz('America/New_York').format(),
             updatedAt: moment(new Date()).tz('America/New_York').format(),
             expirationDate: req.body.expirationDate
@@ -119,15 +118,11 @@ module.exports = {
         operationType: req.body.productName || fundOperation.productName,
         productId: req.body.productId || fundOperation.productId,
         userAccountId: _.get(req, 'body.userAccount.id', 0) || fundOperation.userAccountId,
-        amount: fundOperation.amount,
+        amount: req.body.amount || fundOperation.amount,
         initialAmount: req.body.initialAmount || fundOperation.initialAmount,
         status: req.body.status || fundOperation.status,
         startDate:
           moment(req.body.startDate).tz('America/New_York').format() || fundOperation.startDate,
-        endDate:
-          req.body.endDate && req.body.endDate !== 'Fecha inválida'
-            ? moment(req.body.endDate).tz('America/New_York').format()
-            : null,
         expirationDate:
           req.body.expirationDate && req.body.expirationDate !== 'Fecha inválida'
             ? moment(req.body.expirationDate).tz('America/New_York').format()
@@ -181,9 +176,9 @@ module.exports = {
                   gpAmount,
                   percentage,
                   status: 1,
-                  createdAt:
-                    updateDate ? moment(updateDate).tz('America/New_York').format() :
-                    moment(new Date()).tz('America/New_York').format(),
+                  createdAt: updateDate
+                    ? moment(updateDate).tz('America/New_York').format()
+                    : moment(new Date()).tz('America/New_York').format(),
                   updatedAt: moment(new Date()).tz('America/New_York').format(),
                 },
                 { transaction: t }

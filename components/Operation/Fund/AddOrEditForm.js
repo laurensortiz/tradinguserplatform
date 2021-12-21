@@ -257,45 +257,36 @@ class AddOrEditForm extends PureComponent {
             </Select>
           )}
         </Form.Item>
-
-        {/*<Form.Item label="Tipo de Operación">*/}
-        {/*  {getFieldDecorator('operationType', {*/}
-        {/*    initialValue: operationTypeInitValue,*/}
-        {/*    rules: [{ required: true, message: 'Por favor indique el tipo de operación' }],*/}
-        {/*  })(*/}
-        {/*    <Input*/}
-        {/*      name="operationType"*/}
-        {/*      onChange={this._handleChange}*/}
-        {/*      placeholder="Tipo de Operación"*/}
-        {/*    />*/}
-        {/*  )}*/}
-        {/*</Form.Item>*/}
-        {_.isEqual(this.props.actionType, 'add') ? (
-          <Form.Item label="Monto">
+        <Form.Item label="Saldo Inicial">
+          {getFieldDecorator('initialAmount', {
+            initialValue: initialAmountInitValue,
+            value: initialAmountInitValue,
+            rules: [
+              { required: true, message: 'Por favor indique el monto' },
+              {
+                validator: (rule, value) => {
+                  if (_.isEqual(this.props.actionType, 'edit')) {
+                    return AmountFormatValidation(rule, value)
+                  } else {
+                    return AmountOperationValidation(this.state.accountAvailable, value)
+                  }
+                },
+              },
+            ],
+          })(<Input name="initialAmount" onChange={this._handleChange} placeholder="Monto" />)}
+        </Form.Item>
+        {_.isEqual(this.props.actionType, 'edit') && (
+          <Form.Item label="Saldo Actual">
             {getFieldDecorator('amount', {
               initialValue: amountInitValue,
               value: amountInitValue,
               rules: [
-                { required: true, message: 'Por favor indique el monto' },
+                { required: false, message: 'Por favor indique el monto' },
                 {
-                  validator: (rule, value) =>
-                    AmountOperationValidation(this.state.accountAvailable, value),
+                  validator: (rule, value) => AmountFormatValidation(rule, value),
                 },
               ],
             })(<Input name="amount" onChange={this._handleChange} placeholder="Monto" />)}
-          </Form.Item>
-        ) : (
-          <Form.Item label="Nuevo Monto">
-            {getFieldDecorator('initialAmount', {
-              initialValue: initialAmountInitValue,
-              value: initialAmountInitValue,
-              rules: [
-                { required: true, message: 'Por favor indique el monto' },
-                {
-                  validator: AmountFormatValidation,
-                },
-              ],
-            })(<Input name="initialAmount" onChange={this._handleChange} placeholder="Monto" />)}
           </Form.Item>
         )}
 
