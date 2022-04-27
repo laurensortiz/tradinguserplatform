@@ -151,7 +151,11 @@ class AccountInformation extends PureComponent {
       </TagDate>
     )
 
-  _getHeaderCard = (isUserBlocked, forceEnableUserWT) => {
+  _getHeaderCard = (isUserBlocked, forceEnableUserWT, accountType, username) => {
+
+    if(accountType === 3 && username !== 'cgvedia180781516') {
+      return null
+    }
     if (forceEnableUserWT) {
       return (
         <Button onClick={this._onHandleShowWireTransferForm}>
@@ -187,6 +191,9 @@ class AccountInformation extends PureComponent {
         {this._getLastRequestInfo()}
       </>
     )
+
+
+
   }
 
   _getHeaderCardHoliday = () => {
@@ -266,10 +273,10 @@ class AccountInformation extends PureComponent {
             <Col>
               <Descriptions
                 title={
-                  !_.isEqual(accountType, 3)
+                  !_.isEqual(accountType, 4)
                     ? isOutBusinessHours
                       ? this._getHeaderCardAfterHours(isUserBlocked)
-                      : this._getHeaderCard(isUserBlocked, forceEnableUserWT)
+                      : this._getHeaderCard(isUserBlocked, forceEnableUserWT, accountType, username)
                     : null
                 }
               >
