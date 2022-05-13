@@ -1,5 +1,6 @@
 import { Lead } from '../models'
 import moment from 'moment-timezone'
+import SendEmail from '../../common/email/lead'
 
 module.exports = {
   async create(req, res) {
@@ -14,6 +15,7 @@ module.exports = {
         createdAt: moment(new Date()).tz('America/New_York').format(),
         updatedAt: moment(new Date()).tz('America/New_York').format(),
       })
+      await SendEmail(req.body)
 
       return res.status(200).send(lead)
     } catch (err) {
