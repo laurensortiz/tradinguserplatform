@@ -11,7 +11,11 @@ const { Option } = Select
 
 const ModalForm = styled(Modal)`
   padding: 0;
+`
+
+const MainForm = styled(Form)`
   z-index: 1;
+  position: relative;
 `
 
 const ModalAlert = styled(Alert)`
@@ -119,7 +123,7 @@ function RegisterForm({ lng, form, t }) {
                   type="error"
                 />
               )}
-              <Form onSubmit={handleSubmit} className="auth-form">
+              <MainForm onSubmit={handleSubmit} className="auth-form">
                 <Col sm={12}>
                   <Form.Item label={t('firstName')}>
                     {getFieldDecorator('firstName', {
@@ -232,7 +236,7 @@ function RegisterForm({ lng, form, t }) {
                     Login
                   </Button>
                 </Col>
-              </Form>
+              </MainForm>
             </Col>
             <Col sm={12}>
               <Title>¿No tienes una cuenta?</Title>
