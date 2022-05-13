@@ -11,6 +11,7 @@ const { Option } = Select
 
 const ModalForm = styled(Modal)`
   padding: 0;
+  z-index: 1;
 `
 
 const ModalAlert = styled(Alert)`
@@ -36,7 +37,7 @@ const AlertMessage = styled(Alert)`
   margin-bottom: 15px;
 `
 
-const TIMEOUT_MODAL = 60000 // 5 minutes
+const TIMEOUT_MODAL = 10000 // 5 minutes
 
 function RegisterForm({ lng, form, t }) {
   const [isRegisterFormActive, setIsRegisterFormActive] = useState(false)
